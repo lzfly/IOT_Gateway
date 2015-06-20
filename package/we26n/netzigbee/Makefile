@@ -7,7 +7,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=flowmeter
+PKG_NAME:=netzigbee
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)
@@ -15,16 +15,16 @@ PKG_USE_MIPS16:=0
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/flowmeter
+define Package/netzigbee
   SECTION:=we26n
   CATEGORY:=WE26N
-  TITLE:=flowmeter reader (using uart to 433M module)
+  TITLE:=netzigbee gateway interface (using eth to zigbee module)
   MAINTAINER:=wangmingdong <wang_leaf@sina.com>
   DEPENDS:=+libpthread +libubus +libubox
 endef
 
-define Package/flowmeter/description
-  flowmeter reader (using uart to 433M module)
+define Package/netzigbee/description
+  netzigbee gateway interface (using eth to zigbee module)
 endef
 
 define Build/Prepare
@@ -42,9 +42,9 @@ define Build/Compile
 	-f test.mk
 endef
 
-define Package/flowmeter/install
+define Package/netzigbee/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/flowmeter $(1)/usr/bin/flowmeter
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/netzigbee $(1)/usr/bin/netzigbee
 endef
 
-$(eval $(call BuildPackage,flowmeter))
+$(eval $(call BuildPackage,netzigbee))
