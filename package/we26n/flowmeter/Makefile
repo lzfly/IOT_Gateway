@@ -8,9 +8,10 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=flowmeter
+PKG_VERSION:=0.1.1
 PKG_RELEASE:=1
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)
+PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_USE_MIPS16:=0
 
 include $(INCLUDE_DIR)/package.mk
