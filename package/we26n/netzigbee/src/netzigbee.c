@@ -62,7 +62,7 @@ void server_main( struct ubus_context *ctx )
 }
 
 
-extern void *  test_aux_thread( void * arg );
+extern void *  beginSearch();
 
 int  prepare_threads( void )
 {
@@ -71,7 +71,7 @@ int  prepare_threads( void )
 
     
     /**/
-    iret = pthread_create( &aux_thrd, NULL, test_aux_thread, NULL );
+    iret = pthread_create( &aux_thrd, NULL, beginSearch, NULL );
     if ( 0 != iret )
     {
         printf( "aux pthread create fail, %d", iret );
