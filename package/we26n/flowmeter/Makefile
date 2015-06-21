@@ -39,7 +39,7 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 	CC="$(TARGET_CC)" \
 	CFLAGS="$(TARGET_CFLAGS) -Wall" \
-	LDFLAGS="$(TARGET_LDFLAGS) -lubox -lubus" \
+	LDFLAGS="$(TARGET_LDFLAGS) -lubox -lubus -lpthread" \
 	-f test.mk
 endef
 

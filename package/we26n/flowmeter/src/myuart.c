@@ -42,7 +42,7 @@ int  myuart_init( int sno, intptr_t * pret )
 
 
 	/**/
-	sprintf( tstr, "/dev/ttySAC%d", sno );
+	sprintf( tstr, "/dev/ttyUSB%d", sno );
 
 	/**/
 	fd = open( tstr, O_RDWR | O_NOCTTY | O_NONBLOCK );
@@ -55,7 +55,7 @@ int  myuart_init( int sno, intptr_t * pret )
 	memset( &settings, 0, sizeof(settings));
 
 	tcgetattr(fd, &settings );
-	settings.c_cflag = B115200 | CS8 | CLOCAL | CREAD;
+	settings.c_cflag = B9600 | CS8 | CLOCAL | CREAD;
 	settings.c_iflag = 0;
 	settings.c_oflag = 0;
 	settings.c_lflag = 0;
