@@ -62,14 +62,44 @@ void server_main( struct ubus_context *ctx )
 }
 
 
+extern void *  test_aux_thread( void * arg );
+
+int  prepare_threads( void )
+{
+    int  iret;
+    pthread_t  aux_thrd;
+
+    
+    /**/
+    iret = pthread_create( &aux_thrd, NULL, test_aux_thread, NULL );
+    if ( 0 != iret )
+    {
+        printf( "aux pthread create fail, %d", iret );
+        return 3;
+    }
+
+    return 0;
+}
+
+
+
 int  main( void )
 {
+    int  iret;
     struct ubus_context *ctx;
 
     /**/
+    iret = prepare_threads();
+    if ( 0 != iret )
+    {
+        fprintf( stderr, "Failed to prepare thread\n" );
+        return 1;
+    }
+    
+    /**/
 	uloop_init();
 	signal(SIGPIPE, SIG_IGN);	
-
+    
     /**/
 	ctx = ubus_connect( NULL );
 	if ( NULL == ctx) 
