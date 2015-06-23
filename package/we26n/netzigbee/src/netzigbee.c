@@ -15,6 +15,7 @@
 #include <libubox/blobmsg_json.h>
 #include <libubox/uloop.h>
 #include <libubus.h>
+#include "we26n_type.h"
 
 static struct blob_buf b;
 
@@ -82,7 +83,6 @@ int  prepare_threads( void )
 }
 
 
-
 int  main( void )
 {
     int  iret;
@@ -98,6 +98,7 @@ int  main( void )
     
     /**/
 	uloop_init();
+
 	signal(SIGPIPE, SIG_IGN);	
     
     /**/
