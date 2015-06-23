@@ -286,23 +286,30 @@ int startSearchDevice()
 	int cmd_length=1;
 	w26n_byte msg[cmd_length];
 
-	char buffer[512];
+	char buffer1[512];
+	char *buffer;
+	int index = 0;
 
 	int resp_length=0;
 	msg[SRPC_CMD_ID_POS]=RPCS_GET_DEVICES;
 
 	while(1)
 	{
-			sendCommand(g_monitor_socket,msg,cmd_length,buffer,&resp_length);
+			sendCommand(g_monitor_socket,msg,cmd_length,buffer1,&resp_length);
+			printf("[startSearchDevice]resp_length=%d\r\n",resp_length);
 
+			index = 0;
+            while(resp_length > index){
+            	buffer = buffer1 + index;
 				w26n_byte resptype = buffer[0];
+				printf("[startSearchDevice]resptype=%d\r\n",resptype);
+				printf("[startSearchDevice]index=%d\r\n",index);
 				if(resptype == 1)
 			   {
-					printf("[startSearchDevice]resptype=%d\r\n",resptype);
-
 
 					w26n_byte resplen = buffer[1];
 					printf("[startSearchDevice]resplen=%d\r\n",resplen);
+					index = index + resplen + 2;
 
 					int shortaddr = buffer[2]&(buffer[3]<<8);
 					printf("[startSearchDevice]shortaddr=%d\r\n",shortaddr);
@@ -342,13 +349,14 @@ int startSearchDevice()
 					printf("[startSearchDevice]SN=%s\r\n",SN);
 			   }
 
-				if(resptype == 7)
+				else if(resptype == 7)
 				{
 					printf("[startSearchDevice]resptype=%d\r\n",resptype);
 
 
 					w26n_byte resplen = buffer[1];
 					printf("[startSearchDevice]resplen=%d\r\n",resplen);
+					index = index + resplen + 2;
 
 					int shortaddr = buffer[2]&(buffer[3]<<8);
 					printf("[startSearchDevice]shortaddr=%d\r\n",shortaddr);
@@ -361,15 +369,66 @@ int startSearchDevice()
 
 
 				}
+				else if(resptype == 0x70)
+				{
+					printf("[startSearchDevice]resptype=%d\r\n",resptype);
 
 
+					w26n_byte resplen = buffer[1];
+					printf("[startSearchDevice]resplen=%d\r\n",resplen);
+					index = index + resplen + 2;
+
+					int shortaddr = buffer[2]&(buffer[3]<<8);
+					printf("[startSearchDevice]shortaddr=%d\r\n",shortaddr);
+
+					w26n_byte endpoint = buffer[4];
+					printf("[startSearchDevice]endpoint=%d\r\n",endpoint);
+
+					int clusterId = buffer[5]&(buffer[6]<<8);
+					printf("[startSearchDevice]clusterId=%d\r\n",clusterId);
+
+
+					w26n_byte num = buffer[7];
+					printf("[startSearchDevice]num=%d\r\n",num);
+
+					int attr = buffer[8]&(buffer[9]<<8);
+					printf("[startSearchDevice]attr=%d\r\n",attr);
+
+					w26n_byte type = buffer[10];
+					printf("[startSearchDevice]type=%d\r\n",type);
+
+					w26n_byte value = buffer[11];
+					printf("[startSearchDevice value=%d\r\n",value);
+
+				}
+				else{
+					w26n_byte resplen = buffer[1];
+					printf("[startSearchDevice]resplen=%d\r\n",resplen);
+					index = index + resplen + 2;
+
+				}
+
+         }
 		sleep(10);
 	}
 
-
-
-
 }
 
+
+int setDeviceStatus()
+{
+
+	int cmd_length=1;
+	w26n_byte msg[cmd_length];
+
+	char buffer[512];
+	int resp_length=0;
+	msg[SRPC_CMD_ID_POS]=RPCS_GET_GATEDETAIL;
+
+	sendCommand(g_monitor_socket,msg,cmd_length,buffer,&resp_length);
+
+	return 0;
+
+}
 
 
