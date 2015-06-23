@@ -64,6 +64,8 @@ void server_main( struct ubus_context *ctx )
 
 
 extern void *  beginSearch();
+extern void *  receiveDeviceMsg();
+extern void *  ctrlDevice);
 
 int  prepare_threads( void )
 {
@@ -76,9 +78,24 @@ int  prepare_threads( void )
     if ( 0 != iret )
     {
         printf( "aux pthread create fail, %d", iret );
-        return 3;
+        return -1;
     }
 
+
+	iret = pthread_create( &aux_thrd, NULL, receiveDeviceMsg, NULL );
+	if ( 0 != iret )
+	{
+		printf( "receiveDeviceMsg pthread create fail, %d", iret );
+		return -1;
+	}
+	
+	iret = pthread_create( &aux_thrd, NULL, ctrlDevice, NULL );
+	if ( 0 != iret )
+	{
+		printf( "ctrlDevice pthread create fail, %d", iret );
+		return -1;
+	}
+	
     return 0;
 }
 
