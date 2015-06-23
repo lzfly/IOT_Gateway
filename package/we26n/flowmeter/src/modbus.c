@@ -7,25 +7,49 @@
 
 #include <sys/time.h>
 
+#if 0
+#define container_of(ptr, type, member) \
+    (type *)((char *)(ptr) - (char *) &((type *)0)->member)
+#endif
+
+#include <libubox/list.h>
+
+#include "myuart.h"
 #include "modbus.h"
+
+
+typedef struct _tag_modbus_req
+{
+    struct list_head  node;
+
+    /**/
+    uint64_t  usec_send;
+
+    /**/
+    uint8_t  addr;
+    uint16_t  reg;
+    uint16_t  num;
+
+    /**/
+    modbus_cb_func  func;
+    intptr_t  arg;
+        
+} modbus_req_t;
+
 
 /**/
 typedef struct _tag_modbus_context
 {   
     /**/
-    uint64_t  usec_last;
+    struct list_head  reqlist;
     
-    /**/
-    modbus_cb_func  func;
-    intptr_t  arg;
+    /* uart handler */
+    intptr_t  uctx;
 
     /**/
-    int  state;
     int  tsize;
     int  toffs;
     uint8_t  tbuf[4];
-    
-    /**/
     
 } modbus_context_t;
 
@@ -127,129 +151,274 @@ uint16_t  modbus_crc16( uint8_t * puchMsg, int tlen )
 }
 
 
+int  modbus_set_uartctx( intptr_t ctx, intptr_t uctx )
+{
+    modbus_context_t * pctx;
+
+    /**/
+    pctx = (modbus_context_t *)ctx;
+
+    /**/
+    pctx->uctx = uctx;
+    return 0;
+}
+
+
+static int  modbus_internal_send( modbus_context_t * pctx, modbus_req_t * preq )
+{
+    uint16_t  temp;
+    uint8_t  pdat[8];
+    
+    /**/
+    pdat[0] = preq->addr;
+    pdat[1] = 0x3;
+
+    pdat[2] = (uint8_t)(preq->reg >> 8);
+    pdat[3] = (uint8_t)(preq->reg & 0xFF);
+
+    pdat[4] = (uint8_t)(preq->num >> 8);
+    pdat[5] = (uint8_t)(preq->num & 0xFF);
+
+    /**/
+    temp = modbus_crc16( pdat, 6 );
+    pdat[6] = (uint8_t)(temp >> 8);
+    pdat[7] = (uint8_t)(temp & 0xFF);    
+
+    /**/
+    myuart_send( pctx->uctx, 8, pdat );
+    preq->usec_send = tu_get_usec();
+    
+    return 0;
+    
+}
+
+
+int  modbus_send_req( intptr_t ctx, uint8_t addr, uint16_t reg, uint16_t num, modbus_cb_func func, intptr_t arg )
+{
+    modbus_req_t * preq;
+    modbus_context_t * pctx;
+
+    /**/
+    pctx = (modbus_context_t *)ctx;
+
+    /**/
+    if ( 0 == pctx->uctx )
+    {
+        return 1;
+    }
+    
+    /**/
+    preq = (modbus_req_t *)malloc( sizeof(modbus_req_t) );
+    if ( NULL == preq )
+    {
+        return 3;
+    }
+
+    /**/
+    preq->addr = addr;
+    preq->reg = reg;
+    preq->num = num;
+    preq->func = func;
+    preq->arg = arg;
+    
+    /* empty -> first entry */
+    if ( list_empty( &(pctx->reqlist) ) )
+    {
+        modbus_internal_send( pctx, preq );
+        pctx->toffs = 0;
+    }
+    
+    /**/
+    printf( "add tail, %p\n", preq );
+    list_add_tail( &(preq->node), &(pctx->reqlist) );
+    return 0;
+    
+}
+
+
+
+static int  modbus_internal_trynew( modbus_context_t * pctx )
+{
+    modbus_req_t * preq;    
+    
+    /**/
+    if ( list_empty( &(pctx->reqlist) ) )
+    {
+        return 0;
+    }
+    
+    /**/
+    preq = list_first_entry( &(pctx->reqlist), modbus_req_t, node );
+    printf( "try new %p \n", preq );
+    modbus_internal_send( pctx, preq );
+    pctx->toffs = 0;
+    return 0;
+}
+
+
+static int  modbus_internal_timeout( modbus_context_t * pctx )
+{
+    uint64_t  temp;
+    modbus_req_t * preq;
+    
+    /**/
+    if ( list_empty( &(pctx->reqlist) ) )
+    {
+        return 0;
+    }
+    
+    /**/
+    temp = tu_get_usec();
+    preq = list_first_entry( &(pctx->reqlist), modbus_req_t, node );
+    
+    /* wait 10ms, timeout  */
+    if ( (temp - preq->usec_send) > 100000 )
+    {
+        list_del( &(preq->node) );
+        free( preq );
+
+        /**/
+        modbus_internal_trynew( pctx );
+    }
+    
+    /**/
+    return 0;
+    
+}
+
+
 
 extern  void  dump_hex( const unsigned char * ptr, size_t  len );
 
-int  modbus_recv_byte( modbus_context_t * pctx, uint8_t dat )
+int  modbus_recv_decode( intptr_t ctx, int tlen, uint8_t * pdat )
 {
     uint32_t  temp;
     uint32_t  crcs;
+    uint8_t  dat;
+    int  count;
+    int  tsize;
+    modbus_req_t * preq;    
+    modbus_context_t * pctx;
+
+    /**/
+    pctx = (modbus_context_t *)ctx;
+
+    /**/
+    if ( list_empty( &(pctx->reqlist) ) )
+    {
+        return 0;
+    }
     
     /**/
-    switch ( pctx->state )
+    preq = list_first_entry( &(pctx->reqlist), modbus_req_t, node );
+    
+    /**/
+    memcpy( &(pctx->tbuf[pctx->toffs]), pdat, tlen );
+    tsize = pctx->toffs + tlen;
+
+    /**/
+    while( pctx->toffs < tsize )
     {
-    case 0:
-        /* address, fix 2 */
-        if ( dat == 2 )
-        {
-            pctx->tbuf[0] = dat;
-            pctx->state = 1;
-        }
-        break;
-
-    case 1:
-        /* function, fix 3 */
-        if ( dat == 3 )
-        {
-            pctx->tbuf[1] = dat;
-            pctx->state = 2;
-        }
-        else
-        {
-            pctx->state = 0;
-        }
-        break;
-
-    case 2:
-        /* byte count */
-        pctx->tbuf[2] = dat;
-        if ( dat > (pctx->tsize - 5) )
-        {
-            /* too long not fit in buffer, notify to user? */
-            pctx->state = 0;
-            break;
-        }
-        
         /**/
-        pctx->state = 3;
-        pctx->toffs = 0;
-        break;
+        dat = pctx->tbuf[pctx->toffs];
 
-    case 3:
-        pctx->tbuf[3 + pctx->toffs] = dat;
-        pctx->toffs += 1;
-        temp = pctx->tbuf[2];
-        if ( pctx->toffs >= (temp + 2) )
+        /**/
+        if ( pctx->toffs == 0 )
         {
-            /* check crc */
-            temp = modbus_crc16( &(pctx->tbuf[0]), (pctx->toffs + 1) );
-
-            /**/
-            crcs = pctx->tbuf[pctx->toffs+1];
-            crcs = crcs << 8;
-            crcs = crcs | pctx->tbuf[pctx->toffs+2];
-
-#if 0
-            /**/
-            dump_hex( &(pctx->tbuf[0]), (pctx->toffs + 3) );
-            printf( "crc = %08x, crc = %08x\n", temp, crcs );
-#endif
-
-            /**/
-            if ( crcs == temp )
+            /* address */
+            if ( dat == preq->addr )
             {
-                if ( NULL != pctx->func )
-                {
-                    pctx->func( pctx->arg, (pctx->toffs + 1), &(pctx->tbuf[0]) );
-                }
+                pctx->toffs += 1;
+                continue;
+            }
+
+            goto next_shift;
+        }
+
+        /**/
+        if ( pctx->toffs == 1 )
+        {
+            /* function, fix 3 */
+            if ( dat == 3 )
+            {
+                pctx->toffs += 1;
+                continue;
+            }
+
+            goto next_shift;
+        }
+
+
+        if ( pctx->toffs == 2 )
+        {
+            /* byte count */
+            if ( (dat < 2) && (dat > (pctx->tsize - 5)) )
+            {
+                /* too long not fit in buffer, notify to user? */            
+                goto next_shift;
             }
             
-            /**/
-            pctx->state = 0;
-            
+            pctx->toffs += 1;
+            continue;
         }
-        break;
+
+        /**/
+        count = pctx->tbuf[2];
+        count += 4;
+        if ( pctx->toffs < count )
+        {
+             pctx->toffs += 1;
+             continue;
+        }
         
-    default:
-        pctx->state = 0;
-        break;
-    }
+        /* check crc */
+        temp = modbus_crc16( &(pctx->tbuf[0]), (pctx->toffs - 1) );
+        
+        /**/
+        crcs = pctx->tbuf[pctx->toffs-1];
+        crcs = crcs << 8;
+        crcs = crcs | pctx->tbuf[pctx->toffs];
 
+#if 0
+        /**/
+        dump_hex( &(pctx->tbuf[0]), (pctx->toffs + 1) );
+        printf( "crc = %08x, crc = %08x\n", temp, crcs );
+#endif
+        
+        /**/
+        if ( crcs == temp )
+        {
+            /**/
+            preq->func( preq->arg, (pctx->toffs - 1), &(pctx->tbuf[0]) );
+            
+            /**/
+            list_del( &(preq->node) );
+            free( preq );
+
+            /**/
+            modbus_internal_trynew( pctx );
+            return 0;
+        }
+        
+next_shift:
+        if ( tsize <= 1 ) 
+        {
+            break;
+        }
+
+        
+        memmove( &(pctx->tbuf[0]), &(pctx->tbuf[0]), tsize-1 );
+        pctx->toffs = 0;
+        tsize = tsize - 1;
+        
+    }
+    
+    /**/
+    modbus_internal_timeout( pctx );
     return 0;
     
 }
 
-
-int  modbus_recv_dec( intptr_t ctx, int tlen, uint8_t * pdat )
-{
-    int  i;
-    modbus_context_t * pctx;
-
-    /**/
-    pctx = (modbus_context_t *)ctx;
-    
-    /**/
-    for ( i=0; i<tlen; i++ )
-    {
-        modbus_recv_byte( pctx, pdat[i] );
-    }
-
-    return 0;
-}
-
-
-int  modbus_set_callback( intptr_t ctx, modbus_cb_func func, intptr_t arg )
-{
-    modbus_context_t * pctx;
-
-    /**/
-    pctx = (modbus_context_t *)ctx;
-
-    /**/
-    pctx->func = func;
-    pctx->arg = arg;
-    return 0;
-}
 
 
 int  modbus_init( int tsize, intptr_t * pret )
@@ -266,11 +435,13 @@ int  modbus_init( int tsize, intptr_t * pret )
     /**/
     memset( pctx, 0, sizeof(modbus_context_t) + tsize );
     pctx->tsize = tsize;
-    pctx->state = 0;
     pctx->toffs = 0;
+    
+    /**/
+    pctx->uctx = 0;
 
     /**/
-    pctx->usec_last = tu_get_usec();
+    INIT_LIST_HEAD( &(pctx->reqlist) );
     
     /**/
     *pret = (intptr_t)pctx;
@@ -290,38 +461,5 @@ int  modbus_fini( intptr_t  ctx )
     free( pctx );
     return 0;
 }
-
-
-/* helper function */
-int  modbus_rreg_enc( uint16_t addr, uint16_t num, int tmax, uint8_t * pdat, int * pret )
-{
-    uint16_t  temp;
-    
-    /**/
-    if ( tmax < 8 )
-    {
-        return 1;
-    }
-
-    pdat[0] = 0x2;
-    pdat[1] = 0x3;
-
-    pdat[2] = (uint8_t)(addr >> 8);
-    pdat[3] = (uint8_t)(addr & 0xFF);
-
-    pdat[4] = (uint8_t)(num >> 8);
-    pdat[5] = (uint8_t)(num & 0xFF);
-
-    /**/
-    temp = modbus_crc16( pdat, 6 );
-    pdat[6] = (uint8_t)(temp >> 8);
-    pdat[7] = (uint8_t)(temp & 0xFF);
-
-    /**/
-    *pret = 8;
-    return 0;
-    
-}
-
 
 

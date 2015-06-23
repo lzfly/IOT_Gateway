@@ -84,19 +84,6 @@ int  test_modbus_cbk( intptr_t arg, int tlen, void * pdat )
 }
 
 
-int  test_send_query( intptr_t  uctx )
-{
-    int  tlen;
-    uint8_t  tary[16];
-
-    /**/
-    modbus_rreg_enc( 0x17, 0x4, 16, tary, &tlen );
-    dump_hex( tary, tlen );
-    
-    /**/
-    myuart_send( uctx, tlen, tary );
-    return 0;
-}
 
 int  countt = 0;
 
@@ -121,9 +108,6 @@ int  test_aux_loop( void * pctx )
     }
 
     /**/
-    modbus_set_callback( mctx, test_modbus_cbk, 0 );
-    
-    /**/
     iret = myuart_init( 0, &uctx );
     if ( 0 != iret )
     {
@@ -131,9 +115,10 @@ int  test_aux_loop( void * pctx )
     }
 
     /**/
-    myuart_set_callback( uctx, (uartcb_func)modbus_recv_dec, mctx );
+    modbus_set_uartctx( mctx, uctx );
+    myuart_set_callback( uctx, (uartcb_func)modbus_recv_decode, mctx );
     myuart_get_fd( uctx, &ufd );
-
+    
 	/* epoll */
 	epfd = epoll_create( 5 );
 	if ( -1 == epfd )
@@ -168,7 +153,7 @@ int  test_aux_loop( void * pctx )
 		{
 		    if ( countt < 10 )
 		    {
-		        test_send_query( uctx );
+                modbus_send_req( mctx, 2, 0x17, 0x4, test_modbus_cbk, 0 );
 		        countt += 1;
 		    }
 		    
