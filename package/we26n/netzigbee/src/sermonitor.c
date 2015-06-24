@@ -38,11 +38,20 @@ static void getSendSrpc(w26n_byte* cmd,int cmd_length,w26n_byte* msg,int *msg_le
     bt1[3] = (0xff00&g_Gate.snid)>>8;
     bt1[4] = (0xff0000&g_Gate.snid)>>16;
     bt1[5] = (0xff000000&g_Gate.snid)>>24;
-    bt1[6] = 0xfe;
+
+	bt1[6] = 0xfe;
+    printf("bit[0] = 0x%x", bt1[0]);
+	printf("bit[1] = 0x%x", bt1[1]);
+	printf("bit[2] = 0x%x", bt1[2]);
+	printf("bit[3] = 0x%x", bt1[3]);
+	printf("bit[4] = 0x%x", bt1[4]);
+	printf("bit[5] = 0x%x", bt1[5]);
+	printf("bit[6] = 0x%x", bt1[6]);
 
     for(i=0;i<cmd_length;i++)
     {
     	bt1[FEIBEE_REQUEST_PREFIX_LENGTH+i]=cmd[i];
+		printf("bt1[%d] = 0x%x", FEIBEE_REQUEST_PREFIX_LENGTH+i, cmd[i]);
     }
     memcpy(msg, bt1, FEIBEE_REQUEST_PREFIX_LENGTH+cmd_length);
     *msg_length=FEIBEE_REQUEST_PREFIX_LENGTH+cmd_length;

@@ -273,7 +273,8 @@ int getGateDetailInfo()
 	return 0;
 }
 
-
+extern int sendDeviceState(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint, w26n_uint8 state);
+	
 static int searchDeviceSocket=0;
 int startSearchDevice()
 {
@@ -295,7 +296,26 @@ int startSearchDevice()
 
 		sendCommand(g_monitor_socket,msg,cmd_length);
 
-		sleep(20);
+		sleep(10);
+
+        int i;
+		index++;
+		for(i = 0; i < g_devices_count; i++)
+		{
+			 printf("[startSearchDevice] endpoint=%d\r\n", g_devices[i].endpoint);
+
+			if(g_devices[i].endpoint == 16)
+			{
+				printf("device SN = %s", g_devices[i].SN);
+				printf("device shortaddr = 0x%x", g_devices[i].shortaddr);
+                sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, index%2);
+				printf("[startSearchDevice] sendDeviceState=%d\r\n", index%2);
+
+			}
+		}
+		sleep(10);
+
+
 	}
 
 }
