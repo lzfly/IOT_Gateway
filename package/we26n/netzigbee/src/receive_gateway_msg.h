@@ -1,0 +1,7 @@
+
+#ifndef RECEIVEGATEWAYMSG_H_
+#define RECEIVEGATEWAYMSG_H_
+
+
+
+#endif /* RECEIVEGATEWAYMSG_H_ */
