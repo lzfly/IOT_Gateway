@@ -111,7 +111,10 @@ int  main( void )
         fprintf( stderr, "Failed to prepare thread\n" );
         return 1;
     }
-    
+
+
+	while(1)
+		sleep(1000);
 #if 0
     /**/
 	uloop_init();

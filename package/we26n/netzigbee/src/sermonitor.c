@@ -171,7 +171,7 @@ int server_monitor()
 	printf("[server_monitor]connect ok! \r\n");
 
     int  iret;
-	    pthread_t  aux_thrd;
+	pthread_t  aux_thrd;
 
 
     iret = pthread_create( &aux_thrd, NULL, receiveDeviceMsg, NULL );

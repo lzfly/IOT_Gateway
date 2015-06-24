@@ -135,7 +135,17 @@ int receiveDeviceMsg()
 
 					g_devices[g_devices_count].endpoint = buffer[4];
 					printf("[receiveDeviceMsg]endpoint=%d\r\n",g_devices[g_devices_count].endpoint);
-
+                    
+					int i;
+                    for(i = 0; i < g_devices_count; i++)
+					{
+						if(g_devices[g_devices_count].endpoint == g_devices[i].endpoint)
+						{
+							printf("[receiveDeviceMsg] find old device\r\n");
+							continue;
+						}
+					}
+                    printf("[receiveDeviceMsg] find new device\r\n");
 
 					g_devices[g_devices_count].profileId = buffer[5]&(buffer[6]<<8);
 					printf("[receiveDeviceMsg]profileId=%d\r\n",g_devices[g_devices_count].profileId);

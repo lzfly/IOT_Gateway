@@ -206,7 +206,7 @@ int beginSearch()
 	}
 
 	waitMessage(sock);
-
+    sleep(5);
 	startSearchDevice();
 	
 	return 0;
@@ -287,9 +287,12 @@ int startSearchDevice()
 
 	int resp_length=0;
 	msg[SRPC_CMD_ID_POS]=RPCS_GET_DEVICES;
+    printf("[startSearchDevice]\r\n");
 
 	while(1)
 	{
+		printf("[startSearchDevice] g_devices_count=%d\r\n", g_devices_count);
+
 		sendCommand(g_monitor_socket,msg,cmd_length);
 
 		sleep(20);
