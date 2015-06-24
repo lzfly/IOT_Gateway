@@ -62,16 +62,16 @@ int sendCommandRevMsg(int fd,w26n_byte* cmd, int cmd_length,char* resp_body, int
 
 		if(-1 == write(fd,msg,8))
 		{
-			printf("[sendCommand]write fail!\r\n");
+			printf("[sendCommandRevMsg]write fail!\r\n");
 			return -1;
 		}
 
-		printf("[sendCommand]write ok!\r\n");
+		printf("[sendCommandRevMsg]write ok!\r\n");
 
 		recbytes=read(fd,buffer,1024);
 		if(-1==recbytes)
 		{
-			printf("[sendCommand]read data fail!");
+			printf("[sendCommandRevMsg]read data fail!");
 			return -1;
 		}
 
@@ -80,7 +80,7 @@ int sendCommandRevMsg(int fd,w26n_byte* cmd, int cmd_length,char* resp_body, int
 		*resp_length=recbytes;
 	//	buffer[recbytes]='\0';
 
-		printf("[sendCommand]recbytes=%d\r\n",recbytes);
+		printf("[sendCommandRevMsg]recbytes=%d\r\n",recbytes);
 
 		//close(cfd);
 		return 0;
@@ -118,12 +118,11 @@ int receiveMsg(int fd,char* resp_body, int *resp_length)
 		char buffer[1024]={0};
 		int recbytes;
 
-		printf("[sendCommand]write ok!\r\n");
 
 		recbytes=read(fd,buffer,1024);
 		if(-1==recbytes)
 		{
-			printf("[sendCommand]read data fail!");
+			printf("[reveiveMsg]read data fail!");
 			return -1;
 		}
 
@@ -132,12 +131,16 @@ int receiveMsg(int fd,char* resp_body, int *resp_length)
 		*resp_length=recbytes;
 	//	buffer[recbytes]='\0';
 
-		printf("[sendCommand]recbytes=%d\r\n",recbytes);
+		printf("[reveiveMsg]recbytes=%d\r\n",recbytes);
 
 		//close(cfd);
 		return 0;
 
 }
+
+
+extern void *  receiveDeviceMsg();
+extern void *  ctrlDevice();
 
 
 int server_monitor()
@@ -167,6 +170,23 @@ int server_monitor()
 	}
 	printf("[server_monitor]connect ok! \r\n");
 
+    int  iret;
+	    pthread_t  aux_thrd;
+
+
+    iret = pthread_create( &aux_thrd, NULL, receiveDeviceMsg, NULL );
+	if ( 0 != iret )
+	{
+	    printf( "receiveDeviceMsg pthread create fail, %d", iret );
+		return -1;
+	}
+		   
+	iret = pthread_create( &aux_thrd, NULL, ctrlDevice, NULL );
+	if ( 0 != iret )
+	{
+		printf( "ctrlDevice pthread create fail, %d", iret );
+		return -1;
+	}
 
 		return 0;
 }
