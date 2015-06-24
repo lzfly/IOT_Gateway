@@ -17,18 +17,18 @@
 #include <libubus.h>
 #include "we26n_type.h"
 
-static struct blob_buf b;
+/*static struct blob_buf b;
 
 static int zigbee_info( struct ubus_context *ctx, struct ubus_object *obj,
                 struct ubus_request_data *req, const char *method,
                 struct blob_attr *msg )
 {
-    /**/
+   
 	blob_buf_init( &b, 0 );
 	blobmsg_add_u32( &b, "args",  1234 );
 	blobmsg_add_u32( &b, "argv",  5678 );
 
-    /**/
+    
     ubus_send_reply(ctx, req, b.head);
     return UBUS_STATUS_OK;
 }
@@ -60,7 +60,7 @@ void server_main( struct ubus_context *ctx )
 		fprintf(stderr, "Failed to add object: %s\n", ubus_strerror(ret));
     
 	uloop_run();
-}
+}*/
 
 
 extern void *  beginSearch();
@@ -112,6 +112,7 @@ int  main( void )
         return 1;
     }
     
+#if 0
     /**/
 	uloop_init();
 
@@ -132,6 +133,8 @@ int  main( void )
     /**/
 	ubus_free(ctx);
 	uloop_done();
+#endif
+
 	return 0;
 	
 }

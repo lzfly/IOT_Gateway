@@ -22,14 +22,112 @@
 #include <netdb.h>
 #include <errno.h>
 
+#include <libubox/blobmsg_json.h>
+#include <libubox/uloop.h>
+#include <libubus.h>
+
 #include "we26n_type.h"
 #include "gateway.h"
 #include "fbee_protocol.h"
 
-extern int sendCommand(int fd,w26n_byte* cmd, int cmd_length,char* resp_body, int *resp_length);
+extern int sendCommand(int fd,w26n_byte* cmd, int cmd_length);
+
+
+static struct blob_buf b;
+
+static int zigbee_info( struct ubus_context *ctx, struct ubus_object *obj,
+                struct ubus_request_data *req, const char *method,
+                struct blob_attr *msg )
+{
+
+	static const struct blobmsg_policy policy[2] = { { "args", BLOBMSG_TYPE_INT32 }, { "argv", BLOBMSG_TYPE_INT32 } };
+	struct blob_attr * cur[2];
+	uint32_t  x,y;
+	static struct blob_buf b;
+	
+	/**/
+	
+	{
+		/* req.priv */
+	
+		blobmsg_parse( &policy, 2, &cur, blob_data(msg), blob_len(msg) );
+		
+		/**/
+		x = blobmsg_get_u32( cur[0] );
+		y = blobmsg_get_u32( cur[1] );
+		
+		printf( "x = %d, y = %d\n", x, y );
+		
+	}
+
+    /**/
+	blob_buf_init( &b, 0 );
+	blobmsg_add_u32( &b, "args",  1234 );
+	blobmsg_add_u32( &b, "argv",  5678 );
+
+    /**/
+    ubus_send_reply(ctx, req, b.head);
+    return UBUS_STATUS_OK;
+}
+
+
+static const struct ubus_method zigbee_methods[] = {
+	UBUS_METHOD_NOARG("info",  zigbee_info ),
+};
+
+
+static struct ubus_object_type zigbee_object_type =
+	UBUS_OBJECT_TYPE("netzigbee_iface", zigbee_methods);
+
+static struct ubus_object zigbee_object = {
+	.name = "we26n.netzigbee",
+	.type = &zigbee_object_type,
+	.methods = zigbee_methods,
+	.n_methods = ARRAY_SIZE(zigbee_methods),
+};
+
+
+
+void server_main( struct ubus_context *ctx )
+{
+	int ret;
+
+	ret = ubus_add_object(ctx, &zigbee_object);
+	if (ret)
+		fprintf(stderr, "Failed to add object: %s\n", ubus_strerror(ret));
+    
+	uloop_run();
+}
+
+
 
 int ctrlDevice()
-{}
+{
+    struct ubus_context *ctx;
+	
+	
+    /**/
+	uloop_init();
+
+	signal(SIGPIPE, SIG_IGN);	
+    
+    /**/
+	ctx = ubus_connect( NULL );
+	if ( NULL == ctx) 
+	{
+	    fprintf(stderr, "Failed to connect to ubus\n");
+	    return -1;
+	}
+
+    /**/
+	ubus_add_uloop( ctx );
+	server_main( ctx );
+
+    /**/
+	ubus_free(ctx);
+	uloop_done();
+
+}
 
 int sendDeviceCmd()
 {
@@ -41,7 +139,7 @@ int sendDeviceCmd()
 	int resp_length=0;
 	msg[SRPC_CMD_ID_POS]=RPCS_GET_GATEDETAIL;
 
-	sendCommand(g_monitor_socket,msg,cmd_length,buffer,&resp_length);
+	sendCommand(g_monitor_socket,msg,cmd_length);
 
 	return 0;
 

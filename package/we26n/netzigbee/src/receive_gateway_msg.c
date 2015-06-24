@@ -22,9 +22,76 @@
 #include <netdb.h>
 #include <errno.h>
 
+#include <libubox/blobmsg_json.h>
+#include <libubox/uloop.h>
+#include <libubus.h>
+
 #include "we26n_type.h"
 #include "gateway.h"
 #include "fbee_protocol.h"
+
+
+void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
+{
+	static const struct blobmsg_policy policy[2] = { { "args", BLOBMSG_TYPE_INT32 }, { "argv", BLOBMSG_TYPE_INT32 } };
+	struct blob_attr * cur[2];
+	uint32_t  a,b;
+	
+	/**/
+	if ( type == UBUS_MSG_DATA )
+	{
+		/* req.priv */
+		printf( "data cback, %d\n", type );
+		blobmsg_parse( &policy, 2, &cur, blob_data(msg), blob_len(msg) );
+		
+		/**/
+		a = blobmsg_get_u32( cur[0] );
+		b = blobmsg_get_u32( cur[1] );
+		
+		printf( "a = %d, b = %d\n", a, b );
+		
+	}
+
+	return;
+}
+
+
+int  sendMsgToWeb(void * data, int len)
+{
+    int  iret;
+    uint32_t  id;
+    struct ubus_context *ctx;
+	static struct blob_buf b;
+	
+	blob_buf_init( &b, 0 );
+	blobmsg_add_u32( &b, "args",  1234 );
+	blobmsg_add_u32( &b, "argv",  5678 );
+	
+    /**/
+	ctx = ubus_connect( NULL );
+	if ( NULL == ctx) 
+	{
+	    fprintf(stderr, "Failed to connect to ubus\n");
+	    return -1;
+	}
+
+    /**/
+	if ( ubus_lookup_id(ctx, "we26n.flowmeter", &id) ) {
+		fprintf(stderr, "Failed to look up flowmeter object\n");
+		return;
+	}
+	
+	/**/
+	ubus_invoke( ctx, id, "info", b.head, test_data_cback, 0, 3000);
+
+	
+    /**/
+	ubus_free(ctx);
+	return 0;
+	
+}
+
+
 
 extern int receiveMsg(int fd,char* resp_body, int *resp_length);
 
