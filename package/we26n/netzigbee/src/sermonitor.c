@@ -105,11 +105,20 @@ int sendCommand(int fd,w26n_byte* cmd, int cmd_length)
 
 
 
-		w26n_byte msg[32];
+		w26n_byte msg[128];
 		int msg_length=0;
 		getSendSrpc(cmd,cmd_length,msg,&msg_length);
 
-		if(-1 == write(fd,msg,8))
+        printf("msg[0] = 0x%x", msg[0]);
+		printf("msg[0] = 0x%x", msg[0]);
+		printf("msg[0] = 0x%x", msg[0]);
+		printf("msg[0] = 0x%x", msg[0]);
+		printf("msg[0] = 0x%x", msg[0]);
+		printf("msg[0] = 0x%x", msg[0]);
+		printf("msg[0] = 0x%x", msg[0]);
+
+
+		if(-1 == write(fd,msg,msg_length))
 		{
 			printf("[sendCommand]write fail!\r\n");
 			return -1;
