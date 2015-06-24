@@ -1,6 +1,8 @@
 #ifndef GATEWAYBEAN_H_
 #define GATEWAYBEAN_H_
+#include "we26n_type.h"
 
+#define MAX_DEVICES 32
 
 struct GatewayBean {
 
@@ -12,7 +14,23 @@ struct GatewayBean {
 	char password[64];
 
 };
+
+struct deviceBean{
+	w26n_uint16 shortaddr ;
+	w26n_uint8 endpoint;					
+	w26n_uint16 profileId ;
+	w26n_uint16 deviceId;
+	w26n_uint8 namelen;
+	w26n_char name[101];				
+	w26n_uint8 status;;
+	w26n_uint8 IEEE[8];
+	w26n_uint8 SNlen ;
+	w26n_char SN[101];
+	
+};
 extern struct GatewayBean g_Gate;
+extern struct deviceBean g_devices[MAX_DEVICES];
+extern int g_devices_count;
 extern int g_monitor_socket;
 
 #endif /* SEARCHGATEWAY_H_ */

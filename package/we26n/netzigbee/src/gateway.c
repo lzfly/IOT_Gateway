@@ -6,11 +6,9 @@
 #include "gateway.h"
 
 
-
-
-
 struct GatewayBean g_Gate;
-
+struct deviceBean g_devices[MAX_DEVICES];
+int g_devices_count = 0;
 int g_monitor_socket;
 
 //

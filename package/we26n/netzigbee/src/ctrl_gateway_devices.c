@@ -129,15 +129,21 @@ int ctrlDevice()
 
 }
 
-int sendDeviceCmd()
+int sendDeviceState(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint, w26n_uint8 state)
 {
 
-	int cmd_length=1;
+	int cmd_length=15;
 	w26n_byte msg[cmd_length];
 
 	char buffer[512];
 	int resp_length=0;
-	msg[SRPC_CMD_ID_POS]=RPCS_GET_GATEDETAIL;
+	msg[0] = RPCS_SET_DEV_STATE;
+	msg[1] = 0x0D;
+	msg[2] = addrmode;
+	msg[3] = shortaddr&0xFF;
+	msg[4] = (shortaddr&0xFF00)>>8;
+	msg[11] = endPoint;
+	msg[3] = state;
 
 	sendCommand(g_monitor_socket,msg,cmd_length);
 
