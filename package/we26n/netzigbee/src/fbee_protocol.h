@@ -81,4 +81,49 @@
 
 #define RPCS_DEVICE_REPORT                0x70
 
+
+/*device type*/
+//普通开关	0x0000
+#define FB_DEVICE_TYPE_NORMAL_ON_OFF  0x0000
+
+//可控继电器(开关)	0x0002
+#define FB_DEVICE_TYPE_RELAY_ON_OFF  0x0002
+
+//开关插座	0x0009
+#define FB_DEVICE_TYPE_OUTLET_ON_OFF  0x0009
+
+//门磁	0x0060
+
+//调光灯	0x0101
+#define FB_DEVICE_TYPE_BRIGHTNESS_LAMP  0x0009
+
+//彩灯	0x0102
+//可调颜色灯，有调光，开关功能	0x0105
+//光照	0x0106
+//人体红外	0x0107
+
+//色温灯	0x0110/0x0220
+#define FB_DEVICE_TYPE_HUE_LAMP  0x0110
+#define FB_DEVICE_TYPE_HUE_LAMP_2  0x0220
+
+//红外遥控器	0x0161
+
+//窗帘	0x0202
+#define FB_DEVICE_TYPE_WINDOWS  0x0202
+
+//飞利浦彩灯	0x0210
+
+//温湿度	0x0301/0x0302
+#define FB_DEVICE_TYPE_TEMP_HUM  0x0301
+#define FB_DEVICE_TYPE_TEMP_HUM_2  0x0302
+
+//可燃气体	0x0308
+#define FB_DEVICE_TYPE_GAS  0x0308
+
+//PM2.5	0x0309
+//烟雾	0x0310
+//点阵显示器	0x0340
+//声光报警	0x0403
+
+
 #endif
