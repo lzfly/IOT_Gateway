@@ -148,6 +148,51 @@ int  server_add( void )
 }
 
 
+extern int receiveDeviceMsg(char *buf, int len);
+static void
+zigbee_proc_poll_fd(struct uloop_fd *fd, unsigned int events)
+{
+        char buf[1024];
+
+        while (1) {
+                int b = read(fd->fd, buf, sizeof(buf));
+                if (b < 0) {
+                        if (errno == EINTR)
+                                continue;
+
+                        if (errno == EAGAIN)
+                                return;
+
+                        break;
+                }
+                
+                if (!b)
+                        break;
+				
+				receiveDeviceMsg(buf, b);
+        }
+}
+
+int socket_rev_add()
+{
+	int iret;
+	struct uloop_fd *pufd;
+	
+    pufd = (struct uloop_fd *)malloc( sizeof(struct uloop_fd) );
+    if ( NULL == pufd )
+    {
+        return 3;
+    }
+    
+    memset( pufd, 0, sizeof(struct uloop_fd) );
+    pufd->fd = g_monitor_socket;
+    pufd->cb = zigbee_proc_poll_fd;
+
+    /**/
+    iret = uloop_fd_add( pufd, ULOOP_READ);
+	return 0;
+}
+
 int ctrlDevice()
 {
     struct ubus_context *ctx;
@@ -161,6 +206,10 @@ int ctrlDevice()
     
     /**/
 	server_add();
+	
+	socket_rev_add();
+	
+	
 	uloop_run();
 
 	uloop_done();

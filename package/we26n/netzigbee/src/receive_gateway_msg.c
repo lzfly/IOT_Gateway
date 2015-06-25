@@ -136,7 +136,7 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoi
 extern int receiveMsg(int fd,char* resp_body, int *resp_length);
 
 static int searchDeviceSocket=0;
-int receiveDeviceMsg()
+/*int receiveDeviceMsg()
 {
 
 	int cmd_length=1;
@@ -157,6 +157,261 @@ int receiveDeviceMsg()
 			index = 0;
             while(resp_length > index){
             	buffer = buffer1 + index;
+				w26n_byte resptype = buffer[0];
+				printf("[receiveDeviceMsg]resptype=%d\r\n",resptype);
+				printf("[receiveDeviceMsg]index=%d\r\n",index);
+				if(resptype == RPCS_GET_DEVICES_RSP)
+			   {
+
+					w26n_byte resplen = buffer[1];
+					printf("[receiveDeviceMsg]resplen=%d\r\n",resplen);
+					index = index + resplen + 2;
+                    
+					if(g_devices_count >= MAX_DEVICES)
+					    continue;
+					
+					g_devices[g_devices_count].shortaddr = (buffer[2]&0xFF)|(buffer[3]<<8);
+					printf("buffer[2] = 0x%x", buffer[2]&0xFF);
+					printf("buffer[3] = 0x%x", buffer[3]);
+					printf("[receiveDeviceMsg]shortaddr=%d\r\n",g_devices[g_devices_count].shortaddr);
+
+					g_devices[g_devices_count].endpoint = buffer[4];
+					printf("[receiveDeviceMsg]endpoint=%d\r\n",g_devices[g_devices_count].endpoint);
+                    
+					int i;
+					int olddevice = 0;
+                    for(i = 0; i < g_devices_count; i++)
+					{
+						printf("[receiveDeviceMsg] i  endpoint=%d\r\n",g_devices[i].endpoint);
+
+						if(g_devices[g_devices_count].endpoint == g_devices[i].endpoint)
+						{
+							printf("[receiveDeviceMsg] find old device\r\n");
+							olddevice = 1;
+							break;
+						}
+					}
+					if(olddevice)
+						continue;
+
+                    printf("[receiveDeviceMsg] find new device\r\n");
+
+					g_devices[g_devices_count].profileId = buffer[5]|(buffer[6]<<8);
+					printf("buffer[5] = 0x%x", buffer[5]);
+					printf("buffer[6] = 0x%x", buffer[6]);
+
+					printf("[receiveDeviceMsg]profileId=%d\r\n",g_devices[g_devices_count].profileId);
+
+					g_devices[g_devices_count].deviceId = buffer[7]|(buffer[8]<<8);
+		            printf("buffer[7] = 0x%x", buffer[7]);
+		            printf("buffer[8] = 0x%x", buffer[8]);
+
+					printf("[receiveDeviceMsg]deviceId=%d\r\n",g_devices[g_devices_count].deviceId);
+
+					g_devices[g_devices_count].namelen = buffer[10];
+					printf("[receiveDeviceMsg]namelen=%d\r\n",g_devices[g_devices_count].namelen);
+
+					memcpy(g_devices[g_devices_count].name, &buffer[11], g_devices[g_devices_count].namelen);
+					g_devices[g_devices_count].name[g_devices[g_devices_count].namelen] = 0;
+					printf("[receiveDeviceMsg]name=%s\r\n",g_devices[g_devices_count].name);
+
+					g_devices[g_devices_count].status = buffer[11 + g_devices[g_devices_count].namelen];
+					printf("[receiveDeviceMsg]status=%d\r\n",g_devices[g_devices_count].status);
+
+					w26n_byte IEEE[8];
+					memcpy(&IEEE[0], &buffer[12 + g_devices[g_devices_count].namelen], 8);
+					memcpy(&g_devices[g_devices_count].IEEE[0], &buffer[12 + g_devices[g_devices_count].namelen], 8);
+					printf("[receiveDeviceMsg]IEEE=%d\r\n",g_devices[g_devices_count].IEEE);
+
+					g_devices[g_devices_count].SNlen = buffer[20 + g_devices[g_devices_count].namelen];
+					printf("[receiveDeviceMsg]SNlen=%d\r\n",g_devices[g_devices_count].SNlen);
+
+
+
+					memcpy(g_devices[g_devices_count].SN, &buffer[21 + g_devices[g_devices_count].namelen], g_devices[g_devices_count].SNlen);
+					g_devices[g_devices_count].SN[g_devices[g_devices_count].SNlen] = 0;
+                   
+					printf("[receiveDeviceMsg]SN=%s\r\n",g_devices[g_devices_count].SN);
+					
+					g_devices_count++;
+			   }
+
+				else if(resptype == RPCS_GET_DEV_STATE_RSP)
+				{
+					printf("[receiveDeviceMsg]resptype=%d\r\n",resptype);
+
+
+					w26n_byte resplen = buffer[1];
+					printf("[receiveDeviceMsg]resplen=%d\r\n",resplen);
+					index = index + resplen + 2;
+
+					int shortaddr = buffer[2]&(buffer[3]<<8);
+					printf("[receiveDeviceMsg]shortaddr=%d\r\n",shortaddr);
+
+					w26n_byte endpoint = buffer[4];
+					printf("[receiveDeviceMsg]endpoint=%d\r\n",endpoint);
+
+					w26n_byte status = buffer[5];
+					printf("[receiveDeviceMsg]status=%d\r\n",status);
+
+
+				}
+				else if(resptype == RPCS_DEVICE_REPORT)
+				{
+					printf("[receiveDeviceMsg]resptype=%d\r\n",resptype);
+
+
+					w26n_byte resplen = buffer[1];
+					printf("[receiveDeviceMsg]resplen=%d\r\n",resplen);
+					index = index + resplen + 2;
+
+					int shortaddr = buffer[2]&(buffer[3]<<8);
+					printf("[receiveDeviceMsg]shortaddr=%d\r\n",shortaddr);
+
+					w26n_byte endpoint = buffer[4];
+					printf("[receiveDeviceMsg]endpoint=%d\r\n",endpoint);
+
+					int clusterId = (buffer[5]&0xFF)|((buffer[6]&0xFF)<<8);
+					printf("[receiveDeviceMsg]clusterId=%d\r\n",clusterId);
+                    
+
+					int i, index;
+                    for(i = 0; i < g_devices_count; i++)
+					{
+						printf("[receiveDeviceMsg] i  endpoint=%d\r\n",g_devices[i].endpoint);
+
+						if(shortaddr == g_devices[i].shortaddr && endpoint == g_devices[i].endpoint)
+						{
+							printf("[receiveDeviceMsg] find old device\r\n");
+							index = i;
+							break;
+						}
+					}
+					if(g_devices[index].deviceId == FB_DEVICE_TYPE_GAS)
+					{
+					
+					    printf("[receiveDeviceMsg]FB_DEVICE_TYPE_GAS\r\n");
+						w26n_byte num = buffer[7];
+						printf("[receiveDeviceMsg]num=%d\r\n",num);
+
+						int attr = buffer[8]&(buffer[9]<<8);
+						printf("[receiveDeviceMsg]attr=%d\r\n",attr);
+
+						w26n_byte type = buffer[10];
+						printf("[receiveDeviceMsg]type=%d\r\n",type);
+
+						w26n_byte value = buffer[11];
+						printf("[receiveDeviceMsg] value=%d\r\n",value);
+						
+						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, 0, value);
+					}
+					else if(g_devices[index].deviceId == FB_DEVICE_TYPE_TEMP_HUM || g_devices[index].deviceId == FB_DEVICE_TYPE_TEMP_HUM_2)
+					{
+					    printf("[receiveDeviceMsg]FB_DEVICE_TYPE_TEMP_HUM\r\n");
+						w26n_byte num = buffer[7];
+						printf("[receiveDeviceMsg]num=%d\r\n",num);
+
+						w26n_uint16 attr = buffer[8]|(buffer[9]<<8);
+						printf("[receiveDeviceMsg]attr=%d\r\n",attr);
+
+						w26n_byte type = buffer[10];
+						printf("[receiveDeviceMsg]type=%d\r\n",type);
+
+						w26n_uint16 value = buffer[11]|(buffer[12]<<8);
+						printf("[receiveDeviceMsg] value=%d\r\n",value);
+
+						w26n_uint16 attr1 = buffer[13]|(buffer[14]<<8);
+						printf("[receiveDeviceMsg]attr=%d\r\n",attr);
+
+						w26n_byte type1 = buffer[15];
+						printf("[receiveDeviceMsg]type=%d\r\n",type);
+
+						w26n_byte value1 = buffer[16];
+						printf("[receiveDeviceMsg] value=%d\r\n",value);
+						
+						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, 1, value);
+						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, 0, value1);
+					}
+					else{
+						w26n_byte num = buffer[7];
+						printf("[receiveDeviceMsg]num=%d\r\n",num);
+
+						int attr = buffer[8]&(buffer[9]<<8);
+						printf("[receiveDeviceMsg]attr=%d\r\n",attr);
+
+						w26n_byte type = buffer[10];
+						printf("[receiveDeviceMsg]type=%d\r\n",type);
+
+						w26n_byte value = buffer[11];
+						printf("[receiveDeviceMsg] value=%d\r\n",value);
+					}
+					
+
+				}
+				else if(resptype == RPCS_GET_GATEDETAIL_RSP){
+					int resplen = buffer[1];
+					char respversion[8];
+					
+					printf("[receiveDeviceMsg]resplen=%d\r\n",resplen);
+					index = index + resplen + 2;
+					
+					memcpy(respversion, &buffer[2], 5);
+					respversion[5] = 0;
+
+					printf("[getGateDetailInfo]version=%s\r\n",respversion);
+
+					strcpy(g_Gate.version,respversion);
+
+					int respsnid;
+					memcpy(&respsnid, &buffer[7], 4);
+
+					printf("[getGateDetailInfo]snid=0x%x\r\n",respsnid);
+
+					char respname[21];
+					memcpy(respname, &buffer[11], 20);
+					respname[20] = 0;
+
+					printf("[getGateDetailInfo]name=%s\r\n",respname);
+
+					strcpy(g_Gate.username,respname);
+
+					char resppass[21];
+					memcpy(resppass, &buffer[31], 20);
+					resppass[20] = 0;
+
+					printf("[getGateDetailInfo]pass=%s\r\n",resppass);
+
+					strcpy(g_Gate.password,resppass);
+				}
+				else{
+					w26n_byte resplen = buffer[1];
+					printf("[receiveDeviceMsg]resplen=%d\r\n",resplen);
+					index = index + resplen + 2;
+
+				}
+
+         }
+		sleep(10);
+	}
+
+}*/
+
+int receiveDeviceMsg(char *buf, int len)
+{
+	char *buffer;
+	int index = 0;
+
+	int resp_length=0;
+	
+	resp_length = len;
+    printf("[receiveDeviceMsg] start"); 
+	//while(1)
+	{
+			printf("[receiveDeviceMsg]resp_length=%d\r\n",resp_length);
+
+			index = 0;
+            while(resp_length > index){
+            	buffer = buf + index;
 				w26n_byte resptype = buffer[0];
 				printf("[receiveDeviceMsg]resptype=%d\r\n",resptype);
 				//printf("[receiveDeviceMsg]index=%d\r\n",index);
@@ -393,7 +648,6 @@ int receiveDeviceMsg()
 				}
 
          }
-		sleep(10);
 	}
 
 }
