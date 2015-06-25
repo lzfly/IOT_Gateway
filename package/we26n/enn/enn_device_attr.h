@@ -12,11 +12,8 @@
 
 //三路开关状态控制
 //数据类型： int 32bit
-#define ENN_DEVICE_ATTR_ON_OFF_THREE_A_STATE 2003
+#define ENN_DEVICE_ATTR_ON_OFF_THREE_STATE 2003
 //数据类型： int 32bit
-#define ENN_DEVICE_ATTR_ON_OFF_THREE_B_STATE 2004
-//数据类型： int 32bit
-#define ENN_DEVICE_ATTR_ON_OFF_THREE_C_STATE 2004
 
 //两路窗帘控制 
 //数据类型： int 32bit
@@ -39,6 +36,10 @@
 #define ENN_DEVICE_ATTR_TEMP_VALUE 2011
 //数据类型： double 64bit
 #define ENN_DEVICE_ATTR_HUM_VALUE  2012
+
+//燃气
+//数据类型： int 32bit
+#define ENN_DEVICE_ATTR_GAS_VALUE  2022
 
 
 #endif

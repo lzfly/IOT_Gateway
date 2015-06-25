@@ -29,6 +29,8 @@
 #include "we26n_type.h"
 #include "gateway.h"
 #include "fbee_protocol.h"
+#include "enn_device_type.h"
+#include "enn_device_attr.h"
 
 
 void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
@@ -56,16 +58,12 @@ void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
 }
 
 
-int  sendMsgToWeb(void * data, int len)
+int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoint, w26n_uint8 atrr, w26n_uint32 data)
 {
     int  iret;
     uint32_t  id;
     struct ubus_context *ctx;
 	static struct blob_buf b;
-	
-	blob_buf_init( &b, 0 );
-	blobmsg_add_u32( &b, "args",  1234 );
-	blobmsg_add_u32( &b, "argv",  5678 );
 	
     /**/
 	ctx = ubus_connect( NULL );
@@ -76,11 +74,46 @@ int  sendMsgToWeb(void * data, int len)
 	}
 
     /**/
-	if ( ubus_lookup_id(ctx, "we26n.flowmeter", &id) ) {
+	if ( ubus_lookup_id(ctx, "jianyou", &id) ) {
 		fprintf(stderr, "Failed to look up flowmeter object\n");
 		return;
 	}
 	
+	blob_buf_init( &b, 0 );
+	blobmsg_add_string( &b, "gatewayid", "we26n_78A351111384" );
+	
+	char deviceidstr[64];
+	sprintf(deviceidstr, "zigbee_fbee_%d_%d", shortaddr, endpoint);
+	blobmsg_add_string( &b, "deviceid", deviceidstr);
+	
+	char devicetypestr[8];
+	char deviceattrstr[16];
+	switch(deviceId)
+	{
+	 case FB_DEVICE_TYPE_GAS:
+	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_GAS);
+		  sprintf(devicetypestr, "%d", ENN_DEVICE_ATTR_GAS_VALUE);
+	     break;
+	 case FB_DEVICE_TYPE_TEMP_HUM:
+	 case FB_DEVICE_TYPE_TEMP_HUM_2:
+	     sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_TEMP_HUM);
+		 if(atrr)
+		     sprintf(devicetypestr, "%d", ENN_DEVICE_ATTR_TEMP_VALUE);
+		 else
+		     sprintf(devicetypestr, "%d", ENN_DEVICE_ATTR_HUM_VALUE);
+	     break;
+	 default:
+	     break;
+	}
+	blobmsg_add_string( &b, "devicetype", devicetypestr);
+	
+	blobmsg_add_string( &b, "attr", devicetypestr );
+	
+	char devicedatastr[20];
+	sprintf(devicedatastr, "0x%x", data);
+	blobmsg_add_string( &b, "data", devicedatastr);	
+
+	printf("[sendMsgToWeb]ubus_invoke\r\n");
 	/**/
 	ubus_invoke( ctx, id, "info", b.head, test_data_cback, 0, 3000);
 
@@ -231,21 +264,81 @@ int receiveDeviceMsg()
 					w26n_byte endpoint = buffer[4];
 					printf("[receiveDeviceMsg]endpoint=%d\r\n",endpoint);
 
-					int clusterId = buffer[5]&(buffer[6]<<8);
+					int clusterId = (buffer[5]&0xFF)|((buffer[6]&0xFF)<<8);
 					printf("[receiveDeviceMsg]clusterId=%d\r\n",clusterId);
+                    
 
+					int i, index;
+                    for(i = 0; i < g_devices_count; i++)
+					{
+						printf("[receiveDeviceMsg] i  endpoint=%d\r\n",g_devices[i].endpoint);
 
-					w26n_byte num = buffer[7];
-					printf("[receiveDeviceMsg]num=%d\r\n",num);
+						if(shortaddr == g_devices[i].shortaddr && endpoint == g_devices[i].endpoint)
+						{
+							printf("[receiveDeviceMsg] find old device\r\n");
+							index = i;
+							break;
+						}
+					}
+					if(g_devices[index].deviceId == FB_DEVICE_TYPE_GAS)
+					{
+					
+					    printf("[receiveDeviceMsg]FB_DEVICE_TYPE_GAS\r\n");
+						w26n_byte num = buffer[7];
+						printf("[receiveDeviceMsg]num=%d\r\n",num);
 
-					int attr = buffer[8]&(buffer[9]<<8);
-					printf("[receiveDeviceMsg]attr=%d\r\n",attr);
+						int attr = buffer[8]&(buffer[9]<<8);
+						printf("[receiveDeviceMsg]attr=%d\r\n",attr);
 
-					w26n_byte type = buffer[10];
-					printf("[receiveDeviceMsg]type=%d\r\n",type);
+						w26n_byte type = buffer[10];
+						printf("[receiveDeviceMsg]type=%d\r\n",type);
 
-					w26n_byte value = buffer[11];
-					printf("[receiveDeviceMsg] value=%d\r\n",value);
+						w26n_byte value = buffer[11];
+						printf("[receiveDeviceMsg] value=%d\r\n",value);
+						
+						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, 0, value);
+					}
+					else if(g_devices[index].deviceId == FB_DEVICE_TYPE_TEMP_HUM || g_devices[index].deviceId == FB_DEVICE_TYPE_TEMP_HUM_2)
+					{
+					    printf("[receiveDeviceMsg]FB_DEVICE_TYPE_TEMP_HUM\r\n");
+						w26n_byte num = buffer[7];
+						printf("[receiveDeviceMsg]num=%d\r\n",num);
+
+						w26n_uint16 attr = buffer[8]|(buffer[9]<<8);
+						printf("[receiveDeviceMsg]attr=%d\r\n",attr);
+
+						w26n_byte type = buffer[10];
+						printf("[receiveDeviceMsg]type=%d\r\n",type);
+
+						w26n_uint16 value = buffer[11]|(buffer[12]<<8);
+						printf("[receiveDeviceMsg] value=%d\r\n",value);
+
+						w26n_uint16 attr1 = buffer[13]|(buffer[14]<<8);
+						printf("[receiveDeviceMsg]attr=%d\r\n",attr);
+
+						w26n_byte type1 = buffer[15];
+						printf("[receiveDeviceMsg]type=%d\r\n",type);
+
+						w26n_byte value1 = buffer[16];
+						printf("[receiveDeviceMsg] value=%d\r\n",value);
+						
+						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, 1, value);
+						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, 0, value1);
+					}
+					else{
+						w26n_byte num = buffer[7];
+						printf("[receiveDeviceMsg]num=%d\r\n",num);
+
+						int attr = buffer[8]&(buffer[9]<<8);
+						printf("[receiveDeviceMsg]attr=%d\r\n",attr);
+
+						w26n_byte type = buffer[10];
+						printf("[receiveDeviceMsg]type=%d\r\n",type);
+
+						w26n_byte value = buffer[11];
+						printf("[receiveDeviceMsg] value=%d\r\n",value);
+					}
+					
 
 				}
 				else if(resptype == RPCS_GET_GATEDETAIL_RSP){
