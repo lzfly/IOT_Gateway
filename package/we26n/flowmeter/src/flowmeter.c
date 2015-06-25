@@ -16,77 +16,512 @@
 #include <libubox/uloop.h>
 #include <libubus.h>
 
-static struct blob_buf b;
+#include "enn_device_type.h"
+#include "enn_device_attr.h"
 
-static int flow_info( struct ubus_context *ctx, struct ubus_object *obj,
+#include "modbus.h"
+#include "myuart.h"
+
+
+enum {
+    CTRLCMD_GATEWAY,
+    CTRLCMD_DEVICEID,
+    CTRLCMD_ATTR,
+    CTRLCMD_DATA,
+    __CTRLCMD_MAX
+};
+
+
+static const struct blobmsg_policy  ctrlcmd_policy[] = {
+    [CTRLCMD_GATEWAY] = { .name = "gatewayid", .type = BLOBMSG_TYPE_STRING },
+    [CTRLCMD_DEVICEID] = { .name = "deviceid", .type = BLOBMSG_TYPE_STRING },
+    [CTRLCMD_ATTR] = { .name = "attr", .type = BLOBMSG_TYPE_STRING },
+    [CTRLCMD_DATA] = { .name = "data", .type = BLOBMSG_TYPE_STRING },   
+};
+
+
+static int flow_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
                 struct ubus_request_data *req, const char *method,
                 struct blob_attr *msg )
 {
-    /**/
-	blob_buf_init( &b, 0 );
-	blobmsg_add_u32( &b, "args",  1234 );
-	blobmsg_add_u32( &b, "argv",  5678 );
+
+    struct blob_attr * tb[__CTRLCMD_MAX];
+    const char * ptr;
+    static struct blob_buf b;
 
     /**/
-    ubus_send_reply(ctx, req, b.head);
+    blobmsg_parse( ctrlcmd_policy, ARRAY_SIZE(ctrlcmd_policy), tb, blob_data(msg), blob_len(msg));
+
+    if ( tb[CTRLCMD_GATEWAY] )
+    {
+        ptr = blobmsg_data( tb[CTRLCMD_GATEWAY] );
+        printf( "gate = %s\n", ptr );
+    }
+
+    if ( tb[CTRLCMD_DEVICEID] )
+    {
+        ptr = blobmsg_data( tb[CTRLCMD_DEVICEID] );
+        printf( "device = %s\n", ptr );
+    }
+
+    if ( tb[CTRLCMD_ATTR] )
+    {
+        ptr = blobmsg_data( tb[CTRLCMD_ATTR] );
+        printf( "attr = %s\n", ptr );
+    }
+
+    if ( tb[CTRLCMD_DATA] )
+    {
+        ptr = blobmsg_data( tb[CTRLCMD_DATA] );
+        printf( "data = %s\n", ptr );
+    }
+    
+
+    /* send reply */
+    blob_buf_init( &b, 0 );
+    blobmsg_add_string( &b, "return",  "ok" );
+    
+    /**/
+    ubus_send_reply( ctx, req, b.head );
     return UBUS_STATUS_OK;
+    
 }
 
 
 static const struct ubus_method flow_methods[] = {
-	UBUS_METHOD_NOARG("info",  flow_info ),
+    UBUS_METHOD( "ctrlcmd",  flow_ctrlcmd, ctrlcmd_policy ),
 };
 
 
 static struct ubus_object_type system_object_type =
-	UBUS_OBJECT_TYPE("flowmeter_iface", flow_methods);
+    UBUS_OBJECT_TYPE("flowmeter_iface", flow_methods);
 
 static struct ubus_object flow_object = {
-	.name = "we26n.flowmeter",
-	.type = &system_object_type,
-	.methods = flow_methods,
-	.n_methods = ARRAY_SIZE(flow_methods),
+    .name = "we26n_flowmeter",
+    .type = &system_object_type,
+    .methods = flow_methods,
+    .n_methods = ARRAY_SIZE(flow_methods),
 };
 
 
-
-void server_main( struct ubus_context *ctx )
+int  test_server_add( void )
 {
-	int ret;
+    int ret;
+    struct ubus_context * ctx;
 
-	ret = ubus_add_object(ctx, &flow_object);
-	if (ret)
-		fprintf(stderr, "Failed to add object: %s\n", ubus_strerror(ret));
+    /**/
+    ctx = ubus_connect( NULL );
+    if ( NULL == ctx) 
+    {
+        return 1;
+    }
+
+    /**/
+    ubus_add_uloop( ctx );
+
+    /**/
+    ret = ubus_add_object( ctx, &flow_object );
+    if (ret)
+    {
+        fprintf(stderr, "Failed to add object: %s\n", ubus_strerror(ret));
+        return 2;
+    }
     
-	uloop_run();
+    return 0;
+    
 }
 
 
-extern void *  test_aux_thread( void * arg );
 
-int  prepare_threads( void )
+typedef struct  powermeter_info
 {
-    int  iret;
-    pthread_t  aux_thrd;
-
+    int  state;
     
     /**/
-    iret = pthread_create( &aux_thrd, NULL, test_aux_thread, NULL );
+    int  count;
+    
+} powermeter_info_t;
+
+
+int  test_ubus_01_send_report( powermeter_info_t * pinfo, int32_t value )
+{
+    int  iret;
+    uint32_t id;
+    char  tstr[200];
+    struct ubus_context * ctx;
+    struct blob_buf b = { };
+
+    /**/
+    ctx = ubus_connect( NULL );
+    if ( NULL == ctx )
+    {
+        return 1;
+    }
+
+    /**/
+    iret = ubus_lookup_id( ctx, "jianyou", &id );
     if ( 0 != iret )
     {
-        fprintf( stderr, "aux pthread create fail, %d", iret );
+        ubus_free(ctx);
+        return 2;
+    }
+
+    /**/
+    blob_buf_init( &b, 0 );
+    blobmsg_add_string( &b, "gatewayid", "we26n_78A351111384" );
+    sprintf( tstr, "rf433_enn_%s", "12345678" );
+    blobmsg_add_string( &b, "deviceid", tstr );
+    blobmsg_add_string( &b, "devicetype", ENN_DEVICE_TYPE_POWERMETER );
+    sprintf( tstr, "%d", ENN_DEVICE_ATTR_POWERMETER_VALUE );
+    blobmsg_add_string( &b, "attr", tstr );
+    sprintf( tstr, "%d", value );
+    blobmsg_add_string( &b, "data", tstr );
+    
+    ubus_invoke(ctx, id, "report", b.head, NULL, NULL, 200);
+
+    /**/
+    blob_buf_free(&b);
+    ubus_free(ctx);
+    return 0;
+    
+}
+
+
+int  test_modbus_01_data_cbk( intptr_t arg, int tlen, void * pdat )
+{
+    int32_t  aaa;
+    uint8_t * puc;
+    powermeter_info_t * pinfo;
+
+    /**/
+    pinfo = (powermeter_info_t *)arg;
+
+
+    if ( tlen == 7 )
+    {
+        puc = (uint8_t *)pdat;
+
+        aaa = modbus_conv_long( &(puc[3]) );
+        printf( "%d\n", aaa );
+
+        test_ubus_01_send_report( pinfo, aaa );
+    }
+    
+    test_modbus_cbk( arg, tlen, pdat );
+    return 0;
+    
+}
+
+
+void  test_modbus_01_timer_cbk( struct uloop_timeout * ptmr )
+{
+    intptr_t  mctx;
+    powermeter_info_t * pinfo;
+
+    /**/
+    mctx = *((intptr_t *)(ptmr+1));
+    pinfo = (powermeter_info_t *)(((intptr_t *)(ptmr + 1)) + 1);
+
+    /**/
+    modbus_send_req( mctx, 1, 0x14, 0x2, test_modbus_01_data_cbk, (intptr_t)pinfo );
+
+    /**/
+    uloop_timeout_set( ptmr, 5000 );
+    return;
+}
+
+
+
+extern int  test_modbus_cbk( intptr_t arg, int tlen, void * pdat );
+
+
+typedef struct  flowmeter_info
+{
+    int  state;
+    char  devsn[10];
+
+    /**/
+    int  count;
+    
+} flowmeter_info_t;
+
+
+
+
+int  test_ubus_02_send_report( flowmeter_info_t * pinfo, double value )
+{
+    int  iret;
+    uint32_t id;
+    char  tstr[200];
+    struct ubus_context * ctx;
+    struct blob_buf b = { };
+
+    /**/
+    ctx = ubus_connect( NULL );
+    if ( NULL == ctx )
+    {
+        return 1;
+    }
+
+    /**/
+    iret = ubus_lookup_id( ctx, "jianyou", &id );
+    if ( 0 != iret )
+    {
+        ubus_free(ctx);
+        return 2;
+    }
+
+    /**/
+    blob_buf_init( &b, 0 );
+    blobmsg_add_string( &b, "gatewayid", "we26n_78A351111384" );
+    sprintf( tstr, "rf433_enn_%s", pinfo->devsn );
+    blobmsg_add_string( &b, "deviceid", tstr );
+    blobmsg_add_string( &b, "devicetype", ENN_DEVICE_TYPE_WATERMETER );
+    sprintf( tstr, "%d", ENN_DEVICE_ATTR_WATERMETER_VALUE );
+    blobmsg_add_string( &b, "attr", tstr );
+    sprintf( tstr, "%f", value );
+    blobmsg_add_string( &b, "data", tstr );
+    
+    ubus_invoke(ctx, id, "report", b.head, NULL, NULL, 200);
+
+    /**/
+    blob_buf_free(&b);
+    ubus_free(ctx);
+    return 0;
+    
+}
+
+
+int  test_modbus_02_data_cbk( intptr_t arg, int tlen, void * pdat )
+{
+    int32_t  aaa;
+    float  bbb;
+    double  ccc;
+    uint8_t * puc;
+    flowmeter_info_t * pinfo;
+
+    /**/
+    pinfo = (flowmeter_info_t *)arg;
+
+
+    if ( tlen == 11 )
+    {
+        puc = (uint8_t *)pdat;
+
+        aaa = modbus_conv_long( &(puc[3]) );
+        bbb = modbus_conv_real4( &(puc[7]) );
+        ccc = bbb;
+        ccc = ccc + aaa;
+        printf( "%f\n", ccc );
+
+        test_ubus_02_send_report( pinfo, ccc );
+    }
+    
+    // test_modbus_cbk( arg, tlen, pdat );
+    return 0;
+    
+}
+
+
+int  test_modbus_02_sn_cbk( intptr_t arg, int tlen, void * pdat )
+{
+    uint8_t * puc;
+    flowmeter_info_t * pinfo;
+
+    /**/
+    pinfo = (flowmeter_info_t *)arg;
+    puc = (uint8_t *)pdat;
+
+
+    test_modbus_cbk( arg, tlen, pdat );
+
+    /**/
+    if ( tlen == 7 )
+    {    
+        /**/
+        if ( (puc[0] == 2) && (puc[1] == 3) && (puc[2] == 4) )
+        {
+            /**/
+            sprintf( pinfo->devsn, "%02x%02x%02x%02x", puc[4], puc[3], puc[6], puc[5] );
+            pinfo->state = 1;
+        }
+    }
+    
+    return 0;
+    
+}
+
+
+void  test_modbus_02_timer_cbk( struct uloop_timeout * ptmr )
+{
+    intptr_t  mctx;
+    flowmeter_info_t * pinfo;
+
+    /**/
+    mctx = *((intptr_t *)(ptmr+1));
+    pinfo = (flowmeter_info_t *)(((intptr_t *)(ptmr + 1)) + 1);
+
+    /**/
+    switch ( pinfo->state )
+    {
+    case 0:
+        modbus_send_req( mctx, 2, 1528, 2, test_modbus_02_sn_cbk, (intptr_t)pinfo );
+        break;
+
+    case 1:
+        modbus_send_req( mctx, 2, 136, 0x4, test_modbus_02_data_cbk, (intptr_t)pinfo );
+        break;
+    }
+
+    /**/    
+    uloop_timeout_set( ptmr, 4000 );
+    return;
+    
+}
+
+
+int  test_prepare_timer( intptr_t mctx )
+{
+    struct uloop_timeout * ptmr;
+    flowmeter_info_t * pinfo2;
+    powermeter_info_t * pinfo1;
+    
+    /**/
+    ptmr = (struct uloop_timeout *)malloc( sizeof(struct uloop_timeout) + sizeof(intptr_t) + sizeof(flowmeter_info_t) );
+    if ( NULL == ptmr ) 
+    {
+        return 1;
+    }
+
+    /* flow meter */
+    memset( ptmr, 0, sizeof(struct uloop_timeout) );
+    ptmr->cb = test_modbus_02_timer_cbk;
+
+    /**/
+    *((intptr_t *)(ptmr + 1)) = mctx;
+    pinfo2 = (flowmeter_info_t *)(((intptr_t *)(ptmr + 1)) + 1);
+    pinfo2->state = 0;
+    uloop_timeout_set( ptmr, 2000 );
+    
+    /* power meter */
+    ptmr = (struct uloop_timeout *)malloc( sizeof(struct uloop_timeout) + sizeof(intptr_t) + sizeof(powermeter_info_t) );
+    if ( NULL == ptmr ) 
+    {
+        return 1;
+    }
+
+    /**/
+    memset( ptmr, 0, sizeof(struct uloop_timeout) );
+    ptmr->cb = test_modbus_01_timer_cbk;
+
+    /**/
+    *((intptr_t *)(ptmr + 1)) = mctx;
+    pinfo1 = (powermeter_info_t *)(((intptr_t *)(ptmr + 1)) + 1);
+    pinfo1->state = 0;
+    uloop_timeout_set( ptmr, 4000 );    
+    return 0;
+    
+}
+
+
+void  test_uart_cbk(struct uloop_fd * pufd, unsigned int events)
+{
+    intptr_t  uctx;
+
+    /**/
+    uctx = *((intptr_t *)(pufd + 1));
+
+    /* pufd->eof == true */
+    /**/
+    myuart_run( uctx );
+    return;
+}
+
+
+int  test_prepare_ufd( intptr_t uctx )
+{
+    int  iret;
+    int  ufd;
+    struct uloop_fd * pufd;
+
+
+    /**/
+    myuart_get_fd( uctx, &ufd );
+    
+    /**/
+    pufd = (struct uloop_fd *)malloc( sizeof(struct uloop_fd) + sizeof(intptr_t) );
+    if ( NULL == pufd )
+    {
         return 3;
+    }
+    
+    memset( pufd, 0, sizeof(struct uloop_fd) );
+    pufd->fd = ufd;
+    pufd->cb = test_uart_cbk;
+    *((intptr_t *)(pufd + 1)) = uctx;
+
+    /**/
+    iret = uloop_fd_add( pufd, ULOOP_READ | ULOOP_BLOCKING );
+    if ( iret < 0 )
+    {
+        return 4;
     }
 
     return 0;
+
 }
+
+
+int  test_prepare_modbus( void )
+{
+    int  iret;
+    intptr_t  uctx;
+    intptr_t  mctx;
+
+    /**/
+    iret = modbus_init( 100, &mctx );
+    if ( 0 != iret )
+    {
+        return 1;
+    }
+
+    /**/
+    iret = myuart_init( 0, &uctx );
+    if ( 0 != iret )
+    {
+        return 2;
+    }
+
+    /**/
+    modbus_set_uartctx( mctx, uctx );
+    myuart_set_callback( uctx, (uartcb_func)modbus_recv_decode, mctx );
+
+    /**/
+    iret = test_prepare_ufd( uctx );
+    if ( 0 != iret )
+    {
+        return 3;
+    }
+    
+    /**/
+    iret = test_prepare_timer( mctx );
+    if ( 0 != iret )
+    {
+        return 4;
+    }
+    
+    return 0;
+    
+}
+
+
 
 
 int  main( void )
 {
     int  iret;
-    struct ubus_context *ctx;
 
+#if 0
     /**/
     iret = prepare_threads();
     if ( 0 != iret )
@@ -95,27 +530,38 @@ int  main( void )
         return 1;
     }
 
-    /**/
-	uloop_init();
-	signal(SIGPIPE, SIG_IGN);	
+#else
+
 
     /**/
-	ctx = ubus_connect( NULL );
-	if ( NULL == ctx) 
-	{
-	    fprintf(stderr, "Failed to connect to ubus\n");
-	    return -1;
-	}
+    uloop_init();
+    signal(SIGPIPE, SIG_IGN);   
+
+    iret = test_server_add();
+    if ( 0 != iret )
+    {
+        printf( "server add fail,ret = %d\n", iret );
+        uloop_done();
+        return 1;
+    }
 
     /**/
-	ubus_add_uloop( ctx );
-	server_main( ctx );
+    iret = test_prepare_modbus();
+    if ( 0 != iret )
+    {
+        printf( "prepare modbus fail, ret = %d\n", iret );
+        uloop_done();
+        return 2;
+    }
 
     /**/
-	ubus_free(ctx);
-	uloop_done();
-	return 0;
-	
+    uloop_run();
+    uloop_done();
+    
+#endif
+    
+    return 0;
+    
 }
 
 

@@ -17,6 +17,9 @@
 
 #include <syslog.h>
 
+#include <libubox/blobmsg_json.h>
+#include <libubox/uloop.h>
+#include <libubus.h>
 
 #include "modbus.h"
 #include "myuart.h"
@@ -73,7 +76,6 @@ void  dump_hex( const unsigned char * ptr, size_t  len )
     fflush(stdout);
     
 }
-
 
 
 
@@ -155,6 +157,15 @@ int  test_aux_loop( void * pctx )
 		    {
                 modbus_send_req( mctx, 2, 0x17, 0x4, test_modbus_cbk, 0 );
 		        countt += 1;
+		    }
+		    else if ( countt < 20 )
+		    {
+                modbus_send_req( mctx, 1, 0x0, 0x3, test_modbus_cbk, 0 );
+		        countt += 1;
+		    }
+		    else
+		    {
+    		    modbus_proc_timeout( mctx );
 		    }
 		    
 		    continue;
