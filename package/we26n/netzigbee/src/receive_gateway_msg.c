@@ -130,42 +130,17 @@ int receiveDeviceMsg()
 					if(g_devices_count >= MAX_DEVICES)
 					    continue;
 					
-					g_devices[g_devices_count].shortaddr = (buffer[2]&0xFF)|(buffer[3]<<8);
-					printf("buffer[2] = 0x%x", buffer[2]&0xFF);
-					printf("buffer[3] = 0x%x", buffer[3]);
+					g_devices[g_devices_count].shortaddr = buffer[2]&(buffer[3]<<8);
 					printf("[receiveDeviceMsg]shortaddr=%d\r\n",g_devices[g_devices_count].shortaddr);
 
 					g_devices[g_devices_count].endpoint = buffer[4];
 					printf("[receiveDeviceMsg]endpoint=%d\r\n",g_devices[g_devices_count].endpoint);
-                    
-					int i;
-					int olddevice = 0;
-                    for(i = 0; i < g_devices_count; i++)
-					{
-						printf("[receiveDeviceMsg] i  endpoint=%d\r\n",g_devices[i].endpoint);
 
-						if(g_devices[g_devices_count].endpoint == g_devices[i].endpoint)
-						{
-							printf("[receiveDeviceMsg] find old device\r\n");
-							olddevice = 1;
-							break;
-						}
-					}
-					if(olddevice)
-						continue;
 
-                    printf("[receiveDeviceMsg] find new device\r\n");
-
-					g_devices[g_devices_count].profileId = buffer[5]|(buffer[6]<<8);
-					printf("buffer[5] = 0x%x", buffer[5]);
-					printf("buffer[6] = 0x%x", buffer[6]);
-
+					g_devices[g_devices_count].profileId = buffer[5]&(buffer[6]<<8);
 					printf("[receiveDeviceMsg]profileId=%d\r\n",g_devices[g_devices_count].profileId);
 
-					g_devices[g_devices_count].deviceId = buffer[7]|(buffer[8]<<8);
-		            printf("buffer[7] = 0x%x", buffer[7]);
-		            printf("buffer[8] = 0x%x", buffer[8]);
-
+					g_devices[g_devices_count].deviceId = buffer[7]&(buffer[8]<<8);
 					printf("[receiveDeviceMsg]deviceId=%d\r\n",g_devices[g_devices_count].deviceId);
 
 					g_devices[g_devices_count].namelen = buffer[10];
@@ -247,6 +222,38 @@ int receiveDeviceMsg()
 					w26n_byte value = buffer[11];
 					printf("[receiveDeviceMsg] value=%d\r\n",value);
 
+				}
+				else if(resptype == RPCS_GET_GATEDETAIL_RSP){
+					int resptype = buffer[0];
+					int resplen = buffer[1];
+					char respversion[8];
+					memcpy(respversion, &buffer[2], 5);
+					respversion[5] = 0;
+
+					printf("[getGateDetailInfo]version=%s\r\n",respversion);
+
+					strcpy(g_Gate.version,respversion);
+
+					int respsnid;
+					memcpy(&respsnid, &buffer[7], 4);
+
+					printf("[getGateDetailInfo]snid=0x%x\r\n",respsnid);
+
+					char respname[21];
+					memcpy(respname, &buffer[11], 20);
+					respname[20] = 0;
+
+					printf("[getGateDetailInfo]name=%s\r\n",respname);
+
+					strcpy(g_Gate.username,respname);
+
+					char resppass[21];
+					memcpy(resppass, &buffer[31], 20);
+					resppass[20] = 0;
+
+					printf("[getGateDetailInfo]pass=%s\r\n",resppass);
+
+					strcpy(g_Gate.password,resppass);
 				}
 				else{
 					w26n_byte resplen = buffer[1];
