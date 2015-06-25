@@ -180,9 +180,24 @@ int sendDeviceState(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPo
 	msg[2] = addrmode;
 	msg[3] = shortaddr&0xFF;
 	msg[4] = (shortaddr&0xFF00)>>8;
+    msg[5] = 0x0;
+	msg[6] = 0x0;
+	msg[7] = 0x0;
+	msg[8] = 0x0;
+	msg[9] = 0x0;
+	msg[10] = 0x0;
 	msg[11] = endPoint;
-	msg[3] = state;
+	msg[12] = 0x0;
+	msg[13] = 0x0;
+	msg[14] = state;
 
+	printf("luz--msg0=0x%x\r\n", msg[0]);
+    printf("luz--msg1=0x%x\r\n", msg[1]);
+	printf("luz--msg2=0x%x\r\n", msg[2]);
+	printf("luz--msg3=0x%x\r\n", msg[3]);
+	printf("luz--msg4=0x%x\r\n", msg[4]);
+	printf("luz--msg11=0x%x\r\n", msg[11]);
+	printf("luz--msg14=0x%x\r\n", msg[14]);
 	sendCommand(g_monitor_socket,msg,cmd_length);
 
 	return 0;
