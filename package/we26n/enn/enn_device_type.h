@@ -10,8 +10,8 @@
 //电表
 #define ENN_DEVICE_TYPE_POWERMETER 0005
 
-//两路开关
-#define ENN_DEVICE_TYPE_ON_OFF 0009
+//三路开关
+#define ENN_DEVICE_TYPE_ON_OFF_THREE 0009
 
 //两路窗帘 
 #define ENN_DEVICE_TYPE_WINDOWS 0026
