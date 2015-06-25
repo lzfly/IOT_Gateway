@@ -130,17 +130,42 @@ int receiveDeviceMsg()
 					if(g_devices_count >= MAX_DEVICES)
 					    continue;
 					
-					g_devices[g_devices_count].shortaddr = buffer[2]&(buffer[3]<<8);
+					g_devices[g_devices_count].shortaddr = (buffer[2]&0xFF)|(buffer[3]<<8);
+					printf("buffer[2] = 0x%x", buffer[2]&0xFF);
+					printf("buffer[3] = 0x%x", buffer[3]);
 					printf("[receiveDeviceMsg]shortaddr=%d\r\n",g_devices[g_devices_count].shortaddr);
 
 					g_devices[g_devices_count].endpoint = buffer[4];
 					printf("[receiveDeviceMsg]endpoint=%d\r\n",g_devices[g_devices_count].endpoint);
+                    
+					int i;
+					int olddevice = 0;
+                    for(i = 0; i < g_devices_count; i++)
+					{
+						printf("[receiveDeviceMsg] i  endpoint=%d\r\n",g_devices[i].endpoint);
 
+						if(g_devices[g_devices_count].endpoint == g_devices[i].endpoint)
+						{
+							printf("[receiveDeviceMsg] find old device\r\n");
+							olddevice = 1;
+							break;
+						}
+					}
+					if(olddevice)
+						continue;
 
-					g_devices[g_devices_count].profileId = buffer[5]&(buffer[6]<<8);
+                    printf("[receiveDeviceMsg] find new device\r\n");
+
+					g_devices[g_devices_count].profileId = buffer[5]|(buffer[6]<<8);
+					printf("buffer[5] = 0x%x", buffer[5]);
+					printf("buffer[6] = 0x%x", buffer[6]);
+
 					printf("[receiveDeviceMsg]profileId=%d\r\n",g_devices[g_devices_count].profileId);
 
-					g_devices[g_devices_count].deviceId = buffer[7]&(buffer[8]<<8);
+					g_devices[g_devices_count].deviceId = buffer[7]|(buffer[8]<<8);
+		            printf("buffer[7] = 0x%x", buffer[7]);
+		            printf("buffer[8] = 0x%x", buffer[8]);
+
 					printf("[receiveDeviceMsg]deviceId=%d\r\n",g_devices[g_devices_count].deviceId);
 
 					g_devices[g_devices_count].namelen = buffer[10];
@@ -224,9 +249,12 @@ int receiveDeviceMsg()
 
 				}
 				else if(resptype == RPCS_GET_GATEDETAIL_RSP){
-					int resptype = buffer[0];
 					int resplen = buffer[1];
 					char respversion[8];
+					
+					printf("[receiveDeviceMsg]resplen=%d\r\n",resplen);
+					index = index + resplen + 2;
+					
 					memcpy(respversion, &buffer[2], 5);
 					respversion[5] = 0;
 
