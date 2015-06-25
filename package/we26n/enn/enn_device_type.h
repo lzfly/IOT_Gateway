@@ -1,0 +1,22 @@
+#ifndef ENN_DEVICE_TYPE_H
+#define ENN_DEVICE_TYPE_H
+
+//UEM泛能机
+#define ENN_DEVICE_TYPE_GATEWAY 0001
+
+//水表
+#define ENN_DEVICE_TYPE_WATERMETER 0006
+
+//电表
+#define ENN_DEVICE_TYPE_POWERMETER 0005
+
+//两路开关
+#define ENN_DEVICE_TYPE_ON_OFF 0009
+
+//两路窗帘 
+#define ENN_DEVICE_TYPE_WINDOWS 0026
+
+//可调亮度灯 
+#define ENN_DEVICE_TYPE_BRIGHTNESS_LAMP 0018
+
+#endif
