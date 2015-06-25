@@ -64,7 +64,11 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoi
     uint32_t  id;
     struct ubus_context *ctx;
 	static struct blob_buf b;
-	
+
+ 
+    printf("[sendMsgToWeb] start\r\n");
+
+
     /**/
 	ctx = ubus_connect( NULL );
 	if ( NULL == ctx) 
@@ -73,12 +77,15 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoi
 	    return -1;
 	}
 
+    printf("[sendMsgToWeb] start--1\r\n");
+
     /**/
 	if ( ubus_lookup_id(ctx, "jianyou", &id) ) {
-		fprintf(stderr, "Failed to look up flowmeter object\n");
+		fprintf(stderr, "Failed to look up jianyou object\n");
 		return;
 	}
-	
+	printf("[sendMsgToWeb] start--2\r\n");
+
 	blob_buf_init( &b, 0 );
 	blobmsg_add_string( &b, "gatewayid", "we26n_78A351111384" );
 	
@@ -115,7 +122,7 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoi
 
 	printf("[sendMsgToWeb]ubus_invoke\r\n");
 	/**/
-	ubus_invoke( ctx, id, "info", b.head, test_data_cback, 0, 3000);
+	ubus_invoke( ctx, id, "report", b.head, test_data_cback, 0, 3000);
 
 	
     /**/
@@ -152,20 +159,20 @@ int receiveDeviceMsg()
             	buffer = buffer1 + index;
 				w26n_byte resptype = buffer[0];
 				printf("[receiveDeviceMsg]resptype=%d\r\n",resptype);
-				printf("[receiveDeviceMsg]index=%d\r\n",index);
+				//printf("[receiveDeviceMsg]index=%d\r\n",index);
 				if(resptype == RPCS_GET_DEVICES_RSP)
 			   {
 
 					w26n_byte resplen = buffer[1];
-					printf("[receiveDeviceMsg]resplen=%d\r\n",resplen);
+					//printf("[receiveDeviceMsg]resplen=%d\r\n",resplen);
 					index = index + resplen + 2;
                     
 					if(g_devices_count >= MAX_DEVICES)
 					    continue;
 					
 					g_devices[g_devices_count].shortaddr = (buffer[2]&0xFF)|(buffer[3]<<8);
-					printf("buffer[2] = 0x%x", buffer[2]&0xFF);
-					printf("buffer[3] = 0x%x", buffer[3]);
+					//printf("buffer[2] = 0x%x", buffer[2]&0xFF);
+					//printf("buffer[3] = 0x%x", buffer[3]);
 					printf("[receiveDeviceMsg]shortaddr=%d\r\n",g_devices[g_devices_count].shortaddr);
 
 					g_devices[g_devices_count].endpoint = buffer[4];
@@ -179,7 +186,7 @@ int receiveDeviceMsg()
 
 						if(g_devices[g_devices_count].endpoint == g_devices[i].endpoint)
 						{
-							printf("[receiveDeviceMsg] find old device\r\n");
+							//printf("[receiveDeviceMsg] find old device\r\n");
 							olddevice = 1;
 							break;
 						}
@@ -190,14 +197,14 @@ int receiveDeviceMsg()
                     printf("[receiveDeviceMsg] find new device\r\n");
 
 					g_devices[g_devices_count].profileId = buffer[5]|(buffer[6]<<8);
-					printf("buffer[5] = 0x%x", buffer[5]);
-					printf("buffer[6] = 0x%x", buffer[6]);
+					//printf("buffer[5] = 0x%x", buffer[5]);
+					//printf("buffer[6] = 0x%x", buffer[6]);
 
 					printf("[receiveDeviceMsg]profileId=%d\r\n",g_devices[g_devices_count].profileId);
 
 					g_devices[g_devices_count].deviceId = buffer[7]|(buffer[8]<<8);
-		            printf("buffer[7] = 0x%x", buffer[7]);
-		            printf("buffer[8] = 0x%x", buffer[8]);
+		            //printf("buffer[7] = 0x%x", buffer[7]);
+		            //printf("buffer[8] = 0x%x", buffer[8]);
 
 					printf("[receiveDeviceMsg]deviceId=%d\r\n",g_devices[g_devices_count].deviceId);
 
@@ -235,17 +242,17 @@ int receiveDeviceMsg()
 
 
 					w26n_byte resplen = buffer[1];
-					printf("[receiveDeviceMsg]resplen=%d\r\n",resplen);
+					//printf("[receiveDeviceMsg]resplen=%d\r\n",resplen);
 					index = index + resplen + 2;
 
-					int shortaddr = buffer[2]&(buffer[3]<<8);
-					printf("[receiveDeviceMsg]shortaddr=%d\r\n",shortaddr);
+					int shortaddr = (buffer[2]&0xFF )|(buffer[3]<<8);
+					//printf("[receiveDeviceMsg]shortaddr=%d\r\n",shortaddr);
 
 					w26n_byte endpoint = buffer[4];
-					printf("[receiveDeviceMsg]endpoint=%d\r\n",endpoint);
+					//printf("[receiveDeviceMsg]endpoint=%d\r\n",endpoint);
 
 					w26n_byte status = buffer[5];
-					printf("[receiveDeviceMsg]status=%d\r\n",status);
+					//printf("[receiveDeviceMsg]status=%d\r\n",status);
 
 
 				}
@@ -253,12 +260,14 @@ int receiveDeviceMsg()
 				{
 					printf("[receiveDeviceMsg]resptype=%d\r\n",resptype);
 
+                    printf("[receiveDeviceMsg] RPCS_DEVICE_REPORT \r\n");
+
 
 					w26n_byte resplen = buffer[1];
 					printf("[receiveDeviceMsg]resplen=%d\r\n",resplen);
 					index = index + resplen + 2;
 
-					int shortaddr = buffer[2]&(buffer[3]<<8);
+					int shortaddr = (buffer[2]&0xFF)|(buffer[3]<<8);
 					printf("[receiveDeviceMsg]shortaddr=%d\r\n",shortaddr);
 
 					w26n_byte endpoint = buffer[4];
