@@ -19,4 +19,7 @@
 //可调亮度灯 
 #define ENN_DEVICE_TYPE_BRIGHTNESS_LAMP 0018
 
+//温湿度 
+#define ENN_DEVICE_TYPE_TEMP_HUM 0019
+
 #endif

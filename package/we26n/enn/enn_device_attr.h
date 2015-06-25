@@ -32,5 +32,11 @@
 //数据类型： int 32bit
 #define ENN_DEVICE_ATTR_BRIGHTNESS_LAMP_BRIGHTNESS_VALUE 2010
 
+//温湿度 
+//数据类型： double 64bit
+#define ENN_DEVICE_ATTR_TEMP_VALUE 2011
+//数据类型： double 64bit
+#define ENN_DEVICE_ATTR_HUM_VALUE  2012
+
 
 #endif
