@@ -13,7 +13,12 @@ int  modbus_recv_decode( intptr_t ctx, int tlen, uint8_t * pdat );
 
 /**/
 int  modbus_send_req( intptr_t ctx, uint8_t addr, uint16_t reg, uint16_t num, modbus_cb_func func, intptr_t arg );
+int  modbus_proc_timeout( intptr_t ctx );
 
+
+/**/
+int32_t  modbus_conv_long( uint8_t * puc );
+float  modbus_conv_real4( uint8_t * puc );
 
 #endif
 

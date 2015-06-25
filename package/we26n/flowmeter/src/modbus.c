@@ -193,48 +193,6 @@ static int  modbus_internal_send( modbus_context_t * pctx, modbus_req_t * preq )
 }
 
 
-int  modbus_send_req( intptr_t ctx, uint8_t addr, uint16_t reg, uint16_t num, modbus_cb_func func, intptr_t arg )
-{
-    modbus_req_t * preq;
-    modbus_context_t * pctx;
-
-    /**/
-    pctx = (modbus_context_t *)ctx;
-
-    /**/
-    if ( 0 == pctx->uctx )
-    {
-        return 1;
-    }
-    
-    /**/
-    preq = (modbus_req_t *)malloc( sizeof(modbus_req_t) );
-    if ( NULL == preq )
-    {
-        return 3;
-    }
-
-    /**/
-    preq->addr = addr;
-    preq->reg = reg;
-    preq->num = num;
-    preq->func = func;
-    preq->arg = arg;
-    
-    /* empty -> first entry */
-    if ( list_empty( &(pctx->reqlist) ) )
-    {
-        modbus_internal_send( pctx, preq );
-        pctx->toffs = 0;
-    }
-    
-    /**/
-    printf( "add tail, %p\n", preq );
-    list_add_tail( &(preq->node), &(pctx->reqlist) );
-    return 0;
-    
-}
-
 
 
 static int  modbus_internal_trynew( modbus_context_t * pctx )
@@ -274,14 +232,73 @@ static int  modbus_internal_timeout( modbus_context_t * pctx )
     /* wait 10ms, timeout  */
     if ( (temp - preq->usec_send) > 100000 )
     {
+        printf( "timeout delete, %p\n", preq );
+
+        /**/
         list_del( &(preq->node) );
         free( preq );
-
+        
         /**/
         modbus_internal_trynew( pctx );
     }
     
     /**/
+    return 0;
+    
+}
+
+
+int  modbus_send_req( intptr_t ctx, uint8_t addr, uint16_t reg, uint16_t num, modbus_cb_func func, intptr_t arg )
+{
+    modbus_req_t * preq;
+    modbus_context_t * pctx;
+
+    /**/
+    pctx = (modbus_context_t *)ctx;
+
+    /**/
+    if ( 0 == pctx->uctx )
+    {
+        return 1;
+    }
+    
+    /**/
+    preq = (modbus_req_t *)malloc( sizeof(modbus_req_t) );
+    if ( NULL == preq )
+    {
+        return 3;
+    }
+
+    /**/
+    preq->addr = addr;
+    preq->reg = reg;
+    preq->num = num;
+    preq->func = func;
+    preq->arg = arg;
+    
+    /* empty -> first entry */
+    if ( list_empty( &(pctx->reqlist) ) )
+    {
+        modbus_internal_send( pctx, preq );
+        pctx->toffs = 0;
+
+        /**/
+        printf( "add tail, %p\n", preq );
+        list_add_tail( &(preq->node), &(pctx->reqlist) );
+
+    }
+    else
+    {
+        /**/
+        printf( "add tail, %p\n", preq );
+        list_add_tail( &(preq->node), &(pctx->reqlist) );
+
+        /**/
+        modbus_internal_timeout( pctx );
+    }
+
+    /**/
+    
     return 0;
     
 }
@@ -421,6 +438,20 @@ next_shift:
 
 
 
+int  modbus_proc_timeout( intptr_t ctx )
+{
+    modbus_context_t * pctx;
+
+    /**/
+    pctx = (modbus_context_t *)ctx;
+
+    /**/
+    modbus_internal_timeout( pctx );
+    return 0;
+}
+
+
+
 int  modbus_init( int tsize, intptr_t * pret )
 {
     modbus_context_t * pctx;
@@ -461,5 +492,49 @@ int  modbus_fini( intptr_t  ctx )
     free( pctx );
     return 0;
 }
+
+
+
+
+
+int32_t  modbus_conv_long( uint8_t * puc )
+{
+    int32_t  temp;
+
+    /**/
+    temp = puc[2];
+    temp = temp << 8;
+    temp = temp | puc[3];
+    temp = temp << 8;
+    temp = temp | puc[0];
+    temp = temp << 8;
+    temp = temp | puc[1];
+
+    /**/
+    return temp;
+}
+
+
+float  modbus_conv_real4( uint8_t * puc )
+{
+    volatile float  temp;
+    uint32_t * pu32;
+
+    /**/
+    pu32 = (uint32_t *)&temp;
+
+    /**/
+    *pu32 = puc[2];
+    *pu32 <<= 8;
+    *pu32 |= puc[3];
+    *pu32 <<= 8;
+    *pu32 |= puc[0];
+    *pu32 <<= 8;
+    *pu32 |= puc[1];
+
+    /**/
+    return temp;
+}
+
 
 

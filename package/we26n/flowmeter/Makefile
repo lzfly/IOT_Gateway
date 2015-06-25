@@ -33,12 +33,13 @@ define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)/obj
 	$(CP) ./src  $(PKG_BUILD_DIR)/
 	$(CP) ./test.mk  $(PKG_BUILD_DIR)/
+	$(CP) ../enn  $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 	CC="$(TARGET_CC)" \
-	CFLAGS="$(TARGET_CFLAGS) -Wall" \
+	CFLAGS="$(TARGET_CFLAGS) -Wall -I ./enn" \
 	LDFLAGS="$(TARGET_LDFLAGS) -lubox -lubus -lpthread" \
 	-f test.mk
 endef
