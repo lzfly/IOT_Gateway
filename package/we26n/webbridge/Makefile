@@ -38,6 +38,8 @@ define Package/webbridge/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) ./files/datareport.lua  $(1)/usr/bin/datareport.lua
 	$(INSTALL_BIN) ./files/commanddispatcher.lua  $(1)/usr/bin/commanddispatcher.lua
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/webbridge.sh  $(1)/etc/init.d/webbridge.sh
 endef
 
 $(eval $(call BuildPackage,webbridge))

@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 require "ubus"
 require "uloop"
 
