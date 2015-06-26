@@ -1,4 +1,9 @@
 # Put your custom commands here that should be executed once
 # the system init finished. By default this file does nothing.
 
+start-stop-daemon -b -S -x datareport.lua
+start-stop-daemon -b -S -x commanddispatcher.lua
+start-stop-daemon -b -S -x flowmeter
+start-stop-daemon -b -S -x netzigbee
+
 exit 0
