@@ -31,6 +31,5 @@ struct deviceBean{
 extern struct GatewayBean g_Gate;
 extern struct deviceBean g_devices[MAX_DEVICES];
 extern int g_devices_count;
-extern int g_monitor_socket;
 
 #endif /* SEARCHGATEWAY_H_ */

@@ -29,8 +29,9 @@
 #include "we26n_type.h"
 #include "gateway.h"
 #include "fbee_protocol.h"
+#include "gateway_socket.h"
 
-extern int sendCommand(int fd,w26n_byte* cmd, int cmd_length);
+struct uloop_fd ufd;
 
 
 enum {
@@ -178,11 +179,7 @@ int socket_rev_add()
 	int iret;
 	struct uloop_fd *pufd;
 	
-    pufd = (struct uloop_fd *)malloc( sizeof(struct uloop_fd) );
-    if ( NULL == pufd )
-    {
-        return 3;
-    }
+    pufd = &ufd;
     
     memset( pufd, 0, sizeof(struct uloop_fd) );
     pufd->fd = g_monitor_socket;
@@ -190,14 +187,16 @@ int socket_rev_add()
 
     /**/
     iret = uloop_fd_add( pufd, ULOOP_READ);
+	
+	printf("[socket_rev_add] ok\r\n");
 	return 0;
 }
 
-int ctrlDevice()
+int gatewaySevice()
 {
     struct ubus_context *ctx;
 	
-    printf("[ctrlDevice]start\r\n");
+    printf("[gatewaySevice]start\r\n");
 		
     /**/
 	uloop_init();
@@ -213,7 +212,31 @@ int ctrlDevice()
 	uloop_run();
 
 	uloop_done();
+	return 0;
 
+}
+int startGatewayService()
+{
+
+    int  iret;
+	pthread_t  aux_thrd;
+
+
+    printf( "[startGatewayService]start");
+		   
+	iret = pthread_create( &aux_thrd, NULL, gatewaySevice, NULL );
+	if ( 0 != iret )
+	{
+		printf( "gatewaySevice pthread create fail, %d", iret );
+		return -1;
+	}
+
+	return 0;
+}
+int endGatewayService()
+{
+   uloop_end();
+   printf( "[endGatewayService]end");
 }
 
 int sendDeviceState(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint, w26n_uint8 state)

@@ -81,20 +81,6 @@ int  prepare_threads( void )
         return -1;
     }
 
-/*
-	iret = pthread_create( &aux_thrd, NULL, receiveDeviceMsg, NULL );
-	if ( 0 != iret )
-	{
-		printf( "receiveDeviceMsg pthread create fail, %d", iret );
-		return -1;
-	}
-	iret = pthread_create( &aux_thrd, NULL, ctrlDevice, NULL );
-	if ( 0 != iret )
-	{
-		printf( "ctrlDevice pthread create fail, %d", iret );
-		return -1;
-	}
-*/	
     return 0;
 }
 
@@ -115,28 +101,6 @@ int  main( void )
 
 	while(1)
 		sleep(1000);
-#if 0
-    /**/
-	uloop_init();
-
-	signal(SIGPIPE, SIG_IGN);	
-    
-    /**/
-	ctx = ubus_connect( NULL );
-	if ( NULL == ctx) 
-	{
-	    fprintf(stderr, "Failed to connect to ubus\n");
-	    return -1;
-	}
-
-    /**/
-	ubus_add_uloop( ctx );
-	server_main( ctx );
-
-    /**/
-	ubus_free(ctx);
-	uloop_done();
-#endif
 
 	return 0;
 	

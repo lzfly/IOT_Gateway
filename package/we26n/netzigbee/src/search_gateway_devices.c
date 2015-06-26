@@ -25,10 +25,8 @@
 #include "gateway.h"
 #include "fbee_protocol.h"
 #include "we26n_type.h"
+#include "gateway_socket.h"
 
-extern int server_monitor();
-extern int sendCommandRevMsg(int fd,w26n_byte* cmd, int cmd_length,char* resp_body, int *resp_length);
-extern int sendCommand(int fd,w26n_byte* cmd, int cmd_length);
 extern int startSearchDevice();
 
 static int PORT=9090;
@@ -93,7 +91,7 @@ int gateway_conf_init()
 	 return 0;
 }
 
-void waitMessage(int socket_descriptor)
+int waitMessage(int socket_descriptor)
 {
     int sin_len;
     char message[256];
@@ -142,26 +140,12 @@ void waitMessage(int socket_descriptor)
     	printf("IP:%s\n",g_Gate.IP);
 		printf("SN:%s\n",g_Gate.SN);
 		printf("SN=0X%x\n", g_Gate.snid);
-
-		beginListenGateway();
-		sleep(2);
-
-		getGateDetailInfo();
-
-//
-		//startSearchDevice();
-//
-//		sleep(10);
-//		startSearchDevice();
-//		sleep(10);
-//		startSearchDevice();
-//		sleep(10);
-//		startSearchDevice();
-
-
+		
+		return 0;
     }
-
-    close(socket_descriptor);
+	else{
+	    return 2;
+	}
 }
 
 
@@ -191,6 +175,8 @@ int beginSearch()
 	addrto.sin_port=htons(PORT);
 	int nlen=sizeof(addrto);
 
+research:	
+	printf("[beginSearch]begin to search gateway\n"); 
 	int ret=sendto(sock, SEARCH_GATEWAY_COMMAND, strlen(SEARCH_GATEWAY_COMMAND), 0, (struct sockaddr *)&addrto, nlen);
 
 	if(ret<0)
@@ -204,27 +190,28 @@ int beginSearch()
 	{
 		printf("send ok\n");
 	}
-
-	waitMessage(sock);
-    sleep(5);
-	startSearchDevice();
+    
+	int iret;
+	iret = waitMessage(sock);
+	if(iret == 0)
+	{ 
+	    printf("[beginSearch]find gateway\n");
+	    close(sock);
+		connectGateway();
+		startGatewayService();
+		sleep(2);
+		getGateDetailInfo(); 
+	    sleep(5);
+	    startSearchDevice();
+	}
+	else
+	{
+	    printf("[beginSearch] no find gateway\n");
+	    sleep(60 * 5);
+		goto research;
+	}
 	
 	return 0;
-}
-
-//listen gateway
-int beginListenGateway()
-{
-	int  iret;
-	pthread_t  aux_thrd;
-	iret = pthread_create( &aux_thrd, NULL, server_monitor, NULL );
-	if ( 0 != iret )
-	{
-		printf( "aux pthread create fail, %d", iret );
-		return -1;
-	}
-	return 0;
-
 }
 
 //get gate info
@@ -243,6 +230,8 @@ int getGateDetailInfo()
 extern int sendDeviceState(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint, w26n_uint8 state);
 	
 static int searchDeviceSocket=0;
+static int sendFailCount = 0;
+
 int startSearchDevice()
 {
 
@@ -252,6 +241,7 @@ int startSearchDevice()
 	char buffer1[512];
 	char *buffer;
 	int index = 0;
+	int iret;
 
 	int resp_length=0;
 	msg[SRPC_CMD_ID_POS]=RPCS_GET_DEVICES;
@@ -261,8 +251,24 @@ int startSearchDevice()
 	{
 		printf("[startSearchDevice] g_devices_count=%d\r\n", g_devices_count);
 
-		sendCommand(g_monitor_socket,msg,cmd_length);
-
+		iret = sendCommand(g_monitor_socket,msg,cmd_length);
+		if(iret)
+		{
+			sendFailCount++;
+			if(sendFailCount > 3)
+			{
+			    printf("[startSearchDevice]send command fail 3 times\n"); 
+				printf("[startSearchDevice]restart Gateway Service\n");
+			    disConnectGateway();
+				endGatewayService();
+				sleep(2);
+				connectGateway();
+				startGatewayService();
+				sendFailCount = 0;
+				
+			}
+		}
+		
 		sleep(10);
 
         int i;

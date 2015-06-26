@@ -9,7 +9,6 @@
 struct GatewayBean g_Gate;
 struct deviceBean g_devices[MAX_DEVICES];
 int g_devices_count = 0;
-int g_monitor_socket;
 
 //
 //w26n_bool void we26n_read_gateIP(char *ip)
