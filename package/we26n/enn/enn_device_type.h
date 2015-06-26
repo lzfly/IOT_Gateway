@@ -10,19 +10,22 @@
 //电表
 #define ENN_DEVICE_TYPE_POWERMETER "0005"
 
-//三路开关
+//开关
 #define ENN_DEVICE_TYPE_ON_OFF_THREE "0009"
 
-//两路窗帘 
-#define ENN_DEVICE_TYPE_WINDOWS "0026"
+//窗帘 
+#define ENN_DEVICE_TYPE_WINDOWS "0036"
 
 //可调亮度灯 
 #define ENN_DEVICE_TYPE_BRIGHTNESS_LAMP "0018"
 
-//温湿度 
-#define ENN_DEVICE_TYPE_TEMP_HUM "0019"
+//可调亮度色温灯 
+#define ENN_DEVICE_TYPE_COLOR_TEMP_LAMP "0037"
 
-//燃气
-#define ENN_DEVICE_TYPE_GAS "0020"
+//温湿度 
+#define ENN_DEVICE_TYPE_TEMP_HUM "0038"
+
+//燃气报警
+#define ENN_DEVICE_TYPE_GAS "0039"
 
 #endif

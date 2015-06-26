@@ -32,6 +32,8 @@
 #include "fbee_protocol.h"
 #include "gateway_socket.h"
 #include "ctrl_gateway_devices.h"
+#include "enn_device_type.h"
+#include "enn_device_attr.h"
 
 
 struct uloop_fd ufd;
@@ -166,7 +168,39 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 			{
 				printf("device SN = %s", g_devices[i].SN);
 				printf("device shortaddr = 0x%x", g_devices[i].shortaddr);
-                sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data1);
+				
+				switch(g_devices[i].deviceId)
+				{
+				 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
+                     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data1);
+					 break;
+				 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
+				 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
+					 if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE)
+					 {
+					     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data1);
+						
+					 }
+					 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE)
+					 {
+						 sendDeviceLevel(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data1);
+					 }
+					 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE)
+					 {
+						 sendDeviceColorTemp(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data1);
+					 }
+					 else
+					 {
+					     printf("[startSearchDevice] error attr\r\n");
+					}
+					 break;
+				 case FB_DEVICE_TYPE_WINDOWS:
+				     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data1);
+					 break;
+				 default:
+					 break;
+				}
+                
 				printf("[startSearchDevice] sendDeviceState=%d\r\n", data1);
 
 			}
@@ -340,6 +374,9 @@ int sendDeviceState(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPo
 
 	char buffer[512];
 	int resp_length=0;
+	
+	printf( "[sendDeviceState]start");
+	
 	msg[0] = RPCS_SET_DEV_STATE;
 	msg[1] = 0x0D;
 	msg[2] = addrmode;
@@ -356,17 +393,80 @@ int sendDeviceState(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPo
 	msg[13] = 0x0;
 	msg[14] = state;
 
-	printf("luz--msg0=0x%x\r\n", msg[0]);
-    printf("luz--msg1=0x%x\r\n", msg[1]);
-	printf("luz--msg2=0x%x\r\n", msg[2]);
-	printf("luz--msg3=0x%x\r\n", msg[3]);
-	printf("luz--msg4=0x%x\r\n", msg[4]);
-	printf("luz--msg11=0x%x\r\n", msg[11]);
-	printf("luz--msg14=0x%x\r\n", msg[14]);
 	sendCommand(g_monitor_socket,msg,cmd_length);
 
 	return 0;
 
 }
 
+int sendDeviceLevel(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint, w26n_uint8 level)
+{
+
+	int cmd_length=17;
+	w26n_byte msg[cmd_length];
+
+	char buffer[512];
+	int resp_length=0;
+	
+	printf( "[sendDeviceLevel]start");
+	
+	msg[0] = RPCS_SET_DEV_LEVEL;
+	msg[1] = 0x0D;
+	msg[2] = addrmode;
+	msg[3] = shortaddr&0xFF;
+	msg[4] = (shortaddr&0xFF00)>>8;
+    msg[5] = 0x0;
+	msg[6] = 0x0;
+	msg[7] = 0x0;
+	msg[8] = 0x0;
+	msg[9] = 0x0;
+	msg[10] = 0x0;
+	msg[11] = endPoint;
+	msg[12] = 0x0;
+	msg[13] = 0x0;
+	msg[14] = level;
+	msg[15] = 0x0;
+	msg[16] = 0x0;
+
+	sendCommand(g_monitor_socket,msg,cmd_length);
+
+	return 0;
+
+}
+
+int sendDeviceColorTemp(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint, w26n_uint16 colorTemp)
+{
+
+	int cmd_length=18;
+	w26n_byte msg[cmd_length];
+
+	char buffer[512];
+	int resp_length=0;
+	
+	printf( "[sendDeviceColorTemp]start");
+	
+	msg[0] = RPCS_SET_COLORTMP;
+	msg[1] = 0x0D;
+	msg[2] = addrmode;
+	msg[3] = shortaddr&0xFF;
+	msg[4] = (shortaddr&0xFF00)>>8;
+    msg[5] = 0x0;
+	msg[6] = 0x0;
+	msg[7] = 0x0;
+	msg[8] = 0x0;
+	msg[9] = 0x0;
+	msg[10] = 0x0;
+	msg[11] = endPoint;
+	msg[12] = 0x0;
+	msg[13] = 0x0;
+	msg[14] = colorTemp&0xFF;
+	msg[15] = (colorTemp&0xFF00)>>8;
+	msg[16] = 0x0;
+	msg[17] = 0x0;
+
+	sendCommand(g_monitor_socket,msg,cmd_length);
+
+	return 0;
+
+}
 
