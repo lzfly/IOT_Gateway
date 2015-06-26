@@ -210,8 +210,11 @@ int gatewaySevice()
 	
 	
 	uloop_run();
+    printf("[gatewaySevice]exit run\r\n");
 
 	uloop_done();
+	printf("[gatewaySevice] exit gateway thread\r\n");
+
 	return 0;
 
 }
@@ -233,9 +236,14 @@ int startGatewayService()
 
 	return 0;
 }
+
+int restartGatewayService()
+{
+	   socket_rev_add();
+}
 int endGatewayService()
 {
-   uloop_end();
+   uloop_fd_delete(&ufd);
    printf( "[endGatewayService]end");
 }
 

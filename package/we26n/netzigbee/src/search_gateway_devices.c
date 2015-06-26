@@ -263,7 +263,7 @@ int startSearchDevice()
 				endGatewayService();
 				sleep(2);
 				connectGateway();
-				startGatewayService();
+				restartGatewayService();
 				sendFailCount = 0;
 				
 			}
