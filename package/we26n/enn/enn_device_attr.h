@@ -17,13 +17,12 @@
 
 //两路窗帘控制 
 //数据类型： int 32bit
-#define ENN_DEVICE_ATTR_WINDOWS_A_OPEN   2005
+#define ENN_DEVICE_ATTR_WINDOWS_OPEN   2005
 //数据类型： int 32bit
-#define ENN_DEVICE_ATTR_WINDOWS_A_CLOSE   2006
+#define ENN_DEVICE_ATTR_WINDOWS_CLOSE   2006
 //数据类型： int 32bit
-#define ENN_DEVICE_ATTR_WINDOWS_B_OPEN   2007
-//数据类型： int 32bit
-#define ENN_DEVICE_ATTR_WINDOWS_B_CLOSE   2008
+#define ENN_DEVICE_ATTR_WINDOWS_STOP   2007
+
 
 //可调亮度灯属性 
 //数据类型： int 32bit
