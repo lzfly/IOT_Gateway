@@ -192,12 +192,12 @@ int server_monitor()
 	pthread_t  aux_thrd;
 
 
-    iret = pthread_create( &aux_thrd, NULL, receiveDeviceMsg, NULL );
+    /*iret = pthread_create( &aux_thrd, NULL, receiveDeviceMsg, NULL );
 	if ( 0 != iret )
 	{
 	    printf( "receiveDeviceMsg pthread create fail, %d", iret );
 		return -1;
-	}
+	}*/
 		   
 	iret = pthread_create( &aux_thrd, NULL, ctrlDevice, NULL );
 	if ( 0 != iret )
