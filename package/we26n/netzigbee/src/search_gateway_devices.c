@@ -275,7 +275,7 @@ int startSearchDevice()
 		{
 			 printf("[startSearchDevice] endpoint=%d\r\n", g_devices[i].endpoint);
 
-			if(g_devices[i].endpoint == 16)
+			if(g_devices[i].endpoint == 11)
 			{
 				printf("device SN = %s", g_devices[i].SN);
 				printf("device shortaddr = 0x%x", g_devices[i].shortaddr);

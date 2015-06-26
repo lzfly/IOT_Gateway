@@ -105,12 +105,33 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 	   char shortaddrstr[32];
 	   char endpiontstr[32];
 	   ptr = strchr(deviceIdstr, c);
+	   printf( "deviceid parse 1\n");
+
 	   ptr = strchr(ptr + 1, c);
+	   printf( "deviceid parse 2\n");
+
 	   ptr1 = strchr(ptr + 1, c);
+	   printf( "deviceid parse 3\n");
+
+       printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", ptr,ptr1);
+
+
+	   if(ptr == 0 || ptr1 == 0)
+	   {
+		   printf( "deviceid parse error\n");
+
+           goto done;
+	   }
 	   int i = 0;
+
+	   printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", ptr,ptr1);
+
+	   printf( "deviceid parse count=%d\n", ptr1-ptr-1);
+
 	   while(i < ptr1 - ptr - 1)
 	   {
 	      shortaddrstr[i] = ptr[i+1];
+		  i++;
 	   }
 	   shortaddrstr[ptr1 - ptr - 1] = 0;
 	   
@@ -139,6 +160,8 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
         int i;
 		for(i = 0; i < g_devices_count; i++)
 		{
+			printf("[startSearchDevice] shrtaddr=%d endpoint=%d\r\n", g_devices[i].shortaddr, g_devices[i].endpoint);
+
 			if(g_devices[i].endpoint == endpoint && g_devices[i].shortaddr == shortaddr)
 			{
 				printf("device SN = %s", g_devices[i].SN);
@@ -149,6 +172,8 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 			}
 		}
 	}
+
+done:
 
     /* send reply */
 	blob_buf_init( &b, 0 );
