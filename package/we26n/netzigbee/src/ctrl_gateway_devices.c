@@ -31,9 +31,10 @@
 #include "gateway.h"
 #include "fbee_protocol.h"
 #include "gateway_socket.h"
+#include "ctrl_gateway_devices.h"
+
 
 struct uloop_fd ufd;
-
 
 enum {
     CTRLCMD_GATEWAY,

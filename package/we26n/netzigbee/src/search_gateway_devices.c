@@ -26,6 +26,7 @@
 #include "fbee_protocol.h"
 #include "we26n_type.h"
 #include "gateway_socket.h"
+#include "ctrl_gateway_devices.h"
 
 extern int startSearchDevice();
 
@@ -227,9 +228,6 @@ int getGateDetailInfo()
 	return 0;
 }
 
-extern int sendDeviceState(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint, w26n_uint8 state);
-	
-static int searchDeviceSocket=0;
 static int sendFailCount = 0;
 
 int startSearchDevice()
