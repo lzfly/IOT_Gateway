@@ -9,6 +9,7 @@
 #include <syslog.h>
 #include <stdarg.h>
 #include <pthread.h>
+#include <string.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -57,7 +58,15 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 {
 
 	struct blob_attr * tb[__CTRLCMD_MAX];
-    const char * ptr;
+    const char * gatewayidstr;
+	const char * deviceIdstr;
+	const char * attrstr;
+	const char * datastr;
+	w26n_uint16 shortaddr ;
+	w26n_uint8 endpoint;
+	w26n_uint32 attr;
+	w26n_uint32 data;
+	w26n_uint8 data1;
     static struct blob_buf b;
 
 	printf("[zigbee_ctrlcmd]start\r\n");
@@ -67,28 +76,78 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 
 	if ( tb[CTRLCMD_GATEWAY] )
 	{
-		ptr = blobmsg_data( tb[CTRLCMD_GATEWAY] );
-		printf( "gate = %s\n", ptr );
+		gatewayidstr = blobmsg_data( tb[CTRLCMD_GATEWAY] );
+		printf( "gate = %s\n", gatewayidstr );
 	}
 
 	if ( tb[CTRLCMD_DEVICEID] )
 	{
-		ptr = blobmsg_data( tb[CTRLCMD_DEVICEID] );
-		printf( "device = %s\n", ptr );
+		deviceIdstr = blobmsg_data( tb[CTRLCMD_DEVICEID] );
+		printf( "device = %s\n", deviceIdstr );
 	}
 
 	if ( tb[CTRLCMD_ATTR] )
 	{
-		ptr = blobmsg_data( tb[CTRLCMD_ATTR] );
-		printf( "attr = %s\n", ptr );
+		attrstr = blobmsg_data( tb[CTRLCMD_ATTR] );
+		printf( "attr = %s\n", attrstr );
 	}
 
 	if ( tb[CTRLCMD_DATA] )
 	{
-		ptr = blobmsg_data( tb[CTRLCMD_DATA] );
-		printf( "data = %s\n", ptr );
+		datastr = blobmsg_data( tb[CTRLCMD_DATA] );
+		printf( "data = %s\n", datastr );
 	}
 	
+	
+    {
+	   char *ptr,*ptr1, c = '_';
+	   char shortaddrstr[32];
+	   char endpiontstr[32];
+	   ptr = strchr(deviceIdstr, c);
+	   ptr = strchr(ptr + 1, c);
+	   ptr1 = strchr(ptr + 1, c);
+	   int i = 0;
+	   while(i < ptr1 - ptr - 1)
+	   {
+	      shortaddrstr[i] = ptr[i+1];
+	   }
+	   shortaddrstr[ptr1 - ptr - 1] = 0;
+	   
+	   stpcpy(endpiontstr, ptr1 + 1);
+	   endpiontstr[strlen(ptr1) - 1] = 0;
+	   
+	   printf( "shortaddrstr = %s\n", shortaddrstr );
+	   printf( "endpiontstr = %s\n", endpiontstr );
+	   
+	   shortaddr = strtoul(shortaddrstr, NULL, 10);
+	   endpoint = strtoul(endpiontstr, NULL, 10);
+	   
+	   printf( "shortaddr = %d\n", shortaddr );
+	   printf( "endpoint = %d\n", endpoint );
+	   
+	   attr = strtoul(attrstr, NULL, 10);
+	   printf( "attr = %d\n", attr );
+	   
+	   data = strtoul(datastr, NULL, 16);
+	   printf( "data = %d\n", data );
+	   data1 = data;
+	   
+
+	}
+	{
+        int i;
+		for(i = 0; i < g_devices_count; i++)
+		{
+			if(g_devices[i].endpoint == endpoint && g_devices[i].shortaddr == shortaddr)
+			{
+				printf("device SN = %s", g_devices[i].SN);
+				printf("device shortaddr = 0x%x", g_devices[i].shortaddr);
+                sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data1);
+				printf("[startSearchDevice] sendDeviceState=%d\r\n", data1);
+
+			}
+		}
+	}
 
     /* send reply */
 	blob_buf_init( &b, 0 );
