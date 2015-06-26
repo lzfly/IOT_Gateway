@@ -69,7 +69,6 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 	w26n_uint8 endpoint;
 	w26n_uint32 attr;
 	w26n_uint32 data;
-	w26n_uint8 data1;
     static struct blob_buf b;
 
 	printf("[zigbee_ctrlcmd]start\r\n");
@@ -152,9 +151,8 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 	   attr = strtoul(attrstr, NULL, 10);
 	   printf( "attr = %d\n", attr );
 	   
-	   data = strtoul(datastr, NULL, 16);
+	   data = strtoul(datastr, NULL, 10);
 	   printf( "data = %d\n", data );
-	   data1 = data;
 	   
 
 	}
@@ -172,22 +170,22 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 				switch(g_devices[i].deviceId)
 				{
 				 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
-                     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data1);
+                     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
 					 break;
 				 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 				 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
 					 if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE)
 					 {
-					     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data1);
+					     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
 						
 					 }
 					 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE)
 					 {
-						 sendDeviceLevel(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data1);
+						 sendDeviceLevel(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
 					 }
 					 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE)
 					 {
-						 sendDeviceColorTemp(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data1);
+						 sendDeviceColorTemp(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
 					 }
 					 else
 					 {
@@ -195,13 +193,13 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 					}
 					 break;
 				 case FB_DEVICE_TYPE_WINDOWS:
-				     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data1);
+				     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
 					 break;
 				 default:
 					 break;
 				}
                 
-				printf("[startSearchDevice] sendDeviceState=%d\r\n", data1);
+				printf("[startSearchDevice] sendDeviceState=%d\r\n", data);
 
 			}
 		}

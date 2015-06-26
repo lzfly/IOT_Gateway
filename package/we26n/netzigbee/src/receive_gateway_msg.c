@@ -116,8 +116,8 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoi
 	
 	blobmsg_add_string( &b, "attr", devicetypestr );
 	
-	char devicedatastr[20];
-	sprintf(devicedatastr, "0x%x", data);
+	char devicedatastr[64];
+	sprintf(devicedatastr, "%d", data);
 	blobmsg_add_string( &b, "data", devicedatastr);	
 
 	printf("[sendMsgToWeb]ubus_invoke\r\n");

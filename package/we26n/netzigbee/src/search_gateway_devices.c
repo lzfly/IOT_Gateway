@@ -269,7 +269,7 @@ int startSearchDevice()
 		
 		sleep(10);
 
-        int i;
+/*        int i;
 		index++;
 		for(i = 0; i < g_devices_count; i++)
 		{
@@ -283,7 +283,7 @@ int startSearchDevice()
 				printf("[startSearchDevice] sendDeviceState=%d\r\n", index%2);
 
 			}
-		}
+		i}*/
 		sleep(10);
 
 
