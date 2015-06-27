@@ -99,7 +99,7 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoi
 	{
 	 case FB_DEVICE_TYPE_GAS:
 	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_GAS);
-		  sprintf(devicetypestr, "%d", ENN_DEVICE_ATTR_GAS_VALUE);
+		  sprintf(devicetypestr, "%d", ENN_DEVICE_ATTR_GAS_ALERT);
 	     break;
 	 case FB_DEVICE_TYPE_TEMP_HUM:
 	 case FB_DEVICE_TYPE_TEMP_HUM_2:
