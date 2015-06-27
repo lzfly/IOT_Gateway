@@ -228,7 +228,7 @@ void  test_modbus_01_timer_cbk( struct uloop_timeout * ptmr )
     modbus_send_req( mctx, 1, 0x14, 0x2, test_modbus_01_data_cbk, (intptr_t)pinfo );
 
     /**/
-    uloop_timeout_set( ptmr, 5000 );
+    uloop_timeout_set( ptmr, 30000 );
     return;
 }
 
@@ -368,15 +368,17 @@ void  test_modbus_02_timer_cbk( struct uloop_timeout * ptmr )
     {
     case 0:
         modbus_send_req( mctx, 2, 1528, 2, test_modbus_02_sn_cbk, (intptr_t)pinfo );
+        uloop_timeout_set( ptmr, 4000 );        
         break;
 
     case 1:
         modbus_send_req( mctx, 2, 136, 0x4, test_modbus_02_data_cbk, (intptr_t)pinfo );
+        uloop_timeout_set( ptmr, 30000 );        
         break;
     }
 
     /**/    
-    uloop_timeout_set( ptmr, 4000 );
+
     return;
     
 }
