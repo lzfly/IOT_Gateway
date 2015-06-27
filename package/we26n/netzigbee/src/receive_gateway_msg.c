@@ -174,7 +174,7 @@ int receiveDeviceMsg(char *buf, int len)
 					{
 						printf("[receiveDeviceMsg] i  endpoint=%d\r\n",g_devices[i].endpoint);
 
-						if(g_devices[g_devices_count].endpoint == g_devices[i].endpoint)
+						if(g_devices[g_devices_count].endpoint == g_devices[i].endpoint && g_devices[g_devices_count].shortaddr == g_devices[i].shortaddr)
 						{
 							//printf("[receiveDeviceMsg] find old device\r\n");
 							olddevice = 1;

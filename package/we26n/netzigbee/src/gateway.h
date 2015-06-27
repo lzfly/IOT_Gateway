@@ -2,7 +2,7 @@
 #define GATEWAYBEAN_H_
 #include "we26n_type.h"
 
-#define MAX_DEVICES 32
+#define MAX_DEVICES 64
 
 struct GatewayBean {
 
