@@ -3,7 +3,7 @@
 require "ubus"
 
 http = require "socket.http";
-url = "http://192.168.1.7:8081";
+url = "http://192.168.1.26:8080/helloapp/ctrl";
 
 conn = ubus.connect();
 if not conn then
@@ -62,19 +62,21 @@ function dispatchCommand(data)
 	local jobj = cjson.decode(data);
 
 	for idx, value in ipairs(jobj) do
-		local devId = value["deviceid"]
-		if devId ~= nil then
-			local gatewayId = value["gatewayid"];
-			local attr = value["attr"];
-			local data = value["data"];
+		if value ~= nil then
+			local devId = value["deviceid"]
+			if devId ~= nil then
+				local gatewayId = value["gatewayid"];
+				local attr = value["attr"];
+				local data = value["data"];
 
-			local devIdLower = string.lower(devId);
-			if string.match(devIdLower, "zigbee_jianyou") == "zigbee_jianyou" then
-				sendToZigbeeJianyou(gatewayId, devId, attr, data);
-			elseif string.match(devIdLower, "zigbee_fbee") == "zigbee_fbee" then
-				sendToZigbeeFbee(atewayId, devId, attr, data);
-			elseif string.match(devIdLower, "433_jianyou") == "433_jianyou" then
-				sendTo433Jianyou(gatewayId, devId, attr, data);
+				local devIdLower = string.lower(devId);
+				if string.match(devIdLower, "zigbee_jianyou") == "zigbee_jianyou" then
+					sendToZigbeeJianyou(gatewayId, devId, attr, data);
+				elseif string.match(devIdLower, "zigbee_fbee") == "zigbee_fbee" then
+					sendToZigbeeFbee(atewayId, devId, attr, data);
+				elseif string.match(devIdLower, "433_jianyou") == "433_jianyou" then
+					sendTo433Jianyou(gatewayId, devId, attr, data);
+				end
 			end
 		end
 	end
@@ -90,6 +92,8 @@ while true do
 		processing = true;
 
 		local result = getCommand();
+
+		print(result);
 
 		--result = '[{ "gatewayid":"we26n_xxxxxx", "deviceid":"zigbee_fbee_xxxxx", "attr":"001", "data":"989797897897897" },{ "gatewayid":"we26n_xxxxxx", "deviceid":"zigbee_jianyou_xxxxx", "attr":"001", "data":"989797897897897" }]';
 

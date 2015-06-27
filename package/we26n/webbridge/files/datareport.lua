@@ -48,7 +48,7 @@ local customMethod = {
 				end
 
 				if queryParam ~= nil then
-					local targetUrl = "http://192.168.1.7:8081/helloapp/info?" .. queryParam;
+					local targetUrl = "http://192.168.1.7:8080/helloapp/info?" .. queryParam;
 
 					print(targetUrl);
 

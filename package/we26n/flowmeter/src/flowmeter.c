@@ -12,6 +12,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <syslog.h>
+
 #include <libubox/blobmsg_json.h>
 #include <libubox/uloop.h>
 #include <libubus.h>
@@ -521,6 +523,9 @@ int  main( void )
 {
     int  iret;
 
+    /**/
+    syslog( LOG_CRIT, "begin flowmeter ..." );
+    
 #if 0
     /**/
     iret = prepare_threads();
