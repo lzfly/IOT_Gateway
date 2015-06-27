@@ -3,7 +3,7 @@
 require "ubus"
 
 http = require "socket.http";
-url = "http://192.168.1.26:8080/helloapp/ctrl";
+url = "http://101.200.1.101:8001/helloapp/ctrl";
 
 conn = ubus.connect();
 if not conn then
