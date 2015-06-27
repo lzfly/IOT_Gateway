@@ -24,12 +24,12 @@
 #define ENN_DEVICE_TYPE_GAS "0005"
 
 //甲醛报警
-#define ENN_DEVICE_TYPE_GAS "0004"
+#define ENN_DEVICE_TYPE_FORMAL "0004"
 
 //PM2.5
-#define ENN_DEVICE_TYPE_GAS "0003"
+#define ENN_DEVICE_TYPE_PM25 "0003"
 
 //烟雾
-#define ENN_DEVICE_TYPE_GAS "0006"
+#define ENN_DEVICE_TYPE_SMOKE "0006"
 
 #endif

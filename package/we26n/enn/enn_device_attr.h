@@ -36,7 +36,8 @@
 #define ENN_DEVICE_ATTR_HUM_VALUE  1015
 
 //PM2.5
-#define ENN_DEVICE_ATTR_PM25 1006
+//数据类型： int 32bit 
+#define ENN_DEVICE_ATTR_PM25_VALUE 1006
 
 //甲醛报警 
 #define ENN_DEVICE_ATTR_FORMAL 1007
