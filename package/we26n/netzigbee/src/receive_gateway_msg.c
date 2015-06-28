@@ -44,13 +44,13 @@ void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
 	{
 		/* req.priv */
 		printf( "data cback, %d\n", type );
-		blobmsg_parse( &policy, 2, &cur, blob_data(msg), blob_len(msg) );
+//		blobmsg_parse( &policy, 2, &cur, blob_data(msg), blob_len(msg) );
 		
 		/**/
-		a = blobmsg_get_u32( cur[0] );
-		b = blobmsg_get_u32( cur[1] );
+//		a = blobmsg_get_u32( cur[0] );
+//		b = blobmsg_get_u32( cur[1] );
 		
-		printf( "a = %d, b = %d\n", a, b );
+//		printf( "a = %d, b = %d\n", a, b );
 		
 	}
 
@@ -274,12 +274,12 @@ int receiveDeviceMsg(char *buf, int len)
 					int i, index;
                     for(i = 0; i < g_devices_count; i++)
 					{
-						printf("[receiveDeviceMsg] report i  endpoint=%d\r\n",g_devices[i].endpoint);
-						 printf("[receiveDeviceMsg] report i  shortaddr=%d\r\n",g_devices[i].shortaddr);
+						//printf("[receiveDeviceMsg] report i  endpoint=%d\r\n",g_devices[i].endpoint);
+						 //printf("[receiveDeviceMsg] report i  shortaddr=%d\r\n",g_devices[i].shortaddr);
 
 						if(shortaddr == g_devices[i].shortaddr && endpoint == g_devices[i].endpoint)
 						{
-							printf("[receiveDeviceMsg] find device\r\n");
+							printf("[receiveDeviceMsg]report find device\r\n");
 							index = i;
 							break;
 						}
