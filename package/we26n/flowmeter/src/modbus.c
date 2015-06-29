@@ -232,7 +232,7 @@ static int  modbus_internal_timeout( modbus_context_t * pctx )
     /* wait 10ms, timeout  */
     if ( (temp - preq->usec_send) > 100000 )
     {
-        printf( "timeout delete, %p\n", preq );
+        printf( "timeout delete, addr = %d \n", preq->addr );
 
         /**/
         list_del( &(preq->node) );
@@ -283,14 +283,14 @@ int  modbus_send_req( intptr_t ctx, uint8_t addr, uint16_t reg, uint16_t num, mo
         pctx->toffs = 0;
 
         /**/
-        printf( "add tail, %p\n", preq );
+        printf( "add head to addr %d\n", preq->addr );
         list_add_tail( &(preq->node), &(pctx->reqlist) );
 
     }
     else
     {
         /**/
-        printf( "add tail, %p\n", preq );
+        printf( "add tail to addr %d\n", preq->addr );
         list_add_tail( &(preq->node), &(pctx->reqlist) );
 
         /**/
@@ -328,7 +328,16 @@ int  modbus_recv_decode( intptr_t ctx, int tlen, uint8_t * pdat )
     
     /**/
     preq = list_first_entry( &(pctx->reqlist), modbus_req_t, node );
+
+#if 1
+
+    {
+        printf( "recv from addr %d :", preq->addr );
+        dump_hex( pdat, tlen );
+    }
     
+#endif
+
     /**/
     memcpy( &(pctx->tbuf[pctx->toffs]), pdat, tlen );
     tsize = pctx->toffs + tlen;
@@ -424,7 +433,7 @@ next_shift:
         }
 
         
-        memmove( &(pctx->tbuf[0]), &(pctx->tbuf[0]), tsize-1 );
+        memmove( &(pctx->tbuf[0]), &(pctx->tbuf[1]), tsize-1 );
         pctx->toffs = 0;
         tsize = tsize - 1;
         
