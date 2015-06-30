@@ -155,6 +155,7 @@ int waitMessage(int socket_descriptor)
 int beginSearch()
 {
 	int sock=-1;
+	sleep(30);
 	if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
 	{
 		return -1;
@@ -171,7 +172,7 @@ int beginSearch()
 	bzero(&addrto, sizeof(struct sockaddr_in));
 	addrto.sin_family=AF_INET;
 	//addrto.sin_addr.s_addr=htonl(INADDR_BROADCAST);
-	addrto.sin_addr.s_addr=htonl( 0xc0a801ff );//192.168.1.255
+	addrto.sin_addr.s_addr=htonl( 0xc0a800ff );//192.168.1.255
 
 	addrto.sin_port=htons(PORT);
 	int nlen=sizeof(addrto);
@@ -208,7 +209,7 @@ research:
 	else
 	{
 	    printf("[beginSearch] no find gateway\n");
-	    sleep(60 * 5);
+	    sleep(40);
 		goto research;
 	}
 	
