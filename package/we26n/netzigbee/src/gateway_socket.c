@@ -203,6 +203,11 @@ int getLocalIPandMAC ()
    struct ifreq buf[MAXINTERFACES];
    struct arpreq arp;
    struct ifconf ifc;
+
+
+printf ("getLocalIPandMAC\n");
+
+
 if ((fd = socket (AF_INET, SOCK_DGRAM, 0)) >= 0)
 {
   ifc.ifc_len = sizeof buf;
@@ -218,7 +223,7 @@ if ((fd = socket (AF_INET, SOCK_DGRAM, 0)) >= 0)
     //获取设备名称
     printf ("net device %s\n", buf[intrface].ifr_name);
 	
-	if(0 != strncmp(buf[intrface].ifr_name, "eth0", strlen("eth0")))
+	if(0 != strncmp(buf[intrface].ifr_name, "br-lan", strlen("br-lan")))
 	    continue;
 
 
@@ -235,7 +240,8 @@ if ((fd = socket (AF_INET, SOCK_DGRAM, 0)) >= 0)
             if (!(ioctl (fd, SIOCGIFADDR, (char *) &buf[intrface])))
             {
                  printf ("IP address is:" );
-                 printf("%s", inet_ntoa(((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr));
+                 printf("%08x", ((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr);
+                 g_localAddr.sin_addr = ((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr;				 
                  printf("" );
                    //puts (buf[intrface].ifr_addr.sa_data);
             }
