@@ -87,7 +87,9 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoi
 	printf("[sendMsgToWeb] start--2\r\n");
 
 	blob_buf_init( &b, 0 );
-	blobmsg_add_string( &b, "gatewayid", "we26n_78A351111384" );
+	char gatewayidstr[32];
+	sprintf(gatewayidstr, "we26n_%s", g_localMAC);
+	blobmsg_add_string( &b, "gatewayid", gatewayidstr );
 	
 	char deviceidstr[64];
 	sprintf(deviceidstr, "zigbee_fbee_%d_%d", shortaddr, endpoint);

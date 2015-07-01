@@ -34,6 +34,7 @@ extern struct GatewayBean g_Gate;
 extern struct deviceBean g_devices[MAX_DEVICES];
 extern int g_devices_count;
 extern struct sockaddr_in g_localAddr;
+extern char g_localMAC[16];
 
 
 #endif /* SEARCHGATEWAY_H_ */
