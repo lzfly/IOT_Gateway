@@ -8,7 +8,7 @@ macAddr = string.gsub(macAddr, ":", "");
 macAddr = "we26n_" .. macAddr;
 
 http = require "socket.http";
-url = "http://192.168.1.26:8080/helloapp/ctrl?gatewayid=" .. macAddr;
+url = "http://101.200.1.101:8001/helloapp/ctrl?gatewayid=" .. macAddr;
 
 conn = ubus.connect();
 if not conn then
