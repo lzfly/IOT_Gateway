@@ -2,8 +2,13 @@
 
 require "ubus"
 
+local macReader = io.popen("eth_mac r lan");
+local macAddr = macReader:read("*all");
+macAddr = string.gsub(macAddr, ":", "");
+macAddr = "we26n_" .. macAddr;
+
 http = require "socket.http";
-url = "http://101.200.1.101:8001/helloapp/ctrl";
+url = "http://192.168.1.26:8080/helloapp/ctrl?gatewayid=" .. macAddr;
 
 conn = ubus.connect();
 if not conn then
@@ -86,6 +91,8 @@ end
 local processing = false;
 local t = os.time();
 
+socket = require("socket");
+
 while true do
 	local time = os.time();
 	if time - t >= 1 and not processing then
@@ -107,5 +114,7 @@ while true do
 
 		processing = false;
 		t = time;
+
+		socket.sleep(1);
 	end
 end
