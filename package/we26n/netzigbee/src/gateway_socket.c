@@ -263,7 +263,14 @@ if ((fd = socket (AF_INET, SOCK_DGRAM, 0)) >= 0)
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[3],
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[4],
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[5]);
-                 printf("" );
+				 sprint(g_localMAC, "%02x%02x%02x%02x%02x%02x",
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[0],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[1],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[2],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[3],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[4],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[5]);
+                 printf("g_localMAC=%s\n". g_localMAC);
                  printf("" );
              }
 

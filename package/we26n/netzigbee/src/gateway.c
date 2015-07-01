@@ -11,6 +11,7 @@ struct GatewayBean g_Gate;
 struct deviceBean g_devices[MAX_DEVICES];
 int g_devices_count = 0;
 struct sockaddr_in g_localAddr;
+char  g_localMAC[16];
 
 //
 //w26n_bool void we26n_read_gateIP(char *ip)
