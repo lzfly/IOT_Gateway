@@ -134,6 +134,57 @@ int  test_server_add( void )
 }
 
 
+char  g_mac_addr[20];
+
+// FILE *popen(const char *command, const char *type);
+// char *fgets(char *s, int size, FILE *stream);
+
+
+int  test_get_macaddr( void )
+{
+    FILE * fout;
+    char  tbuf[100];
+    char * ptr;
+    char * dst;
+    
+    /**/
+    fout = popen( "eth_mac r lan", "r" );
+    if ( fout == NULL )
+    {
+        return 1;
+    }
+
+    /**/
+    ptr = fgets( tbuf, 90, fout );
+    if ( NULL == ptr )
+    {
+        return 2;
+    }
+
+    /**/
+    pclose( fout );
+
+    /**/
+    dst = g_mac_addr;
+    ptr = tbuf;
+    while( '\0' != *(ptr) )
+    {
+        if ( *(ptr) != ':' )
+        {
+            *dst++ = *ptr++;
+        }
+        else
+        {
+            ptr++;
+        }
+    }
+
+    /**/
+    *dst = '\0';
+    return 0;
+    
+}
+
 
 typedef struct  powermeter_info
 {
@@ -170,7 +221,8 @@ int  test_ubus_01_send_report( powermeter_info_t * pinfo, int32_t value )
 
     /**/
     blob_buf_init( &b, 0 );
-    blobmsg_add_string( &b, "gatewayid", "we26n_78A351111384" );
+    sprintf( tstr, "we26n_", g_mac_addr );
+    blobmsg_add_string( &b, "gatewayid", tstr );
     sprintf( tstr, "rf433_enn_%s", "12345678" );
     blobmsg_add_string( &b, "deviceid", tstr );
     blobmsg_add_string( &b, "devicetype", ENN_DEVICE_TYPE_POWERMETER );
@@ -275,7 +327,8 @@ int  test_ubus_02_send_report( flowmeter_info_t * pinfo, double value )
 
     /**/
     blob_buf_init( &b, 0 );
-    blobmsg_add_string( &b, "gatewayid", "we26n_78A351111384" );
+    sprintf( tstr, "we26n_", g_mac_addr );
+    blobmsg_add_string( &b, "gatewayid", tstr );
     sprintf( tstr, "rf433_enn_%s", pinfo->devsn );
     blobmsg_add_string( &b, "deviceid", tstr );
     blobmsg_add_string( &b, "devicetype", ENN_DEVICE_TYPE_WATERMETER );
@@ -527,6 +580,15 @@ int  main( void )
 
     /**/
     syslog( LOG_CRIT, "begin flowmeter ..." );
+
+
+    iret = test_get_macaddr();
+    if ( 0 != iret )
+    {
+        syslog( LOG_CRIT, "get mac, ret = %d", iret );
+        return 1;
+    }
+
     
 #if 0
     /**/
@@ -549,7 +611,7 @@ int  main( void )
     {
         printf( "server add fail,ret = %d\n", iret );
         uloop_done();
-        return 1;
+        return 2;
     }
 
     /**/
@@ -558,7 +620,7 @@ int  main( void )
     {
         printf( "prepare modbus fail, ret = %d\n", iret );
         uloop_done();
-        return 2;
+        return 3;
     }
 
     /**/
