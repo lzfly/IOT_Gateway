@@ -58,7 +58,7 @@ void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
 }
 
 
-int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoint, w26n_uint8 atrr, w26n_uint32 data)
+int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoint, w26n_uint16 attr, w26n_uint32 data)
 {
     int  iret;
     uint32_t  id;
@@ -106,7 +106,7 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoi
 	 case FB_DEVICE_TYPE_TEMP_HUM:
 	 case FB_DEVICE_TYPE_TEMP_HUM_2:
 	     sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_TEMP_HUM);
-		 if(atrr == ENN_DEVICE_ATTR_TEMP_VALUE)
+		 if(attr == ENN_DEVICE_ATTR_TEMP_VALUE)
 		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_TEMP_VALUE);
 		 else
 		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_HUM_VALUE);
@@ -123,9 +123,9 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoi
 	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
 	     sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_COLOR_TEMP_LAMP);
-		 if(atrr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE)
+		 if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE)
 		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE);
-		 else if(atrr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE)
+		 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE)
 		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE);
 		 else
 		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE);
