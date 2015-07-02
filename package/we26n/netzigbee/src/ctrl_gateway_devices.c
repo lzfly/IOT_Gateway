@@ -54,6 +54,12 @@ static const struct blobmsg_policy  ctrlcmd_policy[] = {
 	[CTRLCMD_DATA] = { .name = "data", .type = BLOBMSG_TYPE_STRING },	
 };
 
+static const struct blobmsg_policy  getstatecmd_policy[] = {
+	[CTRLCMD_GATEWAY] = { .name = "gatewayid", .type = BLOBMSG_TYPE_STRING },
+	[CTRLCMD_DEVICEID] = { .name = "deviceid", .type = BLOBMSG_TYPE_STRING },
+	[CTRLCMD_ATTR] = { .name = "attr", .type = BLOBMSG_TYPE_STRING },	
+};
+
 
 static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
                 struct ubus_request_data *req, const char *method,
@@ -221,9 +227,160 @@ done:
     
 }
 
+static int zigbee_getstatecmd( struct ubus_context *ctx, struct ubus_object *obj,
+                struct ubus_request_data *req, const char *method,
+                struct blob_attr *msg )
+{
+
+	struct blob_attr * tb[__CTRLCMD_MAX];
+    const char * gatewayidstr;
+	const char * deviceIdstr;
+	const char * attrstr;
+	const char * datastr;
+	w26n_uint16 shortaddr ;
+	w26n_uint8 endpoint;
+	w26n_uint32 attr;
+	w26n_uint32 data;
+    static struct blob_buf b;
+
+	printf("[zigbee_getstatecmd]start\r\n");
+	
+    /**/
+	blobmsg_parse( ctrlcmd_policy, ARRAY_SIZE(ctrlcmd_policy), tb, blob_data(msg), blob_len(msg));
+
+	if ( tb[CTRLCMD_GATEWAY] )
+	{
+		gatewayidstr = blobmsg_data( tb[CTRLCMD_GATEWAY] );
+		printf( "gate = %s\n", gatewayidstr );
+	}
+
+	if ( tb[CTRLCMD_DEVICEID] )
+	{
+		deviceIdstr = blobmsg_data( tb[CTRLCMD_DEVICEID] );
+		printf( "device = %s\n", deviceIdstr );
+	}
+
+	if ( tb[CTRLCMD_ATTR] )
+	{
+		attrstr = blobmsg_data( tb[CTRLCMD_ATTR] );
+		printf( "attr = %s\n", attrstr );
+	}
+	
+    {
+	   char *ptr,*ptr1, c = '_';
+	   char shortaddrstr[32];
+	   char endpiontstr[32];
+	   ptr = strchr(deviceIdstr, c);
+
+	   ptr = strchr(ptr + 1, c);
+
+	   ptr1 = strchr(ptr + 1, c);
+
+       printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", ptr,ptr1);
+
+
+	   if(ptr == 0 || ptr1 == 0)
+	   {
+		   printf( "deviceid parse error\n");
+
+           goto done;
+	   }
+	   int i = 0;
+
+	   printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", ptr,ptr1);
+
+	   printf( "deviceid parse count=%d\n", ptr1-ptr-1);
+
+	   while(i < ptr1 - ptr - 1)
+	   {
+	      shortaddrstr[i] = ptr[i+1];
+		  i++;
+	   }
+	   shortaddrstr[ptr1 - ptr - 1] = 0;
+	   
+	   stpcpy(endpiontstr, ptr1 + 1);
+	   endpiontstr[strlen(ptr1) - 1] = 0;
+	   
+	   printf( "shortaddrstr = %s\n", shortaddrstr );
+	   printf( "endpiontstr = %s\n", endpiontstr );
+	   
+	   shortaddr = strtoul(shortaddrstr, NULL, 10);
+	   endpoint = strtoul(endpiontstr, NULL, 10);
+	   
+	   printf( "shortaddr = %d\n", shortaddr );
+	   printf( "endpoint = %d\n", endpoint );
+	   
+	   attr = strtoul(attrstr, NULL, 10);
+	   printf( "attr = %d\n", attr );
+	    
+	}
+	{
+        int i;
+		for(i = 0; i < g_devices_count; i++)
+		{
+			printf("[startSearchDevice] shrtaddr=%d endpoint=%d\r\n", g_devices[i].shortaddr, g_devices[i].endpoint);
+
+			if(g_devices[i].endpoint == endpoint && g_devices[i].shortaddr == shortaddr)
+			{
+				printf("device SN = %s", g_devices[i].SN);
+				printf("device shortaddr = 0x%x", g_devices[i].shortaddr);
+				
+				switch(g_devices[i].deviceId)
+				{
+				 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
+                     getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+					 break;
+				 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
+				 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
+					 if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE)
+					 {
+					     getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+						
+					 }
+					 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE)
+					 {
+						 getDeviceLevel(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+					 }
+					 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE)
+					 {
+						 getDeviceColorTemp(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+					 }
+					 else
+					 {
+					     printf("[startSearchDevice] error attr\r\n");
+					}
+					 break;
+				 case FB_DEVICE_TYPE_WINDOWS:
+				     getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+					 break;
+				 default:
+					 break;
+				}
+                
+			}
+		}
+	}
+
+done:
+
+    /* send reply */
+	blob_buf_init( &b, 0 );
+	blobmsg_add_string( &b, "return",  "ok" );
+    
+    /**/
+    ubus_send_reply( ctx, req, b.head );
+	
+	/**/
+	
+	
+    return UBUS_STATUS_OK;
+    
+}
+
 
 static const struct ubus_method zigbee_methods[] = {
 	UBUS_METHOD( "ctrlcmd",  zigbee_ctrlcmd, ctrlcmd_policy ),
+	UBUS_METHOD( "getstatecmd",  zigbee_getstatecmd, getstatecmd_policy ),
 };
 
 
@@ -468,3 +625,99 @@ int sendDeviceColorTemp(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 e
 
 }
 
+int getDeviceState(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint)
+{
+
+	int cmd_length=14;
+	w26n_byte msg[cmd_length];
+
+	char buffer[512];
+	int resp_length=0;
+	
+	printf( "[getDeviceState]start");
+	
+	msg[0] = RPCS_GET_DEV_STATE;
+	msg[1] = 0x0D;
+	msg[2] = addrmode;
+	msg[3] = shortaddr&0xFF;
+	msg[4] = (shortaddr&0xFF00)>>8;
+    msg[5] = 0x0;
+	msg[6] = 0x0;
+	msg[7] = 0x0;
+	msg[8] = 0x0;
+	msg[9] = 0x0;
+	msg[10] = 0x0;
+	msg[11] = endPoint;
+	msg[12] = 0x0;
+	msg[13] = 0x0;
+
+	sendCommand(g_monitor_socket,msg,cmd_length);
+
+	return 0;
+
+}
+
+int getDeviceLevel(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint)
+{
+
+	int cmd_length=14;
+	w26n_byte msg[cmd_length];
+
+	char buffer[512];
+	int resp_length=0;
+	
+	printf( "[sendDeviceLevel]start");
+	
+	msg[0] = RPCS_GET_DEV_LEVEL;
+	msg[1] = 0x0D;
+	msg[2] = addrmode;
+	msg[3] = shortaddr&0xFF;
+	msg[4] = (shortaddr&0xFF00)>>8;
+    msg[5] = 0x0;
+	msg[6] = 0x0;
+	msg[7] = 0x0;
+	msg[8] = 0x0;
+	msg[9] = 0x0;
+	msg[10] = 0x0;
+	msg[11] = endPoint;
+	msg[12] = 0x0;
+	msg[13] = 0x0;
+
+	sendCommand(g_monitor_socket,msg,cmd_length);
+
+	return 0;
+
+}
+
+int getDeviceColorTemp(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint)
+{
+
+	int cmd_length=14;
+	w26n_byte msg[cmd_length];
+
+	char buffer[512];
+	int resp_length=0;
+	
+	printf( "[sendDeviceColorTemp]start");
+	
+	msg[0] = RPCS_GET_COLORTMP;
+	msg[1] = 0x0D;
+	msg[2] = addrmode;
+	msg[3] = shortaddr&0xFF;
+	msg[4] = (shortaddr&0xFF00)>>8;
+    msg[5] = 0x0;
+	msg[6] = 0x0;
+	msg[7] = 0x0;
+	msg[8] = 0x0;
+	msg[9] = 0x0;
+	msg[10] = 0x0;
+	msg[11] = endPoint;
+	msg[12] = 0x0;
+	msg[13] = 0x0;
+
+
+	sendCommand(g_monitor_socket,msg,cmd_length);
+
+	return 0;
+
+}

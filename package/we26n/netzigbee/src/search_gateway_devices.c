@@ -291,6 +291,29 @@ int startSearchDevice()
 
 			}
 		i}*/
+		
+        int i;
+		index++;
+		for(i = 0; i < g_devices_count; i++)
+		{
+		    printf("getDeviceState");
+			printf("[startSearchDevice] endpoint=%d\r\n", g_devices[i].endpoint);
+			printf("device SN = %s", g_devices[i].SN);
+		    printf("device shortaddr = 0x%x", g_devices[i].shortaddr);
+
+			switch(g_devices[i].deviceId)
+			{
+				case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
+				case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
+                    getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+					getDeviceLevel(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+					getDeviceColorTemp(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+					break;
+				default:
+					getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+					break;
+			}
+		}
 		sleep(10);
 
 
