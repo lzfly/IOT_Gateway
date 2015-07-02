@@ -194,7 +194,7 @@ int receiveDeviceMsg(char *buf, int len)
 					int olddevice = 0;
                     for(i = 0; i < g_devices_count; i++)
 					{
-						printf("[receiveDeviceMsg] i  endpoint=%d\r\n",g_devices[i].endpoint);
+						//printf("[receiveDeviceMsg] i  endpoint=%d\r\n",g_devices[i].endpoint);
 
 						if(g_devices[g_devices_count].endpoint == g_devices[i].endpoint && g_devices[g_devices_count].shortaddr == g_devices[i].shortaddr)
 						{
@@ -250,7 +250,7 @@ int receiveDeviceMsg(char *buf, int len)
 
 				else if(resptype == RPCS_GET_DEV_STATE_RSP)
 				{
-					printf("[receiveDeviceMsg]resptype=%d\r\n",resptype);
+					printf("[receiveDeviceMsg]RPCS_GET_DEV_STATE_RSP\r\n");
 
 
 					w26n_byte resplen = buffer[1];
@@ -263,7 +263,7 @@ int receiveDeviceMsg(char *buf, int len)
 					w26n_byte endpoint = buffer[4];
 					//printf("[receiveDeviceMsg]endpoint=%d\r\n",endpoint);
 
-					int i, index;
+					int i, index = -1;
                     for(i = 0; i < g_devices_count; i++)
 					{
 						//printf("[receiveDeviceMsg] report i  endpoint=%d\r\n",g_devices[i].endpoint);
@@ -276,9 +276,11 @@ int receiveDeviceMsg(char *buf, int len)
 							break;
 						}
 					}	
+					if(index == -1)
+						continue;
 				
 					w26n_byte status = buffer[5];
-					//printf("[receiveDeviceMsg]status=%d\r\n",status);
+					printf("[receiveDeviceMsg]status=%d\r\n",status);
 					
 					switch(g_devices[index].deviceId)
 					{
@@ -294,7 +296,8 @@ int receiveDeviceMsg(char *buf, int len)
 				}
 				else if(resptype == RPCS_GET_DEV_LEVEL_RSP)
 				{
-					printf("[receiveDeviceMsg]resptype=%d\r\n",resptype);
+					//printf("[receiveDeviceMsg]resptype=%d\r\n",resptype);
+					 printf("[receiveDeviceMsg]RPCS_GET_DEV_LEVEL_RSP\r\n");
 
 
 					w26n_byte resplen = buffer[1];
@@ -307,7 +310,7 @@ int receiveDeviceMsg(char *buf, int len)
 					w26n_byte endpoint = buffer[4];
 					//printf("[receiveDeviceMsg]endpoint=%d\r\n",endpoint);
 
-					int i, index;
+					int i, index = -1;
                     for(i = 0; i < g_devices_count; i++)
 					{
 						//printf("[receiveDeviceMsg] report i  endpoint=%d\r\n",g_devices[i].endpoint);
@@ -320,7 +323,9 @@ int receiveDeviceMsg(char *buf, int len)
 							break;
 						}
 					}	
-				
+				    if(index == -1)
+						continue;
+
 					w26n_byte level = buffer[5];
 					printf("[receiveDeviceMsg]level=%d\r\n",level);
 					switch(g_devices[index].deviceId)
@@ -336,7 +341,9 @@ int receiveDeviceMsg(char *buf, int len)
 				}
 				else if(resptype == RPCS_GET_COLORTMP_RSP)
 				{
-					printf("[receiveDeviceMsg]resptype=%d\r\n",resptype);
+					//printf("[receiveDeviceMsg]resptype=%d\r\n",resptype);
+					 printf("[receiveDeviceMsg]RPCS_GET_DEV_COLORTMP_RSP\r\n");
+
 
 
 					w26n_byte resplen = buffer[1];
@@ -349,7 +356,7 @@ int receiveDeviceMsg(char *buf, int len)
 					w26n_byte endpoint = buffer[4];
 					//printf("[receiveDeviceMsg]endpoint=%d\r\n",endpoint);
 
-					int i, index;
+					int i, index = -1;
                     for(i = 0; i < g_devices_count; i++)
 					{
 						//printf("[receiveDeviceMsg] report i  endpoint=%d\r\n",g_devices[i].endpoint);
@@ -362,8 +369,12 @@ int receiveDeviceMsg(char *buf, int len)
 							break;
 						}
 					}	
-				
-					 w26n_uint16 colortmp = (buffer[5]&&0xFF)|((buffer[6]&0xFF)<<8);
+				     if(index == -1)
+						 continue;
+					 printf("[receiveDeviceMsg]buffer[5]=%x\r\n",buffer[5]);
+					 printf("[receiveDeviceMsg]buffer[6]=%x\r\n",buffer[6]);
+
+					 w26n_uint16 colortmp = ((1000000/((buffer[5]&0xFF)|((buffer[6]&0xFF)<<8)))/100)*100;
 					 printf("[receiveDeviceMsg]colortmp=%d\r\n",colortmp);
                      sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE, colortmp);
 				}
@@ -392,7 +403,7 @@ int receiveDeviceMsg(char *buf, int len)
 					printf("[receiveDeviceMsg]report clusterId=%d\r\n",clusterId);
                     
 
-					int i, index;
+					int i, index = -1;
                     for(i = 0; i < g_devices_count; i++)
 					{
 						//printf("[receiveDeviceMsg] report i  endpoint=%d\r\n",g_devices[i].endpoint);
@@ -405,6 +416,10 @@ int receiveDeviceMsg(char *buf, int len)
 							break;
 						}
 					}
+                    if(index == -1)
+						continue;
+
+
 					if(g_devices[index].deviceId == FB_DEVICE_TYPE_GAS)
 					{
 					
@@ -442,15 +457,16 @@ int receiveDeviceMsg(char *buf, int len)
 						printf("[receiveDeviceMsg]attr=%d\r\n",attr);
 
 						w26n_byte type1 = buffer[15];
-						printf("[receiveDeviceMsg]type=%d\r\n",type);
+						printf("[receiveDeviceMsg]type1=%d\r\n",type1);
 
 						w26n_byte value1 = buffer[16];
-						printf("[receiveDeviceMsg] value=%d\r\n",value);
+						printf("[receiveDeviceMsg] value1=%d\r\n",value1);
 						
 						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, ENN_DEVICE_ATTR_TEMP_VALUE, value);
 						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, ENN_DEVICE_ATTR_HUM_VALUE, value1);
 					}
 					else{
+
 						w26n_byte num = buffer[7];
 						printf("[receiveDeviceMsg]num=%d\r\n",num);
 
@@ -463,7 +479,7 @@ int receiveDeviceMsg(char *buf, int len)
 						w26n_byte value = buffer[11];
 						printf("[receiveDeviceMsg] value=%d\r\n",value);
 					}
-					
+
 
 				}
 				else if(resptype == RPCS_GET_GATEDETAIL_RSP){
