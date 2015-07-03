@@ -280,7 +280,10 @@ int receiveDeviceMsg(char *buf, int len)
 						continue;
 				
 					w26n_byte status = buffer[5];
-					printf("[receiveDeviceMsg]status=%d\r\n",status);
+					printf("[receiveDeviceMsg]status=%d g_level[index]=%d\r\n",status, g_level[index]);
+					if(g_openStatus[index] == status)
+					    continue;
+					g_openStatus[index] = status;
 					
 					switch(g_devices[index].deviceId)
 					{
@@ -327,7 +330,10 @@ int receiveDeviceMsg(char *buf, int len)
 						continue;
 
 					w26n_byte level = buffer[5];
-					printf("[receiveDeviceMsg]level=%d\r\n",level);
+					printf("[receiveDeviceMsg]level=%d g_level[index]=%d\r\n",level, g_level[index]);
+					if(g_level[index] == level)
+					    continue;
+					g_level[index] = level;
 					switch(g_devices[index].deviceId)
 					{
 					 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
@@ -376,6 +382,12 @@ int receiveDeviceMsg(char *buf, int len)
 
 					 w26n_uint16 colortmp = ((1000000/((buffer[5]&0xFF)|((buffer[6]&0xFF)<<8)))/100)*100;
 					 printf("[receiveDeviceMsg]colortmp=%d\r\n",colortmp);
+					 
+					printf("[receiveDeviceMsg]colortmp=%d g_colorTmp[index]=%d\r\n",colortmp, g_colorTmp[index]);
+					if(g_colorTmp[index] == colortmp)
+					    continue;
+					g_colorTmp[index] = colortmp;
+					 
                      sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE, colortmp);
 				}
 				else if(resptype == RPCS_DEVICE_REPORT)

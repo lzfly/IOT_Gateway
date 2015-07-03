@@ -35,6 +35,8 @@ extern struct deviceBean g_devices[MAX_DEVICES];
 extern int g_devices_count;
 extern struct sockaddr_in g_localAddr;
 extern char g_localMAC[16];
-
+extern w26n_uint8  g_openStatus[MAX_DEVICES];
+extern w26n_uint8  g_level[MAX_DEVICES];
+extern w26n_uint16  g_colorTmp[MAX_DEVICES];
 
 #endif /* SEARCHGATEWAY_H_ */
