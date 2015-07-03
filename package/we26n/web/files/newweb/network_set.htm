@@ -1,0 +1,7702 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<%
+require("uci")
+local x = uci.cursor()
+
+local w_ssid = ""
+local w_pwd = ""
+
+x:foreach("wireless", "wifi-iface",
+	function(s)
+		if s['mode'] == "sta" then
+			w_ssid = s['ssid'] or ""
+			w_pwd = s['key'] or ""
+			return false
+		end
+	end)
+
+local p_name = x:get("network", "wan", "username") or ""
+local p_password = x:get("network","wan","password") or ""
+
+local p_bandwidth = x:get("band","band_manage","bandwidth") or 10
+
+local s_ip=x:get("network","wan","ipaddr") or ""
+local s_netmask=x:get("network","wan","netmask") or ""
+local s_gateway=x:get("network","wan","gateway") or ""
+local s_dns=x:get("network","wan","dns") or ""
+
+local network_type = x:get("network", "wan", "proto")
+if x:get("network", "wwan", "proto") then
+	network_type = "bridge"
+end
+%>
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+
+
+
+
+
+<head>
+
+
+
+
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+
+
+
+
+
+<title>宽带上网管理</title>
+
+
+
+
+
+
+
+<style type="text/css">
+
+
+
+
+
+
+
+/* CSS Document */
+
+
+
+
+
+
+
+html,body {
+
+
+
+
+
+
+
+	height:100%;
+
+
+
+
+
+
+
+	margin:0px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+body {
+
+
+
+
+
+
+
+	background:#0A53A0;
+
+
+
+
+
+
+
+	filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);
+
+
+
+
+
+
+
+-ms-filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);/*IE8*/ 
+
+
+
+
+
+
+
+	background:-webkit-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:-o-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:-ms-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:-moz-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:adial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a{
+
+
+
+
+
+
+
+cursor: pointer;
+
+
+
+
+
+
+
+}
+
+
+
+@media screen and (min-height: 631px) {
+
+#body_center{
+
+
+
+width:100%;
+
+
+
+height:630px;
+
+
+
+position:absolute;
+
+
+
+top:50%;
+
+
+
+margin-top:-328px;
+
+
+
+text-align:center;
+
+
+
+}
+
+#main {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	height:560px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+
+
+
+
+	border-top:1px solid #407CB8;
+
+
+
+
+
+
+
+}
+
+
+
+}
+
+@media screen and (max-height: 630px) {
+
+#body_center{
+
+width:100%;
+
+height:590px;
+
+position:absolute;
+
+top:50%;
+
+margin-top:-310px;
+
+text-align:center;
+
+}
+
+#main {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	height:520px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+
+
+
+
+	border-top:1px solid #407CB8;
+
+
+
+
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+a:link {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a:visited {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a:hover {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a:active {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.left {
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.right {
+
+
+
+
+
+
+
+	float:right;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+img {
+
+
+
+
+
+
+
+	border:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+span {
+
+
+
+
+
+
+
+	display:block;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.hide {
+
+
+
+
+
+
+
+	display:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#top .back {
+
+
+
+
+
+
+
+	width:42px;
+
+
+
+
+
+
+
+	height:75px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/back.png) no-repeat center center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#top .title {
+
+
+
+
+
+
+
+	height:75px;
+
+
+
+
+
+
+
+	line-height:75px;
+
+
+
+
+
+
+
+	width:200px;
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:26px;
+
+
+
+
+
+
+
+	font-family:Microsoft YaHei,small;
+
+
+
+
+
+
+
+	font-weight:normal;
+
+
+
+
+
+
+
+	text-align:left;
+
+
+
+
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+
+
+
+
+	cursor:pointer;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_text {
+
+
+
+
+
+
+
+	width:300px;
+
+
+
+
+
+
+
+	height:30px;
+
+
+
+
+
+
+
+	line-height:30px;
+
+
+
+
+
+
+
+	border:1px solid #00AAA9;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_lable {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:16px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#tip {
+
+
+
+
+
+
+
+	width:160px;
+
+
+
+
+
+
+
+	overflow:hidden;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+	border:solid 2px #669999;
+
+
+
+
+
+
+
+	background:#6699CC;
+
+
+
+
+
+
+
+	display:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#tip .loading {
+
+
+
+
+
+
+
+	width:126px;
+
+
+
+
+
+
+
+	height:22px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	margin-top:5px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#tip .tip_info {
+
+
+
+
+
+
+
+	width:126px;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	margin-top:5px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#top {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	height:75px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+#main .handle {
+
+
+
+
+
+
+
+	width:100%;
+
+
+
+
+
+
+
+	text-align:left;
+
+
+
+
+
+
+
+	margin-top:40px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .select {
+
+
+
+
+
+
+
+	width:50%;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .select .select_con {
+
+
+
+
+
+
+
+	width:180px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	position:relative;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .handle .select_text {
+
+
+
+
+
+
+
+	border:none;
+
+
+
+
+
+
+
+	height:30px;
+
+
+
+
+
+
+
+	width:135px;
+
+
+
+
+
+
+
+	background:none;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+
+
+
+
+	font-size:22px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .handle .select_arrow {
+
+
+
+
+
+
+
+	width:40px;
+
+
+
+
+
+
+
+	height:30px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/arrow.png) no-repeat center center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .select .select_item {
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	width:135px;
+
+
+
+
+
+
+
+	height:2px;
+
+
+
+
+
+
+
+	left:0px;
+
+
+
+
+
+
+
+	top:35px;
+
+
+
+
+
+
+
+	overflow:hidden;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .select .select_item ul {
+
+
+
+
+
+
+
+	margin:0px;
+
+
+
+
+
+
+
+	padding:0px;
+
+
+
+
+
+
+
+	list-style:none;
+
+
+
+
+
+
+
+	border:2px solid #D39D09;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .select .select_item ul li {
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+	width:100%;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .select .select_item ul li a {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content {
+
+
+
+
+
+
+
+	width:100%;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	margin-top:70px;
+
+
+
+
+
+
+
+	text-align:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content .content_left {
+
+
+
+
+
+
+
+	width:49%;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.network {
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	width:100%;
+
+
+
+
+
+
+
+	height:200px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content_left .caption {
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	width:100%;
+
+
+
+
+
+
+
+	color:#E6A606;
+
+
+
+
+
+
+
+	font-size:22px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content_left .info {
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	width:200px;
+
+
+
+
+
+
+
+	text-align:left;
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:14px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content .content_right {
+
+
+
+
+
+
+
+	width:50%;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+	border-left:1px solid #5493D6;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_btn {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	width:302px;
+
+
+
+
+
+
+
+	height:32px;
+
+
+
+
+
+
+
+	border:none;
+
+
+
+
+
+
+
+	font-size:18px;
+
+
+
+
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+
+
+
+
+	background:#8AC40E;
+
+
+
+
+
+
+
+	cursor:pointer;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_info {
+
+
+
+
+
+
+
+	color:#FDFF00;
+
+
+
+
+
+
+
+	font-size:15px;
+
+
+
+
+
+
+
+	height:32px;
+
+
+
+
+
+
+
+	line-height:32px;
+
+
+
+
+
+
+
+	margin-left:10px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	width:auto;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_hint {
+
+
+
+
+
+
+
+	width:32px;
+
+
+
+
+
+
+
+	height:32px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	margin-left:50px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/state.png)}
+
+
+
+
+
+
+
+.relay_text {
+
+
+
+
+
+
+
+	width:270px;
+
+
+
+
+
+
+
+	height:30px;
+
+
+
+
+
+
+
+	line-height:30px;
+
+
+
+
+
+
+
+	border:1px solid #00AAA9;
+
+
+
+
+
+
+
+	padding-left:30px;
+
+
+
+
+
+
+
+	background:#FFFFFF url(<%=resource%>/images/relay_wifi.png) no-repeat left center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.network {
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	width:100%;
+
+
+
+
+
+
+
+	height:200px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/network.png) no-repeat center center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.view_pwd{
+
+
+
+
+
+
+
+width:36px;
+
+
+
+
+
+
+
+height:36px;
+
+
+
+
+
+
+
+background:url(<%=resource%>/images/view_pwd1.png) no-repeat center center;
+
+
+
+
+
+
+
+filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/view_pwd1.png');
+
+
+
+
+
+
+
+}
+
+
+
+input:focus {
+
+		-webkit-box-shadow: 0px 0px 10px #00AAA9;
+
+		-moz-box-shadow: 0px 0px 10px #00AAA9;
+
+		box-shadow: 0px 0px 10px #00AAA9;
+
+	}
+
+
+
+</style>
+
+<!--[if lt IE 9]>
+
+<script src="<%=resource%>/js/css3-mediaqueries.js"></script>
+
+<![endif]-->
+
+<script type="text/javascript" src="<%=resource%>/js/jquery-1.8.1.min.js"></script>
+
+
+
+
+
+
+
+<script type="text/javascript" src="<%=resource%>/js/jsloader.js"></script>
+
+
+
+
+
+
+
+<script>
+
+
+
+
+
+
+
+var box1;
+
+
+
+
+
+
+
+var a=0;
+
+
+
+
+
+
+
+var opacity;
+
+
+
+var timeout;
+
+var wan_way;
+
+var regIp=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+
+
+
+
+
+
+
+var regMask=/^(254|252|248|240|224|192|128|0)\.0\.0\.0|255\.(254|252|248|240|224|192|128|0)\.0\.0|255\.255\.(254|252|248|240|224|192|128|0)\.0|255\.255\.255\.(254|252|248|240|224|192|128|0)$/;
+
+
+
+
+
+
+
+var regNum =   /^[0-9]*[1-9][0-9]*$/ ;　
+
+
+
+
+
+
+
+var urls=["<%=resource%>/js/jquery.poshytip.js","<%=resource%>/js/jquery.form.js","<%=resource%>/js/tip.js"];
+
+
+
+
+
+
+
+function init(){ 
+
+
+
+
+
+
+
+  loadCss("<%=resource%>/js/tip-yellowsimple/tip-yellowsimple.css");
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function load_data(){
+
+
+
+
+
+
+
+  box1 = new LightBox("tip");
+
+
+
+
+
+
+
+  if(a==1){
+
+
+
+
+
+
+
+	 box1.Close(); 
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+	var navigatorName = "Microsoft Internet Explorer";
+
+
+
+
+
+
+
+if( navigator.appName == navigatorName ){
+
+
+
+
+
+
+
+if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE6.0") 
+
+
+
+
+
+
+
+{ 
+
+
+
+
+
+
+
+ $(".link").each(function(){
+
+
+
+
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+
+
+
+
+              });
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE7.0") 
+
+
+
+
+
+
+
+{ 
+
+
+
+
+
+
+
+ $(".link").each(function(){
+
+
+
+
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+
+
+
+
+              });
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE8.0") 
+
+
+
+
+
+
+
+{ 
+
+
+
+
+
+
+
+  $(".link").each(function(){
+
+
+
+
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+
+
+
+
+              });
+
+
+
+
+
+
+
+}else{
+
+
+
+
+
+
+
+  $('#top .back,#top .title').click(function(){
+
+
+
+
+
+
+
+     window.parent.closeFun("network_set");
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+}else{
+
+
+
+
+
+
+
+   $('#top .back,#top .title').click(function(){
+
+
+
+
+
+
+
+     window.parent.closeFun("network_set");
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+$(document).click(function(e){                       
+
+
+
+
+
+
+
+      if($(".select_item").css("height")=="90px"){
+
+
+
+
+
+
+
+	   $(".select_item").animate({height:"2px"},400);
+
+
+
+
+
+
+
+	  }
+
+
+
+
+
+
+
+ }); 
+
+
+
+
+
+
+
+	$('#wan_pppoe_username,#wan_pppoe_passwd,#relay_username,#wan_relay_passwd').poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+  $("#wan_pppoe_username,#wan_pppoe_passwd,#relay_username,#wan_relay_passwd").blur(function(){
+
+
+
+
+
+
+
+    if($(this).attr("value")==""||$(this).attr("value")==null){
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+	  $(this).poshytip('hide');
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+   $("#pppoe_total").blur(function(){
+
+
+
+
+
+
+
+    var pppoe_total=$(this).attr("value");
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(pppoe_total==""||pppoe_total==null){
+
+
+
+
+
+
+
+	  $('#pppoe_total').poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+	 if(!pppoe_total.match(regNum)){
+
+
+
+
+
+
+
+	   $('#pppoe_total').poshytip({
+
+
+
+
+
+
+
+			    content: '总带宽不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+$("#static_total").blur(function(){
+
+
+
+
+
+
+
+    var static_total=$(this).attr("value");
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(static_total==""||static_total==null){
+
+
+
+
+
+
+
+	  $('#static_total').poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+	 if(!static_total.match(regNum)){
+
+
+
+
+
+
+
+	   $('#static_total').poshytip({
+
+
+
+
+
+
+
+			    content: '总带宽不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+  $("#dhcp_total").blur(function(){
+
+
+
+
+
+
+
+    var dhcp_total=$(this).attr("value");
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(dhcp_total==""||dhcp_total==null){
+
+
+
+
+
+
+
+	  $('#dhcp_total').poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+	 if(!dhcp_total.match(regNum)){
+
+
+
+
+
+
+
+	   $('#dhcp_total').poshytip({
+
+
+
+
+
+
+
+			    content: '总带宽不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+    $("#relay_total").blur(function(){
+
+
+
+
+
+
+
+    var relay_total=$(this).attr("value");
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(relay_total==""||relay_total==null){
+
+
+
+
+
+
+
+	  $('#relay_total').poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+	 if(!relay_total.match(regNum)){
+
+
+
+
+
+
+
+	   $('#relay_total').poshytip({
+
+
+
+
+
+
+
+			    content: '总带宽不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+  $("#wan_ipaddr").blur(function(){
+
+
+
+
+
+
+
+    var wan_ipaddr=$(this).attr("value");
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(wan_ipaddr==""||wan_ipaddr==null){
+
+
+
+
+
+
+
+	$('#wan_ipaddr').poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+	 if(!wan_ipaddr.match(regIp)){
+
+
+
+
+
+
+
+	   $('#wan_ipaddr').poshytip({
+
+
+
+
+
+
+
+			    content: 'Ip地址不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+
+
+
+
+      }else{
+
+
+
+
+
+
+
+	   var ip_items=wan_ipaddr.split(".");
+
+
+
+
+
+
+
+	   var wan_gateway=ip_items[0]+"."+ip_items[1]+"."+ip_items[2]+".1"
+
+
+
+
+
+
+
+	   $("#wan_gateway").attr("value",wan_gateway);
+
+
+
+
+
+
+
+	  }
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+  $("#wan_gateway").blur(function(){
+
+
+
+
+
+
+
+    var wan_gateway=$(this).attr("value");
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(wan_gateway==""||wan_gateway==null){
+
+
+
+
+
+
+
+	  $('#wan_gateway').poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+	 if(!wan_gateway.match(regIp)){
+
+
+
+
+
+
+
+	   $('#wan_gateway').poshytip({
+
+
+
+
+
+
+
+			    content: '网关不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+  $("#wan_netmask").blur(function(){
+
+
+
+
+
+
+
+    var mask=$(this).attr("value");
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(mask==""||mask==null){
+
+
+
+
+
+
+
+	  $('#wan_netmask').poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+	 if(!mask.match(regMask)){
+
+
+
+
+
+
+
+	   $('#wan_netmask').poshytip({
+
+
+
+
+
+
+
+			    content: '子网掩码不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+  $("#wan_dns0").blur(function(){
+
+
+
+
+
+
+
+    var dns=$(this).attr("value");
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(dns==""||dns==null){
+
+
+
+
+
+
+
+	  $('#wan_dns0').poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+	 if(!dns.match(regIp)){
+
+
+
+
+
+
+
+	   $('#wan_dns0').poshytip({
+
+
+
+
+
+
+
+			    content: 'DNS不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+    $("#wan_dns1").blur(function(){
+
+
+
+
+
+
+
+    var dns=$(this).attr("value");
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(dns!=""&&dns!=null&&!dns.match(regIp)){
+
+
+
+
+
+
+
+	   $('#wan_dns1').poshytip({
+
+
+
+
+
+
+
+			    content: 'DNS不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function hide(id){
+
+
+
+
+
+
+
+  if(parseFloat($("#"+id+"").css("opacity")) < 1)
+
+
+
+
+
+
+
+  {
+
+
+
+
+
+
+
+   opacity+=0.05;
+
+
+
+
+
+
+
+   $("#"+id+"").css("opacity",opacity+"");
+
+
+
+
+
+
+
+   window.setTimeout("hide('"+id+"')", 50);
+
+
+
+
+
+
+
+  } 
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+function showItems(){
+
+
+
+
+
+
+
+ $(".select_item").animate({height:"90px"},400);
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function setSelectValue(obj){
+
+
+
+
+
+
+
+     $("*").poshytip('hide');
+
+
+
+
+
+
+
+	 var value=$(obj.firstChild).attr("title");
+
+
+
+
+
+
+
+	 var id=$(obj.firstChild).attr("class");
+
+
+
+	 
+
+
+
+	 $(".select_text").html(value);
+
+
+
+
+
+
+
+	 $(".content").css("opacity","0.00");
+
+
+
+
+
+
+
+     $("#item1").addClass("hide"); 
+
+
+
+
+
+
+
+     $("#item2").addClass("hide"); 
+
+
+
+
+
+
+
+     $("#item3").addClass("hide"); 
+
+
+
+
+
+
+
+     $("#item4").addClass("hide"); 
+
+
+
+	 
+
+
+
+	 switch(id){
+
+
+
+	   case 'item1':
+
+
+
+	   $("#item1").removeClass("hide"); 
+
+
+
+	   setPos("wan_pppoe_username");
+
+
+
+	   break;
+
+
+
+	   case 'item2':
+
+
+
+	   $("#item2").removeClass("hide"); 
+
+
+
+	   setPos("wan_ipaddr");
+
+
+
+	   break;
+
+
+
+	   case 'item3':
+
+
+
+	   $("#item3").removeClass("hide"); 
+
+
+
+	   setPos("dhcp_total");
+
+
+
+	   break;
+
+
+
+	   default:
+
+
+
+	   $("#item4").removeClass("hide"); 
+
+
+
+	   setPos("relay_username");
+
+
+
+	   break;
+
+
+
+	 }
+
+
+
+	 opacity=0;
+
+
+
+	 hide(id);
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function setSelectMbg(obj){
+
+
+
+
+
+
+
+     $(obj).css("background","#999966");
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function setSelectObg(obj){
+
+
+
+
+
+
+
+     $(obj).css("background","none");
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function change_src(obj){
+
+
+
+
+
+
+
+	var src=$(obj).css("backgroundImage");
+
+
+
+
+
+
+
+	src=src.substring(src.lastIndexOf("/")+1,src.indexOf("png")-1);
+
+
+
+
+
+
+
+	if(src=="view_pwd"){
+
+
+
+
+
+
+
+		 $(obj).css("background","url(<%=resource%>/images/view_pwd1.png) no-repeat center center");
+
+
+
+
+
+
+
+         $(obj).css("filter","progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/view_pwd1.png')");
+
+
+
+
+
+
+
+		 document.getElementById("pppoe_passwd").innerHTML="<input type='password' name='wan_pppoe_passwd' class='t_text' value='"+document.getElementById("wan_pppoe_passwd").value+"' id='wan_pppoe_passwd'/>";
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+		 $(obj).css("background","url(<%=resource%>/images/view_pwd.png) no-repeat center center");
+
+
+
+
+
+
+
+		 $(obj).css("filter","progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/view_pwd.png')");
+
+
+
+
+
+
+
+		 document.getElementById("pppoe_passwd").innerHTML="<input type='text' name='wan_pppoe_passwd' class='t_text' value='"+document.getElementById("wan_pppoe_passwd").value+"' id='wan_pppoe_passwd'/>";
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function change_src1(obj){
+
+
+
+
+
+
+
+	var src=$(obj).css("backgroundImage");
+
+
+
+
+
+
+
+	src=src.substring(src.lastIndexOf("/")+1,src.indexOf("png")-1);
+
+
+
+
+
+
+
+	if(src=="view_pwd"){
+
+
+
+
+
+
+
+		 $(obj).css("background","url(<%=resource%>/images/view_pwd1.png) no-repeat center center");
+
+
+
+
+
+
+
+		 $(obj).css("filter","progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/view_pwd1.png')");
+
+
+
+
+
+
+
+		 document.getElementById("relay_passwd").innerHTML="<input type='password'   class='t_text' value='"+document.getElementById("wan_relay_passwd").value+"' id='wan_relay_passwd' name='wan_relay_passwd'/>";
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+		 $(obj).css("background","url(<%=resource%>/images/view_pwd.png) no-repeat center center");
+
+
+
+
+
+
+
+		 $(obj).css("filter","progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/view_pwd.png')");
+
+
+
+
+
+
+
+		 document.getElementById("relay_passwd").innerHTML="<input type='text'  class='t_text' value='"+document.getElementById("wan_relay_passwd").value+"' id='wan_relay_passwd' name='wan_relay_passwd'/>";
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function saveReport(tmp) {
+
+
+
+
+
+
+
+ switch (tmp){
+
+
+
+
+
+
+
+   case 'pppoe':
+
+
+
+
+       var p_ppoe_username="<%=p_name%>"
+
+
+   var pppoe_username=$("#wan_pppoe_username").attr("value");
+
+
+
+
+
+
+
+   var pppoe_passwd=$("#wan_pppoe_passwd").attr("value");
+
+
+
+
+
+
+
+   var pppoe_total=$("#pppoe_total").attr("value");
+
+
+
+
+
+
+
+   if(pppoe_username!=""&&pppoe_username!=null&&pppoe_passwd!=""&&pppoe_passwd!=null&&pppoe_total!=""&&pppoe_total!=null&&pppoe_total.match(regNum)){
+
+
+
+//if(p_ppoe_username!=pppoe_username){
+
+//   setCookie("p_ppoe_username",p_ppoe_username);
+
+//  }
+
+
+
+      box_show();
+
+
+
+
+
+
+
+      $(".tip_info").html("保存中...");
+
+//		document.getElementById("pppoe").submit();
+
+
+
+     $("#pppoe").ajaxSubmit(function(message) {
+
+
+
+
+
+
+
+      setTimeout("box_delay('保存成功')",9000);	 
+
+
+
+
+
+
+
+     });
+
+
+
+
+
+
+
+   }else{
+
+
+
+
+
+
+
+    $("#wan_pppoe_username,#wan_pppoe_passwd,#pppoe_total").blur();
+
+
+
+
+
+
+
+   }
+
+
+
+
+
+
+
+   break;
+
+
+
+
+
+
+
+   case 'static':
+
+
+
+
+
+
+
+   var ip=$("#wan_ipaddr").attr("value");
+
+
+
+
+
+
+
+   var mask=$("#wan_netmask").attr("value");
+
+
+
+
+
+
+
+   var gate=$("#wan_gateway").attr("value");
+
+
+
+
+
+
+
+   var dns0=$("#wan_dns0").attr("value");
+
+
+
+
+
+
+
+   var dns1=$("#wan_dns1").attr("value");
+
+
+
+
+
+
+
+   var static_total=$("#static_total").attr("value");
+
+
+
+
+
+
+
+   if((ip.match(regIp)&&mask.match(regMask)&&gate.match(regIp)&&dns0.match(regIp)&&dns1==""&&static_total!=""&&static_total!=null&&static_total.match(regNum))||(ip.match(regIp)&&mask.match(regMask)&&gate.match(regIp)&&dns0.match(regIp)&&dns1!=""&&dns1.match(regIp)&&static_total!=""&&static_total!=null&&static_total.match(regNum))){
+
+
+
+
+
+
+
+      box_show();
+
+
+
+
+
+
+
+      $(".tip_info").html("保存中...");
+
+
+
+
+
+
+
+      $("#static").ajaxSubmit(function(message) {
+
+
+
+
+
+
+
+       setTimeout("box_delay('保存成功')",9000);	 
+
+
+
+
+
+
+
+	  });
+
+
+
+
+
+
+
+   }else{
+
+
+
+
+
+
+
+     $("#wan_ipaddr,#wan_netmask,#wan_gateway,#wan_dns0,#wan_dns1,#static_total").blur();
+
+
+
+
+
+
+
+   }
+
+
+
+
+
+
+
+   break;
+
+
+
+
+
+
+
+   case 'dhcp':
+
+
+
+
+
+
+
+      var dhcp_total=$("#dhcp_total").attr("value");
+
+
+
+
+
+
+
+	  if(dhcp_total!=""&&dhcp_total!=null&&dhcp_total.match(regNum)){
+
+
+
+
+
+
+
+      box_show();
+
+
+
+
+
+
+
+      $(".tip_info").html("保存中...");
+
+
+
+
+
+
+
+      $("#dhcp").ajaxSubmit(function(message) {
+
+
+
+
+
+
+
+       setTimeout("box_delay('保存成功')",9000);	 
+
+
+
+
+
+
+
+	  });
+
+
+
+
+
+
+
+    }else{
+
+
+
+
+
+
+
+	 $("#dhcp_total").blur();
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+   break;
+
+   case 'bridge':
+   
+    var ssid=$("#relay_username").attr("value");
+	//alert(ssid);
+    var pwd=$("#wan_relay_passwd").attr("value");
+	//alert(pwd);
+    var total_width=$("#relay_total").attr("value");
+	//alert(total_width);
+	if(ssid!=null&&ssid!=""&&total_width.match(regNum)){
+		box_show();
+		$(".tip_info").html("保存中...");
+		$("#wds").ajaxSubmit(function(message) {
+			setTimeout("box_delay('保存成功')",9000);	 
+		});
+	}else{
+		$("#relay_username, #relay_total").blur();
+	}
+    break;
+ }
+} 
+
+
+
+
+
+
+
+function box_show(){
+
+
+
+
+
+
+
+	  box1.Show(); 
+
+
+
+
+
+
+
+}
+
+
+
+
+
+function box_delay(con){
+
+  $(".tip_info").html(con);
+
+   setTimeout("box_close()",1000);
+
+ }
+
+function box_close(){
+
+
+
+
+
+
+
+	  a=1;
+
+
+
+
+
+
+
+	  $(".tip_info").html("加载中...");
+
+
+
+
+
+
+
+	  location.reload();
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function loadCss(src){
+
+
+
+
+
+
+
+       var _doc = document.getElementsByTagName('head')[0];  
+
+
+
+
+
+
+
+       var css = document.createElement('link');     
+
+
+
+
+
+
+
+       css.setAttribute('rel', 'stylesheet');       
+
+
+
+
+
+
+
+       css.setAttribute('type', 'text/css');    
+
+
+
+
+
+
+
+	   css.setAttribute('href', src);   
+
+
+
+
+
+
+
+	   _doc.appendChild(css); 
+
+
+
+
+
+
+
+	   if (css.readyState) { //IE
+
+
+
+
+
+
+
+	     css.onreadystatechange = function () {
+
+
+
+
+
+
+
+            if (css.readyState == "loaded" ||css.readyState == "complete") {
+
+
+
+
+
+
+
+                css.onreadystatechange = null;
+
+
+
+
+
+
+
+                loadmultijs(urls,function(){ load_data(); });
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+        };
+
+
+
+
+
+
+
+     } else{ //标准的DOM浏览器
+
+
+
+
+
+
+
+        css.onload = function () {
+
+
+
+
+
+
+
+              loadmultijs(urls,function(){ load_data(); });
+
+
+
+
+
+
+
+        };
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+　　} 
+
+
+
+
+
+function getParam(){
+
+ $("#result").load("network_param.html",function(responseText,textStatus){
+
+  var t=responseText;
+
+  var wan_state=t.substring(t.indexOf("wan_state")+11,t.indexOf("wan_state")+12);
+
+  if(wan_state=="1"){
+
+   switch(wan_way){
+
+	case "pppoe":
+
+    $("#item1 .t_hint").css("backgroundPosition","-0px -0px");
+
+	$("#item1 .t_hint").css("filter","progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/success.png')");
+
+	$("#item1 .t_hint").css("marginLeft","80px");
+
+	$("#item1 .t_info").html("连接正常！");
+
+	break;
+
+	case "static":
+
+	$("#item2 .t_hint").css("marginLeft","80px");   
+
+	$("#item2 .t_hint").css("backgroundPosition","-0px -0px");
+
+	$("#item2 .t_hint").css("filter","progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/success.png')");
+
+	$("#item2 .t_info").html("连接正常！");
+
+	break;
+
+	case "dhcp":
+
+	$("#item3 .t_hint").css("marginLeft","80px");
+
+    $("#item3 .t_hint").css("backgroundPosition","-0px -0px");
+
+	$("#item3 .t_hint").css("filter","progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/success.png')");   
+
+	$("#item3 .t_info").html("连接正常！");
+
+	break;
+
+   }
+
+   }else{
+
+//   timeout=window.setTimeout("getParam()",1000);
+
+   }
+
+  });
+
+}
+
+</script>
+
+
+
+
+
+
+
+</head>
+
+
+
+
+
+
+
+<body onload="init();">
+
+<div id="result" class="hide">
+
+
+
+</div>
+
+<div id="body_center">
+
+
+
+
+
+
+
+<div id="top">
+
+
+
+
+
+
+
+     <a href="javascript:;" class="link"><div class="back left"></div></a><a href="javascript:;" class="link"><div class="title left">&nbsp;&nbsp;宽带上网设置</div></a>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<div id="main">
+
+
+
+
+
+
+
+  <div class="handle">
+
+
+
+
+
+
+
+    <div class="select">
+
+
+
+
+
+
+
+	  <div class="select_con">
+
+
+
+
+
+
+
+        <a href="javascript:goto(0);" onclick="return false"><span class="select_text"   onclick="showItems();">宽带拨号上网</span></a>
+
+
+
+
+
+
+
+        <a href="javascript:goto(0);" onclick="return false"><span class="select_arrow" onclick="showItems();"></span></a>
+
+
+
+
+
+
+
+	    <span class="select_item">
+
+
+
+
+
+
+
+	    <ul>
+
+
+
+
+
+
+
+	       <li onclick="setSelectValue(this)" onmouseover="setSelectMbg(this);" onmouseout="setSelectObg(this);"><a href="javascript:;"  title="宽带拨号上网" class="item1">宽带拨号上网</a></li>
+
+
+
+
+
+
+
+		   <li onclick="setSelectValue(this)" onmouseover="setSelectMbg(this);" onmouseout="setSelectObg(this);"><a href="javascript:;"  title="静态IP上网" class="item2">静态IP上网</a></li>
+
+
+
+
+
+
+
+		   <li onclick="setSelectValue(this)" onmouseover="setSelectMbg(this);" onmouseout="setSelectObg(this);"><a href="javascript:;"  title="动态IP上网" class="item3">动态IP上网</a></li>
+
+
+
+
+
+
+
+		   <li onclick="setSelectValue(this)" onmouseover="setSelectMbg(this);" onmouseout="setSelectObg(this);"><a href="javascript:;"  title="无线中继上网" class="item4">无线中继上网</a></li>
+
+
+
+
+
+
+
+        </ul>
+
+
+
+
+
+
+
+	    </span>	  </div>
+
+
+
+
+
+
+
+	</div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+  <div class="content" id="item1">
+
+
+
+
+
+
+
+      <div class="content_left left">
+
+
+
+
+
+
+
+        <span class="network" style="background-position: -0px -0px; width: 200px; height: 200px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/pppoe_icon.png');"></span>
+
+
+
+
+
+
+
+		<span class="caption">宽带运营商账号上网</span>
+
+
+
+
+
+
+
+		<span class="info">请输入宽带运营商提供的账号密码拨号上网</span>
+
+
+
+
+
+
+
+	  </div>
+
+
+
+
+
+
+
+	  <div class="content_right right">
+
+
+
+
+
+
+
+	   <form method="post" id="pppoe" action="<%=luci.dispatcher.build_url("admin/newweb/pppoe_update")%>">
+
+
+
+
+
+       <input type="hidden" name="wan_proto" value="pppoe">
+
+
+
+
+
+       <input type="hidden" name="wan_ifname" value="== nvram_get(\"wan_ifname\"); ==">  
+
+       <input type="hidden" name="wan_unit" value="== nvram_get(\"wan_unit\"); ==">
+
+       <input type="hidden" name="action" value="Apply">
+
+
+
+
+
+
+
+	    <table border="0" align="center" cellpadding="0" cellspacing="0">
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="40"></td>
+
+
+
+
+
+
+
+		     <td><!--<span class="t_hint" style="background-position: -0px -42px; width: 32px; height: 32px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/fail.png');"></span><span class="t_info">未连接或连接失败！</span></span>--></td>
+
+
+
+
+
+
+
+			 <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="70" align="right"><label class="t_lable">宽带账号&nbsp;:&nbsp;</label></td>
+
+
+
+
+
+
+
+			 <td><input type="text" name="wan_pppoe_username" value="<%=p_name%>" class="t_text" id='wan_pppoe_username'/></td>
+
+
+
+
+
+
+
+			 <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="70" align="right"><label class="t_lable">宽带密码&nbsp;:&nbsp;</label></td>
+
+
+
+
+
+
+
+			 <td><span id="pppoe_passwd"><input type="password" class="t_text" name='wan_pppoe_passwd' value="<%=p_password%>" id="wan_pppoe_passwd"/></span></td>
+
+
+
+
+
+
+
+			 <td><a href="javascript:;"><span class="view_pwd"  onclick="change_src(this);"></span></a></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		    <tr>
+
+
+
+
+
+
+
+		     <td height="70" align="right"><label class="t_lable">总带宽&nbsp;:&nbsp;</label></td>
+
+
+
+
+
+
+
+			 <td><span id="pppoe_passwd"><input type="text" class="t_text" name='pppoe_total' value="<%=p_bandwidth%>" id="pppoe_total"/></span></td>
+
+
+
+
+
+
+
+			 <td style="color:#FFFFFF;">M</td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="100"></td>
+
+
+
+
+
+
+
+		     <td><input type="button" value="保存"  class="t_btn" onclick="saveReport('pppoe');"/></td>
+
+
+
+
+
+
+
+			 <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		</table>
+
+
+
+
+
+
+
+		</form>
+
+
+
+
+
+
+
+	  </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+   <div class="content hide" id="item2">
+
+
+
+
+
+
+
+      <div class="content_left left">
+
+
+
+
+
+
+
+        <span class="network" style="background-position: -0px -210px; width: 200px; height: 200px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/static_icon.png');"></span>
+
+
+
+
+
+
+
+		<span class="caption">静态IP上网</span>
+
+
+
+
+
+
+
+		<span class="info">需设置您的IP地址、子网掩码、网关、DNS等信息以接入互联网</span>
+
+
+
+
+
+
+
+	  </div>
+
+
+
+
+
+
+
+	  <div class="content_right right">
+
+
+
+
+
+
+
+	  <form method="post" id="static" action="<%=luci.dispatcher.build_url("admin/newweb/static_update")%>">
+
+
+
+
+
+      <input type="hidden" name="wan_proto" value="static">
+
+
+
+
+
+
+
+
+
+	  <input type="hidden" name="wan_dns" value="2">      
+
+
+
+
+
+
+
+
+
+      <input type="hidden" name="wan_unit" value="== nvram_get(\"wan_unit\"); ==">
+
+      <input type="hidden" name="action" value="Apply">
+
+
+
+
+
+
+
+	    <table border="0" align="center" cellpadding="0" cellspacing="0">
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="40"></td>
+
+
+
+
+
+
+
+		     <td><!--<span class="t_hint" style="background-position: -0px -42px; width: 32px; height: 32px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/fail.png');"></span><span class="t_info">未连接或连接失败！</span>--></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="40" align="right"><label class="t_lable">IP地址&nbsp;:&nbsp;</label></td>
+
+
+
+
+
+
+
+			 <td><input type="text" name="wan_ipaddr"  value="<%=s_ip%>" class="t_text" id="wan_ipaddr"/></td>
+
+
+
+
+
+
+
+              <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="40" align="right"><label class="t_lable">子网掩码&nbsp;:&nbsp;</label></td>
+
+
+
+
+
+
+
+			 <td>
+
+
+
+
+
+
+
+			 <script language="javascript">
+
+
+
+
+
+
+
+		     var wan_netmask="<%=s_netmask%>"
+
+
+
+
+
+
+
+			 if(wan_netmask=='0.0.0.0'){
+
+
+
+
+
+
+
+			  document.write('<input type="text" name="wan_netmask" value="255.255.255.0" class="t_text" id="wan_netmask"/>');
+
+
+
+
+
+
+
+			 }else{
+
+
+
+
+
+
+
+			  document.write('<input type="text" name="wan_netmask" value="'+wan_netmask+'" class="t_text" id="wan_netmask"/>');
+
+
+
+
+
+
+
+			 }
+
+
+
+
+
+
+
+		   </script>
+
+
+
+
+
+
+
+			 </td>
+
+
+
+
+
+
+
+            <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="40" align="right"><label class="t_lable">网关&nbsp;:&nbsp;</label></td>
+
+
+
+
+
+
+
+			 <td><input type="text" name="wan_gateway" value="<%=s_gateway%>" class="t_text" id="wan_gateway"/></td>
+
+
+
+
+
+
+
+            <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="40" align="right"><label class="t_lable">首选DNS地址&nbsp;:&nbsp;</label></td>
+
+
+
+
+
+
+
+			 <td><input type="text" name="wan_dns0" value="<%=s_dns%>" class="t_text" id="wan_dns0"/></td>
+
+
+
+
+
+
+
+             <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="40" align="right"><label class="t_lable">备用DNS地址&nbsp;:&nbsp;</label></td>
+
+
+
+
+
+
+
+			 <td><input type="text" name="wan_dns1" value="<%=s_dns%>" class="t_text" id="wan_dns1"/></td>
+
+
+
+
+
+
+
+			 <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		    <tr>
+
+
+
+
+
+
+
+		     <td height="40" align="right"><label class="t_lable">总带宽&nbsp;:&nbsp;</label></td>
+
+
+
+
+
+
+
+			 <td><span id="pppoe_passwd"><input type="text" class="t_text" name='network_bandwidth_total' value="<%=p_bandwidth%>" id="static_total"/></span></td>
+
+
+
+
+
+
+
+			 <td style="color:#FFFFFF;" width="36">M</td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="46"></td>
+
+
+
+
+
+
+
+		     <td valign="bottom"><input type="button" value="保存"  class="t_btn" onclick="saveReport('static');"/></td>
+
+
+
+
+
+
+
+			 <td>&nbsp;</td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		</table>
+
+
+
+
+
+
+
+	 </form>
+
+
+
+
+
+
+
+	  </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+  <div class="content hide" id="item3">
+
+
+
+
+
+
+
+      <div class="content_left left">
+
+
+
+
+
+
+
+        <span class="network" style="background-position: -0px -420px; width: 200px; height: 200px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/dhcp_icon.png');"></span>
+
+
+
+
+
+
+
+		<span class="caption">动态IP上网</span>
+
+
+
+
+
+
+
+		<span class="info">系统自动获取IP地址,通过DHCP方式自动设置</span>
+
+
+
+
+
+
+
+	  </div>
+
+
+
+
+
+
+
+    <div class="content_right right">
+
+
+
+
+
+
+
+	   <form method="post" id="dhcp" action="<%=luci.dispatcher.build_url("admin/newweb/dhcp_update")%>">
+
+
+
+
+
+	   <input type="hidden" name="wan_proto"  value="dhcp">
+
+
+
+
+
+       <input type="hidden" name="wan_unit" value="== nvram_get(\"wan_unit\"); ==">
+
+       <input type="hidden" name="action" value="Apply">
+
+
+
+
+
+
+
+	    <table border="0" align="center" cellpadding="0" cellspacing="0">
+
+
+
+
+
+
+
+		   <tr>    
+
+
+
+              <td height="40"></td>
+
+
+
+		      <td height="107"><!--<span class="t_hint" style="background-position: -0px -42px; width: 32px; height: 32px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/fail.png');"></span><span class="t_info">未连接或连接失败！</span>--></td> 
+
+
+
+              <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+             <td></td>
+
+
+
+		     <td height="66" align="center"><label class="t_lable">无需设置,点击确定按钮即可。</label></td>
+
+
+
+             <td></td>
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		    <tr>
+
+
+
+
+
+
+
+		     <td height="66" align="right"><label class="t_lable">总带宽&nbsp;:&nbsp;</label></td>
+
+
+
+
+
+
+
+			 <td><span id="pppoe_passwd"><input type="text" class="t_text" name='network_bandwidth_total' value="<%=p_bandwidth%>" id="dhcp_total"/></span></td>
+
+
+
+
+
+
+
+			 <td style="color:#FFFFFF;" width="36">M</td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+             <td></td>
+
+
+
+
+
+
+
+		     <td height="88" align="left"><input type="button" value="确定"  class="t_btn" onclick="saveReport('dhcp');"/></td>
+
+
+
+
+
+
+
+             <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		</table>
+
+
+
+
+
+
+
+		</form>
+
+
+
+
+
+
+
+	  </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+  <div class="content hide" id="item4">
+
+
+
+
+
+
+
+      <div class="content_left left">
+
+
+
+
+
+
+
+        <span class="network" style="background-position: -0px -630px; width: 200px; height: 200px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/relay_icon.png');"></span>
+
+
+
+
+
+
+
+		<span class="caption">无线中继</span>
+
+
+
+
+
+
+
+		<span class="info">与已连接网络的路由器建立连接，以实现信号的中继和放大</span>
+
+
+
+
+
+
+
+	  </div>
+
+
+
+
+
+
+
+	  <div class="content_right right">
+
+
+
+
+     <form method="post" id="wds" action="<%=luci.dispatcher.build_url("admin/newweb/wds_update")%>">
+
+
+	    <table border="0" align="center" cellpadding="0" cellspacing="0">
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="40"></td>
+
+
+
+
+
+
+
+		     <td><!--<span class="t_hint" style="background-position: -0px -42px; width: 32px; height: 32px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/fail.png');"></span><span class="t_info">未连接或连接失败！</span>--></td>
+
+
+
+
+
+
+
+			 <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="70" align="right"><label class="t_lable">网络名称&nbsp;:&nbsp;</label></td>
+
+
+
+
+
+
+
+			 <td><input type="text" class="relay_text" id="relay_username" name='relay_username' value="<%=w_ssid%>"/></td>
+
+
+
+
+
+
+
+			 <td><img src="<%=resource%>/images/scan1.png" style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/scan1.png');"/></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="70" align="right"><label class="t_lable">网络密码&nbsp;:&nbsp;</label></td>
+
+
+
+
+
+
+
+			 <td><span id="relay_passwd"><input type="password" class="t_text" id="wan_relay_passwd" name='wan_relay_passwd' value="<%=w_pwd%>"/></span></td>
+
+
+
+
+
+
+
+			 <td><a href="javascript:;"><span class="view_pwd"  onclick="change_src1(this);"></span></a></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="70" align="right"><label class="t_lable">总带宽&nbsp;:&nbsp;</label></td>
+
+
+
+
+
+
+
+			 <td><span id="pppoe_passwd"><input type="text" class="t_text" name='network_bandwidth_total' value="<%=p_bandwidth%>" id="relay_total"/></span></td>
+
+
+
+
+
+
+
+			 <td style="color:#FFFFFF;">M</td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="100"></td>
+
+
+
+
+
+
+
+		     <td><input type="button" value="保存"  class="t_btn" onclick="saveReport('bridge');"/></td>
+
+
+
+
+
+
+
+			 <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		</table>
+
+
+
+
+	</form>
+
+
+	  </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<div id="tip">
+
+
+
+
+
+
+
+   <span class="loading"><img src="<%=resource%>/images/loading.gif"/></span>
+
+
+
+
+
+
+
+   <span class="tip_info"></span>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<script>
+
+
+
+
+
+
+
+  function setPos(id){
+
+
+
+
+
+
+
+        var o=document.getElementById(""+id+""); 
+
+
+
+
+
+
+
+		if(o.setSelectionRange){//W3C
+
+
+
+
+
+
+
+			setTimeout(function(){
+
+
+
+
+
+
+
+				o.setSelectionRange(o.value.length,o.value.length);
+
+
+
+
+
+
+
+				o.focus();
+
+
+
+
+
+
+
+			},0);
+
+
+
+
+
+
+
+		}else if(o.createTextRange){//IE
+
+
+
+
+
+
+
+			var textRange=o.createTextRange();
+
+
+
+
+
+
+
+			textRange.moveStart("character",o.value.length);
+
+
+
+
+
+
+
+			textRange.moveEnd("character",0);
+
+
+
+
+
+
+
+			textRange.select();
+
+
+
+
+
+
+
+		}
+
+
+
+
+
+
+
+	} 
+
+ wan_way="<%=network_type%>";
+
+ switch(wan_way){
+	case "pppoe":
+    	$(".select_text").html("宽带拨号上网");
+		$("#item1").removeClassaddClass("hide"); 
+		$("#item2").addClass("hide"); 
+		$("#item3").addClass("hide"); 
+		$("#item4").addClass("hide");
+        setPos("wan_pppoe_username");
+    	break;
+	case "static":
+    	$(".select_text").html("静态IP上网");
+    	$("#item1").addClass("hide"); 
+        $("#item2").removeClass("hide"); 
+		$("#item3").addClass("hide"); 
+		$("#item4").addClass("hide");
+        setPos("wan_ipaddr");
+    	break;
+   case "bridge":
+    	$(".select_text").html("无线中继上网");
+	    $("#item1").addClass("hide"); 
+	    $("#item2").addClass("hide"); 
+	    $("#item3").addClass("hide"); 
+        $("#item4").removeClass("hide");
+        setPos("relay_username");
+	    break;
+	default: // "dhcp":
+        $(".select_text").html("动态IP上网");
+    	$("#item1").addClass("hide"); 
+		$("#item2").addClass("hide"); 
+        $("#item3").removeClass("hide");
+		$("#item4").addClass("hide");
+        setPos("dhcp_total");
+		break;
+   }
+
+getParam();
+
+
+
+
+
+</script>
+
+</body>
+
+
+
+
+
+
+
+</html>
+
+
+
+
+
+
+

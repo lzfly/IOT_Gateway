@@ -1,0 +1,173 @@
+<!doctype html> 
+<html> 
+	<head> 
+		<style> body{ margin:auto;}img{display:block}; a{ display:block; text-decoration:none; font-family:"微软雅黑";} .big_box{ background-color:#115baa; height:960px;} .zigbee{ width:1200px; margin:auto; padding-bottom:17px; overflow:hidden;} .zigbee img,zigbee a{ float:left; } .zigbee img{padding-top:160px; padding-right:17px; } .zigbee a{font-size:26px; color:white;padding-top:165px; } .small_box{ width:1200px; height:560px; margin:auto; background-image:url(<%=resource%>/images/picture.png); background-repeat:no-repeat; overflow:hidden;} .deng,.chuanglian{ float:left; padding-left:200px;} .deng a,.chuanglian a{ font-size:34px; padding-left:50px; padding-top:70px; color:white;} .deng img,.chuanglian img { padding-left:10px; padding-top:30px;} </style> 
+		<meta charset="utf-8"> <title>无标题文档</title> 
+
+		<script type="text/javascript" src="<%=resource%>/js/jquery-1.8.1.min.js"></script>
+
+		<script type="text/javascript" src="<%=resource%>/js/jquery.rotate.js"></script>
+
+		<script type="text/javascript" src="<%=resource%>/js/modernizr-1.5.min.js"></script>
+
+		<script type="text/javascript" src="<%=resource%>/js/prefixfree.min.js"></script>
+
+		<script type="text/javascript" src="<%=resource%>/js/jquery.form.js"></script>
+
+		<script type="text/javascript" src="<%=resource%>/js/tip.js"></script>
+
+		<script type="text/javascript">
+
+		var resPath = "<%=resource%>" + "/images/";
+		var lightState = 1;
+		var windowState = 0;
+
+		function initState()
+		{
+			document.getElementById("currLightState").value = lightState;
+			document.getElementById("currWindowState").value = windowState;
+
+			if (lightState == 0)
+			{
+				document.getElementById("lightShow").src = resPath + "1176237.png";
+				document.getElementById("lightBtn").src = resPath + "button_01.png";
+			}
+			else
+			{
+				document.getElementById("lightShow").src = resPath + "light.png";
+				document.getElementById("lightBtn").src = resPath + "button_02.png";
+			}
+
+			if (windowState == 0)
+			{
+				document.getElementById("windowShow").src = resPath + "chuanglian.png";
+				document.getElementById("windowBtn").src = resPath + "button_01.png";
+			}
+			else
+			{
+				document.getElementById("windowShow").src = resPath + "chuanglian.png";
+				document.getElementById("windowBtn").src = resPath + "button_02.png";
+			}
+		}
+
+/*
+				lightState = document.getElementById("currLightState").value;
+				alert(lightState);
+
+*/
+		function switchLightState()
+		{
+			if (lightState == 0)
+			{
+				document.getElementById("currLightState").value = "1";
+			}
+			else
+			{
+				document.getElementById("currLightState").value = "0";
+			}
+
+			 $("#lightSet").ajaxSubmit(function(message) {
+				 lightState = document.getElementById("currLightState").value;
+				 if (lightState == 0) {
+					document.getElementById("lightShow").src = resPath + "1176237.png";
+					document.getElementById("lightBtn").src = resPath + "button_01.png";
+				 } else {
+					document.getElementById("lightShow").src = resPath + "light.png";
+					document.getElementById("lightBtn").src = resPath + "button_02.png";
+				 }
+				 
+			 });
+		}
+
+		function switchWindowState()
+		{
+			//alert("21313");
+			if (windowState == 0)
+			{
+				document.getElementById("currWindowState").value = "1";
+			}
+			else
+			{
+				document.getElementById("currWindowState").value = "0";
+			}
+			 $("#windowSet").ajaxSubmit(function(message) {
+				 windowState = document.getElementById("currWindowState").value;
+				 if (windowState == 0) {
+					document.getElementById("windowShow").src = resPath + "chuanglian.png";
+					document.getElementById("windowBtn").src = resPath + "button_01.png";
+				 } else {
+					document.getElementById("windowShow").src = resPath + "close.png";
+					document.getElementById("windowBtn").src = resPath + "button_02.png";
+				 }
+
+			 });
+		}
+
+		</script>
+	</head>
+
+<body oninit="initState();" style="margin-top: 0; padding-top: 0; overflow: hidden;">
+
+<div class="big_box" style="margin-top: 0; padding-top: 0; height: 800px;">
+	<div class="zigbee" style="margin-top: 20px; padding-top: 0;">
+    	<img style="margin: 0; padding: 0;" src="<%=resource%>/images/picture_01.png">
+        <a style="margin-top: 10px; padding-top: 10px;">ZIGBEE设备设备</a>
+    </div>
+
+	<div class="small_box" style="margin-bottom: 0; padding-bottom: 0;">
+		<form method="post" id="lightSet" action="<%=luci.dispatcher.build_url("admin/newweb/light_control")%>">
+			<div class="deng">
+				<a>灯</a>
+				<input type="hidden" value="0" id="currLightState"/>
+				<img id="lightShow" src="<%=resource%>/images/1176237.png">
+				<img id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState();">
+				<!--
+				<select>
+				<option >00:00-02:00</option>
+				<option >02:00-04:00</option>
+				<option >04:00-06:00</option>
+				<option >06:00-08:00</option>
+				<option >08:00-10:00</option>
+				<option >10:00-12:00</option>
+				<option >12:00-14:00</option>
+				<option >14:00-16:00</option>
+				<option >16:00-18:00</option>
+				<option >18:00-20:00</option>
+				<option >20:00-22:00</option>
+				<option >22:00-24:00</option>
+				</select>
+				-->
+			</div>
+		</form>
+        
+		<form method="post" id="windowSet" action="<%=luci.dispatcher.build_url("admin/newweb/static_update")%>">
+			<div class="chuanglian">
+				<a>窗帘</a>
+				<input type="hidden" value="0" id="currWindowState"/>
+				<img id="windowShow" src="<%=resource%>/images/chuanglian.png">
+				<img id="windowBtn" src="<%=resource%>/images/button_01.png" onclick="switchWindowState();">
+				<!--
+				<select >
+				<option >00:00-02:00</option>
+				<option >02:00-04:00</option>
+				<option >04:00-06:00</option>
+				<option >06:00-08:00</option>
+				<option >08:00-10:00</option>
+				<option >10:00-12:00</option>
+				<option >12:00-14:00</option>
+				<option >14:00-16:00</option>
+				<option >16:00-18:00</option>
+				<option >18:00-20:00</option>
+				<option >20:00-22:00</option>
+				<option >22:00-24:00</option>
+				</select>
+				-->
+			</div>
+		</form>
+	</div>
+
+</div>
+
+
+</body>
+</html>

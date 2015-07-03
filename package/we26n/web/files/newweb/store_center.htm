@@ -1,0 +1,8305 @@
+<%
+	require("uci")
+	local x = uci.cursor()
+	local s_dir=x:get("store","store_fs","start_dir")
+	
+%>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+
+<head>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+
+<title>存储中心</title>
+
+
+
+<style type="text/css">
+
+
+
+/* CSS Document */
+
+
+
+html,body {
+
+
+
+	height:100%;
+
+
+
+	margin:0px;
+
+
+
+}
+
+
+
+body {
+
+
+
+	background:#0A53A0;
+
+
+
+	filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);
+
+
+
+-ms-filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);/*IE8*/ 
+
+
+
+	background:-webkit-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	background:-o-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	background:-ms-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	background:-moz-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	background:adial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+}
+
+
+
+@media screen and (min-height: 681px) {
+
+#body_center{
+
+
+
+
+
+
+
+width:100%;
+
+
+
+
+
+
+
+height:680px;
+
+
+
+
+
+
+
+position:absolute;
+
+
+
+
+
+
+
+top:50%;
+
+
+
+
+
+
+
+margin-top:-345px;
+
+
+
+
+
+
+
+text-align:center;
+
+
+
+
+
+
+
+}
+
+#main {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+
+
+
+
+	border-top:1px solid #407CB8;
+
+	position:relative;
+
+	background:none; 
+
+	height:600px;
+
+
+
+
+
+
+
+}
+
+}
+
+@media screen and (max-height: 680px) {
+
+#body_center{
+
+width:100%;
+
+height:590px;
+
+position:absolute;
+
+top:50%;
+
+margin-top:-305px;
+
+text-align:center;
+
+
+
+}
+
+#main {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+
+
+
+
+	border-top:1px solid #407CB8;
+
+	position:relative;
+
+	background:none; 
+
+	height:520px;
+
+
+
+}
+
+}
+
+a{
+
+
+
+cursor:pointer;
+
+
+
+}
+
+
+
+a:link {
+
+
+
+	text-decoration:none;
+
+
+
+}
+
+
+
+a:visited {
+
+
+
+	text-decoration:none;
+
+
+
+}
+
+
+
+a:hover {
+
+
+
+	text-decoration:none;
+
+
+
+}
+
+
+
+a:active {
+
+
+
+	text-decoration:none;
+
+
+
+}
+
+
+
+.left {
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.right {
+
+
+
+	float:right;
+
+
+
+}
+
+
+
+img {
+
+
+
+	border:none;
+
+
+
+}
+
+
+
+span {
+
+
+
+	display:block;
+
+
+
+}
+
+
+
+.hide {
+
+
+
+	display:none;
+
+
+
+}
+
+
+
+#top .back {
+
+
+
+	width:42px;
+
+
+
+	height:75px;
+
+
+
+	background:url(<%=resource%>/images/back.png) no-repeat center center;
+
+
+
+}
+
+
+
+#top .title {
+
+
+
+	height:75px;
+
+
+
+	line-height:75px;
+
+
+
+	width:200px;
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:26px;
+
+
+
+	font-family:Microsoft YaHei,small;
+
+
+
+	font-weight:normal;
+
+
+
+	text-align:left;
+
+
+
+}
+
+
+
+.t_text {
+
+
+
+	width:300px;
+
+
+
+	height:30px;
+
+
+
+	border:1px solid #66FF00;
+
+
+
+}
+
+
+
+.t_lable {
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:18px;
+
+
+
+}
+
+
+
+#tip {
+
+
+
+	width:auto;
+
+
+
+	overflow:hidden;
+
+
+
+	text-align:center;
+
+
+
+	border:solid 2px #669999;
+
+
+
+	background:#6699CC;
+
+
+
+	display:none;
+
+
+
+}
+
+
+
+#tip .loading {
+
+
+
+	width:126px;
+
+
+
+	height:22px;
+
+
+
+	padding:5px 10px 5px;
+
+
+
+	margin:auto;
+
+
+
+	margin-top:5px;
+
+
+
+}
+
+
+
+#tip .tip_info {
+
+
+
+	width:100%;
+
+
+
+	text-align:center;
+
+
+
+}
+
+
+
+#top {
+
+
+
+	width:80%;
+
+
+
+	max-width:1200px;
+
+
+
+	min-width:980px;
+
+
+
+	height:75px;
+
+
+
+	margin:auto;
+
+
+
+}
+
+
+
+
+
+.capacity {
+
+
+
+	border-left:1px solid #407CB8;
+
+
+
+	margin-top:20px;
+
+
+
+}
+
+
+
+.capacity .size {
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:14px;
+
+
+
+	margin-left:15px;
+
+
+
+	text-align:left;
+
+
+
+}
+
+
+
+.capacity .rate {
+
+
+
+	width:120px;
+
+
+
+	height:15px;
+
+
+
+	line-height:15px;
+
+
+
+	margin-top:5px;
+
+
+
+	margin-left:15px;
+
+
+
+	background:#FFFFFF;
+
+
+
+	padding:0px;
+
+
+
+	position:relative;
+
+
+
+}
+
+
+
+.capacity .rate .pro {
+
+
+
+	position:absolute;
+
+
+
+	left:0px;
+
+
+
+	top:0px;
+
+
+
+	margin:0px;
+
+
+
+	width:0px;
+
+
+
+	padding:0px;
+
+
+
+	height:15px;
+
+
+
+	background:#DD9541;
+
+
+
+	z-index:1;
+
+
+
+}
+
+
+
+.capacity .residue_t {
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:38px;
+
+
+
+	float:left;
+
+
+
+	margin-left:10px;
+
+
+
+}
+
+
+
+.capacity .residue_i {
+
+
+
+	color:#CCCCCC;
+
+
+
+	font-size:14px;
+
+
+
+	position:absolute;
+
+
+
+	top:20px;
+
+
+
+	right:-30px;
+
+
+
+}
+
+
+
+.uninstall {
+
+
+
+	width:50px;
+
+
+
+	height:100%;
+
+
+
+	background:url(<%=resource%>/images/uninstall.png) no-repeat center center;
+
+
+
+	float:right;
+
+
+
+	position:relative;
+
+
+
+}
+
+
+
+.uninstall .tip {
+
+
+
+	color:#CCCCCC;
+
+
+
+	font-size:12px;
+
+
+
+	position:absolute;
+
+
+
+	right:0px;
+
+
+
+	bottom:4px;
+
+
+
+}
+
+
+
+.li_boder {
+
+
+
+	border-bottom:4px solid #D39E08;
+
+
+
+}
+
+
+
+.menu {
+
+
+
+	width:100%;
+
+
+
+	line-height:50px;
+
+
+
+	float:left;
+
+
+
+	text-align:right;
+
+
+
+}
+
+
+
+.menu ul {
+
+
+
+	padding:0px;
+
+
+
+	margin:0px;
+
+
+
+	list-style:none;
+
+
+
+	width:575px;
+
+
+
+	height:50px;
+
+
+
+	float:right;
+
+
+
+}
+
+
+
+.menu ul li {
+
+
+
+	float:left;
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:14px;
+
+
+
+	margin-left:20px;
+
+
+
+	margin-top:12px;
+
+
+
+	cursor:pointer;
+
+
+
+}
+
+
+
+.directory {
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.directory .up {
+
+
+
+	height:50px;
+
+
+
+	width:32px;
+
+
+
+	background:url(<%=resource%>/images/up_icon1.png) center center no-repeat;
+
+
+
+	cursor:pointer;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.directory .dir {
+
+
+
+	color:#FFFFFF;
+
+
+
+	float:left;
+
+
+
+	margin-left:10px;
+
+
+
+}
+
+
+
+.directory a {
+
+
+
+	color:#FFFFFF;
+
+
+
+	text-decoration:blink;
+
+
+
+}
+
+
+
+.directory a:hover {
+
+
+
+	text-decoration:underline;
+
+
+
+}
+
+
+
+.directory .dir_v {
+
+
+
+	color:#FFFFFF;
+
+
+
+	height:45px;
+
+
+
+	float:left;
+
+	text-align:left;
+
+	text-overflow:ellipsis;
+
+	white-space:nowrap;
+
+	width:auto;
+
+	overflow:hidden;
+
+	
+
+
+
+}
+
+
+
+.directory .dir_v_d {
+
+
+
+	color:#FFFFFF;
+
+
+
+	height:45px;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+#file_list {
+
+
+
+	width:100%;
+
+
+
+	height:520px;
+
+
+
+	float:left;
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+}
+
+
+
+#jianluyou_list {
+
+
+
+	width:100%;
+
+
+
+	height:380px;
+
+
+
+	float:left;
+
+
+
+	overflow:auto;
+
+
+
+}
+
+
+
+#file_list ul {
+
+
+
+	padding-left:10px;
+
+
+
+	margin:0px;
+
+
+
+	list-style:none;
+
+
+
+	width:98%;
+
+
+
+}
+
+
+
+.icon {
+
+
+
+	width:30px;
+
+
+
+	height:40px;
+
+
+
+}
+
+
+
+.l_name {
+
+
+
+	height:40px;
+
+
+
+	line-height:40px;
+
+
+
+	margin-left:10px;
+
+
+
+	font-size:14px;
+
+
+
+	text-align:left;
+
+
+
+	color:#FFFFFF;
+
+
+
+	width:70%;
+
+
+
+	text-overflow:ellipsis;
+
+
+
+	white-space:nowrap;
+
+
+
+	overflow:hidden;
+
+
+
+}
+
+
+
+.l_name a {
+
+
+
+	color:#FFFFFF;
+
+
+
+	text-decoration:blink;
+
+
+
+}
+
+
+
+.l_name a:hover {
+
+
+
+	text-decoration:underline;
+
+
+
+}
+
+
+
+.l_time {
+
+
+
+	height:40px;
+
+
+
+	line-height:40px;
+
+
+
+	margin-left:10px;
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:14px;
+
+
+
+	text-align:left;
+
+
+
+	width:15%;
+
+
+
+}
+
+
+
+.l_size {
+
+
+
+	height:40px;
+
+
+
+	line-height:40px;
+
+
+
+	margin-left:10px;
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:14px;
+
+
+
+}
+
+
+
+.check_c {
+
+
+
+	margin-top:13px;
+
+
+
+}
+
+
+
+.li_file {
+
+
+
+	width:100%;
+
+
+
+	clear:left;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.ifolder {
+
+
+
+	background:url(<%=resource%>/images/folder_list.png) no-repeat center center;
+
+
+
+}
+
+
+
+.ifile {
+
+
+
+	background:url(<%=resource%>/images/file.png) no-repeat center center;
+
+
+
+}
+
+
+
+.iimage {
+
+
+
+	background:url(<%=resource%>/images/image_list.png) no-repeat center center;
+
+
+
+}
+
+
+
+.idoc {
+
+
+
+	background:url(<%=resource%>/images/doc_list.png) no-repeat center center;
+
+
+
+}
+
+
+
+.ivideo {
+
+
+
+	background:url(<%=resource%>/images/video_list.png) no-repeat center center;
+
+
+
+}
+
+
+
+.imusic {
+
+
+
+	background:url(<%=resource%>/images/music_list.png) no-repeat center center;
+
+
+
+}
+
+
+
+.itxt {
+
+
+
+	background:url(<%=resource%>/images/txt.png) no-repeat center center;
+
+
+
+}
+
+
+
+.ipdf {
+
+
+
+	background:url(<%=resource%>/images/pdf.png) no-repeat center center;
+
+
+
+}
+
+
+
+.file_menu {
+
+
+
+	width:100%;
+
+
+
+	float:left;
+
+
+
+	line-height:50px;
+
+
+
+	text-align:right}
+
+
+
+.file_menu .mode {
+
+
+
+	width:32px;
+
+
+
+	height:45px;
+
+
+
+	float:right;
+
+
+
+	background:url(<%=resource%>/images/thumbnai_mode.png) center center no-repeat;
+
+
+
+}
+
+#footer {
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	width:900px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+	height:25px;
+
+
+
+
+
+
+
+	line-height:25px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	font-size:14px;
+
+
+
+
+
+
+
+	bottom:85px;
+
+    color:#CCCCCC;
+
+
+
+
+
+	left:50%;
+
+	margin-left:-450px;
+
+    border:solid 1px #333333;
+
+    -moz-border-radius: 8px;
+
+	-khtml-border-radius: 8px;
+
+	-webkit-border-radius: 8px;
+
+	border-radius: 8px; 
+
+	
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#footer .cont .close {
+
+
+
+	width:17px;
+
+
+
+	height:25px;
+
+
+
+	position:absolute;
+
+
+
+	cursor:pointer;
+
+
+
+	top:0px;
+
+
+
+	right:0px;
+
+
+
+	background:url(<%=resource%>/images/close.png) no-repeat center center;
+
+
+
+}
+
+
+
+#footer .cont .che_f_n {
+
+
+
+	position:absolute;
+
+
+
+	top:5px;
+
+
+
+	right:95px;
+
+
+
+}
+
+
+
+#footer .cont .lab_f_n {
+
+
+
+	position:absolute;
+
+
+
+	height:25px;
+
+
+
+	line-height:25px;
+
+
+
+	top:0px;
+
+
+
+	right:40px;
+
+
+
+}
+
+
+
+#foot_menu {
+
+
+
+	width:100%;
+
+
+
+	height:80px;
+
+
+
+	background:#4C4D4C;
+
+
+
+	position:absolute;
+
+
+
+	left:0px;
+
+
+
+	bottom:0px;
+
+
+
+}
+
+
+
+#foot_menu ul {
+
+
+
+	position:0px;
+
+
+
+	margin:0px;
+
+
+
+	list-style:none;
+
+
+
+	margin-top:10px;
+
+
+
+}
+
+
+
+#foot_menu ul li {
+
+
+
+	width:42px;
+
+
+
+	color:#FFFFFF;
+
+
+
+	float:left;
+
+
+
+	text-align:center;
+
+
+
+	margin-left:25px;
+
+
+
+	font-size:12px;
+
+
+
+}
+
+
+
+#foot_menu .menu_middle {
+
+
+
+	margin-left:260px;
+
+
+
+}
+
+
+
+#foot_menu .menu_right {
+
+
+
+	float:right;
+
+
+
+	margin-top:0px;
+
+
+
+	margin-right:10px;
+
+
+
+}
+
+
+
+.bt_btn {
+
+
+
+	height:30px;
+
+
+
+	width:42px;
+
+
+
+	line-height:38px;
+
+
+
+	font-family:"微软雅黑";
+
+
+
+	font-size:16px;
+
+
+
+	text-align:center;
+
+
+
+	border:none;
+
+
+
+	position:absolute;
+
+
+
+}
+
+
+
+.up-input {
+
+
+
+	position:absolute;
+
+
+
+	top:0px;
+
+
+
+	left:0px;
+
+
+
+	height:100%;
+
+
+
+	width:100%;
+
+
+
+	-moz-opacity:0;
+
+
+
+	filter:alpha(opacity:0);
+
+
+
+	opacity:0;
+
+
+
+	cursor:pointer;
+
+
+
+}
+
+
+
+.filter {
+
+
+
+	filter:alpha(opacity=50);
+
+
+
+	opacity:0.50;
+
+
+
+}
+
+
+
+.m_li_file {
+
+
+
+	width:270px;
+
+
+
+	height:40px;
+
+
+
+	float:left;
+
+
+
+	background:#4083C8;
+
+
+
+	color:#FFFFFF;
+
+
+
+	margin:5px;
+
+
+
+}
+
+
+
+ 
+
+.m_new_text {
+
+
+
+	border:1px #D2D2D2 solid;
+
+
+
+	width:140px;
+
+
+
+	height:20px;
+
+	line-height:20px;
+
+	vertical-align:middle;
+
+
+
+	margin-top:8px;
+
+
+
+}
+
+
+
+.file_title {
+
+
+
+	width:98%;
+
+
+
+	clear:left;
+
+
+
+	float:left;
+
+
+
+	padding-left:10px;
+
+
+
+}
+
+
+
+#folder_list {
+
+
+
+	position:absolute;
+
+
+
+	left:35%;
+
+
+
+	top:20%;
+
+
+
+	width:520px;
+
+
+
+	height:320px;
+
+
+
+	background:#FFFFFF;
+
+
+
+	border:3px solid #999999;
+
+
+
+	z-index:1;
+
+
+
+}
+
+
+
+#folder_list .top {
+
+
+
+	width:100%;
+
+
+
+	height:50px;
+
+
+
+	position:relative;
+
+
+
+	background:#F8F8F8;
+
+
+
+	border-bottom:1px solid #999999;
+
+
+
+}
+
+
+
+#folder_list .top h3 {
+
+
+
+	position:absolute;
+
+
+
+	padding:0px;
+
+
+
+	padding-top:0px;
+
+
+
+	left:10px;
+
+
+
+	font-size:16px;
+
+
+
+}
+
+
+
+#folder_list .top .close {
+
+
+
+	width:17px;
+
+
+
+	height:20px;
+
+
+
+	position:absolute;
+
+
+
+	top:15px;
+
+
+
+	right:10px;
+
+
+
+	background:url(<%=resource%>/images/close.png) no-repeat center center;
+
+
+
+}
+
+
+
+#folder_list .middle {
+
+
+
+	width:500px;
+
+
+
+	height:200px;
+
+
+
+	margin:10px;
+
+
+
+	text-align:justify;
+
+
+
+	overflow:auto;
+
+
+
+}
+
+
+
+#folder_list .bottom {
+
+
+
+	width:500px;
+
+
+
+	margin:10px;
+
+
+
+	text-align:center;
+
+
+
+}
+
+
+
+#folder_list .bottom .confirm {
+
+
+
+	width:128px;
+
+
+
+	height:36px;
+
+
+
+	background:#0066FF;
+
+
+
+	color:#FFFFFF;
+
+
+
+	border:1px solid #0099FF;
+
+
+
+	cursor:pointer;
+
+
+
+}
+
+
+
+#folder_list .bottom .cancel {
+
+
+
+	width:128px;
+
+
+
+	height:36px;
+
+
+
+	color:#FFFFFF;
+
+
+
+	background:#CCCCCC;
+
+
+
+	border:1px solid #999999;
+
+
+
+	cursor:pointer;
+
+
+
+}
+
+
+
+#folder_list_m {
+
+
+
+	position:absolute;
+
+
+
+	left:35%;
+
+
+
+	top:20%;
+
+
+
+	width:520px;
+
+
+
+	height:320px;
+
+
+
+	background:#FFFFFF;
+
+
+
+	border:3px solid #999999;
+
+
+
+	z-index:1;
+
+
+
+}
+
+
+
+#folder_list_m .top {
+
+
+
+	width:100%;
+
+
+
+	height:50px;
+
+
+
+	position:relative;
+
+
+
+	background:#F8F8F8;
+
+
+
+	border-bottom:1px solid #999999;
+
+
+
+}
+
+
+
+#folder_list_m .top h3 {
+
+
+
+	position:absolute;
+
+
+
+	padding:0px;
+
+
+
+	padding-top:0px;
+
+
+
+	left:10px;
+
+
+
+	font-size:16px;
+
+
+
+}
+
+
+
+#folder_list_m .top .close {
+
+
+
+	width:17px;
+
+
+
+	height:20px;
+
+
+
+	position:absolute;
+
+
+
+	top:15px;
+
+
+
+	right:10px;
+
+
+
+	background:url(<%=resource%>/images/close.png) no-repeat center center;
+
+
+
+}
+
+
+
+#folder_list_m .middle {
+
+
+
+	width:500px;
+
+
+
+	height:200px;
+
+
+
+	margin:10px;
+
+
+
+	text-align:justify;
+
+
+
+	overflow:auto;
+
+
+
+}
+
+
+
+#folder_list_m .bottom {
+
+
+
+	width:500px;
+
+
+
+	margin:10px;
+
+
+
+	text-align:center;
+
+
+
+}
+
+
+
+#folder_list_m .bottom .confirm {
+
+
+
+	width:128px;
+
+
+
+	height:36px;
+
+
+
+	background:#0066FF;
+
+
+
+	color:#FFFFFF;
+
+
+
+	border:1px solid #0099FF;
+
+
+
+	cursor:pointer;
+
+
+
+}
+
+
+
+#folder_list_m .bottom .cancel {
+
+
+
+	width:128px;
+
+
+
+	height:36px;
+
+
+
+	color:#FFFFFF;
+
+
+
+	background:#CCCCCC;
+
+
+
+	border:1px solid #999999;
+
+
+
+	cursor:pointer;
+
+
+
+}
+
+
+
+.file_top_menu {
+
+
+
+	background:url(<%=resource%>/images/file_menu1.png);
+
+
+
+}
+
+
+
+.file_bot_menu {
+
+
+
+	background:url(<%=resource%>/images/file_menu.png);
+
+
+
+}
+
+
+
+.ic-chname-ok{
+
+
+
+width:24px;
+
+
+
+height:100%;
+
+
+
+float:left;
+
+
+
+margin-left:8px;
+
+
+
+background:url(<%=resource%>/images/perm_yes.png) center center no-repeat;
+
+
+
+}
+
+
+
+.ic-chname-no{
+
+
+
+width:24px;
+
+
+
+height:100%;
+
+
+
+float:left;
+
+
+
+margin-left:2px;
+
+
+
+background:url(<%=resource%>/images/perm_no.png) center center no-repeat;
+
+
+
+}
+
+
+
+</style>
+
+
+
+<link rel='stylesheet' type='text/css' href='<%=resource%>/js/tree_themes/SimpleTree.css'>
+
+<!--[if lt IE 9]>
+
+<script src="<%=resource%>/js/css3-mediaqueries.js"></script>
+
+<![endif]-->
+
+
+
+<script type="text/javascript" src="<%=resource%>/js/jquery-1.8.1.min.js"></script>
+
+
+
+<script type="text/javascript" src="<%=resource%>/js/jsloader.js"></script>
+
+
+
+<script type="text/javascript">
+
+
+
+var root_dir;
+
+
+
+var start_dir;
+
+
+
+var zone_dir;
+
+
+
+var box1;
+
+
+
+var tmp_jud=0;
+
+
+
+var image_type="png,bmp,jpg,tiff,gif,pcx,tga,exif,fpx,svg,psd,cdr,pcd,dxf,ufo,eps,ai,raw";
+
+
+
+var video_type="wmv,asf,asx,rm,rmvb,mpg,mpeg,mpe,dat,vob,dv,3gp,3g2,mov,avi,mkv,mp4,m4v,flv";
+
+
+
+var audio_type="mp3,mpeg,avi,rm,rmvb,mov,wmv,asf,dat(VCD),asx,wvx,mpe,mpa";
+
+
+
+var file_type="txt,docx,wps,tex,ltx,rtf,inf,hlp,chm,html,xhtml,shtml,htm,pdf,mht,mhtml,odf,wps,ppt,pptx,doc";
+
+
+
+var usb_info;
+
+var h_dir;
+
+var urls=["<%=resource%>/js/jquery.mousewheel.js","<%=resource%>/js/jquery.mCustomScrollbar.concat.min.js","<%=resource%>/js/jquery.form.js","<%=resource%>/js/SimpleTree.js","<%=resource%>/js/tip.js"];
+
+
+
+function init(){
+
+
+
+   loadCss("<%=resource%>/css/jquery.mCustomScrollbar.css");
+
+
+
+}
+
+
+
+function load_data(){
+
+
+   //if(usb_info!=""&&usb_info!=null&&usb_info.indexOf(",")>=0){
+	if(true){
+
+   //start_dir="== jianluyou_nvram_get(\"jlu_harddisk_path\"); ==";
+	start_dir="<%=s_dir%>"	
+    h_dir=start_dir;
+
+   var d_arr=start_dir.split("/");
+
+
+
+  zone_dir=d_arr[d_arr.length-2];
+
+
+
+   root_dir=start_dir.substring(0,start_dir.indexOf(zone_dir))+"*";
+
+
+   start_dir=start_dir+"/*";
+   
+
+
+
+   fileList(start_dir);
+
+
+
+   $('#foot_menu ul li').bind('mouseover', function(){$(this).removeClass("filter");});
+
+
+
+   $('#foot_menu  ul li').bind('mouseout', function(){$(this).addClass("filter"); });
+
+
+
+   $('.mode').bind('click', function(){ change_arrange(this) });
+
+
+
+   $(".st_tree").SimpleTree();
+
+
+
+   box1 = new LightBox("tip");
+
+
+
+   }else{
+
+
+
+     alert("没有发现可用磁盘");
+
+
+
+   }
+
+var mwidth=$("#main").css("width");
+
+mwidth=mwidth.substring(0,mwidth.length-2);
+
+var swidth=parseInt(mwidth)-675;
+
+$(".directory .dir_v").css("width",swidth+"px");
+
+}
+
+
+
+var folderArray=[];
+
+
+
+var musicArray=[];
+
+
+
+var docArray=[];
+
+
+
+var videoArray=[];
+
+
+
+var imageArray=[];
+
+
+
+var files_myArray=[];
+
+
+
+var files_myArray1;
+
+
+
+var files_myArray2;
+
+
+
+var files_myArray3;
+
+
+
+var name;
+
+
+
+var size;
+
+
+
+var modifytime;
+
+
+
+var filetype;
+
+
+
+var $parent;
+
+
+
+var $ul;
+
+
+
+function fileList(path){
+
+ 
+
+ $("#filename").val(path);
+
+
+
+ $("#handle").val("list");
+
+
+
+ $("#dir").attr("value",path);
+
+
+
+ folderArray=[];
+
+
+
+ musicArray=[];
+
+
+
+ docArray=[];
+
+
+
+ videoArray=[];
+
+
+
+ imageArray=[];
+
+
+
+ files_myArray=[];
+
+ 
+
+ $("#myform").ajaxSubmit(function(message) {
+	
+	
+   files_myArray1=message.split('#');
+
+   var mode=$(".mode").css("backgroundImage").substring($(".mode").css("backgroundImage").lastIndexOf("/")+1,$(".mode").css("backgroundImage").lastIndexOf(".png"));
+
+
+
+   for(var i=0;i<files_myArray1.length-1;i++){
+
+
+
+          files_myArray2=files_myArray1[i].split('*');
+	
+
+
+	      files_myArray3=files_myArray2[0].split('/');
+		 
+		
+
+		  name=files_myArray3[files_myArray3.length-1];
+
+
+
+	      filetype=files_myArray3[1];
+
+		
+	      size=toDecimal(files_myArray2[1]/1000);
+		 
+
+
+	      modifytime=files_myArray2[2];
+
+
+
+     if(filetype=="1"){
+	
+		
+		     folderArray.push(filetype+","+name+",-,"+modifytime);
+
+
+
+		  }else{
+
+		
+
+		     var ftype=name.substring(name.lastIndexOf("."),name.length);
+
+
+			
+			 switch(ftype){
+
+
+
+			 case '.png':
+
+
+
+			 case '.jpg':
+
+
+
+			 case '.gif':
+
+
+
+			 case '.bmp':
+
+
+
+			 case '.tiff':
+
+
+
+			 case '.pcx':
+
+
+
+			 case '.tga':
+
+
+
+			 case '.exif':
+
+
+
+			 imageArray.push(filetype+","+name+","+size+","+modifytime);
+
+
+
+			 break;
+
+
+
+			 case '.avi':
+
+
+
+			 case '.wmv':
+
+
+
+             case '.mp4':
+
+
+
+			 case '.m4v':
+
+
+
+			 case '.rmvb':
+
+
+
+			 case '.rm':
+
+
+
+			 case '.mkv':
+
+
+
+			 case '.mov':
+
+
+
+			 case '.flv':
+
+
+
+			 case '.asf':
+
+
+
+			 case '.mpg':
+
+
+
+			 case '.mpe':
+
+
+
+			 case '.mpeg':
+
+
+
+			 videoArray.push(filetype+","+name+","+size+","+modifytime);
+
+
+
+			 break;
+
+
+
+			 case '.mp3':
+
+
+
+			 case '.wma':
+
+
+
+			 case '.mid':
+
+
+
+             case '.dat':
+
+
+
+			 musicArray.push(filetype+","+name+","+size+","+modifytime);
+
+
+
+			 break;
+
+
+
+			 default:
+
+
+
+			 docArray.push(filetype+","+name+","+size+","+modifytime);
+
+
+
+			 break;
+
+
+
+			}
+
+
+
+		  }
+
+
+
+		 }
+
+
+
+		 files_myArray=files_myArray.concat(folderArray);
+
+
+
+		 files_myArray=files_myArray.concat(docArray);
+
+
+
+		 files_myArray=files_myArray.concat(imageArray);
+
+
+
+		 files_myArray=files_myArray.concat(musicArray);
+
+
+
+		 files_myArray=files_myArray.concat(videoArray);
+
+
+
+		 if(mode=="list_mode"){
+
+
+
+		    changeMode("thumbnai_mode");
+
+
+
+		  }else{
+
+
+
+		    changeMode("list_mode");
+
+
+
+		 }
+
+
+
+ });
+
+if($("#head_check").attr("checked")=="checked"){
+
+  $("#head_check").click();
+
+}  
+
+}
+
+
+
+var l_myArray;
+
+
+
+var l_type;
+
+
+
+var l_name;
+
+
+
+var l_time;
+
+
+
+var l_size;
+
+
+
+function changeMode(mode){
+
+
+
+$parent= $("#jianluyou_list"); 
+
+
+
+$parent.html("");
+
+
+
+$ul= $("<ul id='jianluyou_list_ul'></ul>");
+
+
+
+if(mode=="list_mode"){
+
+
+   for(var i=0;i<files_myArray.length;i++){
+
+
+
+          l_myArray=files_myArray[i].split(',');
+
+		  
+		  l_type=l_myArray[0];
+
+		 
+
+		  l_name=l_myArray[1];
+
+
+
+		  l_size=l_myArray[2];
+
+
+
+		  l_time=l_myArray[3];
+
+          if(l_name!=""&&l_name!=null){
+
+		  var $li = $("<li class='li_file'></li>");
+
+
+
+		  var $checkbox = $("<span class='check left'><input type='checkbox' name='jianluyou_chk' class='check_c'/></span>");
+
+
+
+		  if(l_type=="d"){
+
+
+
+		  var $type = $("<span class='icon ifolder left'><input type='hidden' value='1' class='l_type'/></span>");
+
+
+
+		  }else{
+
+
+
+		  var  ftype=l_name.substring(l_name.lastIndexOf("."),l_name.length);
+
+
+
+		   switch(ftype){
+
+
+
+		     case '.png':
+
+
+
+			 case '.jpg':
+
+
+
+			 case '.gif':
+
+
+
+			 case '.bmp':
+
+
+
+			 case '.tiff':
+
+
+
+			 case '.pcx':
+
+
+
+			 case '.tga':
+
+
+
+			 case '.exif':
+
+
+
+			 var $type = $("<span class='icon iimage left'><input type='hidden' value='0' class='l_type'/></span>");
+
+
+
+			 break;
+
+
+
+			 case '.avi':
+
+
+
+			 case '.wmv':
+
+
+
+             case '.mp4':
+
+
+
+			 case '.m4v':
+
+
+
+			 case '.rmvb':
+
+
+
+			 case '.rm':
+
+
+
+			 case '.mkv':
+
+
+
+			 case '.mov':
+
+
+
+			 case '.flv':
+
+
+
+			 case '.asf':
+
+
+
+			 case '.mpg':
+
+
+
+			 case '.mpe':
+
+
+
+			 case '.mpeg':
+
+
+
+			 var $type = $("<span class='icon ivideo left'><input type='hidden' value='0' class='l_type'/></span>");
+
+
+
+			 break;
+
+
+
+			 case '.mp3':
+
+
+
+			 case '.wma':
+
+
+
+			 case '.mid':
+
+
+
+             case '.dat':
+
+
+
+			 var $type = $("<span class='icon imusic left'><input type='hidden' value='0' class='l_type'/></span>");
+
+
+
+			 break;
+
+
+
+			 default:
+
+
+
+			 var $type = $("<span class='icon idoc left'><input type='hidden' value='0' class='l_type'/></span>");
+
+
+
+			 break;
+
+
+
+		   }
+
+
+
+		  }
+
+
+
+		  var $name = $("<span class='l_name left'><a href='javascript:;' onclick='open_fun(this)' title='"+l_name+"'>"+l_name+"</a></span>");
+
+
+
+		  var $time;
+
+
+
+		  var $size;
+
+
+
+		  //if(l_time!="100"&&typeof(l_time)!= "undefined"){
+			if(true){
+
+
+		     $time = $("<span class='l_time left'>"+l_time+"</span>");
+
+
+
+			 if(l_size!="-"){
+
+
+
+			 var s=parseInt(l_size);
+
+
+
+			 if(s>=1024){
+
+
+
+			   s=toDecimal(s/1024);
+
+
+
+			   l_size=s+"MB";
+
+
+
+			   if(s>=1024){
+
+
+
+			    s=toDecimal(s/1024);
+
+
+
+			    l_size=s+"GB";
+
+
+
+			   }
+
+
+
+			   if(s>=1024){
+
+
+
+			    s=toDecimal(s/1024);
+
+
+
+			    l_size=s+"TB";
+
+
+
+			   }
+
+
+
+			 }else{
+
+
+
+			  l_size=l_size+"KB";
+
+
+
+			 }
+
+
+
+			 }
+
+
+
+			 $size = $("<span class='l_size left'>"+l_size+"</span>");
+
+
+
+		  }else{
+
+
+
+		     $time = $("<span class='l_time left'>-</span>"); 
+
+
+
+			 $size = $("<span class='l_size left'>-</span>");
+
+
+
+		  }
+
+
+
+		  $li.append($checkbox);
+
+
+
+		  $li.append($type);
+
+
+
+		  $li.append($name);
+
+
+
+		  $li.append($time);
+
+
+
+		  $li.append($size);
+
+
+
+		  $ul.append($li);
+
+     }
+
+   }
+
+  
+
+  $('.file_title').removeClass('hide');
+
+
+
+  $parent.append($ul);
+
+
+
+  $('.li_file').bind('mouseover', function(){mouseover(this);});
+
+
+
+  $('.li_file').bind('mouseout', function(){mouseout(this);});
+
+
+
+ }else{
+
+
+
+    $('.file_title').addClass('hide');
+
+
+
+    for(var i=0;i<files_myArray.length;i++){
+
+
+
+          l_myArray=files_myArray[i].split(',');
+
+
+
+		  l_type=l_myArray[0];
+
+
+
+		  l_name=l_myArray[1];
+
+
+
+		  l_size=l_myArray[2];
+
+
+
+		  l_time=l_myArray[3];
+
+          if(l_name!=""&&l_name!=null){
+
+		  var $li = $("<li class='m_li_file'></li>");
+
+
+
+		  var $checkbox = $("<span class='check left'><input type='checkbox' name='jianluyou_chk' class='check_c'/></span>");
+
+
+
+		  if(l_type=="1"){
+
+
+
+		  var $type = $("<span class='icon ifolder left'><input type='hidden' value='1' class='l_type'/></span>");
+
+
+
+		  }else{
+
+
+
+		   var  ftype=l_name.substring(l_name.lastIndexOf("."),l_name.length);
+
+
+
+		   switch(ftype){
+
+
+
+		     case '.png':
+
+
+
+			 case '.jpg':
+
+
+
+			 case '.gif':
+
+
+
+			 case '.bmp':
+
+
+
+			 case '.tiff':
+
+
+
+			 case '.pcx':
+
+
+
+			 case '.tga':
+
+
+
+			 case '.exif':
+
+
+
+			 var $type = $("<span class='icon iimage left'><input type='hidden' value='0' class='l_type'/></span>");
+
+
+
+			 break;
+
+
+
+			 case '.avi':
+
+
+
+			 case '.wmv':
+
+
+
+             case '.mp4':
+
+
+
+			 case '.m4v':
+
+
+
+			 case '.rmvb':
+
+
+
+			 case '.rm':
+
+
+
+			 case '.mkv':
+
+
+
+			 case '.mov':
+
+
+
+			 case '.flv':
+
+
+
+			 case '.asf':
+
+
+
+			 case '.mpg':
+
+
+
+			 case '.mpe':
+
+
+
+			 case '.mpeg':
+
+
+
+			 var $type = $("<span class='icon ivideo left'><input type='hidden' value='0' class='l_type'/></span>");
+
+
+
+			 break;
+
+
+
+			 case '.mp3':
+
+
+
+			 case '.wma':
+
+
+
+			 case '.mid':
+
+
+
+             case '.dat':
+
+
+
+			 var $type = $("<span class='icon imusic left'><input type='hidden' value='0' class='l_type'/></span>");
+
+
+
+			 break;
+
+
+
+			 default:
+
+
+
+			 var $type = $("<span class='icon idoc left'><input type='hidden' value='0' class='l_type'/></span>");
+
+
+
+			 break;
+
+
+
+		   }
+
+
+
+		  }
+
+
+
+		  var tmp_name=l_name;
+
+
+
+		  var $name = $("<span class='l_name left' style='width:210px;'><a href='javascript:;' onclick='open_fun(this)' title='"+tmp_name+"'>"+l_name+"</a></span>");
+
+
+
+		  $li.append($checkbox);
+
+
+
+		  $li.append($type);
+
+
+
+		  $li.append($name);
+
+
+
+		  $ul.append($li);
+
+
+
+	 }
+
+	}
+
+
+
+	 $parent.append($ul);
+
+
+
+ }
+
+
+
+    $("#jianluyou_list").mCustomScrollbar({
+
+
+
+					autoHideScrollbar:true,
+
+
+
+					scrollInertia:200,//滚动延迟
+
+
+
+					theme:"light-thin"
+
+
+
+				});
+
+
+
+}
+
+
+
+//排序
+
+
+
+var SortByDate = {
+
+
+
+　　BubbleSortUp: function(array) {
+
+
+
+　　　　var length = array.length;
+
+
+
+　　　　for(i=0; i<=length-2; i++) { 
+
+
+
+　　　　　　for(j=length-1; j>=1; j--) {
+
+
+
+　　　　　　　　//对两个元素进行交换
+
+
+
+　　　　　　　　if(parseFloat(new Date(array[j].split(",")[3].replace(/\-/gi,"/")).getTime()) < parseFloat(new Date(array[j-1].split(",")[3].replace(/\-/gi,"/")).getTime())) {
+
+
+
+　　　　　　　　　　temp = array[j];
+
+
+
+　　　　　　　　　　array[j] = array[j-1];
+
+
+
+　　　　　　　　　　array[j-1] = temp;
+
+
+
+　　　　　　　　}
+
+
+
+　　　　　　}
+
+
+
+　　　　}
+
+
+
+　　},
+
+
+
+   BubbleSortDown: function(array) {
+
+
+
+　　　　var length = array.length;
+
+
+
+　　　　for(i=0; i<=length-2; i++) {
+
+
+
+　　　　　　for(j=length-1; j>=1; j--) {
+
+
+
+　　　　　　　　//对两个元素进行交换
+
+
+
+　　　　　　　　if(parseFloat(new Date(array[j].split(",")[3].replace(/\-/gi,"/")).getTime()) > parseFloat(new Date(array[j-1].split(",")[3].replace(/\-/gi,"/")).getTime())) {
+
+
+
+　　　　　　　　　　temp = array[j-1];
+
+
+
+　　　　　　　　　　array[j-1] = array[j];
+
+
+
+　　　　　　　　　　array[j] = temp;
+
+
+
+　　　　　　　　}
+
+
+
+　　　　　　}
+
+
+
+　　　　}
+
+
+
+　　}
+
+
+
+}
+
+
+
+var SortBySize = {
+
+
+
+　　BubbleSortUp: function(array) {
+
+
+
+　　　　var length = array.length;
+
+
+
+　　　　for(i=0; i<length-1; i++) {
+
+
+
+　　　　　　for(j=i+1;j<length;j++) {
+
+
+
+　　　　　　　　//对两个元素进行交换
+
+
+
+　　　　　　　　if(parseFloat(array[i].split(",")[2]) > parseFloat(array[j].split(",")[2])) {
+
+
+
+　　　　　　　　　　temp = array[i];
+
+
+
+　　　　　　　　　　array[i] = array[j];
+
+
+
+　　　　　　　　　　array[j] = temp;
+
+
+
+　　　　　　　　}
+
+
+
+　　　　　　}
+
+
+
+　　　　}
+
+
+
+　　},
+
+
+
+   BubbleSortDown: function(array) {
+
+
+
+　　　　var length = array.length;
+
+
+
+　　　　　for(i=0; i<length-1; i++) {
+
+
+
+　　　　　　for(j=i+1;j<length;j++) {
+
+
+
+　　　　　　　　//对两个元素进行交换
+
+
+
+　　　　　   　if(parseFloat(array[i].split(",")[2]) < parseFloat(array[j].split(",")[2])) {
+
+
+
+　　　　　　　　　　temp = array[i];
+
+
+
+　　　　　　　　　　array[i] = array[j];
+
+
+
+　　　　　　　　　　array[j] = temp;
+
+
+
+　　　　　　　　}
+
+
+
+　　　　　　}
+
+
+
+　　　　}
+
+
+
+　　}
+
+
+
+}
+
+
+
+var b=0;
+
+
+
+var c=0;
+
+
+
+function sort_fun(way){
+
+
+
+switch(way){
+
+
+
+  case 0:
+
+
+
+     files_myArray=files_myArray.reverse();
+
+
+
+	 changeMode("list_mode");
+
+
+
+  break;
+
+
+
+  case 1:
+
+
+
+  if(b==0){
+
+
+
+    b=1;
+
+
+
+	SortBySize.BubbleSortUp(files_myArray);
+
+
+
+  }else{
+
+
+
+    b=0;
+
+
+
+	SortBySize.BubbleSortDown(files_myArray);
+
+
+
+  }
+
+
+
+  changeMode("list_mode");
+
+
+
+  break;  
+
+
+
+  case 2:
+
+
+
+  if(c==0){
+
+
+
+    c=1;
+
+
+
+	SortByDate.BubbleSortUp(files_myArray);
+
+
+
+  }else{
+
+
+
+    c=0;
+
+
+
+	SortByDate.BubbleSortDown(files_myArray);
+
+
+
+  }
+
+
+
+  changeMode("list_mode");
+
+
+
+  break;  
+
+
+
+}
+
+
+
+}
+
+
+
+//全选
+
+
+
+var chk = 0;
+
+
+
+function chkAll(){ 
+
+
+
+	var chkid="jianluyou_chk";
+
+
+
+	var length=$("#jianluyou_list ul li").length;
+
+
+
+	var mode=$(".mode").css("backgroundImage").substring($(".mode").css("backgroundImage").lastIndexOf("/")+1,$(".mode").css("backgroundImage").lastIndexOf(".png"));
+
+
+
+	chk==0?chk=1:chk=0;
+
+
+
+	for ( var i = 0; i < length; i++){	
+
+
+
+	 if(document.getElementsByName(chkid)[i] && document.getElementsByName(chkid)[i].checked == (!chk)){  
+
+
+
+			document.getElementsByName(chkid)[i].click();
+
+
+
+		}
+
+
+
+	if(mode=="thumbnai_mode"){
+
+
+
+	if(document.getElementsByName(chkid)[i].checked){
+
+
+
+	    $(document.getElementsByName(chkid)[i].parentNode.parentNode).css('background','#4488D1');
+
+
+
+	}else{
+
+
+
+	    $(document.getElementsByName(chkid)[i].parentNode.parentNode).css('background','none');
+
+
+
+	}
+
+
+
+	}
+
+
+
+	}
+
+
+
+}
+
+
+
+//鼠标经过事件
+
+
+
+function mouseover(obj){
+
+
+
+$(obj).css("background","#4488D1");
+
+
+
+}
+
+
+
+function mouseout(obj){
+
+
+
+if(!obj.firstChild.firstChild.checked){
+
+
+
+  $(obj).css("background","none");
+
+
+
+}
+
+
+
+}
+
+
+
+//复制
+
+
+
+var copy_url;
+
+
+
+var copy_name=[];
+
+var copy_num=0;
+
+var copy_suc=[];
+
+var copy_fail=[];
+
+
+
+var move_url;
+
+
+
+var move_name=[];
+
+var move_num=0;
+
+var move_suc=[];
+
+var move_fail=[];
+
+
+
+function copy_fun(){
+
+
+
+  $(".tip_info").html("正在复制文件...");
+
+  copy_num=0;
+
+  copy_suc=[];
+
+  copy_fail=[];
+
+  box_show();
+
+  copy_bandle();
+
+}
+
+var c_url;
+
+function copy_bandle(){
+
+  var path=$("#dir").attr("value");
+ 
+  path=path.substring(0,path.length-1)+copy_name[copy_num];
+ 
+  var url=copy_url+"/"+copy_name[copy_num];
+
+  c_url=url;
+
+  path=toTxt(path);
+
+
+
+  url=toTxt(url);
+
+
+
+  path=path+"+"+url;
+
+
+
+  $("#filename").val(path);
+
+
+
+  $("#handle").val("copy");
+
+
+
+  hideDiv('folder_list');
+
+
+
+  $("#myform").ajaxSubmit(function(message) {
+
+
+
+   if(message=="0"){
+
+      copy_suc.push(copy_name[copy_num]);
+
+   }else{
+
+   
+
+      copy_fail.push(copy_name[copy_num]);
+
+ 
+
+   }
+
+   
+
+});
+
+if(copy_num==copy_name.length-1){
+
+
+
+			   setTimeout("copy_delay()",500);
+
+
+
+}else{
+
+ copy_num+=1;
+
+ copy_bandle();
+
+}
+
+}
+
+function copy_delay(){
+
+var msg='复制成功';
+
+
+
+if(copy_fail.length>0){
+
+
+
+msg=copy_fail+"复制失败";
+
+
+
+}
+
+if(c_url.indexOf(h_dir)>=0&&copy_suc.length>0){
+
+document.getElementById('myIframe').contentWindow.location.reload();
+
+}
+
+$(".tip_info").html(msg);
+
+
+
+setTimeout("box_close()",500);
+
+
+
+}
+
+function copy(){
+
+
+
+var chkid="jianluyou_chk";
+
+
+
+var length=$("#jianluyou_list ul li").length;
+
+
+
+var value;
+
+
+
+var t=0;
+
+copy_name=[];
+
+for ( var i = 0; i < length; i++)
+
+
+
+	{	
+
+
+
+		if(document.getElementsByName(chkid)[i].checked)
+
+
+
+		{  
+
+
+
+		   t=1;
+
+
+
+		   copy_name.push($(document.getElementsByName(chkid)[i].parentNode.parentNode).children(".l_name").children("a").html());
+
+
+
+
+
+		}
+
+
+
+	}
+
+
+
+if(t==1){
+
+
+
+  showDiv('folder_list');
+
+
+
+}else{
+
+
+
+alert("请选择要复制的文件！");
+
+
+
+}
+
+
+
+}
+
+
+
+//移动
+
+
+
+function move_fun(){
+
+   
+
+  $(".tip_info").html("正在移动文件...");
+
+
+
+  box_show();
+
+  move_num=0;
+
+  move_suc=[];
+
+  move_fail=[];
+
+  move_bandle();
+
+}
+
+var m_url;
+
+function move_bandle(){
+
+  var path=$("#dir").attr("value"); 
+	
+
+
+  var tmp_path=path;
+
+
+
+  path=path.substring(0,path.length-1)+move_name[move_num];
+
+
+
+  var url=move_url+"/"+move_name[move_num];
+	
+  m_url=path+"+"+url;
+
+
+  path=toTxt(path);
+
+  
+
+  url=toTxt(url);
+
+
+
+  path=path+"+"+url;
+  
+  
+
+  $("#filename").val(path);
+
+
+
+  $("#handle").val("move");
+
+
+
+  hideDiv('folder_list_m');
+
+
+
+  $("#myform").ajaxSubmit(function(message) {
+
+
+
+  if(message=="0"){
+
+    move_suc.push(move_name[move_num]);
+
+  }else{
+
+    move_fail.push(move_name[move_num]);
+
+  }
+
+  
+
+ });
+
+ if(move_num==move_name.length-1){
+
+
+
+			   setTimeout("move_delay('"+tmp_path+"')",500);
+
+
+
+			}else{
+
+			
+
+   move_num+=1;
+
+   move_bandle();
+
+			}
+
+}
+
+function move_delay(path){
+
+var msg='移动成功';
+
+if(move_suc.length>0){
+
+fileList(path); 
+
+}
+
+if(m_url.indexOf(h_dir)>=0&&move_suc.length>0){
+
+  document.getElementById('myIframe').contentWindow.location.reload();
+
+}
+
+if(move_fail.length>0){
+
+msg=move_fail+"移动失败";
+
+}
+
+
+
+$(".tip_info").html(msg);
+
+
+
+setTimeout("box_close()",500);
+
+
+
+}
+
+function move(){
+
+
+
+var chkid="jianluyou_chk";
+
+
+
+var length=$("#jianluyou_list ul li").length;
+
+
+
+var value;
+
+move_name=[];
+
+var t=0;
+
+
+
+for ( var i = 0; i < length; i++)
+
+
+
+	{	
+
+
+
+		if(document.getElementsByName(chkid)[i].checked)
+
+
+
+		{  
+
+
+
+		   t=1;
+
+
+
+		   move_name.push($(document.getElementsByName(chkid)[i].parentNode.parentNode).children(".l_name").children("a").html());
+
+
+
+		}
+
+
+
+	}
+
+
+
+if(t==1){
+
+
+
+  showDiv('folder_list_m');
+
+
+
+}else{
+
+
+
+  alert("请选择要移动的文件！");
+
+
+
+}
+
+
+
+}
+
+
+
+var a=0;
+
+
+
+var jud_f=0;
+
+
+
+function folder_list_fun(tmp,obj){
+
+
+
+var folder_list;
+
+
+
+var folder_array1;
+
+
+
+var folder_array2;
+
+
+
+var folder_url;
+
+var type;
+
+var n;
+
+
+
+var url;
+
+
+
+var $p;
+
+
+
+ if(tmp==0){
+
+ 	copy_url="<%=s_dir%>";	
+   if(jud_f==0){	
+
+
+     jud_f=1;
+
+
+
+url=$(obj).children(".folder_url").attr("value");
+
+
+	url="<%=s_dir%>"+url;
+
+	url = url + "/*"
+	
+   $p=$(obj).next("ul");
+
+
+
+  $("#filename").val(url);
+
+
+
+  $("#handle").val("list");
+
+
+
+  $("#myform").ajaxSubmit(function(message) {
+
+
+
+   folder_list=message.split('#');
+
+
+   for(var i=0;i<folder_list.length-1;i++){
+
+
+
+   folder_array1=folder_list[i].split('*');
+
+
+
+   folder_url=folder_array1[0];
+
+   
+
+   folder_array2=folder_array1[0].split('/');
+
+   type=folder_array2[1];
+   
+   
+   n=folder_array2[folder_array2.length-1];
+
+
+
+   if(n!=""&&n!=null&&type=="d"){
+
+
+	folder_url = folder_url.replace("/d", "");
+    var $li=$("<li class='folder_list_li'  onclick='folder_list_fun(1,this);tt(this);'><input type='hidden' value='"+folder_url+"' class='folder_url'></input><a href='javascript:;'>"+n+"</a></li>");
+
+
+
+    var $ul=$("<ul></ul>");
+
+
+
+    $p.append($li);
+
+
+
+    $p.append($ul);
+
+
+
+    }
+
+
+
+   }
+
+
+
+   $("#folder_list .st_tree").SimpleTree();
+
+
+
+   });
+
+
+
+   }
+
+
+
+ }else{
+
+
+
+ if(!obj.nextSibling.hasChildNodes()){
+
+
+
+  url=$(obj).children(".folder_url").attr("value");
+
+
+
+  copy_url=url;
+
+
+
+  url=url+"/*";
+
+
+
+   $p=$(obj).next("ul");
+
+
+
+  $("#filename").val(url);
+
+
+
+  $("#handle").val("list");
+
+
+
+  $("#myform").ajaxSubmit(function(message) {
+
+
+
+   folder_list=message.split('#');
+
+
+
+   for(var i=0;i<folder_list.length-1;i++){
+
+
+
+   folder_array1=folder_list[i].split('*');
+
+
+
+   folder_url=folder_array1[0];
+
+   folder_array2=folder_array1[0].split('/');
+   type=folder_array2[1];	
+
+
+
+   n=folder_array2[folder_array2.length-1];
+
+
+
+    if(n!=""&&n!=null&&type=="d"){
+
+	folder_url = folder_url.replace("/d", "");
+
+
+    var $li=$("<li class='folder_list_li'  onclick='folder_list_fun(1,this);tt(this);'><input type='hidden' value='"+folder_url+"' class='folder_url'></input><a href='javascript:;'>"+n+"</a></li>");
+
+
+
+    var $ul=$("<ul></ul>");
+
+
+
+    $p.append($li);
+
+
+
+    $p.append($ul);
+
+
+
+    }
+
+
+
+   }
+
+
+
+   $("#folder_list .st_tree").SimpleTree();
+
+
+
+   });
+
+
+
+ }
+
+
+
+}
+
+
+
+}
+
+
+
+var jud_f_m=0;
+
+
+
+function folder_list_fun_m(tmp,obj){
+
+
+
+var folder_list;
+
+
+
+var folder_array1;
+
+
+
+var folder_array2;
+
+
+
+var folder_url;
+
+var type;
+
+var n;
+
+
+
+var url;
+
+
+
+var $p;
+
+
+
+if(tmp==0){
+
+
+	move_url = "<%=s_dir%>";
+  if(jud_f_m==0){
+
+
+
+   jud_f_m=1;
+
+
+
+  url=$(obj).children(".folder_url").attr("value");
+
+
+
+ 
+
+
+
+ //url=url+"/*";
+
+ url = "<%=s_dir%>"+ url;  
+  url = url + "/*";
+ 
+ $("#filename").val(url);
+
+
+
+ $p=$(obj).next("ul");
+
+
+
+ $("#handle").val("list");
+
+
+
+ $("#myform").ajaxSubmit(function(message) {
+	folder_list=message.split('#');
+	
+   for(var i=0;i<folder_list.length-1;i++){
+
+   folder_array1=folder_list[i].split('*');
+   folder_url=folder_array1[0];
+   folder_array2=folder_array1[0].split('/');
+   type=folder_array2[1];
+   folder_url = folder_url.replace("/d", "");
+   n=folder_array2[folder_array2.length-1];
+   if(n!=""&&n!=null&&type=="d"){
+   var $li=$("<li class='folder_list_li'  onclick='folder_list_fun_m(1,this);tt(this);'><input type='hidden' value='"+folder_url+"' class='folder_url'></input><a href='javascript:;'>"+n+"</a></li>");
+
+
+
+   var $ul=$("<ul></ul>");
+
+
+
+   $p.append($li);
+
+
+
+   $p.append($ul);
+
+
+
+   }
+
+
+
+   }
+
+
+
+   $("#folder_list_m .st_tree").SimpleTree();
+
+
+
+   });
+
+
+
+  }
+
+
+
+}else{
+
+
+
+ if(!obj.nextSibling.hasChildNodes()){
+
+
+
+ url=$(obj).children(".folder_url").attr("value");
+
+
+
+ move_url=url;
+
+
+
+ url=url+"/*";
+
+
+
+ $("#filename").val(url);
+
+
+
+ $p=$(obj).next("ul");
+
+
+
+ $("#handle").val("list");
+
+
+
+ $("#myform").ajaxSubmit(function(message) {
+
+
+
+   folder_list=message.split('#');
+
+
+
+   for(var i=0;i<folder_list.length-1;i++){
+
+
+
+   folder_array1=folder_list[i].split('*');
+   folder_url=folder_array1[0];
+   folder_url = folder_url.replace("/d", "");
+   
+   folder_array2=folder_array1[0].split('/');
+   type=folder_array2[1];
+   
+   n=folder_array2[folder_array2.length-1];
+
+   if(n!=""&&n!=null&&type=="d"){
+
+
+
+   var $li=$("<li class='folder_list_li'  onclick='folder_list_fun_m(1,this);tt(this);'><input type='hidden' value='"+folder_url+"' class='folder_url'></input><a href='javascript:;'>"+n+"</a></li>");
+
+
+
+   var $ul=$("<ul></ul>");
+
+
+
+   $p.append($li);
+
+
+
+   $p.append($ul);
+
+
+
+   }
+
+
+
+   }
+
+
+
+   $("#folder_list_m .st_tree").SimpleTree();
+
+
+
+   });
+
+
+
+ }
+
+
+
+}
+
+
+
+}
+
+
+
+//上传
+
+var f_size;
+
+var timeout;
+
+function up(){
+
+var f = document.getElementById("file_id").files;
+
+var name=$("#file_id").attr("value");
+
+if(name.indexOf("\\")>=0){
+
+  name=name.substring(name.lastIndexOf("\\")+1,name.length);
+
+}
+
+var path=$("#dir").attr("value"); 
+
+
+
+var tmp_path=path;
+
+
+
+path=path.substring(0,path.length-1);
+
+
+
+if(name!=""&&name!=null){
+
+
+
+path=path+name;
+
+
+
+$("#udfilename").val(path);
+
+
+
+$("#udhandle").val("up");
+
+if(typeof(f)!="undefined"){ 
+
+$(".tip_info").html("正在上传文件...<br/>0.0%");
+
+}else{
+
+$(".tip_info").html("正在上传文件...");
+
+}
+
+box_show();
+
+
+
+$("#udmyform").ajaxSubmit(function(message) {
+
+
+
+  $("#upmyform").ajaxSubmit(function(message) {
+
+          window.clearTimeout(timeout);
+
+          $(".tip_info").html("上传成功");
+
+           if(path.indexOf(h_dir)>=0){
+
+		     document.getElementById('myIframe').contentWindow.location.reload();
+
+		   }
+
+		   fileList(tmp_path);
+
+		   setTimeout("box_close()",500);
+
+
+
+		});
+
+     if(typeof(f)!="undefined"){ 
+
+      f_size=f[0].size;  
+
+      getProgress(path);
+
+   }
+
+ });
+
+
+
+}
+
+
+
+}
+
+//获取上传的进度
+
+function getProgress(p){
+
+var f;
+
+var m;
+
+$("#filename").val(p);
+
+$("#handle").val("progress");
+
+$("#myform").ajaxSubmit(function(message) {
+
+   m=parseInt(message);
+
+   f=toDecimal((m/f_size)*100);
+
+   $(".tip_info").html("正在上传文件...<br/>"+f+"%");
+
+   timeout=setTimeout("getProgress('"+p+"')",1000);
+
+ });
+
+
+
+}
+
+//下载
+
+
+
+function  down(){
+
+
+
+var chkid="jianluyou_chk";
+
+
+
+var length=$("#jianluyou_list ul li").length;
+
+
+
+var value;
+
+
+
+var type;
+
+
+
+var t=0;
+
+
+
+for ( var i = 0; i < length; i++)
+
+
+
+	{	
+
+
+
+		if(document.getElementsByName(chkid)[i].checked)
+
+
+
+		{  
+
+
+
+		   t=1;
+
+
+
+		   value=$(document.getElementsByName(chkid)[i].parentNode.parentNode).children(".l_name").children("a").html();
+
+
+
+		   type=$(document.getElementsByName(chkid)[i].parentNode.parentNode).children(".icon").children(".l_type").attr("value");
+
+
+
+		   break;
+
+
+
+		}
+
+
+
+	}
+
+
+
+if(t==1&&type=="0"){
+
+
+
+  var path=$("#dir").attr("value"); 
+
+
+
+  path=path.substring(0,path.length-1)+value;
+
+
+
+  $("#udfilename").val(path);
+
+
+
+  $("#udfname").val(value);
+
+
+
+  $("#udhandle").val("down");
+
+
+
+  var tmp_array=path.split("/");
+
+
+
+  $("#udmyform").ajaxSubmit(function(message) {
+
+
+
+			       //document.getElementById("filedown").action="down_"+tmp_array[tmp_array.length-1];
+
+
+
+                   document.getElementById("filedown").submit();
+
+
+
+   });
+
+
+
+}else{
+
+
+
+alert("请选择要下载的文件！");
+
+
+
+}
+
+
+
+}
+
+
+
+//重命名
+
+
+
+function rename(){
+
+if($(".ic-chname-no").hasClass("rename-no")){
+
+  $(".rename-no").click();
+
+}
+
+var chkid="jianluyou_chk";
+
+
+
+var t=0;
+
+
+
+var obj;
+
+
+
+var value;
+
+var type;
+
+var new_value;
+
+var parent;
+
+var ch;
+
+
+
+var length=$("#jianluyou_list ul li").length;
+
+
+
+var mode=$(".mode").css("backgroundImage").substring($(".mode").css("backgroundImage").lastIndexOf("/")+1,$(".mode").css("backgroundImage").lastIndexOf(".png"));
+
+
+
+for ( var i = 0; i < length; i++)
+
+
+
+	{	
+
+
+
+		if(document.getElementsByName(chkid)[i].checked)
+
+
+
+		{  
+
+
+
+           ch=document.getElementsByName(chkid)[i];
+
+
+
+		   t=1;
+
+
+
+		   value=$(document.getElementsByName(chkid)[i].parentNode.parentNode).children(".l_name").children("a").html();
+
+		   type=$(document.getElementsByName(chkid)[i].parentNode.parentNode).children(".icon").children(".l_type").attr("value");
+
+           parent=document.getElementsByName(chkid)[i].parentNode.parentNode;
+
+		   obj=$(document.getElementsByName(chkid)[i].parentNode.parentNode).children(".l_name");
+
+
+
+		   break;
+
+
+
+		}
+
+
+
+	}
+
+
+
+if(t==1){          
+
+
+
+           obj.html("<input  type='text' class='m_new_text' value='"+value+"' id='rename_new_text' style='float:left;'></input><a href='javascript:;' title='确定'><span class='ic-chname-ok rename-ok'></span></a><a href='javascript:;' title='取消'><span class='ic-chname-no rename-no'></span></a>");
+
+
+
+		   setPos("rename_new_text");
+
+
+
+		   $(".rename-ok").click(function(){
+
+
+
+		     new_value=$("#rename_new_text").attr("value");
+			 //new_value=new_value.replace(/\ /g,"|")
+			 //alert(new_value)
+
+             if(type=="0"){
+
+			  var tmp_value=new_value.substring(0,new_value.lastIndexOf("."));
+
+			  if(tmp_value==""||tmp_value==null){
+
+			    new_value=value;
+
+			  }
+
+			 }
+
+             var path=$("#dir").attr("value"); 
+
+
+
+             var tmp_path=path;
+
+
+
+			 tmp_path=toTxt(tmp_path);
+
+
+
+			 value=toTxt(value);
+
+
+			
+			 new_value=toTxt(new_value);
+			
+		
+
+			 path=tmp_path.substring(0,tmp_path.length-1)+value+"+"+tmp_path.substring(0,tmp_path.length-1)+new_value;
+
+
+
+			 $("#filename").val(path);
+
+
+
+             $("#handle").val("rename");
+
+
+
+			  $("#myform").ajaxSubmit(function(message) {
+
+
+
+			     if(message=="0"){
+
+                   if($("#dir").attr("value").indexOf(h_dir)>=0){
+
+				     document.getElementById('myIframe').contentWindow.location.reload();
+
+				   }
+
+				   fileList(tmp_path);
+
+					
+
+				 }else{
+
+
+
+				  fileList(tmp_path);
+
+
+				 }
+
+				
+
+	         });
+
+
+
+		   });
+
+
+
+		   $(".rename-no").click(function(){
+
+
+
+		      obj.html("<a href='javascript:;' onclick='open_fun(this)' title='"+value+"'>"+value+"</a>");
+
+
+
+			  $(ch).click();
+
+              $(parent).mouseout();
+
+		   });
+
+
+
+}else{
+
+
+
+alert("请选择要重命名的文件！");
+
+
+
+}
+
+
+
+}
+
+
+
+//新建文件夹
+
+
+
+function new_fun(){
+
+if($(".ic-chname-no").hasClass("new-no")){
+
+  $(".new-no").click();
+
+}
+
+if(tmp_jud==0){
+
+
+
+var name='新建文件夹';
+
+
+
+var $parent=$("#jianluyou_list ul"); 
+
+
+
+var $li;
+
+
+
+var $checkbox;
+
+
+
+var $type;
+
+
+
+var $name;
+
+
+
+var $time;
+
+
+
+var $size;
+
+
+
+var mode=$(".mode").css("backgroundImage").substring($(".mode").css("backgroundImage").lastIndexOf("/")+1,$(".mode").css("backgroundImage").lastIndexOf(".png"));
+
+
+
+if(mode=="thumbnai_mode"){
+
+
+
+$li = $("<li class='li_file'></li>");
+
+
+
+$checkbox = $("<span class='check left'><input type='checkbox' name='jianluyou_chk' class='check_c'/></span>");
+
+
+
+$type = $("<span class='icon ifolder left'></span>");
+
+
+
+$name = $("<span class='l_name left'><input type='text' value='"+name+"' id='new_new_text' class='m_new_text' style='float:left;'><a href='javascript:;' title='确定'><span class='ic-chname-ok new-ok'></span></a><a href='javascript:;' title='取消'><span class='ic-chname-no new-no'></span></a></span>");
+
+
+
+$time = $("<span class='l_time left'>-</span>");
+
+
+
+$size = $("<span class='l_size left'>-</span>");
+
+
+
+$li.append($checkbox);
+
+
+
+$li.append($type);
+
+
+
+$li.append($name);
+
+
+
+$li.append($time);
+
+
+
+$li.append($size);
+
+
+
+}else{
+
+
+
+$li = $("<li class='m_li_file'></li>");
+
+
+
+$checkbox = $("<span class='check left'><input type='checkbox' name='jianluyou_chk' class='check_c'/></span>");
+
+
+
+$type = $("<span class='icon ifolder left'></span>");
+
+
+
+$name = $("<span class='l_name left' style='width:210px;'><input type='text' value='"+name+"' id='new_new_text' class='m_new_text' style='float:left;'><a href='javascript:;' title='确定'><span class='ic-chname-ok new-ok'></span></a><a href='javascript:;' title='取消'><span class='ic-chname-no new-no'></span></a></span>");
+
+
+
+$li.append($checkbox);
+
+
+
+$li.append($type);
+
+
+
+$li.append($name);
+
+
+
+$li.append($size);
+
+
+
+}
+
+
+
+$parent.append($li);
+
+
+
+setPos("new_new_text");
+
+var path=$("#dir").attr("value"); 
+
+var tmp_path=path;
+
+$(".new-ok").click(function(){
+
+   name=$("#new_new_text").attr("value");
+
+   path=tmp_path.substring(0,tmp_path.length-1)+name;
+
+
+
+   $("#filename").val(path);
+
+
+
+   $("#handle").val("new");
+
+
+
+   $("#myform").ajaxSubmit(function(message) {
+
+
+
+         if(message=="0"){
+
+
+
+            fileList(tmp_path);
+
+
+
+		 }else{
+
+
+
+		    fileList(tmp_path);
+
+
+
+		 }
+
+
+
+    }); 
+
+
+
+ });
+
+ $(".new-no").click(function(){
+
+		      del_ul($("#jianluyou_list ul li").length);
+
+
+
+	 });
+
+
+
+}else{
+
+
+
+ alert("无法新建");
+
+
+
+}
+
+
+
+}
+
+function del_ul(n)
+
+{
+
+  var s=document.getElementById('jianluyou_list_ul');
+
+  var t=s.childNodes.length;
+
+  for (var i=0;i<t;i++)
+
+  {
+
+   if (i==n-1)
+
+   {
+
+    s.removeChild(s.childNodes[i]);
+
+   }
+
+  }
+
+}
+
+//删除
+
+
+
+var suc_arr=[];
+
+
+
+var fail_arr=[];
+
+
+
+var delete_array=[];
+
+
+
+function delete_fun(){
+
+
+
+ delete_array=[]
+
+
+
+ suc_arr=[];
+
+
+
+ fail_arr=[];
+
+
+
+ var chkid="jianluyou_chk";
+
+
+
+ var length=$("#jianluyou_list ul li").length;
+
+
+
+	for ( var i = 0; i < length; i++)
+
+
+
+	{	
+
+
+
+		if(document.getElementsByName(chkid)[i].checked)
+
+
+
+		{  
+
+
+
+		  var name=$(document.getElementsByName(chkid)[i].parentNode.parentNode).children(".l_name").children("a").html();  
+
+
+
+		  delete_array.push(name);
+
+
+
+		}
+
+
+
+	}	
+
+
+
+	if(delete_array.length!=0){
+
+
+
+	 var isDelete=confirm("您确认要删除《"+delete_array+"》吗？"); 
+
+
+
+	  if(isDelete){
+
+
+
+	      $(".tip_info").html("正在删除文件...");
+
+
+
+          box_show();
+
+
+
+		  del();
+
+
+
+		} 
+
+
+
+	}else{
+
+
+
+	 alert("请选择要删除的文件！");
+
+
+
+	}
+
+
+
+} 
+
+
+
+var num=0;
+
+
+
+function del(){
+
+
+
+            var tmp_item=delete_array[num];
+
+
+
+			var path=$("#dir").attr("value"); 
+
+
+
+		    var tmp_path=path;
+
+
+
+			if(num<delete_array.length){
+
+
+
+		    path=tmp_path.substring(0,tmp_path.length-1)+delete_array[num];
+
+
+
+			path=toTxt(path);
+
+
+
+		    $("#filename").val(path);
+
+
+
+		    $("#handle").val("delete");
+
+
+
+		    $("#myform").ajaxSubmit(function(message) {
+
+
+
+			    if(message=="0"){
+
+
+
+				  suc_arr.push(tmp_item);
+
+
+
+				}else{
+
+
+
+				  fail_arr.push(tmp_item);
+
+
+
+				}
+
+
+
+				num+=1;
+
+
+
+				del();
+
+
+
+			});
+
+
+
+			if(num==delete_array.length-1){
+
+
+
+			   setTimeout("delete_delay('"+tmp_path+"')",500);
+
+
+
+			 }
+
+
+
+			}
+
+
+
+}
+
+
+
+function delete_delay(tmp){
+
+
+
+var msg='删除成功';
+
+
+
+if(fail_arr.length>0){
+
+
+
+msg=fail_arr+"删除失败";
+
+
+
+}
+
+
+
+$(".tip_info").html(msg);
+
+
+
+if(suc_arr.length>0){
+
+
+
+    num=0;
+
+    if($("#dir").attr("value").indexOf(h_dir)>=0){
+
+		document.getElementById('myIframe').contentWindow.location.reload();
+
+	 }
+
+	fileList(tmp);
+
+
+
+}
+
+
+
+setTimeout("box_close()",500);
+
+
+
+}
+
+
+
+function toTxt(str) {
+
+
+
+	var RexStr = /\<|\>|\(|\)|\'|\%|\&|\#|\$|\ /g
+
+
+
+	str = str.replace(RexStr, function(MatchStr) {
+
+
+
+		switch (MatchStr) {
+
+
+
+		case "(":
+
+
+
+			return "\\(";
+
+
+
+			break;
+
+
+
+		case ")":
+
+
+
+			return "\\)";
+
+
+
+			break;
+
+
+
+		case "<":
+
+
+
+			return "\\<";
+
+
+
+			break;
+
+
+
+		case ">":
+
+
+
+			return "\\>";
+
+
+
+			break;
+
+
+
+		case "'":
+
+
+
+			return "\\'";
+
+
+
+			break;
+
+
+
+		case "&":
+
+
+
+			return "\\&";
+
+
+
+			break;
+
+
+
+		case "$":
+
+
+
+			return "\\$";
+
+
+
+			break;
+
+
+
+		case "#":
+
+
+
+			return "\\#";
+
+
+
+			break;
+
+
+
+		case "%":
+
+
+
+			return "\\%";
+
+
+
+			break;
+
+
+
+		case " ":
+
+
+
+			return "\\ ";
+
+
+
+			break;
+
+
+
+		default:
+
+
+
+			break;
+
+
+
+		}
+
+
+
+	})
+
+
+
+ return str;
+
+
+
+}
+
+
+
+//单击打开文件夹
+
+
+
+function open_fun(obj){
+
+
+
+ var value=$(obj).attr("title");
+
+ var deep;
+
+
+
+ var type=$(obj.parentNode.parentNode).children(".icon").children(".l_type").attr("value");
+
+
+
+if(type=="1"){
+
+
+
+   var path=$("#dir").attr("value");
+
+
+
+   path=path.substring(0,path.length-1)+value+"/*";
+
+
+
+   fileList(path);
+
+   if(typeof($(".dir_v a:last").attr("deep"))!='undefined'){
+
+    deep = parseInt($(".dir_v a:last").attr("deep"))+1;
+
+   }else{
+
+    deep = 1;
+
+   }
+
+   $(".dir_v").html($(".dir_v").html()+"&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);' deep='"+deep+"'>"+value+"</a>");
+
+
+
+ }else{
+
+    if($(obj.parentNode.parentNode.firstChild).children(".check_c").attr("checked")!="checked"){
+
+     $(obj.parentNode.parentNode.firstChild).children(".check_c").click();
+
+    }
+
+	rename();
+
+
+
+ }
+
+
+
+}
+
+
+
+//单击打开文件夹
+
+
+
+function open_name_fun(obj){
+
+ tmp_jud=0;
+
+ var dir="";
+
+ var tmp_path="/";
+
+ var path=$("#dir").attr("value");
+
+ if(typeof($(".dir_v a:last").attr("deep"))!='undefined'){
+
+   var n;
+
+   var m;
+
+   var index=$(obj).attr("deep");
+
+   var p=path.split("/");
+
+   for(var i=2;i<=parseInt(index)+1;i++){
+
+    n=i-1;
+
+    dir=dir+"&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);' deep='"+n+"'>"+p[i]+"</a>";
+
+   }
+
+   for(var i=1;i<=parseInt(index)+1;i++){
+
+    m=i-1;
+
+    tmp_path=tmp_path+p[i]+"/";
+
+	if(i==parseInt(index)+1){
+
+	  tmp_path=tmp_path+"*";
+
+	}
+
+   }
+
+ }else{
+
+  var value=$(obj).html();
+
+  dir=$(".dir_v").html();
+
+  dir=dir.substring(0,dir.indexOf(value))+value;
+
+  tmp_path=path.substring(0,path.indexOf(value))+value+"/*";
+
+ }
+
+ 
+
+ fileList(tmp_path);
+
+
+
+ $(".dir_v").html(dir);
+
+
+
+}
+
+
+
+//返回根目录
+
+
+
+function rootDir(){
+
+
+
+ tmp_jud=0;
+
+
+
+ fileList(root_dir);
+
+
+
+ $(".dir_v").html("");
+
+
+
+}
+
+
+
+//返回上一级
+
+
+
+function higher(){
+
+
+
+ var tmp_path= $("#dir").attr("value");
+
+
+
+ var path;
+
+
+
+ tmp_jud=0;
+
+
+
+ if(tmp_path!=root_dir){
+
+
+
+ path=tmp_path.substring(0,tmp_path.lastIndexOf("/"));
+
+
+
+ path=path.substring(0,path.lastIndexOf("/"));
+
+
+
+ path=path+"/*";
+
+
+
+ fileList(path);
+
+
+
+  var dir=$(".dir_v").html();
+
+
+
+  var tmp_dir=dir.substring(dir.lastIndexOf("&nbsp;&gt;&nbsp;"),dir.length);
+
+
+
+  dir=dir.substring(0,dir.indexOf(tmp_dir));
+
+
+
+  $(".dir_v").html(dir);
+
+
+
+  }
+
+
+
+}
+
+
+
+//打开目录
+
+
+
+function open_dir(tmp){
+
+
+
+ var path=start_dir.substring(0,start_dir.lastIndexOf("/"));
+
+
+
+ switch(tmp){
+
+
+
+			 case 'down':
+
+
+
+			 path=path+"/下载/*";
+
+
+
+			 $(".dir_v").html("&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>"+zone_dir+"</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>简路由</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>下载</a>");
+
+
+
+			 tmp_jud=0;
+
+
+
+			 fileList(path);
+
+
+
+			 break;
+
+
+
+			 case 'backup':
+
+
+
+			 path=path+"/备份/*";
+
+
+
+			 $(".dir_v").html("&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>"+zone_dir+"</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>简路由</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>备份</a>");
+
+
+
+			 tmp_jud=0;
+
+
+
+			 fileList(path);
+
+
+
+			 break;
+
+
+
+			 case 'wmoment':
+
+
+
+			 path=path+"/精彩时刻/*";
+
+
+
+			 $(".dir_v").html("&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>"+zone_dir+"</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>简路由</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>精彩时刻</a>");
+
+
+
+			 tmp_jud=0;
+
+
+
+			 fileList(path);
+
+
+
+			 break;
+
+
+
+			 case 'image':
+
+
+
+			 $(".dir_v").html("&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>"+zone_dir+"</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>简路由</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>图片</a>");
+
+
+
+			 tmp_jud=1;
+
+
+
+			 $("#dir").attr("value",start_dir);
+
+
+
+		     allImgaes();
+
+
+
+			 break;
+
+
+
+			 case 'music':
+
+
+
+			 $(".dir_v").html("&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>"+zone_dir+"</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>简路由</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>音频</a>");
+
+
+
+			 tmp_jud=1;
+
+
+
+			 $("#dir").attr("value",start_dir);
+
+
+
+		     allAudios();
+
+
+
+			 break;
+
+
+
+			 case 'video':
+
+
+
+			 $(".dir_v").html("&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>"+zone_dir+"</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>简路由</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>视频</a>");
+
+
+
+			 tmp_jud=1;
+
+
+
+			 $("#dir").attr("value",start_dir);
+
+
+
+		     allVideos();
+
+
+
+			 break;
+
+
+
+			 case 'document':
+
+
+
+			 $(".dir_v").html("&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>"+zone_dir+"</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>简路由</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);'>文档</a>");
+
+
+
+			 tmp_jud=1;
+
+
+
+			 $("#dir").attr("value",start_dir);
+
+
+
+		     allFiles();
+
+
+
+			 break;
+
+
+
+			}
+
+
+
+}
+
+
+
+//获取所有图片
+
+
+
+function allImgaes(){
+
+
+
+       var images;
+
+
+
+	   var images_arr=[];
+
+
+
+       var pic_list=$("#myIframe").contents().find("#harddisk_picture").attr('value');
+
+
+
+	   if(pic_list!=""&&pic_list!=null){
+
+
+
+	   images=pic_list.split("\n");
+
+
+
+	   for(var i=0;i<images.length;i++){
+
+
+
+	   if(images[i]!=""&&images[i]!=null){
+
+          images[i]="-,"+images[i]+",-,-";
+
+		  images_arr.push(images[i]);
+
+
+
+		 }
+
+
+
+	   }
+
+
+
+	   }
+
+
+
+	   var mode=$(".mode").css("backgroundImage").substring($(".mode").css("backgroundImage").lastIndexOf("/")+1,$(".mode").css("backgroundImage").lastIndexOf(".png"));
+
+
+
+	   files_myArray=images_arr;
+
+
+
+	   if(mode=="list_mode"){
+
+
+
+		    changeMode("thumbnai_mode");
+
+
+
+		  }else{
+
+
+
+		    changeMode("list_mode");
+
+
+
+		 }
+
+
+
+}
+
+
+
+ //获取所有文件
+
+
+
+function allFiles(){
+
+
+
+       var files;
+
+
+
+	   var files_arr=[];
+
+
+
+       var file_list=$("#myIframe").contents().find("#harddisk_file").attr('value');
+
+
+
+	   if(file_list!=""&&file_list!=null){
+
+
+
+	   files=file_list.split("\n");
+
+
+
+	   for(var i=0;i<files.length;i++){
+
+
+
+	     if(files[i]!=""&&files[i]!=null){
+
+          files[i]="-,"+files[i]+",-,-";
+
+		  files_arr.push(files[i]);
+
+
+
+		 }
+
+
+
+	   }}
+
+
+
+	   var mode=$(".mode").css("backgroundImage").substring($(".mode").css("backgroundImage").lastIndexOf("/")+1,$(".mode").css("backgroundImage").lastIndexOf(".png"));
+
+
+
+	   files_myArray=files_arr;
+
+
+
+	   if(mode=="list_mode"){
+
+
+
+		    changeMode("thumbnai_mode");
+
+
+
+		  }else{
+
+
+
+		    changeMode("list_mode");
+
+
+
+		 }
+
+
+
+}
+
+
+
+//获取所有音频
+
+
+
+function allAudios(){
+
+
+
+       var audios;
+
+
+
+	   var audios_arr=[];
+
+
+
+       var audio_list=$("#myIframe").contents().find("#harddisk_audio").attr('value');
+
+
+
+	   if(audio_list!=""&&audio_list!=null){
+
+
+
+	    audios=audio_list.split("\n");
+
+
+
+	    for(var i=0;i<audios.length;i++){
+
+
+
+	     if(audios[i]!=""&&audios[i]!=null){
+
+          audios[i]="-,"+audios[i]+",-,-";
+
+		  audios_arr.push(audios[i]);
+
+
+
+		 }
+
+
+
+	    } 
+
+	   }
+
+
+
+	   var mode=$(".mode").css("backgroundImage").substring($(".mode").css("backgroundImage").lastIndexOf("/")+1,$(".mode").css("backgroundImage").lastIndexOf(".png"));
+
+
+
+	   files_myArray=audios_arr;
+
+
+
+	   if(mode=="list_mode"){
+
+
+
+		    changeMode("thumbnai_mode");
+
+
+
+		  }else{
+
+
+
+		    changeMode("list_mode");
+
+
+
+		 }
+
+
+
+}
+
+
+
+//获取所有视频
+
+
+
+function allVideos(){
+
+
+
+       var videos;
+
+
+
+	   var videos_arr=[];
+
+
+
+       var video_list=$("#myIframe").contents().find("#harddisk_video").attr('value');
+
+
+
+	   if(video_list!=""&&video_list!=null){
+
+
+
+	   videos=video_list.split("\n");
+
+
+
+	   for(var i=0;i<videos.length;i++){
+
+
+
+	     if(videos[i]!=""&&videos[i]!=null){
+
+          videos[i]="-,"+videos[i]+",-,-";
+
+		  videos_arr.push(videos[i]);
+
+
+
+		 }
+
+
+
+	   }
+
+
+
+	   }
+
+
+
+	   var mode=$(".mode").css("backgroundImage").substring($(".mode").css("backgroundImage").lastIndexOf("/")+1,$(".mode").css("backgroundImage").lastIndexOf(".png"));
+
+
+
+	   files_myArray=videos_arr;
+
+
+
+	   if(mode=="list_mode"){
+
+
+
+		    changeMode("thumbnai_mode");
+
+
+
+		  }else{
+
+
+
+		    changeMode("list_mode");
+
+
+
+		 }
+
+
+
+}
+
+
+
+ //卸载
+
+
+
+ function uninstall(){
+
+
+
+   $(".tip_info").html("正在卸载...");
+
+
+
+   box_show();
+
+
+
+   $("#unform").ajaxSubmit(function(message) {
+
+
+
+         $(".tip_info").html("卸载成功");
+
+
+
+		 setTimeout("result()",1000);	   
+
+
+
+	 });
+
+
+
+ }
+
+
+
+ function result(){
+
+
+
+  location.reload();
+
+
+
+ }
+
+
+
+ function loadCss(src){
+
+
+
+ var _doc = document.getElementsByTagName('head')[0];  
+
+
+
+       var css = document.createElement('link');     
+
+
+
+       css.setAttribute('rel', 'stylesheet');       
+
+
+
+       css.setAttribute('type', 'text/css');    
+
+
+
+	   css.setAttribute('href', src);   
+
+
+
+	   _doc.appendChild(css); 
+
+
+
+	   if (css.readyState) { //IE
+
+
+
+	     css.onreadystatechange = function () {
+
+
+
+            if (css.readyState == "loaded" ||css.readyState == "complete") {
+
+
+
+                css.onreadystatechange = null;
+
+
+
+                loadmultijs(urls,function(){ load_data(); });
+
+
+
+            }
+
+
+
+        };
+
+
+
+     } else{ //标准的DOM浏览器
+
+
+
+        css.onload = function () {
+
+
+
+              loadmultijs(urls,function(){ load_data(); });
+
+
+
+        };
+
+
+
+    }
+
+
+
+　　} 
+
+
+
+function box_show(){
+
+
+
+	  box1.Show(); 
+
+
+
+  }
+
+
+
+ function box_close(){
+
+
+
+	  box1.Close(); 
+
+
+
+ }
+
+
+
+//显示div
+
+
+
+function showDiv(tmp){
+
+
+
+$("#"+tmp+"").removeClass("hide");
+
+
+
+}
+
+
+
+//隐藏div
+
+
+
+function hideDiv(tmp){
+
+
+
+$("#"+tmp+"").addClass("hide");
+
+
+
+}
+
+
+
+function change_arrange(obj){
+
+
+
+var name=$(obj).css("backgroundImage").substring($(".mode").css("backgroundImage").lastIndexOf("/")+1,$(".mode").css("backgroundImage").lastIndexOf(".png"));
+
+
+
+if(name=='thumbnai_mode'){
+
+
+
+changeMode("thumbnai_mode");
+
+
+
+$(obj).css('background','url(<%=resource%>/images/list_mode.png) no-repeat center center');
+
+
+
+$(obj).attr("title","列表模式"); 
+
+
+
+}else{
+
+
+
+changeMode("list_mode");
+
+
+
+$(obj).css('background','url(<%=resource%>/images/thumbnai_mode.png) no-repeat center center');
+
+
+
+$(obj).attr("title","缩略图模式"); 
+
+
+
+}
+
+
+
+}
+
+
+
+function setPos(id){
+
+
+
+        var o=document.getElementById(""+id+""); 
+
+
+
+		if(o.setSelectionRange){//W3C
+
+
+
+			setTimeout(function(){
+
+
+
+				o.setSelectionRange(o.value.length,o.value.length);
+
+
+
+				o.focus();
+
+
+
+			},0);
+
+
+
+		}else if(o.createTextRange){//IE
+
+
+
+			var textRange=o.createTextRange();
+
+
+
+			textRange.moveStart("character",o.value.length);
+
+
+
+			textRange.moveEnd("character",0);
+
+
+
+			textRange.select();
+
+
+
+		}
+
+
+
+	}
+
+
+
+function toDecimal(x) {  
+
+
+
+            var f = parseFloat(x);  
+
+
+
+            if (isNaN(f)) {  
+
+
+
+                return false;  
+
+
+
+            }  
+
+
+
+            var f = Math.round(x*10)/10;  
+
+
+
+            var s = f.toString();  
+
+
+
+            var rs = s.indexOf('.');  
+
+
+
+            if (rs < 0) {  
+
+
+
+                rs = s.length;  
+
+
+
+                s += '.';  
+
+
+
+            }  
+
+
+
+            while (s.length <= rs + 1) {  
+
+
+
+                s += '0';  
+
+
+
+            }  
+
+
+
+            return s;  
+
+
+
+        }
+
+
+
+	function getCookie(name){
+
+
+
+    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+
+
+
+    if(arr=document.cookie.match(reg))
+
+
+
+        return unescape(arr[2]);
+
+
+
+    else
+
+
+
+        return null;
+
+
+
+     } 
+
+
+
+    function setCookie(name,value){
+
+
+
+	var Days = 30;
+
+
+
+    var exp = new Date();
+
+
+
+    exp.setTime(exp.getTime() + Days*24*60*60*1000);
+
+
+
+    document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString(); 
+
+
+
+	}
+
+
+
+	function checkFun(obj){
+
+
+
+	if($(obj).attr("checked")=="checked"){
+
+
+
+	 setCookie("checkbox","1");
+
+
+
+	}else{
+
+
+
+	 setCookie("checkbox","0");
+
+
+
+	}
+
+
+
+	}
+
+
+
+	function closediv(){
+
+
+
+     $("#footer").slideToggle();
+
+
+
+    }  
+
+
+
+</script>
+
+
+
+</head>
+
+
+
+<body onload="init();">
+
+
+
+<iframe   style="z-index: 1; display:none;"   src="harddisk.html"  marginwidth="0" marginheight="0" frameborder="0" scrolling="no" id="myIframe"></iframe>
+
+
+
+<input type="hidden" name="usb" id="usb_info" value="== usb_info(); ==">
+
+
+
+<input type="hidden" value="" id="dir">
+
+
+
+<form id="unform" method="post" action="jlu.action">
+
+
+
+<input type="hidden" name="action" value="Store">
+
+
+
+<input type="hidden" name="harddisk_del" value="0">
+
+
+
+</form>
+
+
+
+<form id="myform" method="post" action="<%=luci.dispatcher.build_url("admin/newweb/store")%>">
+
+
+
+	<input type="hidden" value="" name="filename" id="filename"/>
+
+
+
+	<input type="hidden" value="" name="fname" id="fname"/>
+
+
+
+	<input type="hidden" value="" name="action" id="handle"/> 
+
+
+
+</form>
+
+
+
+<form id="udmyform" method="post" action="<%=luci.dispatcher.build_url("admin/newweb/prepareup")%>">
+
+
+
+	<input type="hidden" value="" name="filename" id="udfilename"/>
+
+
+
+	<input type="hidden" value="" name="fname" id="udfname"/>
+
+
+
+	<input type="hidden" value="" name="action" id="udhandle"/> 
+
+
+
+</form>
+
+
+
+<form method="link" action="filedown.cgi" id="filedown">
+
+
+
+</form>
+
+
+
+<div id="body_center">
+
+
+
+<div id="top">
+
+
+
+    <a href="javascript:;" class="link"> <div class="back left"></div></a>
+
+
+
+	 <a href="javascript:;" class="link"><div class="title left">&nbsp;&nbsp;存储中心</div></a>
+
+
+
+	 <div class="capacity left">
+
+
+
+	   <div class="left">
+
+
+
+	    <span class="size">磁盘容量:0.0G</span>
+
+
+
+	    <span class="rate"><span class="pro"></span></span>
+
+
+
+	  </div>
+
+
+
+	  <div class="left" style="position:relative;">
+
+
+
+	     <span class="residue_t">0.0G</span>	
+
+
+
+		 <span class="residue_i">可用</span>	   
+
+
+
+	  </div>
+
+
+
+	 </div>
+
+
+
+	  <script language="javascript">
+
+
+
+        usb_info=$("#usb_info").attr("value");
+
+
+
+		if(usb_info!=""&&usb_info!=null&&usb_info.indexOf(",")>=0){
+
+
+
+		var usb_info_array=usb_info.split(",");
+
+
+
+		var total=usb_info_array[0];
+
+
+
+		var t=parseInt(total);
+
+
+
+		var residue=usb_info_array[1];
+
+
+
+		var r=parseInt(residue);
+
+
+
+		$(".capacity .size").html("磁盘容量:"+toDecimal(t/1024)+"G");
+
+
+
+		$(".capacity .residue_t").html(toDecimal(r/1024)+"G");
+
+
+
+	    var rate=0;
+
+
+
+		rate=((t-r)/t)*120;
+
+
+
+        if(rate>1){
+
+
+
+	     $(".rate > span").css("width", String(rate) + "px"); //控制.pro宽度
+
+
+
+        }else if(0<rate){
+
+
+
+		 $(".rate > span").css("width", "1px"); //控制.pro宽度
+
+
+
+		}
+
+
+
+		}
+
+
+
+	   </script>
+
+
+
+	 <a href="javascript:;"><div class="uninstall" onclick="uninstall();"><span class="tip">安全卸载</span></div></a>
+
+
+
+</div>
+
+
+
+<script>
+
+
+
+var navigatorName = "Microsoft Internet Explorer";
+
+
+
+if( navigator.appName == navigatorName ){
+
+
+
+if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE6.0") 
+
+
+
+{ 
+
+
+
+ $(".link").each(function(){
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+              });
+
+
+
+} 
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE7.0") 
+
+
+
+{ 
+
+
+
+ $(".link").each(function(){
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+              });
+
+
+
+} 
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE8.0") 
+
+
+
+{ 
+
+
+
+ $(".link").each(function(){
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+              });
+
+
+
+}else{
+
+
+
+ $('#top .back,#top .title').click(function(){
+
+
+
+     window.parent.closeFun("store_center");
+
+
+
+  });
+
+
+
+}  
+
+
+
+}else{
+
+
+
+  $('#top .back,#top .title').click(function(){
+
+
+
+     window.parent.closeFun("store_center");
+
+
+
+  });
+
+
+
+}
+
+
+
+</script>
+
+
+
+<div id="main" style="position:relative; background:none; height:600px;"> 
+
+
+
+  <div class="menu">
+
+
+
+        <div class="directory">
+
+
+
+         <span class="up" onclick="higher();"  title="返回上一级"></span>
+
+
+
+		 <span class="dir"><a href='javascript:;'  onclick="rootDir();">根目录</a></span>
+
+
+
+		 <div class="left">
+
+
+
+		   <span class="dir_v"></span>
+
+
+
+		   <script>
+
+
+
+		   if(usb_info!=""&&usb_info!=null&&usb_info.indexOf(",")>=0){
+
+
+
+		   var dir= "== jianluyou_nvram_get(\"jlu_harddisk_path\"); ==";
+
+
+
+		   var dir_arr=dir.split("/");
+
+
+
+		   var t_dir1=dir_arr[dir_arr.length-2];
+
+		   var t_dir2=dir_arr[dir_arr.length-1];
+
+
+
+		   $(".dir_v").html("&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);' deep='1'>"+t_dir1+"</a>&nbsp;&gt;&nbsp;<a href='javascript:;' onclick='open_name_fun(this);' deep='2'>"+t_dir2+"</a>");
+
+
+
+		   }else{
+
+
+
+		     $(".dir").html("<a href='javascript:;'>根目录</a>");
+
+
+
+		   }
+
+
+
+		   </script>
+
+
+
+		 </div>
+
+
+
+        </div>
+
+
+
+	    <ul>
+
+
+
+		  <li onclick="open_dir('down');" id="down"><span class="file_top_menu" style="background-position: -0px -0px; width: 26px; height: 26px;float:left;"></span><span style="float:left; height:26px; line-height:26px;">下载</span></li>
+
+
+
+		  <li onclick="open_dir('backup');" id="backup"><span class="file_top_menu" style="background-position: -0px -36px; width: 26px; height: 26px;float:left;"></span><span style="float:left; height:26px; line-height:26px;">&nbsp;备份</span></li>
+
+
+
+		  <li onclick="open_dir('wmoment');" id="wmoment"><span class="file_top_menu" style="background-position: -0px -72px; width: 26px; height: 26px;float:left;"></span><span style="float:left; height:26px; line-height:26px;">&nbsp;精彩时刻</span></li>
+
+
+
+		  <li onclick="open_dir('image');" id="image"><span class="file_top_menu" style="background-position: -0px -108px; width: 26px; height: 26px;float:left;"></span><span style="float:left; height:26px; line-height:26px;">&nbsp;图片</span></li>
+
+
+
+		  <li onclick="open_dir('music');" id="music"><span class="file_top_menu" style="background-position: -0px -144px; width: 26px; height: 26px;float:left;"></span><span style="float:left; height:26px; line-height:26px;">&nbsp;音频</span></li>
+
+
+
+		  <li onclick="open_dir('video');" id="video"><span class="file_top_menu" style="background-position: -0px -180px; width: 26px; height: 26px;float:left;"></span><span style="float:left; height:26px; line-height:26px;">&nbsp;视频</span></li>
+
+
+
+		  <li onclick="open_dir('document');"id="document"><span class="file_top_menu" style="background-position: -0px -216px; width: 26px; height: 26px;float:left;"></span><span style="float:left; height:26px; line-height:26px;">&nbsp;文档</span></li>
+
+
+
+		</ul>
+
+
+
+  </div>
+
+
+
+  <div id="file_list">
+
+
+
+          <div class="file_menu">
+
+
+
+			<a href="javascript:;"><span class="mode" title="列表模式"></span></a>
+
+
+
+		  </div>
+
+
+
+		  <div class='file_title'><span class='check left'><input type='checkbox'  class='check_c' onclick='javascript:chkAll();' id="head_check"/></span><span class='icon left'></span><span class='l_name left' style='cursor:pointer;' onclick='sort_fun(0);'>文件名</span><span class='l_time left' style='cursor:pointer;' onclick='sort_fun(2);'>修改日期</span><span class='l_size left' style='cursor:pointer;' onclick='sort_fun(1);'>大小</span></div>
+
+
+
+		  <div id="jianluyou_list">
+
+
+
+		 </div>
+
+
+
+  </div>
+
+
+
+  <div id="foot_menu">
+
+
+
+        <ul class="menu_left">
+
+
+
+	      <li class="filter"><a href="javascript:copy();"><span class="file_bot_menu" style="background-position: -0px -0px; width: 42px; height: 42px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/copy.png');"></span></a>复制到</li>
+
+
+
+		  <li class="filter"><a href="javascript:move();"><span class="file_bot_menu" style="background-position: -0px -52px; width: 42px; height: 42px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/move.png');"></span></a>移动到</li>
+
+
+
+		  <li class="filter"><a href="javascript:chkAll();"><span class="file_bot_menu" style="background-position: -0px -104px; width: 42px; height: 42px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/selectall.png');"></span></a>全选</li>
+
+
+
+	    </ul>
+
+
+
+		<ul class="menu_middle">
+
+
+
+	       <li class="filter" style="position:relative;">
+
+
+
+		    <a class="bt_btn"><a href="javascript:;"><span class="file_bot_menu" style="background-position: -0px -156px; width: 42px; height: 42px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/upload1.png');"></span></a>上传
+
+
+
+		    <form id="upmyform" method="post" action="<%=luci.dispatcher.build_url("admin/newweb/upload_file")%>" enctype="multipart/form-data">
+
+
+
+		     <input type="file" class="up-input" name='file' id="file_id" onChange="up();"/>
+
+
+
+			</form>
+
+
+
+		   </a>
+
+
+
+		   </li>
+
+
+
+		  <li class="filter"><a href="javascript:down();"><span class="file_bot_menu" style="background-position: -0px -208px; width: 42px; height: 42px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/down1.png');"></span></a>下载</li>
+
+
+
+		  <li class="filter"><a href="javascript:rename();"><span class="file_bot_menu" style="background-position: -0px -260px; width: 42px; height: 42px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/rename.png');"></span></a>重命名</li>
+
+
+
+	    </ul>
+
+
+
+		<ul class="menu_right">
+
+
+
+	      <li class="filter"><a href="javascript:new_fun();"><span class="file_bot_menu" style="background-position: -0px -312px; width: 42px; height: 42px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/new.png');"></span></a>新建</li>
+
+
+
+		  <li class="filter"><a href="javascript:delete_fun();"><span class="file_bot_menu" style="background-position: -0px -364px; width: 42px; height: 42px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/delete1.png');"></span></a>删除</li>
+
+
+
+	    </ul>
+
+
+
+  </div>
+
+<div id="footer">
+
+
+
+  <div class="cont">在Windows的资源管理器里的地址栏输入\\<script language="javascript">document.write(window.location.host);</script>后回车也可以访问路由器的外挂存储<span class="che_f_n"><input type='checkbox' onchange="checkFun(this);"/></span><span class="lab_f_n">不再显示</span><a href="javascript:;"><span class="close" onclick="closediv();" title="关闭"></span></a></div>
+
+
+
+</div>
+
+</div>
+
+
+
+<div id="folder_list" class="hide">
+
+
+
+  <div class="top">
+
+
+
+     <a href="javascript:;"><span  class="close" title="关闭" onclick="hideDiv('folder_list');"></span></a>
+
+
+
+     <h3 class="to">复制到</h3>
+
+
+
+  </div>
+
+
+
+   <div class="middle">
+
+
+
+    <div class="st_tree">
+
+
+
+      <ul>
+
+
+
+	     <li class="folder_list_li" onclick="folder_list_fun(0,this);tt(this);"><input type='hidden' value='' class='folder_url' id="r_url"></input><a href="javascript:;">全部文件</a></li>
+
+
+
+         <ul></ul>
+
+
+
+	  </ul>
+
+
+
+	 </div>
+
+
+
+   </div>
+
+
+
+   <div class="bottom"> 
+
+
+
+      <input type="button"  class="confirm" value="确定" onclick="copy_fun();">
+
+
+
+	  <input type="button"  class="cancel" value="取消" onclick="hideDiv('folder_list');">
+
+
+
+   </div> 
+
+
+
+</div>
+
+
+
+<div id="folder_list_m" class="hide">
+
+
+
+  <div class="top">
+
+
+
+      <a href="javascript:;"><span  class="close" title="关闭" onclick="hideDiv('folder_list_m');"></span></a>
+
+
+
+     <h3 class="to">移动到</h3>
+
+
+
+  </div>
+
+
+
+   <div class="middle">
+
+
+
+    <div class="st_tree">
+
+
+
+      <ul>
+
+
+
+	     <li class="folder_list_li" onclick="folder_list_fun_m(0,this);tt(this);"><input type='hidden' value='' class='folder_url' id="r_urlm"></input><a href="javascript:;">全部文件</a></li>
+
+
+
+         <ul>
+
+
+
+	     </ul>
+
+
+
+	  </ul>
+
+
+
+	 </div>
+
+
+
+   </div>
+
+
+
+        <script>
+
+
+
+   var s_dir="== jianluyou_nvram_get(\"jlu_harddisk_path\"); ==";
+
+
+
+   var dd_arr=s_dir.split("/");
+
+
+
+   var z_dir=dd_arr[dd_arr.length-2];
+
+
+
+   var r=s_dir.substring(0,s_dir.indexOf(z_dir)-1);
+
+
+
+   $("#r_url").attr("value",r);
+
+
+
+   $("#r_urlm").attr("value",r);
+
+
+
+		  </script>
+
+
+
+   <div class="bottom"> 
+
+
+
+      <input type="button"  class="confirm" value="确定" onclick="move_fun();">
+
+
+
+	  <input type="button"  class="cancel" value="取消" onclick="hideDiv('folder_list_m');">
+
+
+
+   </div> 
+
+
+
+</div>
+
+
+
+<div id="img_list" class="hide">
+
+
+
+</div>
+
+
+
+<div id="tip">
+
+
+
+   <span class="loading"><img src="<%=resource%>/images/loading.gif"/></span>
+
+
+
+   <span class="tip_info"></span>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+<script>
+
+
+
+var t=getCookie("checkbox");
+
+
+
+if(t=="1"){
+
+
+
+$("#footer").addClass("hide");
+
+
+
+}
+
+
+
+</script>
+
+
+
+</body>
+
+
+
+</html>
+
+
+

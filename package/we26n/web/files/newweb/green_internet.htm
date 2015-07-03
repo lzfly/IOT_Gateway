@@ -1,0 +1,5764 @@
+<%
+	require("uci")
+	local x = uci.cursor()
+	local count_down_v=2*(x:get("green","switch","t0") or 0)
+	--local count_down_v=luci.sys.exec("uci get green.switch.t0")
+	--if not count_down_v or count_down_v == "" then
+	 --count_down_v = "1"
+	--else
+	--    count_down_v = string.trim(count_down_v)
+	--end
+	local s_time=x:get("green","switch","start") or "00:00"
+	local e_time=x:get("green","switch","end") or "00:00"
+	
+	local c_switch=x:get("green","switch","c_switch") or "0"
+	
+	local n_switch=x:get("green","switch","n_switch") or "0"
+	
+	local a_list=luci.sys.exec("uci get green.addrlist.net_addr")
+	a_list = string.trim(a_list)
+	a_list=a_list.." "
+	--local a_list=x:get("green","addrlist","")
+%>
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+
+
+
+
+
+<head>
+
+
+
+
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+
+
+
+
+
+<title>绿色上网通道</title>
+
+
+
+
+
+
+
+<style type="text/css">
+
+
+
+
+
+
+
+/* CSS Document */
+
+
+
+
+
+
+
+html,body {
+
+
+
+
+
+
+
+	height:100%;
+
+
+
+
+
+
+
+	margin:0px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+body {
+
+
+
+
+
+
+
+	background:#0A53A0;
+
+
+
+
+
+
+
+	filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);
+
+
+
+
+
+
+
+-ms-filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);/*IE8*/ 
+
+
+
+
+
+
+
+	background:-webkit-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:-o-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:-ms-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:-moz-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:adial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+
+
+
+
+}
+
+
+
+@media screen and (min-height: 631px) {
+
+#body_center{
+
+
+
+width:100%;
+
+
+
+height:630px;
+
+
+
+position:absolute;
+
+
+
+top:50%;
+
+
+
+margin-top:-328px;
+
+
+
+text-align:center;
+
+
+
+
+
+}
+
+#main {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	height:560px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+
+
+
+
+	border-top:1px solid #407CB8;
+
+
+
+
+
+
+
+}
+
+
+
+}
+
+@media screen and (max-height: 630px) {
+
+#body_center{
+
+width:100%;
+
+height:590px;
+
+position:absolute;
+
+top:50%;
+
+margin-top:-310px;
+
+text-align:center;
+
+}
+
+#main {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	height:520px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+
+
+
+
+	border-top:1px solid #407CB8;
+
+
+
+
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+a{
+
+
+
+
+
+
+
+cursor:pointer;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a:link {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a:visited {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a:hover {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a:active {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.left {
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.right {
+
+
+
+
+
+
+
+	float:right;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+img {
+
+
+
+
+
+
+
+	border:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+span {
+
+
+
+
+
+
+
+	display:block;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.hide {
+
+
+
+
+
+
+
+	display:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#top .back {
+
+
+
+
+
+
+
+	width:42px;
+
+
+
+
+
+
+
+	height:75px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/back.png) no-repeat center center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#top .title {
+
+
+
+
+
+
+
+	height:75px;
+
+
+
+
+
+
+
+	line-height:75px;
+
+
+
+
+
+
+
+	width:200px;
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:26px;
+
+
+
+
+
+
+
+	font-family:Microsoft YaHei,small;
+
+
+
+
+
+
+
+	font-weight:normal;
+
+
+
+
+
+
+
+	text-align:left;
+
+
+
+
+
+
+
+}
+
+
+
+.t_text {
+
+	width:117px;
+
+	height:30px;
+
+	line-height:30px;
+
+	vertical-align:middle;
+
+	background:#FFFFFF;
+
+	border: 1px solid #00AAA9;
+
+}
+
+
+
+
+
+
+
+
+
+.t_lable {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:18px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#tip {
+
+
+
+
+
+
+
+	width:160px;
+
+
+
+
+
+
+
+	overflow:hidden;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+	border:solid 2px #669999;
+
+
+
+
+
+
+
+	background:#6699CC;
+
+
+
+
+
+
+
+	display:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#tip .loading {
+
+
+
+
+
+
+
+	width:126px;
+
+
+
+
+
+
+
+	height:22px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+
+
+
+
+
+
+	margin-top:5px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#tip .tip_info {
+
+
+
+
+
+
+
+	width:126px;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	margin-top:5px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#top {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	height:75px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#main .content {
+
+
+
+
+
+
+
+	margin-top:40px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content .content_left {
+
+
+
+
+
+
+
+	width:50%;
+
+
+
+
+
+
+
+	position:relative;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content .content_right {
+
+
+
+
+
+
+
+	width:50%;
+
+
+
+
+
+
+
+	position:relative;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.add {
+
+
+
+
+
+
+
+	width:460px;
+
+
+
+
+
+
+
+	height:37px;
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	right:0px;
+
+
+
+
+
+
+
+	top:30px;
+
+
+
+
+
+
+
+	background:#00CC66;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.add .input-clear {
+
+
+
+
+
+
+
+	width:412px;
+
+
+
+
+
+
+
+	height:35px;
+
+
+
+
+
+
+
+	line-height:35px;
+
+
+
+
+
+
+
+	border:0px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	padding:0px;
+
+
+
+
+
+
+
+	margin:0px;
+
+
+
+
+
+
+
+	vertical-align:middle;
+
+	border: 1px solid #00AAA9;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.add .btn {
+
+
+
+
+
+
+
+	width:46px;
+
+
+
+
+
+
+
+	height:37px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	background:#36AC1C url(<%=resource%>/images/jiahao1.png) no-repeat center center;
+
+
+
+
+
+
+
+	border:0px;
+
+
+
+
+
+
+
+	padding:0px;
+
+
+
+
+
+
+
+	margin:0px;
+
+
+
+
+
+
+
+	cursor:pointer;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.a_label {
+
+
+
+
+
+
+
+	width:460px;
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	right:0px;
+
+
+
+
+
+
+
+	text-align:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_k_lable {
+
+
+
+
+
+
+
+	color:#CCCCCC;
+
+
+
+
+
+
+
+	font-size:12px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.url_list {
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	width:460px;
+
+
+
+
+
+
+
+	top:100px;
+
+
+
+
+
+
+
+	right:0px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.url_list_s {
+
+
+
+
+
+
+
+	height:375px;
+
+
+
+
+
+
+
+	width:460px;
+
+
+
+
+
+
+
+	overflow:auto;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.jinzhi {
+
+
+
+
+
+
+
+	width:40px;
+
+
+
+
+
+
+
+	height:40px;
+
+
+
+
+
+
+
+	background:#2978CB url(<%=resource%>/images/jinzhi_icon.png) no-repeat center center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.url {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:14px;
+
+
+
+
+
+
+
+	padding-left:10px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.delete {
+
+
+
+
+
+
+
+	width:24px;
+
+
+
+
+
+
+
+	height:40px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/delete.png) no-repeat center center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_l {
+
+
+
+
+
+
+
+	width:460px;
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	right:-2px;
+
+
+
+
+
+
+
+	text-align:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right .content_right_div {
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	right:0px;
+
+
+
+
+
+
+
+	top:30px;
+
+
+
+
+
+
+
+	width:460px;
+
+
+
+
+
+
+
+	text-align:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right .content_right_ul {
+
+
+
+
+
+
+
+	padding:0px;
+
+
+
+
+
+
+
+	margin:0px;
+
+
+
+
+
+
+
+	list-style:none;
+
+
+
+
+
+
+
+	overflow:auto;
+
+
+
+
+
+
+
+	height:446px;
+
+
+
+
+
+
+
+	width:460px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right .content_right_ul .content_right_li {
+
+
+
+
+
+
+
+	width:440px;
+
+
+
+
+
+
+
+	height:55px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	background:#357BC4;
+
+
+
+
+
+
+
+	margin-top:10px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right_ul .content_right_li:first-child {
+
+
+
+
+
+
+
+	margin-top:0px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right_li ul {
+
+
+
+
+
+
+
+	padding:0px;
+
+
+
+
+
+
+
+	margin:0px;
+
+
+
+
+
+
+
+	list-style:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.li_top {
+
+
+
+
+
+
+
+	margin-top:10px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right_ul ul {
+
+
+
+
+
+
+
+	padding:0px;
+
+
+
+
+
+
+
+	margin:0px;
+
+
+
+
+
+
+
+	list-style:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right_ul ul li {
+
+
+
+
+
+
+
+	padding:0px;
+
+
+
+
+
+
+
+	margin:0px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right_ul .li_left {
+
+
+
+
+
+
+
+	width:46%;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.li_left {
+
+
+
+
+
+
+
+	position:relative;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.li_open {
+
+
+
+
+
+
+
+	width:55px;
+
+
+
+
+
+
+
+	height:55px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	background:#36AC1C;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.li_img {
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/equit1.png);
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.li_handle {
+
+
+
+
+
+
+
+	width:0px;
+
+
+
+
+
+
+
+	height:55px;
+
+
+
+
+
+
+
+	line-height:55px;
+
+
+
+
+
+
+
+	padding-left:3px;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+	background:#8AC40E;
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	right:0px;
+
+
+
+
+
+
+
+	top:0px;
+
+
+
+
+
+
+
+	overflow:hidden;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.li_handle a {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:18px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.li_name {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	width:95px;
+
+
+
+
+
+
+
+	height:55px;
+
+
+
+
+
+
+
+	line-height:55px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	text-overflow:ellipsis;
+
+
+
+
+
+
+
+	white-space:nowrap;
+
+
+
+
+
+
+
+	overflow:hidden;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.li_hand {
+
+
+
+
+
+
+
+	height:55px;
+
+
+
+
+
+
+
+	width:45px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/allow1.png) no-repeat center center;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.li_hand1 {
+
+
+
+
+
+
+
+	height:55px;
+
+
+
+
+
+
+
+	width:45px;
+
+
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/ban.png) no-repeat center center;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.li_bc {
+
+
+
+
+
+
+
+	height:24px;
+
+
+
+
+
+
+
+	width:24px;
+
+
+
+
+
+
+
+	margin-left:-5px;
+
+
+
+
+
+
+
+	margin-top:-8px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/perm_yes.png) center center no-repeat;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right_ul .li_right {
+
+
+
+
+
+
+
+	width:54%;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.jishi {
+
+
+
+
+
+
+
+	width:180px;
+
+
+
+
+
+
+
+	height:25px;
+
+
+
+
+
+
+
+	line-height:25px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/jishi.png) no-repeat left center;
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:15px;
+
+
+
+
+
+
+
+	padding-left:25px;
+
+
+
+
+
+
+
+	margin-left:10px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.jishi1 {
+
+
+
+
+
+
+
+	width:180px;
+
+
+
+
+
+
+
+	height:25px;
+
+
+
+
+
+
+
+	line-height:25px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/jishi1.png) no-repeat left center;
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:15px;
+
+
+
+
+
+
+
+	padding-left:25px;
+
+
+
+
+
+
+
+	margin-left:10px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.dingshi {
+
+
+
+
+
+
+
+	width:180px;
+
+
+
+
+
+
+
+	height:30px;
+
+
+
+
+
+
+
+	line-height:30px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/dingshi.png) no-repeat left center;
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:15px;
+
+
+
+
+
+
+
+	padding-left:25px;
+
+
+
+
+
+
+
+	margin-left:10px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.dingshi1 {
+
+
+
+
+
+
+
+	width:180px;
+
+
+
+
+
+
+
+	height:30px;
+
+
+
+
+
+
+
+	line-height:30px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/dingshi1.png) no-repeat left center;
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:15px;
+
+
+
+
+
+
+
+	padding-left:25px;
+
+
+
+
+
+
+
+	margin-left:10px;
+
+
+
+
+
+
+
+}
+
+
+
+#myul{
+
+
+
+padding:0px; 
+
+
+
+margin:0px;
+
+
+
+list-style:none;
+
+
+
+}
+
+.t_btn {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	width:262px;
+
+
+
+
+
+
+
+	height:32px;
+
+
+
+
+
+
+
+	border:none;
+
+
+
+
+
+
+
+	font-size:18px;
+
+
+
+
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+
+
+
+
+	background:#E6AB07;
+
+
+
+
+
+
+
+	cursor:pointer;
+
+
+
+
+
+
+
+}
+
+
+
+.switch {
+
+
+
+background:url(<%=resource%>/images/switch.png);
+
+
+
+}
+
+input:focus {
+
+		-webkit-box-shadow: 0px 0px 10px #00AAA9;
+
+		-moz-box-shadow: 0px 0px 10px #00AAA9;
+
+		box-shadow: 0px 0px 10px #00AAA9;
+
+	}
+
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px;}
+
+.ui-timepicker-div dl { text-align: left; }
+
+.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
+
+.ui-timepicker-div dl dd { margin: 0 10px 0px 45px; }
+
+.ui-timepicker-div td { font-size: 90%; }
+
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+
+.ui_tpicker_hour_label,.ui_tpicker_minute_label,.ui_tpicker_second_label,.ui_tpicker_millisec_label,.ui_tpicker_time_label{padding-left:10px;font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu; font-size: 90%;}
+
+</style>
+
+
+
+<!--[if lt IE 9]>
+
+<script src="<%=resource%>/js/css3-mediaqueries.js"></script>
+
+<![endif]-->
+
+
+
+ 
+
+
+
+<link rel="stylesheet" type="text/css" href="<%=resource%>/css/jquery-ui.css" />
+
+<link rel="stylesheet" type="text/css" href="<%=resource%>/js/tip-yellowsimple/tip-yellowsimple.css" />
+
+<script type="text/javascript" src="<%=resource%>/js/jquery.min.js"></script>
+
+
+
+
+
+<script type="text/javascript" src="<%=resource%>/js/jsloader.js"></script>
+
+
+
+
+
+<script type="text/javascript">
+
+
+
+
+
+
+
+var $parent;
+
+
+
+
+
+
+
+var addr_list_array=[];
+
+
+
+
+
+
+
+var box1;
+
+
+
+
+
+
+
+var a=0;
+
+
+
+
+
+
+
+var urls=["<%=resource%>/js/modernizr.custom.js","<%=resource%>/js/jquery.mousewheel.js","<%=resource%>/js/jquery.mCustomScrollbar.concat.min.js","<%=resource%>/js/jquery.poshytip.js","<%=resource%>/js/jquery.form.js","<%=resource%>/js/jquery-ui.js","<%=resource%>/js/jquery-ui-slide.min.js","<%=resource%>/js/jquery-ui-timepicker-addon.js","<%=resource%>/js/tip.js"];
+
+
+
+
+
+
+
+   function init(){
+
+
+
+
+
+
+
+   loadCss("<%=resource%>/css/jquery.mCustomScrollbar.css");
+
+
+
+
+
+
+
+   }
+
+
+
+
+
+
+
+   function load_data(){
+
+
+    $('#countdown').numberType();
+
+    addr_list();
+
+
+
+
+
+
+
+    load_device();
+
+
+
+
+
+
+
+    box1 = new LightBox("tip");
+
+
+
+
+
+
+
+    if(a==1){
+
+
+
+
+
+
+
+	 box1.Close(); 
+
+
+
+
+
+
+
+	}
+
+    $('#start_time,#end_time').timepicker({
+
+	   hourGrid: 4,
+
+	   minuteGrid: 10
+
+    });
+
+
+
+
+
+var navigatorName = "Microsoft Internet Explorer";
+
+
+
+
+
+
+
+if( navigator.appName == navigatorName ){
+
+
+
+
+
+
+
+if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE6.0") 
+
+
+
+
+
+
+
+{ 
+
+
+
+
+
+
+
+ $(".link").each(function(){
+
+
+
+
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+
+
+
+
+              });
+
+
+
+
+
+
+
+ loadScript("<%=resource%>/js/jquery.JPlaceholder.js");
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE7.0") 
+
+
+
+
+
+
+
+{ 
+
+
+
+
+
+
+
+ $(".link").each(function(){
+
+
+
+
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+
+
+
+
+              });
+
+
+
+
+
+
+
+ loadScript("<%=resource%>/js/jquery.JPlaceholder.js");
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE8.0") 
+
+
+
+
+
+
+
+{ 
+
+
+
+
+
+
+
+  $(".link").each(function(){
+
+
+
+
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+
+
+
+
+              });
+
+
+
+
+
+
+
+ loadScript("<%=resource%>/js/jquery.JPlaceholder.js");
+
+
+
+
+
+
+
+} else{
+
+
+
+
+
+
+
+ ('#top .back,#top .title').click(function(){
+
+
+
+
+
+
+
+     window.parent.closeFun("green_internet");
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+}else{
+
+
+
+
+
+
+
+ $('#top .back,#top .title').click(function(){
+
+
+
+
+
+
+
+     window.parent.closeFun("green_internet");
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+}
+
+$("#end_time").blur(function(){
+
+
+
+    var start_time=$("#start_time").attr("value");
+
+    var end_time=$("#end_time").attr("value");
+
+    var start_time_arr=start_time.split(":");
+
+	var end_time_arr=end_time.split(":");
+
+ 
+
+	$(this).poshytip('hide');
+
+    
+
+     if(parseInt(end_time_arr[0])<parseInt(start_time_arr[0])){
+
+	  $('#end_time').poshytip({
+
+
+
+
+
+
+
+			    content: '时间不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else if((parseInt(end_time_arr[0])==parseInt(start_time_arr[0]))&&(parseInt(end_time_arr[1])<=parseInt(start_time_arr[1]))){
+
+
+
+
+
+
+
+	   $('#end_time').poshytip({
+
+
+
+
+
+
+
+			    content: '时间不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+	}
+
+  });
+
+
+
+
+
+
+
+   }
+
+
+
+   function addEvent(tmp){
+
+     $('#myul li').bind('mouseover', function(){ 
+
+
+
+
+
+
+
+	 $(this).css("background","#4488D1");
+
+
+
+
+
+
+
+	 $(this.lastChild.firstChild.firstChild).removeClass("hide");
+
+
+
+
+
+
+
+     });
+
+
+
+
+
+    $('#myul li').bind('mouseout', function(){ 
+
+
+
+
+
+
+
+     $(this).css("background","none");	
+
+
+
+
+
+
+
+	 $(this.lastChild.firstChild.firstChild).addClass("hide");
+
+
+
+
+
+
+
+    });
+
+
+
+    if(!$(".url_list_s").hasClass("mCustomScrollbar")){
+
+	$(".url_list_s").mCustomScrollbar({
+
+
+
+
+
+
+
+					autoHideScrollbar:true,
+
+
+
+
+
+
+
+					scrollInertia:200,//滚动延迟
+
+
+
+
+
+
+
+					theme:"light-thin"
+
+
+
+
+
+
+
+				});
+
+	 }else if(tmp=="add"){
+
+	   $(".url_list_s").mCustomScrollbar("update");
+
+	   $(".url_list_s").mCustomScrollbar("scrollTo","bottom"); 
+
+	 }else if(tmp=="del"){
+
+	   $(".url_list_s").mCustomScrollbar("update");   
+
+	 }
+
+
+
+   }
+
+   function addRow(t){
+
+      $parent.html("");
+
+ 
+
+      var n=addr_list_array.length-1;
+
+      for(var i=0;i<addr_list_array.length;i++){
+
+	   if(addr_list_array[i]!=""&&addr_list_array[i]!=null){
+
+	    var row = $("<li style='clear:left;float:left;margin-bottom:1px;'></li>");
+
+
+
+
+
+
+
+	    var td1 = $("<div style='width:44px;float:left;' class='state'><span class='jinzhi'></span></div>");
+
+
+
+
+
+
+
+	    var td2 = $("<div style='width:380px;height:40px;line-height:40px;float:left;text-align:left;'><span class='url'>"+addr_list_array[i]+"</span></div>");
+
+
+
+
+
+
+
+	    var td3 = $("<div style='width:26px;float:left;'><a href='#'><span class='delete hide' title='删除' onclick='deleteURL("+i+")'></span></a></div>");
+
+
+
+
+
+
+
+	    row.append(td1);
+
+
+
+
+
+
+
+	    row.append(td2);
+
+
+
+
+
+
+
+	    row.append(td3);
+
+
+
+
+
+
+
+        $parent.append(row);
+
+	    }
+
+       if(i==n){
+
+         addEvent(t);
+
+        }
+
+	 }
+
+   }
+
+   function addr_list(){
+
+
+
+
+
+
+
+ // var addr_list="== nvram_get(\"greenwall_network_addr_list\"); ==";
+	var addr_list="<%=a_list%>"  
+	
+
+
+
+   //addr_list_array=addr_list.split(",");
+	addr_list_array=addr_list.split(" ");
+ 
+
+     //addr_list_array.remove(addr_list_array.length-1);
+	addr_list_array.remove(addr_list_array.length-1);
+
+
+	 $parent = $("#myul"); 
+
+
+
+     addRow("");
+
+ 
+  }
+
+  
+
+
+
+
+
+   //var greenwal_device;
+
+   //var greenwal_array=[];
+
+   var time1 = "<%=s_time%>";
+
+   var time2 = "<%=e_time%>";
+
+   var enable1 = "<%=c_switch%>";
+
+   var enable2 = "<%=n_switch%>";
+
+   var time3;
+
+   var time4 = "<%=count_down_v%>";
+
+   function  load_device(){
+
+
+
+
+
+
+
+
+
+
+
+   /* greenwal_device="== nvram_get(\"greenwall_device_control\"); ==";
+
+
+
+
+	
+
+
+	if(greenwal_device!=""&&greenwal_device!=null){
+
+
+
+
+
+         greenwal_array=greenwal_device.split("-");
+
+
+
+
+
+
+
+         enable1=greenwal_array[0];
+
+
+
+
+
+
+
+         time1=greenwal_array[1];
+
+
+
+
+
+
+
+         time2=greenwal_array[2];
+
+
+
+
+
+
+
+         enable2=greenwal_array[3];
+
+
+
+
+
+
+
+         time3=greenwal_array[4];
+
+
+
+
+
+
+
+         time4=greenwal_array[5];
+
+		 //getInfo(enable,date,time1,time2,time3,time4);
+*/
+		 var t4=parseFloat(time4)/2;
+
+		 if(enable1=="0"){
+
+		     $(".c_open").addClass("hide");
+
+	         $(".c_close").removeClass("hide");
+
+		     $("#countdown").attr("disabled",true);
+
+		     $(".up").unbind("mousedown");  
+
+	         $(".down").unbind("mousedown");
+
+		 }
+
+		 if(enable2=="0"){
+
+		     $(".t_open").addClass("hide");
+
+	         $(".t_close").removeClass("hide");
+
+		     $("#start_time").attr("disabled",true);
+
+	         $("#end_time").attr("disabled",true);
+
+		 }
+
+		 $("#enable1").attr("value",enable1);
+
+		 $("#enable2").attr("value",enable2);
+
+         $("#countdown").attr("value",t4);
+
+         $("#start_time").attr("value",time1);
+
+         $("#end_time").attr("value",time2);
+
+
+
+	//}
+
+
+
+   }
+
+
+
+  /* function getInfo(e,d,t1,t2,t3,t4){
+
+
+
+
+
+ var current_time ="== localtime(); =="+"";
+
+
+
+ 
+
+
+
+	var t_data = current_time.split(" "); 
+
+
+
+
+
+
+
+	var date=t_data[0];
+
+
+
+
+
+
+
+	var start_time=date+" "+t1+":00";
+
+
+
+
+
+
+
+	var end_time=date+" "+t2+":00";
+
+
+
+
+
+
+
+
+
+	var temp_start_time=t3.substring(0,4)+"-"+t3.substring(4,6)+"-"+t3.substring(6,8)+" "+t3.substring(8,10)+":"+t3.substring(10,12)+":00";
+
+
+
+   
+
+
+
+	var temp_time=parseFloat(t4)*3600*1000;
+
+
+
+
+
+
+
+
+
+	current_time=new Date(current_time.replace(/\-/gi,"/")).getTime();
+
+
+
+
+
+
+
+	start_time=new Date(start_time.replace(/\-/gi,"/")).getTime();
+
+
+
+
+
+
+
+	end_time=new Date(end_time.replace(/\-/gi,"/")).getTime();
+
+
+
+
+
+
+
+    temp_start_time=new Date(temp_start_time.replace(/\-/gi,"/")).getTime();
+
+
+
+
+
+
+
+	d=d.substring(0,4)+"-"+d.substring(4,6)+"-"+d.substring(6,8);
+
+
+
+
+
+
+
+	var temp_end_time=parseFloat(temp_start_time)+temp_time;
+
+
+
+ 
+
+   //alert("start_time="+start_time+"end_time="+end_time+"current_time="+current_time+"temp_start_time="+temp_start_time+"temp_end_time="+temp_end_time+"d="+d);
+
+ 
+
+   if(d!=date){
+
+ 
+
+
+
+
+
+	if((start_time<=current_time&&current_time<=end_time)&&(temp_start_time>current_time||current_time>temp_end_time)){
+
+       $(".close").addClass("hide");
+
+	   $(".open").removeClass("hide");
+
+       $("#countdown").attr("disabled",false);
+
+	   $("#start_time").attr("disabled",false);
+
+	   $("#end_time").attr("disabled",false);
+
+	   $("#enable").attr("value",e);
+
+
+
+	}
+
+
+
+
+
+
+
+	if((temp_start_time<=current_time&&current_time<=temp_end_time)&&(start_time>current_time||current_time>end_time)){
+
+       $(".close").addClass("hide");
+
+	   $(".open").removeClass("hide");
+
+       $("#countdown").attr("disabled",false);
+
+	   $("#start_time").attr("disabled",false);
+
+	   $("#end_time").attr("disabled",false);
+
+	    $("#enable").attr("value",e);
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+	if((start_time<=current_time&&current_time<=end_time)&&(temp_start_time<=current_time&&current_time<=temp_end_time)){
+
+       $(".close").addClass("hide");
+
+	   $(".open").removeClass("hide");
+
+       $("#countdown").attr("disabled",false);
+
+	   $("#start_time").attr("disabled",false);
+
+	   $("#end_time").attr("disabled",false);
+
+	   $("#enable").attr("value",e);
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+	if((start_time>current_time||current_time>end_time)&&(temp_start_time>current_time||current_time>temp_end_time)){
+
+
+
+       $(".close").removeClass("hide");
+
+	   $(".open").addClass("hide");
+
+       $("#countdown").attr("disabled",true);
+
+	   $("#start_time").attr("disabled",true);
+
+	   $("#end_time").attr("disabled",true);
+
+	   $("#enable").attr("value",e);
+
+	    $(".up").unbind("mousedown"); 
+
+	   $(".down").unbind("mousedown"); 
+
+
+
+	}
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+       $(".close").removeClass("hide");
+
+	   $(".open").addClass("hide");
+
+	   $("#countdown").attr("disabled",true);
+
+	   $("#start_time").attr("disabled",true);
+
+	   $("#end_time").attr("disabled",true);
+
+	   $("#enable").attr("value",e);
+
+	    $(".up").unbind("mousedown"); 
+
+	   $(".down").unbind("mousedown"); 
+
+
+
+	}
+
+
+
+
+
+}*/
+
+
+
+
+
+
+
+
+
+var greenwall_device_control;
+
+
+
+var  tmp_date="19910101";
+
+
+
+function setParma(){
+
+
+
+
+
+    var enable1=$("#enable1").attr("value");
+
+	var enable2=$("#enable2").attr("value");
+
+	var time=$("#countdown").attr("value");
+
+
+
+	document.getElementById("count_time").value = time;
+	
+
+
+
+	var start=$("#start_time").attr("value");
+
+
+
+
+
+
+
+	var end=$("#end_time").attr("value");
+
+
+
+
+
+    
+
+	//var t=parseFloat(time)*2;
+
+    //var current_time ="== localtime(); =="+"";
+
+	//current_time=current_time.substring(0,16);
+
+	//current_time=current_time.replace("-","").replace("-","").replace(" ","").replace(":","");
+
+	//greenwall_device_control=enable1+"-"+start+"-"+end+"-"+enable2+"-"+current_time+"-"+t;
+
+    //$("#greenwall_device_control").attr("value",greenwall_device_control)
+
+
+
+    saveReport();
+
+
+
+
+
+
+
+   }
+
+
+
+
+
+
+
+ function saveReport() {
+
+
+
+
+
+    
+
+    var start_time=$("#start_time").attr("value");
+
+    var end_time=$("#end_time").attr("value");
+
+    var start_time_arr=start_time.split(":");
+
+	var end_time_arr=end_time.split(":");
+
+	
+
+	if(parseInt(end_time_arr[0])<parseInt(start_time_arr[0])){
+
+	  $("#end_time").blur();
+
+	 }else if((parseInt(end_time_arr[0])==parseInt(start_time_arr[0]))&&(parseInt(end_time_arr[1])<=parseInt(start_time_arr[1]))){
+
+	  $("#end_time").blur();
+
+	 }else{
+
+	  $(".tip_info").html("保存中...");
+
+
+
+
+
+
+
+	box_show();
+
+
+	
+    document.getElementById("st_time").value = start_time;
+	document.getElementById("en_time").value = end_time;
+	
+	
+
+
+  // $("#greenwall_device_control").attr("value",greenwall_device_control);
+
+
+
+
+     
+
+
+ $("#myform").ajaxSubmit(function(message) {
+
+
+
+
+
+
+
+      setTimeout("box_delay()",700);
+
+
+
+
+
+
+
+    });
+
+	 }
+
+
+
+
+
+   } 
+
+
+
+
+
+   function addURL(){
+
+
+
+
+
+
+
+     var j=0;
+
+
+
+
+
+
+
+     var url=$("#uri-input").attr("value");
+
+
+
+
+
+
+
+	 if(url!=""&&url!=null){
+
+
+
+
+
+
+
+       for(var i=0;i<addr_list_array.length;i++){
+
+
+
+
+
+
+
+	     if(addr_list_array[i]==url){
+
+
+
+
+
+
+
+		  j=1;
+
+
+
+
+
+
+
+		  alert("该地址已经存在！");
+
+
+
+
+
+
+
+
+
+		  break;
+
+
+
+
+
+
+
+		}
+
+
+
+
+
+
+
+	   }
+
+
+
+
+
+
+
+	   if(j==0){
+
+
+
+
+
+
+
+        $("#greenwall_network_addr").attr("value",url);
+
+
+
+
+
+
+
+        $("#addUrl_form").ajaxSubmit(function(message) {
+
+
+
+
+
+          addr_list_array.push(url);
+
+          addRow("add");
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+	   }
+
+
+
+
+
+
+
+	 }else{
+
+
+
+
+
+
+
+	   alert("请输入网址！");
+
+
+
+
+
+
+
+	 }
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+  function deleteURL(s_number){
+
+
+
+
+
+
+
+    s_number=parseInt(s_number)
+
+
+
+
+
+
+
+	$("#greenwall_network_deleate_addr").attr("value",addr_list_array[s_number]);
+
+
+
+
+
+
+
+	$("#deleUrl_form").ajaxSubmit(function(message) {
+
+
+
+
+
+
+
+        addr_list_array.remove(s_number);
+
+        addRow("del");
+
+
+
+
+
+
+
+     });
+
+
+
+
+
+
+
+  }
+
+function switchFun(m,n){
+
+switch (m){
+
+    case "t":
+
+	   if(n=="0"){
+
+         $(".t_close").addClass("hide");
+
+	     $(".t_open").removeClass("hide");
+
+		 //$("#enable2").attr("value","1");
+
+		 $("#start_time").attr("disabled",false);
+
+	     $("#end_time").attr("disabled",false);
+		 document.getElementById("net_switch").value = 1;
+
+	   }else{
+
+	     $(".t_open").addClass("hide");
+
+	     $(".t_close").removeClass("hide");
+
+		 //$("#enable2").attr("value","0");
+
+		 $("#start_time").attr("disabled",true);
+
+	     $("#end_time").attr("disabled",true);
+		 document.getElementById("net_switch").value = 0;
+
+	   }
+
+	break;
+
+	case "c":
+
+	  if(n=="0"){
+		
+		
+         $(".c_close").addClass("hide");
+
+	     $(".c_open").removeClass("hide");
+
+		 //$("#enable1").attr("value","1");
+
+		 $("#countdown").attr("disabled",false);
+
+		 $(".up").bind({
+
+                    mousedown:function() {
+
+						$.up_event(this);
+
+                    }
+
+                });
+
+	     $(".down").bind({
+
+                    mousedown:function() {
+
+						$.down_event(this);
+
+                    }
+
+                });
+		document.getElementById("count_switch").value = 1;
+	   }else{
+		
+	     $(".c_open").addClass("hide");
+
+	     $(".c_close").removeClass("hide");
+
+		 //$("#enable1").attr("value","0");
+
+		 $("#countdown").attr("disabled",true);
+
+		 $(".up").unbind("mousedown");  
+
+	     $(".down").unbind("mousedown");
+		 document.getElementById("count_switch").value = 0;
+	   }
+
+	break;
+
+  }
+
+  /*if(n=="0"){
+
+    $(".close").addClass("hide");
+
+	$(".open").removeClass("hide");
+
+    $("#countdown").attr("disabled",false);
+
+	$("#start_time").attr("disabled",false);
+
+	$("#end_time").attr("disabled",false);
+
+	$("#enable").attr("value","1");
+
+	$("#greenwall_enable").attr("value","1");
+
+	tmp_date="19910101";
+
+	$(".up").bind({
+
+                    mousedown:function() {
+
+						$.up_event(this);
+
+                    }
+
+                });
+
+	 $(".down").bind({
+
+                    mousedown:function() {
+
+						$.down_event(this);
+
+                    }
+
+                });
+
+ }else{
+
+     var current_time ="== localtime(); =="+"";
+
+     $(".open").addClass("hide");
+
+	 $(".close").removeClass("hide");
+
+     $("#countdown").attr("disabled",true);
+
+	 $("#start_time").attr("disabled",true);
+
+	 $("#end_time").attr("disabled",true);
+
+	 $("#enable").attr("value","0");
+
+	 $("#greenwall_enable").attr("value","0");
+
+	 current_time=current_time.substring(0,10);
+
+	 current_time=current_time.replace("-","").replace("-","");
+
+	 tmp_date=current_time;
+
+	 $(".up").unbind("mousedown");  
+
+	 $(".down").unbind("mousedown");  
+
+
+
+ }*/
+
+}
+
+
+
+
+
+Array.prototype.remove=function(dx)
+
+
+
+
+
+
+
+{
+
+
+
+
+
+
+
+    if(isNaN(dx)||dx>this.length){return false;}
+
+
+
+
+
+
+
+    for(var i=0,n=0;i<this.length;i++)
+
+
+
+
+
+
+
+    {
+
+
+
+
+
+
+
+        if(this[i]!=this[dx])
+
+
+
+
+
+
+
+        {
+
+
+
+
+
+
+
+            this[n++]=this[i]
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+    this.length-=1
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+function loadScript(src){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       var _doc = document.getElementsByTagName('head')[0];  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       var script = document.createElement('script');     
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+       script.setAttribute('type', 'text/javascript');    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	   script.setAttribute('src', src);   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	   _doc.appendChild(script); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+　　} 
+
+
+
+
+
+
+
+  function loadCss(src){
+
+
+
+
+
+
+
+ var _doc = document.getElementsByTagName('head')[0];  
+
+
+
+
+
+
+
+       var css = document.createElement('link');     
+
+
+
+
+
+
+
+       css.setAttribute('rel', 'stylesheet');       
+
+
+
+
+
+
+
+       css.setAttribute('type', 'text/css');    
+
+
+
+
+
+
+
+	   css.setAttribute('href', src);   
+
+
+
+
+
+
+
+	   _doc.appendChild(css); 
+
+
+
+
+
+
+
+	   if (css.readyState) { //IE
+
+
+
+
+
+
+
+	     css.onreadystatechange = function () {
+
+
+
+
+
+
+
+            if (css.readyState == "loaded" ||css.readyState == "complete") {
+
+
+
+
+
+
+
+                css.onreadystatechange = null;
+
+
+
+
+
+
+
+                loadmultijs(urls,function(){ load_data(); });
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+        };
+
+
+
+
+
+
+
+     } else{ //标准的DOM浏览器
+
+
+
+
+
+
+
+        css.onload = function () {
+
+
+
+
+
+
+
+              loadmultijs(urls,function(){ load_data(); });
+
+
+
+
+
+
+
+        };
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+　　} 
+
+
+
+
+
+
+
+  function box_show(){
+
+
+
+
+
+
+
+	  box1.Show(); 
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+ function box_delay(){
+
+  $(".tip_info").html("保存成功");
+
+   setTimeout("box_close()",300);
+
+ }
+
+ function box_close(){
+
+
+
+      a=1;
+
+
+
+
+
+
+
+	  $(".tip_info").html("加载中...");
+
+
+
+
+
+
+
+	  location.reload();
+
+
+
+
+
+ }
+
+
+
+
+
+
+
+  
+
+
+
+ 
+
+
+
+</script>
+
+
+
+
+
+
+
+</head>
+
+
+
+
+
+
+
+<body onload="init();">
+
+
+
+
+
+
+
+<form method="post" action="<%=luci.dispatcher.build_url("admin/newweb/addurl")%>" id="addUrl_form">
+
+
+
+
+
+
+
+ <input type="hidden" name="greenwall_network_addr" id="greenwall_network_addr" value="1"/>
+
+
+
+
+
+
+
+ <input type="hidden" name="action" value="Store">
+
+
+
+
+
+
+
+</form>
+
+
+
+
+
+
+
+<form method="post" action="<%=luci.dispatcher.build_url("admin/newweb/delurl")%>" id="deleUrl_form">
+
+
+
+
+
+
+ <input type="hidden" name="greenwall_network_deleate_addr" id="greenwall_network_deleate_addr" value="1"/>
+
+
+
+
+
+
+
+ <input type="hidden" name="action" value="Store">
+
+
+
+
+
+
+
+</form>
+
+
+
+
+
+
+<form method="post" action="<%=luci.dispatcher.build_url("admin/newweb/time_set")%>" id="myform">
+
+
+
+
+
+
+
+
+<input type="hidden" name="st_time" id="st_time" value="<%=s_time%>"/>
+<input type="hidden" name="en_time" id="en_time" value="<%=e_time%>"/>
+<input type="hidden" name="count_switch" id="count_switch" value="<%=c_switch%>"/>
+<input type="hidden" name="net_switch" id="net_switch" value="<%=n_switch%>"/>
+<input type="hidden" name="count_time" id="count_time" value="<%=count_down_v%>"/>
+
+
+
+
+
+ <input type="hidden" name="action" value="Store">
+
+
+
+
+
+
+
+</form>
+
+
+
+
+
+
+
+<div id="body_center">
+
+
+
+
+
+
+
+<div id="top">
+
+
+
+
+
+
+
+     <a href="javascript:;" class="link"><div class="back left"></div></a><a href="javascript:;" class="link"><div class="title left">&nbsp;&nbsp;绿色上网通道</div></a>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<div id="main">
+
+
+
+
+
+
+
+   <div class="content">
+
+
+
+
+
+
+
+      <div class="content_left left">
+
+
+
+
+
+
+
+	       <span class="t_lable a_label">添加限制网站</span>
+
+
+
+
+
+
+
+		   <span class="add">
+
+
+
+
+
+
+
+               <input type="text" name="uri" id="uri-input" class="input-clear" placeholder="请输入要禁止访问的网址" />
+
+
+
+
+
+
+
+               <input name="button" type="button" class="btn" title="添加" onclick="addURL();"/>
+
+
+
+
+
+
+
+           </span>		 
+
+
+
+
+
+
+
+		 <div class="url_list">
+
+
+
+
+
+
+
+		   <div class="url_list_s">
+
+
+
+
+
+
+
+		    <ul  id="myul"> 
+
+
+
+	
+
+
+		   </ul>
+
+
+
+
+
+
+
+		   </div>
+
+
+
+
+
+
+
+		 </div>
+
+
+
+
+
+
+
+	  </div>
+
+
+
+
+
+
+
+	  <div class="content_right right">
+
+
+        
+
+
+
+
+	     <span class="t_l">
+
+
+
+
+
+
+
+        <label class="t_lable">健康上网时间管理</label> <label class="t_k_lable">仅针对儿童组设备</label></span>
+
+
+
+
+
+
+
+	    <div class="content_right_div">
+
+
+
+
+
+         <table cellpadding="0" cellspacing="0" border="0" style="margin-top:50px;">
+
+			  <tr style="color:#FFFFFF;">
+
+			    <td width="100" height="60" align="right" valign="middle">倒计时开关:</td>
+
+				<td colspan="3">
+
+				<a href='javascript:;'><span class='switch c_open' style='background-position: -0px -0px; width: 77px; height: 30px;' onclick='switchFun("c",1);'></span></a>
+
+				<a href='javascript:;'><span class='switch c_close hide' style='background-position: -0px -40px; width: 77px; height: 30px;' onclick='switchFun("c",0);'></span></a></td>
+
+			  </tr>
+
+			  <tr style="color:#FFFFFF;">
+
+			    <td height="60" align="right">倒计时:</td>
+
+				<td width="253"><input type="text"  class="t_text1" value="0" min="0" max="3" step="0.5"  name="countdown" id="countdown"   readonly="readonly"  style="width:238px;height:30px;line-height:30px;vertical-align:middle;background:#FFFFFF;border: 1px solid #00AAA9;"/><input type="hidden"   id="enable1" value="1"/>
+
+				</td>
+
+				<td width="37" colspan="2">&nbsp;小时</td>
+
+			  </tr>
+
+			   <tr style="color:#FFFFFF;">
+
+			    <td width="100" height="60" align="right" valign="middle">上网开关:</td>
+
+				<td colspan="3">
+
+				<a href='javascript:;'><span class='switch t_open' style='background-position: -0px -0px; width: 77px; height: 30px;' onclick='switchFun("t",1);'></span></a>
+
+				<a href='javascript:;'><span class='switch t_close hide' style='background-position: -0px -40px; width: 77px; height: 30px;' onclick='switchFun("t",0);'></span></a></td>
+
+			  </tr>
+
+			  <tr height="60" style="color:#FFFFFF;">
+
+			    <td align="right">时段:</td>
+
+				<td colspan="3"><input type="text" name="start_time" class="t_text" id="start_time"  value="<%=s_time%>" readonly="readonly"/>&nbsp;-&nbsp;<input type="text" name="end_time" class="t_text" id="end_time" value="<%=e_time%>" readonly="readonly"/><input type="hidden"   id="enable2" value="1"/></td>
+
+			  </tr>
+
+			  <tr height="60">
+
+		        <td></td>
+
+		        <td colspan="3"><input type="button" value="保存"  class="t_btn" onclick="setParma();"/></td>
+
+		      </tr>
+
+			</table>
+
+
+
+
+
+
+
+	    </div>
+
+
+
+
+       
+
+
+     </div>
+
+
+
+
+
+
+
+   </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<div id="tip">
+
+
+
+
+
+
+
+   <span class="loading"><img src="<%=resource%>/images/loading.gif"/></span>
+
+
+
+
+
+
+
+   <span class="tip_info"></span>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="keywords" content="简优科技"/>
+        <meta name="description" content="简优科技"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+		<title>简优科技</title>
+		<script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
+		<script type="text/javascript" src="js/jquery.form.js"></script> 
+		<!--[if lt IE 9]>    
+         <script src="js/css3-mediaqueries.js"></script>    
+        <![endif]--> 
+		<style type="text/css">
+		 html,body {
+	      height:100%;
+	      margin:0px;
+         }
+		 img{
+		 border:none;
+		 margin:0px;
+		 padding:0px;
+		 }
+		 #urls{
+		 width:100%;
+		 height:auto;
+		 float:left;
+		 }
+		 .url{
+		  width:0px;
+		  height:90px;
+		  line-height:70px;
+		  text-align:center;
+		  border:1px solid #CCCCCC;
+		  float:left;
+		  -webkit-border-radius: 4px;
+          -moz-border-radius: 4px;
+          border-radius: 4px;
+		  position:relative;
+		  -webkit-box-shadow: 0px 0px 3px #CCCCCC;
+		  -moz-box-shadow: 0px 0px 3px #CCCCCC;
+		  box-shadow: 0px 0px 3px #CCCCCC;
+		  margin-left:6px;
+		  margin-top:6px;
+		 }
+		 .url01{
+		  background:url(images/logo01.gif) no-repeat center center;
+		 }
+		 .url02{
+		  background:url(images/logo02.gif) no-repeat center center;
+		 }
+		 .url03{
+		   background:url(images/logo03.gif) no-repeat center center;
+		 }
+		 .url04{
+		  background:url(images/logo04.gif) no-repeat center center;
+		 }
+		 .url05{
+		  background:url(images/logo05.gif) no-repeat center center;
+		 }
+		 .url06{
+		  background:url(images/logo06.gif) no-repeat center center;
+		 }
+		 .btn{
+ 
+width:180px;
+height:35px;
+border:none;
+-webkit-border-radius: 6px;
+-moz-border-radius: 6px;
+border-radius: 6px;
+cursor:pointer;
+text-shadow: 1px 1px 1px rgba(255,255,255, .22);
+-webkit-box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+-moz-box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+ 
+-webkit-transition: all 0.15s ease;
+-moz-transition: all 0.15s ease;
+-o-transition: all 0.15s ease;
+-ms-transition: all 0.15s ease;
+transition: all 0.15s ease;
+color: #FFFFFF;
+font-size: 24px;
+text-align:center;
+font-family: "微软雅黑";
+ 
+background: #a5cd4e; /* Old browsers */
+background: -moz-linear-gradient(top,  #a5cd4e 0%, #6b8f1a 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#a5cd4e), color-stop(100%,#6b8f1a)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #a5cd4e 0%,#6b8f1a 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #a5cd4e 0%,#6b8f1a 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #a5cd4e 0%,#6b8f1a 100%); /* IE10+ */
+background: linear-gradient(top,  #a5cd4e 0%,#6b8f1a 100%); /* W3C */
+}
+.btn:hover {
+    -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,.29), inset 0px 0px 2px rgba(0,0,0, .5);
+    -moz-box-shadow: 1px 1px 1px rgba(0,0,0,.29), inset 0px 0px 2px rgba(0,0,0, .5);
+    box-shadow: 1px 1px 1px rgba(0,0,0,.29), inset 0px 0px 2px rgba(0,0,0, .5);
+	}
+.btn:active {
+    -webkit-box-shadow: inset 0px 0px 3px rgba(0,0,0, .8);
+    -moz-box-shadow: inset 0px 0px 3px rgba(0,0,0, .8);
+    box-shadow: inset 0px 0px 3px rgba(0,0,0, .8);
+	}
+		</style>
+<script type="text/javascript">
+var page;
+function send(url){
+ $("#myform").ajaxSubmit(function(message) {  
+              page=url;    
+	          setTimeout("goPage()",3000); 
+          });
+}
+function goPage(){
+  window.location.href=page; 
+}
+</script>
+	</head>
+	 <form method="post" action="jly.action" id="myform">
+	      <input type="hidden" name="action" value="Store">
+		  <input type="hidden" name="child_auth" value="1">
+     </form>
+	<body>
+		 <div id="urls">
+			 <a href="javascript:;" title="中国少年儿童教育网" onClick="send('http://www.snetzg.com');">
+			 <div class="url url01">
+			 </div>
+			 </a>
+			 <a href="javascript:;" title="儿童资源网" onClick="send('http://www.tom61.com');">
+			  <div class="url url02">     
+			  </div>
+			 </a>
+			 <a href="javascript:;" title="小精灵儿童网站" onClick="send('http://new.060s.com');">
+			 <div class="url url03">     
+			 </div>
+			 </a>
+			 <a href="javascript:;" title="中国儿童少年基金会" onClick="send('http://www.cctf.org.cn');">
+			 <div class="url url04">     
+			 </div>
+			 </a>
+			 <a href="javascript:;" title="奇奇玩儿童软件" onClick="send('http://www.kidsdown.com');">
+			 <div class="url url05">     
+			 </div>
+			 </a>
+			  <a href="javascript:;" title="少儿信息港" onClick="send('http://n.sst.cn');">
+			 <div class="url url06">     
+			 </div>
+			 </a>
+		 </div>
+		  <script>
+		 var w=document.body.clientWidth;
+		 if(parseInt(w)<=480){
+		   var l_w=(parseInt(w)-5*6)/3;
+		   $(".url").css("width",l_w+"px");
+		 }else if(parseInt(w)<=640){
+		   var l_w=(parseInt(w)-6*6)/4;
+		   $(".url").css("width",l_w+"px");
+		 }else{
+		   $(".url").css("width","110px");
+		 }
+		</script>
+	</body>
+</html>

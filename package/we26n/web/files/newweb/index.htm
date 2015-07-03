@@ -1,0 +1,1381 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" href="<%=resource%>/css/lanrenzhijia.css" type="text/css"/>
+
+<script type="text/javascript" src="<%=resource%>/js/jquery-1.8.1.min.js"></script>
+
+<script type="text/javascript" src="<%=resource%>/js/jquery.rotate.js"></script>
+
+<script type="text/javascript" src="<%=resource%>/js/modernizr-1.5.min.js"></script>
+
+<script type="text/javascript" src="<%=resource%>/js/prefixfree.min.js"></script>
+
+<script type="text/javascript" src="<%=resource%>/js/jquery.form.js"></script>
+
+<script type="text/javascript" src="<%=resource%>/js/tip.js"></script>
+<% local hostname = '泛能网关' %>
+<title><%=hostname%></title>
+
+<!-- Include the VML behavior -->
+
+<style>v\:image { behavior:url(#default#VML); display:inline-block }</style>
+
+<!-- Declare the VML namespace -->
+
+<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" />
+
+<style type="text/css">
+
+/* CSS Document */
+
+html,body {
+
+	height:100%;
+
+	margin:0px;
+
+}
+
+body {
+
+  background:#0A53A0;
+
+  filter:alpha(opacity=100 finishopacity=10 style=2 startx=0,starty=0,finishx=0,finishy=150) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=0);
+
+-ms-filter:alpha(opacity=100 finishopacity=10 style=2 startx=0,starty=0,finishx=0,finishy=150) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=0);/*IE8*/ 
+
+  background:-webkit-radial-gradient(center center,#2F80D7, #0A53A0);
+
+  background:-o-radial-gradient(center center,#2F80D7, #0A53A0);
+
+  background:-ms-radial-gradient(center center,#2F80D7, #0A53A0);
+
+  background:-moz-radial-gradient(center center,#2F80D7, #0A53A0);
+
+  background:adial-gradient(center center,#2F80D7, #0A53A0);
+
+}
+
+a{
+
+cursor: pointer;
+
+}
+
+@media screen and (min-height: 651px) {
+
+#body_center{
+
+width:100%;
+
+height:650px;
+
+position:absolute;
+
+top:50%;
+
+margin-top:-325px;
+
+text-align:center;
+
+}
+
+}
+
+@media screen and (max-height: 650px) {
+
+#body_center{
+
+width:100%;
+
+height:650px;
+
+margin-top:5px;
+
+position:absolute;
+
+text-align:center;
+
+}
+
+}
+
+.hide{
+
+display:none;
+
+}
+
+span{
+
+display:block;
+
+}
+
+a:link {
+
+	color: #FFFFFF;
+
+	text-decoration: none;
+
+}
+
+a:visited {
+
+	text-decoration: none;
+
+	color: #FFFFFF;
+
+}
+
+a:hover {
+
+	text-decoration: none;
+
+	color: #FFFFFF;
+
+}
+
+a:active {
+
+	text-decoration: none;
+
+	color: #FFFFFF;
+
+}
+
+ p{
+
+ color:#FFFFFF;
+
+ font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+ font-weight:400;
+
+ margin:0px;
+
+ padding:2px 0px 0px;
+
+ }
+
+ img{
+
+ border:none;
+
+ }
+
+
+
+ #top{
+
+ width:100%;
+
+ height:auto;
+
+ }
+
+ #top .content{
+
+ width:870px;
+
+ height:68px;
+
+ margin:auto;
+
+ position:relative;
+
+ }
+
+ #top .content .logo{
+
+ width:345px;
+
+ height:68px;
+
+ position:relative ;
+
+ float:left;
+
+ background-image:url(<%=resource%>/images/logo.png);
+
+ background-position:left;
+
+ background-repeat:no-repeat;
+
+ }
+
+ #top .content .logo font{
+
+  color:#FFFFFF;
+
+  font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+  font-size:16px;
+
+  position:absolute;
+
+  right:0px;
+
+  bottom:0px;
+
+ }
+
+ 
+
+ #top .content .menu{
+
+	width:74px;
+
+	height:68px;
+
+	position:absolute;
+
+	right: 0px;
+
+  }
+
+  
+
+#jsddm
+
+{	margin: 0;
+
+	padding: 0;
+
+	list-style:none;
+
+}
+
+#jsddm li
+
+	{	float: left;
+
+		list-style: none;
+
+		font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+		font-size:16px;
+
+	}
+
+#jsddm li a
+
+	{	display: block;
+
+		background: #3171D3;
+
+		text-decoration: none;
+
+		width:74px;
+
+		height:30px;
+
+		padding-top:4px;
+
+		-webkit-border-radius: 2px;
+
+        -moz-border-radius: 2px;
+
+        border-radius: 2px;
+
+		color:#FFFFFF;
+
+}
+
+ 
+
+#jsddm li ul
+
+		{	margin: 0;
+
+			padding: 0;
+
+			position: absolute;
+
+			visibility: hidden;
+
+		}
+
+#jsddm	.js_left{
+
+	float:left;
+
+}
+
+#jsddm	.js_right{
+
+	float:left; 
+
+	width:13px;
+
+	height:13px;
+
+	background:#3370CF;
+
+	text-align:center;
+
+	margin-left:5px;
+
+	margin-top:5px;
+
+	}
+
+.js_arrow{
+
+margin:auto;
+
+}
+
+#jsddm li ul li
+
+	{	float: none;
+
+		display: inline}
+
+			
+
+#jsddm li ul li a
+
+{	
+
+	width: auto;
+
+    background: #79BA00;
+
+	color:#FFFFFF;
+
+	width: 74px;
+
+	height:30px;
+
+	padding-top:4px;
+
+    -webkit-border-radius: 2px;
+
+    -moz-border-radius: 2px;
+
+    border-radius: 2px;
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+	font-size:14px;
+
+}
+
+			
+
+ 
+
+ #middle{
+
+   width:82%;
+
+   min-width:1000px;
+
+   margin:auto;
+
+   margin-top:25px;
+
+   position:relative;
+
+   text-align:center;
+
+ }
+
+ #middle .content{
+
+  width:870px;
+
+  height:470px;
+
+  position:relative;
+
+  overflow:hidden;
+
+  margin:auto;
+
+ }
+
+ #middle .content .content_items{
+
+ width:1740px;
+
+ position:relative;
+
+ }
+
+ #middle .content .content_items .t1{
+
+ width:870px;
+
+ float:left;
+
+ }
+
+ #middle .content .content_items .t2{
+
+ width:870px;
+
+ float:left;
+
+ }
+
+ #network_set{
+
+ width:230px;
+
+ height:310px;
+
+ float:left;
+
+ position:relative;
+
+ text-align:center;
+
+ background-color:#00A6A6;
+
+ }
+
+ #network_set .info{
+
+ width:100%;
+
+ height:100px;
+
+ position:absolute;
+
+ left:0px;
+
+ bottom:0px;
+
+ background-color:#000000;
+
+ filter:alpha(opacity=20);
+
+ opacity:0.20;
+
+ }
+
+ #my_down{
+
+ width:230px;
+
+ height:310px;
+
+ float:left;
+
+ background-color:#2673EC;
+
+ }
+
+ #middle .energy_store{
+
+ width:150px;
+
+ float:left;
+
+ margin-left:10px;
+
+ }
+
+ #wireless_set{
+
+ width:150px;
+
+ height:150px;
+
+ float:left;
+
+ background-color:#00D8CB;
+
+ }
+
+ #equ_manage{
+
+ width:150px;
+
+ height:150px;
+
+ float:left;
+
+ margin-top:10px;
+
+ background-color:#009BBA;
+
+ }
+
+ #like_record{
+
+ width:370px;
+
+ height:170px;
+
+ float:left;
+
+ margin-top:10px;
+
+ margin-left:10px;
+
+ background-color:#FF2D12;
+
+ }
+
+/* #wonderful_moment{
+
+ width:470px;
+
+ height:310px;
+
+ float:left;
+
+ margin-left:10px;
+
+ background-color:#78BA00;
+
+ }*/
+ 
+ 
+ 
+ 
+ 
+  #er_internet{
+
+ width:180px;
+
+ height:130px;
+
+
+ float:left;
+ margin-left:10px;
+ 
+
+ position:relative;
+
+ background-color:#21999d;
+
+ }
+ 
+
+ 
+   #ern_internet{
+
+ width:280px;
+
+ height:130px;
+
+
+ float:left;
+ margin-left:10px;
+ 
+
+ position:relative;
+
+ background-color:#17f666;
+
+ }
+ 
+ 
+   #ernn_internet{
+
+ width:250px;
+
+ height:170px;
+
+
+ float:left;
+ margin-left:10px;
+ 
+margin-top:10px;
+
+ position:relative;
+
+ background-color:#d3ec2b;
+
+ }
+ 
+   #ernnn_internet{
+
+ width:210px;
+
+ height:170px;
+
+
+ float:left;
+ margin-left:10px;
+ margin-top:10px;
+
+ position:relative;
+
+ background-color:#f617ef;
+
+ }
+ 
+ 
+ 
+
+ #green_internet{
+
+ width:230px;
+
+ height:150px;
+
+ clear:left;
+
+ float:left;
+
+ top:10px;
+
+ position:relative;
+
+ background-color:#36AC1C;
+
+ }
+
+ #green_internet .info{
+
+ width:100%;
+
+ height:50px;
+
+ position:absolute;
+
+ left:0px;
+
+ bottom:0px;
+
+ background-color:#000000;
+
+ filter:alpha(opacity=20);
+
+ opacity:0.20;
+
+ }
+
+ #store_center{
+
+ width:230px;
+
+ height:150px;
+
+ float:left;
+
+ margin-top:10px;
+
+ margin-left:10px;
+
+ background-color:#D39D09;
+
+ }
+
+ #energy_save{
+
+ width:150px;
+
+ height:150px;
+
+ float:left;
+
+ margin-top:10px;
+
+ margin-left:10px;
+
+ background-color:#00C140;
+
+ }
+
+ #band_manage{
+
+ width:227px;
+
+ height:150px;
+
+ float:left;
+
+ margin-top:10px;
+
+ margin-left:10px;
+
+ background-color:#FF2D12;
+
+ }
+
+ #next_page{
+
+ width:70px;
+
+ height:120px;
+
+ position:absolute;
+
+ top:40%;
+
+ right:0px;
+
+ }
+
+ #up_page{
+
+ width:70px;
+
+ height:120px;
+
+ position:absolute;
+
+ top:40%;
+
+ left:0px;
+
+ }
+
+ .turn_page{
+
+   background:url(<%=resource%>/images/turn_page.png);
+
+ }
+
+ #footer{
+
+  width:100%;
+
+  font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+  color:#FFFFFF;
+
+  font-size:14px;
+
+  float:left;
+
+  margin-top:30px;
+
+ }
+
+ #footer ul{
+
+ list-style:none;
+
+ text-align:center;
+
+ margin:0 auto;  
+
+ padding:0px;
+
+ }
+
+ #footer ul li{
+
+  height:50px;
+
+  line-height:50px;
+
+  display:inline;
+
+  margin-left:25px;
+
+ }	
+
+ #tip{
+
+width:160px;
+
+overflow:hidden;
+
+text-align:center;
+
+border:solid 2px #669999;
+
+background:#6699CC;
+
+display:none;
+
+}
+
+#tip .loading{
+
+width:126px;
+
+height:22px;
+
+margin:auto;
+
+margin-top:5px;
+
+}
+
+#tip .tip_info{
+
+width:126px;
+
+font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+font-size:16px;
+
+text-align:center;
+
+margin:auto;
+
+margin-top:5px;
+
+}	 
+
+.index{
+
+background:url(<%=resource%>/images/index.png) no-repeat center center;
+
+margin:auto;
+
+}
+
+#tip {
+
+	width:160px;
+
+	overflow:hidden;
+
+	text-align:center;
+
+	border:solid 2px #669999;
+
+	background:#6699CC;
+
+    display:none;
+
+}
+
+#tip .loading {
+
+	width:126px;
+
+	height:22px;
+
+	margin:auto;
+
+	margin-top:5px;
+
+}
+
+#tip .tip_info {
+
+	width:126px;
+
+	text-align:center;
+
+	margin:auto;
+
+	margin-top:5px;
+
+}
+
+</style>
+
+<!--[if lt IE 9]>
+
+<script src="<%=resource%>/js/css3-mediaqueries.js"></script>
+
+<![endif]-->
+
+<script>
+
+// JavaScript Document
+
+var timeout         = 100;
+
+var closetimer		= 0;
+
+var ddmenuitem      = 0;
+
+function jsddm_open()
+
+{	jsddm_canceltimer();
+
+	jsddm_close();
+
+	$('#arrow').rotateAnimation(90);
+
+	ddmenuitem = $(this).find('ul').eq(0).css('visibility', 'visible');
+
+	}
+
+function jsddm_close()
+
+{	if(ddmenuitem){ 
+
+ $('#arrow').rotateAnimation(-0);
+
+ ddmenuitem.css('visibility', 'hidden');
+
+ }
+
+}
+
+
+
+function jsddm_timer()
+
+{	closetimer = window.setTimeout(jsddm_close, timeout);}
+
+
+
+function jsddm_canceltimer()
+
+{	if(closetimer)
+
+	{	window.clearTimeout(closetimer);
+
+		closetimer = null;}}
+
+var box;
+
+function init(){
+
+    box = new LightBox("tip");
+
+    $('#jsddm > li').bind('mouseover', jsddm_open);
+
+	$('#jsddm > li').bind('mouseout',  jsddm_timer);
+
+	$('#arrow').rotate({maxAngle:90,minAngle:-0});
+
+	$('#next_page').bind('mouseover', function(){ $('#next_page').css('background-position','-0px -74px');});
+
+    $('#next_page').bind('mouseout', function(){  $('#next_page').css('background-position','-0px -0px');});
+
+	$('#next_page').bind('click', function(){ $('#next_page').addClass("hide");$('#up_page').removeClass("hide"); $(".content_items").stop(true,true).animate({"left":-870+"px"},400); return false; });
+
+	$('#up_page').bind('mouseover', function(){ $('#up_page').css('background-position','-0px -222px');});
+
+    $('#up_page').bind('mouseout', function(){ $('#up_page').css('background-position','-0px -148px'); });
+
+	$('#up_page').bind('click', function(){ $('#up_page').addClass("hide");$('#next_page').removeClass("hide"); $(".content_items").stop(true,true).animate({"left":-0+"px"},400); return false; });  
+
+	 var addr="== nvram_get(\"jlu_ipcam_addr\"); ==";
+
+	 if(addr!=""&&addr!=null){
+
+	  //Imagess("http://"+addr+"/channel2");
+
+	 }
+
+}
+
+//判断浏览器 
+
+var Browser=new Object(); 
+
+Browser.userAgent=window.navigator.userAgent.toLowerCase(); 
+
+Browser.ie=/msie/.test(Browser.userAgent); 
+
+Browser.Moz=/gecko/.test(Browser.userAgent); 
+
+
+
+//判断是否加载完成 
+
+function Imagess(url){    
+
+    var val=url; 
+
+    var img=new Image(); 
+
+    if(Browser.ie){ 
+
+        img.onreadystatechange =function(){  
+
+            if(img.readyState=="complete"||img.readyState=="loaded"){ 
+
+			   $("#wonderful_moment").html('<img width="100%" height="100%" src="'+url+'"></img>');
+
+            } 
+
+        }        
+
+    }else if(Browser.Moz){ 
+
+        img.onload=function(){ 
+
+            if(img.complete==true){ 
+
+                $("#wonderful_moment").html('<img width="100%" height="100%" src="'+url+'"></img>');
+
+            } 
+
+        }        
+
+    }    
+
+    //如果因为网络或图片的原因发生异常，则显示该图片 
+
+    img.onerror=function(){error();} 
+
+    img.src=val; 
+
+} 
+
+function upgrade(){
+
+$(".tip_info").html("下载中...");
+
+box_show();
+
+$("#downform").ajaxSubmit(function(message) {
+
+      var a=message;
+
+	  if(a==0){
+
+        $(".tip_info").html("升级中...");
+
+		$("#writeform").ajaxSubmit(function(message) {
+
+		   var b=message;
+
+		   if(b==0){
+
+		     $(".tip_info").html("升级完成");
+
+		   }else{
+
+		     $(".tip_info").html("升级失败");
+
+		   }
+
+		   setTimeout("box_close()",2000);
+
+		 });
+
+	  }else{
+
+	   $(".tip_info").html("下载失败");
+
+	   setTimeout("box_close()",2000);
+
+	  }
+
+  });
+
+}
+
+function box_show(){
+
+	  box.Show(); 
+
+}
+
+function box_close(){
+
+      box.Close(); 
+
+}
+
+function showDashBoard(){
+
+      $("#body_center").addClass('fadeInForward-1').removeClass('fadeOutback');
+
+}
+
+function fadeDashBoard(){
+
+	  $("#body_center").addClass('fadeOutback').removeClass('fadeInForward-1');
+
+}
+
+function closeFun(tmp){
+
+  $("."+tmp+"").addClass('slidePageLeft')
+
+          .one('webkitAnimationEnd oanimationend msAnimationEnd animationend', function(e) {
+
+                $("."+tmp+"").removeClass('slidePageLeft').removeClass('openpage');
+
+              });
+
+   showDashBoard();
+
+  }
+
+document.onclick = jsddm_close;
+
+var p;
+
+var iframeLoaded = function (iframe) {
+
+            if (iframe.src.length > 0) {
+
+                if (!iframe.readyState || iframe.readyState == "complete") {
+
+                     $('.page.'+p).addClass('openpage');
+
+                     fadeDashBoard();
+
+                }
+
+            }
+
+        }
+
+function error(){
+
+  $("#wonderful_moment").html('<span class="index" style="background-position: -0px -800px; width: 90px; height: 90px; margin-top:90px;"></span><p>爱&bull;精彩瞬间</p>');
+
+}
+
+</script>
+
+</head>
+
+<body onLoad="init();">
+
+<form  method="post" action="upgrade_from_server.cgi" id="downform">
+
+<input type="hidden" name="action" value="Store">
+
+<input type="hidden" name="upgrade_from_server" value="download">
+
+</form>
+
+<form  method="post" action="upgrade_from_server.cgi" id="writeform">
+
+<input type="hidden" name="action" value="Store">
+
+<input type="hidden" name="upgrade_from_server" value="rewrite">
+
+</form>
+
+<div class="page" id="page_iframe" style="width:100%; height:100%; position:absolute; left:0px; top:0px;">
+
+</div>
+
+<div id="body_center">
+
+<div id="top">
+
+ <div class="content">
+
+   <!--<span class="logo"><font>简生活&nbsp;&nbsp;轻自在</font></span>-->
+
+   <!--div class="menu">
+
+     <ul id="jsddm">
+
+	   <li><a href="javascript:goto(0);" onclick="return false;"><span class="js_left">&nbsp;&nbsp;Daisy</span><span class="js_right"><span class="js_arrow"><img id="arrow" src="<%=resource%>/images/arrow.jpg"/></span></span></a>
+
+		  <ul>
+
+			<li><a href="javascript:goto(0);" onclick="return false;">退出</a></li>
+
+		  </ul>
+
+	   </li>
+
+      </ul>
+
+	</div-->
+
+  </div>
+
+</div>
+
+
+
+<div id="middle"> 
+
+<a href="javascript:goto(0);"><div id="up_page" class="hide turn_page" style="background-position: -0px -148px; width: 42px; height: 64px"></div></a>
+
+ <div class="content">
+
+  <div class="content_items">
+
+   <div class="t1">
+
+     <a href="javascript:goto(0);" class="link"><div id="network_set" class="big" data-page="network_set"><span class="index" style="background-position: -0px -0px; width: 90px; height: 90px; margin-top:90px;"></span><p>宽带上网设置</p>
+
+       <!--span class="info"></span-->
+
+     </div></a>
+
+   <div class="energy_store">
+
+	     <a href="javascript:goto(0);" class="link"><div id="wireless_set" class="big" data-page="wireless_set"><span class="index" style="background-position: -0px -100px; width: 90px; height: 90px;margin-top:20px;"></span><p>无线设置</p></div></a>
+
+	     <a href="javascript:goto(0);" class="link"><div id="equ_manage" class="big" data-page="equ_manage"><span class="index" style="background-position: -0px -200px; width: 90px; height: 90px;margin-top:20px;"></span><p>设备管理</p></div></a>
+
+   </div>
+
+       
+       
+       
+       
+       
+       <a href="javascript:goto(0);" class="link"><div id="er_internet" class="big" data-page="er_internet"><img src="<%=resource%>/images/wifi.png" style=" margin-top:10px;"><span class="index" style="hiden": -0px -400px; padding-top:10px;"></span><p>无线设备</p></div></a>
+       <a href="javascript:goto(0);" class="link"><div id="ern_internet" class="big" data-page="ern_internet"><img src="<%=resource%>/images/wi.png" style=" margin-top:10px;"><span class="index" style="hiden": -0px -400px;padding-top:10px;"></span><p>2.4G设备</p></div></a>
+       <a href="javascript:goto(0);" class="link"><div id="ernn_internet" class="big" data-page="ernn_internet"><img src="<%=resource%>/images/z.png" style=" margin-top:10px;"><span class="index" style="hiden": -0px -400px;  margin-top:20px;"></span><p>ZIGBEE设备设备</p></div></a>
+       <a href="javascript:goto(0);" class="link"><div id="ernnn_internet" class="big" data-page="ernnn_internet"><img src="<%=resource%>/images/lan.png" style=" margin-top:20px;"><span class="index" style="background-position: -0px -400px;  margin-top:30px;"></span><p>蓝牙设备</p></div></a>
+       
+       
+       
+       
+       
+       
+       
+
+	   <a href="javascript:goto(0);" class="link"><div id="green_internet" class="big" data-page="green_internet"><span class="index" style="background-position: -0px -300px; width: 90px; height: 90px; margin-top:20px;"></span><p>绿色上网通道</p></div></a>
+
+	   <a href="javascript:goto(0);" class="link"><div id="store_center" class="big" data-page="store_center"><span class="index" style="background-position: -0px -400px; width: 90px; height: 90px;margin-top:20px;"></span><p>存储中心</p></div></a>
+
+	   <a href="javascript:goto(0);" class="link"><div id="energy_save" class="big" data-page="energy_save"><span class="index" style="background-position: -0px -500px; width: 90px; height: 90px;margin-top:20px;"></span><p>绿色节能</p></div></a>
+
+       <a href="javascript:goto(0);" class="link"><div id="band_manage" class="big" data-page="band_manage"><span class="index" style="background-position: -0px -600px; width: 90px; height: 90px;margin-top:20px;"></span><p>上网带宽管理</p></div></a>
+
+	</div>
+
+	<div class="t2">
+
+	   <a href="javascript:goto(0);" class="link"><div id="my_down" class="big" data-page="my_down"><span class="index" style="background-position: -0px -700px; width: 90px; height: 90px;margin-top:90px;"></span><p>脱机下载</p></div></a>
+
+	</div>
+
+  </div>
+
+ </div>
+
+<a href="javascript:goto(0);"><div id="next_page" class="turn_page" style="background-position: -0px -0px; width: 42px; height: 64px"></div></a>
+
+</div>
+
+<div id="footer">
+
+  <ul>
+
+    <li>@2015&nbsp;<a href="" target="_blank" style="border-bottom:1px solid #FFFFFF;"></a>&nbsp;版权所有</li>
+
+	<li id="last_version">当前版本 V0.1</li>
+
+	<li id="update_version"></li>
+
+  </ul>
+
+</div>
+
+</div>
+
+<div id="tip">
+
+   <span class="loading"><img src="<%=resource%>/images/loading.gif"/></span>
+
+   <span class="tip_info"></span>
+
+</div>
+
+
+
+ <script>
+
+  var state="== firmware_update_states(); ==";
+
+  if(state==1){
+
+     $("#last_version").html("最新版本:"+"== firmware_update_version(); ==");
+
+	 $("#update_version").html('<a href="javascript:;" onclick="upgrade();">立即升级</a>');
+
+  }
+
+var navigatorName = "Microsoft Internet Explorer";  
+
+if(navigator.appName == navigatorName ){   
+
+if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE6.0") 
+
+{ 
+
+ $(".link").each(function(){
+
+                   $(this).attr('href',$(this.firstChild).attr('data-page')+'.htm')
+
+              });
+
+} 
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE7.0") 
+
+{ 
+
+ $(".link").each(function(){
+
+                   $(this).attr('href',$(this.firstChild).attr('data-page')+'.htm')
+
+              });
+
+} 
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE8.0") 
+
+{ 
+
+  $(".link").each(function(){
+
+                   $(this).attr('href',$(this.firstChild).attr('data-page')+'.htm')
+
+              });
+
+}else{
+
+ $('.big').each(function(){
+
+    var $this= $(this),
+
+    page = $this.data('page');
+
+    $this.on('click',function(){
+
+	  $("#page_iframe").addClass(""+page+"");
+
+	  $("#page_iframe").html('<iframe   style="z-index: 1; visibility: inherit;" width="100%" height="100%"  src="'+page+'" onload="iframeLoaded(this);" marginwidth="0" marginheight="0" frameborder="0" scrolling="yes" id="myIframe"></iframe>');
+
+	  p=page;
+
+	  return false;
+
+    })
+
+   });
+
+   showDashBoard(); 
+
+}
+
+}else{
+
+   $('.big').each(function(){
+
+    var $this= $(this),
+
+    page = $this.data('page');
+
+    $this.on('click',function(){
+
+	  $("#page_iframe").addClass(""+page+"");
+
+	  $("#page_iframe").html('<iframe   style="z-index: 1; visibility: inherit;" width="100%" height="100%"  src="'+page+'" onload="iframeLoaded(this);" marginwidth="0" marginheight="0" frameborder="0" scrolling="yes" id="myIframe"></iframe>');
+
+	  p=page;
+
+	  return false;
+
+    })
+
+   });
+
+   showDashBoard(); 
+
+}
+
+ 
+
+ </script>
+
+</body>
+
+</html>
+

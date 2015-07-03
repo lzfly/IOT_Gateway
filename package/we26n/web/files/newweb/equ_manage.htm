@@ -1,0 +1,7080 @@
+<%
+	local name_list=luci.sys.exec("uci get devices.devices.device")
+	name_list = string.trim(name_list)
+	--name_list=name_list.." "
+%>
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+
+
+
+
+
+<head>
+
+
+
+
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+
+
+
+
+
+<title>设备管理</title>
+
+
+
+
+
+
+
+<style type="text/css">
+
+
+
+
+
+
+
+html,body {
+
+
+
+
+
+
+
+	height:100%;
+
+
+
+
+
+
+
+	margin:0px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+body {
+
+
+
+
+
+
+
+	background:#0A53A0;
+
+
+
+
+
+
+
+	filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);
+
+
+
+
+
+
+
+-ms-filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);/*IE8*/ 
+
+
+
+
+
+
+
+	background:-webkit-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:-o-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:-ms-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:-moz-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:adial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a{
+
+
+
+
+
+
+
+cursor: pointer;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+@media screen and (min-height: 631px) {
+
+#body_center{
+
+
+
+width:100%;
+
+
+
+height:630px;
+
+
+
+position:absolute;
+
+
+
+top:50%;
+
+
+
+margin-top:-328px;
+
+
+
+text-align:center;
+
+
+
+}
+
+#main {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	height:560px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+
+
+
+
+	border-top:1px solid #407CB8;
+
+
+
+
+
+}
+
+.kids_li{
+
+float:left;
+
+left:210px;
+
+position:relative;
+
+}
+
+.guests_li{
+
+float:left;
+
+left:420px;
+
+position:relative;
+
+}
+
+.other_li{
+
+float:left;
+
+left:630px;
+
+position:relative;
+
+}
+
+}
+
+@media screen and (max-height: 630px) {
+
+#body_center{
+
+height:590px;
+
+position:absolute;
+
+top:50%;
+
+margin-top:-310px;
+
+text-align:center;
+
+}
+
+#main {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	height:520px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+
+
+
+
+	border-top:1px solid #407CB8;
+
+
+
+
+
+}
+
+.kids_li{
+
+float:left;
+
+left:190px;
+
+position:relative;
+
+}
+
+.guests_li{
+
+float:left;
+
+left:380px;
+
+position:relative;
+
+}
+
+.other_li{
+
+float:left;
+
+left:570px;
+
+position:relative;
+
+}
+
+}
+
+
+
+
+
+a:link {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a:visited {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a:hover {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a:active {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.left {
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.right {
+
+
+
+
+
+
+
+	float:right;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+img {
+
+
+
+
+
+
+
+	border:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+span {
+
+
+
+
+
+
+
+	display:block;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.hide {
+
+
+
+
+
+
+
+	display:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#top .back {
+
+
+
+
+
+
+
+	width:42px;
+
+
+
+
+
+
+
+	height:75px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/back.png) no-repeat center center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#top .title {
+
+
+
+
+
+
+
+	height:75px;
+
+
+
+
+
+
+
+	line-height:75px;
+
+
+
+
+
+
+
+	width:200px;
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:26px;
+
+
+
+
+
+
+
+	font-family:Microsoft YaHei,small;
+
+
+
+
+
+
+
+	font-weight:normal;
+
+
+
+
+
+
+
+	text-align:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_text {
+
+
+
+
+
+
+
+	width:300px;
+
+
+
+
+
+
+
+	height:30px;
+
+
+
+
+
+
+
+	border:1px solid #66FF00;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_lable {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:18px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+ 
+
+
+
+#top {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	height:75px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#main .content {
+
+
+
+
+
+
+
+	margin-top:40px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content .content_left {
+
+
+
+
+
+
+
+	width:21%;
+
+
+
+
+
+
+
+	min-width:200px;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content_left .icon {
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	width:200px;
+
+
+
+
+
+
+
+	height:200px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/equ_manage_icon.png) no-repeat center center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content_left .caption {
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	width:150px;
+
+
+
+
+
+
+
+	height:30px;
+
+
+
+
+
+
+
+	line-height:30px;
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:18px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/name_icon.png) no-repeat left center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .current_equ .t_label {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .current_info {
+
+
+
+
+
+
+
+	color:#CCCCCC;
+
+
+
+
+
+
+
+	font-size:12px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content .content_right {
+
+
+
+
+
+
+
+	width:79%;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_l_text {
+
+
+
+
+
+
+
+	border:0px;
+
+
+
+
+
+
+
+	color:#DFF40F;
+
+
+
+
+
+
+
+	width:130px;
+
+
+
+
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+
+
+
+
+	font-size:16px;
+
+
+
+
+
+
+
+	background:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right ul {
+
+
+
+
+
+
+
+	padding:0px;
+
+
+
+
+
+
+
+	margin:0px;
+
+
+
+
+
+
+
+	list-style:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right .family {
+
+
+
+
+
+
+
+	width:180px;
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	left:0px;
+
+
+
+
+
+
+
+	top:0px;
+
+
+
+
+
+
+
+	border-bottom:4px #F6AE1E solid;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right .kids {
+
+
+
+
+
+
+
+	width:180px;
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	left:0px;
+
+
+
+
+
+
+
+	top:0px;
+
+
+
+
+
+
+
+	border-bottom:4px #6BBD45 solid;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right .guests {
+
+
+
+
+
+
+
+	width:180px;
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	left:0px;
+
+
+
+
+
+
+
+	top:0px;
+
+
+
+
+
+
+
+	border-bottom:4px #D26143 solid;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right .other {
+
+
+
+
+
+
+
+	width:180px;
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	left:0px;
+
+
+
+
+
+
+
+	top:0px;
+
+
+
+
+
+
+
+	border-bottom:4px #353535 solid;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right .group_icon {
+
+
+
+
+
+
+
+	width:120px;
+
+
+
+
+
+
+
+	height:32px;
+
+
+
+
+
+
+
+	line-height:32px;
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	font-size:18px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/group_icon.png) no-repeat left center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.content_right .perm_icon {
+
+
+
+
+
+
+
+	float:right;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/perm_icon.png) no-repeat center center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equ_li {
+
+
+
+
+
+
+
+	clear:left;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	width:180px;
+
+
+
+
+
+
+
+	height:80px;
+
+
+
+
+
+
+
+	background:#4B8FDC;
+
+
+
+
+
+
+
+	margin-top:8px;
+
+
+
+
+
+
+
+	position:relative;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equ_li1 {
+
+
+
+
+
+
+
+	clear:left;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	width:180px;
+
+
+
+
+
+
+
+	height:80px;
+
+
+
+
+
+
+
+	background:#4B8FDC;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equ_li_left {
+
+
+
+
+
+
+
+	margin-left:30px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equit_img {
+
+
+
+
+
+
+
+	margin-top:10px;
+
+
+
+
+
+
+
+	margin-left:5px;
+
+
+
+
+
+
+
+	margin-right:0px;
+
+
+
+
+
+
+
+	cursor:pointer;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/equit1.png);
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equit1_img {
+
+
+
+
+
+
+
+	background:url(images/equit2.png);
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equit_name {
+
+
+
+
+
+
+
+	width:130px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	margin-top:10px;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equit_up {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:12px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	width:130px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equit_up .up {
+
+
+
+
+
+
+
+	width:42px;
+
+
+
+
+
+
+
+	height:20px;
+
+
+
+
+
+
+
+	padding-left:5px;
+
+
+
+
+
+
+
+	margin-left:15px;
+
+
+
+
+
+
+
+	line-length:20px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/upload.png) left center no-repeat;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equit_down {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:12px;
+
+
+
+
+
+
+
+	width:130px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equit_down .down {
+
+
+
+
+
+
+
+	width:42px;
+
+
+
+
+
+
+
+	height:20px;
+
+
+
+
+
+
+
+	padding-left:5px;
+
+
+
+
+
+
+
+	margin-left:15px;
+
+
+
+
+
+
+
+	line-length:20px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/down.png) left center no-repeat;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.perm_li {
+
+
+
+
+
+
+
+	overflow:hidden;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.perm_yes {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	width:140px;
+
+
+
+
+
+
+
+	height:24px;
+
+
+
+
+
+
+
+	padding-left:24px;
+
+
+
+
+
+
+
+	text-align:left;
+
+
+
+
+
+
+
+	margin-left:20px;
+
+
+
+
+
+
+
+	margin-top:20px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/perm_yes.png) no-repeat left center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.perm_no {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	width:140px;
+
+
+
+
+
+
+
+	height:24px;
+
+
+
+
+
+
+
+	padding-left:24px;
+
+
+
+
+
+
+
+	text-align:left;
+
+
+
+
+
+
+
+	margin-left:20px;
+
+
+
+
+
+
+
+	margin-top:20px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/perm_no.png) no-repeat left center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equit_list {
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	width:100%;
+
+
+
+
+
+
+
+	height:35px;
+
+
+
+
+
+
+
+	left:0px;
+
+
+
+
+
+
+
+	bottom:0px;
+
+
+
+
+
+
+
+	background:#6C6C6C;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equit_list .lxfscroll {
+
+
+
+
+
+
+
+	width:150px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	position:relative;
+
+
+
+
+
+
+
+	overflow:hidden;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equit_list .lxfscroll .list {
+
+
+
+
+
+
+
+	width:280px;
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	position:relative;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equit_list img {
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+	cursor:pointer;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.equit_list_f {
+
+
+
+
+
+
+
+	width:180px;
+
+
+
+
+
+
+
+	height:35px;
+
+
+
+
+
+
+
+	position:relative;
+
+
+
+
+
+
+
+	background:#6C6C6C;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.y,.z {
+
+
+
+
+
+
+
+	position:absolute;
+
+
+
+
+
+
+
+	left:23px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.y {
+
+
+
+
+
+
+
+	color:#6C6C6C;
+
+
+
+
+
+
+
+	top:-12px;
+
+
+
+
+
+
+
+}
+
+
+
+.ic-chname-ok{
+
+
+
+
+
+
+
+width:24px;
+
+
+
+
+
+
+
+height:24px;
+
+
+
+
+
+
+
+float:left;
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+background:url(<%=resource%>/images/perm_yes.png) center center no-repeat;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.ic-chname-no{
+
+
+
+
+
+
+
+width:24px;
+
+
+
+
+
+
+
+height:24px;
+
+
+
+
+
+
+
+float:left;
+
+
+
+
+
+
+
+margin-left:1px;
+
+
+
+
+
+
+
+background:url(<%=resource%>/images/perm_no.png) center center no-repeat;
+
+
+
+
+
+
+
+}
+
+
+
+.off{
+
+
+
+width:130px;
+
+
+
+float:left;
+
+
+
+color:#FFFFFF;
+
+
+
+font-size:16px;
+
+
+
+height:30px;
+
+
+
+line-height:40px;
+
+
+
+}
+
+
+
+</style>
+
+<!--[if lt IE 9]>
+
+<script src="<%=resource%>/js/css3-mediaqueries.js"></script>
+
+<![endif]-->
+
+
+
+
+
+<script type="text/javascript" src="<%=resource%>/js/jquery-1.8.1.min.js"></script>
+
+
+
+
+
+
+
+<script type="text/javascript" src="<%=resource%>/js/jsloader.js"></script>
+
+
+
+
+
+
+
+<script type="text/javascript"> 
+
+
+
+
+
+
+
+var $parent;
+
+
+
+
+
+
+
+var device_info;
+
+
+
+
+
+
+
+var device_array=[];
+
+
+
+
+
+
+
+var timeout;
+
+
+
+
+
+
+
+var name;
+
+
+
+
+
+
+
+var dname;
+
+
+
+
+
+
+
+var mac;
+
+
+
+
+
+
+
+var user_type;
+
+
+
+
+
+
+
+var device_type;
+
+
+
+
+
+
+
+var box1;
+
+var info;
+
+
+
+
+
+var a=0;
+
+
+
+var t_a="";
+
+
+
+
+
+
+
+var t_b="";
+
+
+
+
+
+
+
+var t_c="";
+
+
+
+
+
+
+
+var t_d="";
+
+
+
+
+
+
+
+var t_e="";
+
+
+
+
+
+var urls=["<%=resource%>/js/jquery.mousewheel.js","<%=resource%>/js/jquery.mCustomScrollbar.concat.min.js","<%=resource%>/js/jquery.form.js","<%=resource%>/js/jquery-ui.js"];
+
+
+
+
+
+
+
+function init(){
+
+
+
+
+
+
+
+  loadCss("<%=resource%>/css/jquery.mCustomScrollbar.css");
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function load_data(){
+
+
+
+
+
+var navigatorName = "Microsoft Internet Explorer";
+
+
+
+
+
+
+
+if( navigator.appName == navigatorName ){
+
+
+
+
+
+
+
+if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE6.0") 
+
+
+
+
+
+
+
+{ 
+
+
+
+
+
+
+
+ $(".link").each(function(){
+
+
+
+
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+
+
+
+
+              });
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE7.0") 
+
+
+
+
+
+
+
+{ 
+
+
+
+
+
+
+
+ $(".link").each(function(){
+
+
+
+
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+
+
+
+
+              });
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE8.0") 
+
+
+
+
+
+
+
+{ 
+
+
+
+
+
+
+
+ $(".link").each(function(){
+
+
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+
+
+
+
+              });
+
+
+
+
+
+
+
+}else{
+
+
+
+
+
+
+
+ $('#top .back,#top .title').click(function(){
+
+      window.clearTimeout(timeout);
+
+      window.parent.closeFun("equ_manage");
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+}  
+
+
+
+
+
+
+
+}else{
+
+
+
+
+
+
+
+  $('#top .back,#top .title').click(function(){
+
+
+
+
+
+      window.clearTimeout(timeout);
+
+      window.parent.closeFun("equ_manage");
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+}
+
+
+
+  $(document).click(function(e){               
+
+
+
+
+
+
+
+       if(!$(e.target).is('.equit_img')&&!$(e.target).is('.dire')){
+
+
+
+
+
+
+
+	      $(".equit_list").each(function(){
+
+
+
+
+
+
+
+		     $(this).addClass("hide");
+
+
+
+
+
+
+
+		  }); 
+
+
+
+
+
+
+
+	   }
+
+
+
+
+
+
+
+ }); 
+
+
+
+$("#traffic_form").ajaxSubmit(function(data,message) {
+//alert("traffic_form2: " + data)
+    var online=[];
+    var offline=[];
+    var devices=[];
+   //   info="== jianluyou_nvram_get(\"device_info\"); ==";
+	info="<%=name_list%>"
+	//	alert(info)
+  //devices=info.split(",");
+	if( info.length > 23 ){
+		devices=info.split(" ");
+	}
+    //var n=devices.length;
+	for(var i=0;i<devices.length;i++){
+	     var m=devices[i].substring(0,17);
+		 if(data.indexOf(m)>=0){
+		    online.push(devices[i]);
+		 }else{
+		    offline.push(devices[i]);
+		 }
+	}
+        //if(i==n-1){
+	if(online.length>0){
+		device_array=device_array.concat(online);
+	}
+	if(offline.length>0){
+		device_array=device_array.concat(offline);
+	}
+	load_equit();
+		//}
+	  //}
+});
+}
+
+
+
+function load_equit(){
+  //var n=device_array.length;
+  for(var i=0;i<device_array.length;i++){
+    mac=device_array[i].substring(0,17);
+    user_type=device_array[i].substring(18,19);
+	if(device_array[i].length>23){
+	  name=device_array[i].substring(23,device_array[i].length);
+	}else{
+	  name="设备";
+	}
+	device_type=device_array[i].substring(21,22);
+    add_item(i);
+	}
+    //  if(i==n){
+	    $(".connectedSortable").sortable({
+       items :"li", 
+	   opacity: 0.5,//拖动的透明度
+       revert: true, //缓冲效果
+	   scroll:true,
+       cursor: 'move', //拖动的时候鼠标样式 
+       connectWith: ".connectedSortable",
+	   update: saveLayout
+    });
+   $(".equit_name").click(function(){
+        name_click(this);
+  });
+  setScroll();
+  traffic_late();
+//	  }
+  //}
+}
+
+function add_item(n){
+
+switch(user_type){
+
+
+
+
+
+
+
+       case '1':
+
+
+
+
+
+
+
+	        $parent = $("#family"); 
+
+
+
+
+
+
+
+			$li= $("<li class='equ_li'></li>"); 
+
+
+
+
+
+
+
+			switch(device_type){
+
+
+
+
+
+
+
+			 case '1':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -52px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			 case '2':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -104px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			 case '3':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -0px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			 case '4':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -156px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			}
+
+
+
+
+
+
+
+			dname=cutstr(name,10);
+
+
+
+
+
+
+
+			$li.append("<span class='equit_name'>"+dname+"</span>");
+
+
+
+
+
+
+
+			$li.append("<span id='"+n+"' title='"+mac+"'><span class='off hide'>离线</span><span class='equit_up'><span class='up'>上传:</span><span class='t_size' style='float:left;'>0.0kb/s</span></span><span class='equit_down'><span class='down'>下载:</span><span class='t_size' style='float:left;'>0.0kb/s</span></span></span>");
+
+
+
+
+
+
+
+			$li.append(createObj());
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+name+"' class='name'>");
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+device_type+"' class='deviceType'>");
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+user_type+"' class='userType'>");
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+mac+"'class='mac'>");
+
+
+
+
+
+
+
+			$parent.append($li);
+
+
+
+
+
+
+
+			break;
+
+
+
+
+
+
+
+			 case '2':
+
+
+
+
+
+
+
+	        $parent = $("#kids"); 
+
+
+
+
+
+
+
+			$li= $("<li class='equ_li'></li>"); 
+
+
+
+
+
+
+
+			switch(device_type){
+
+
+
+
+
+
+
+			 case '1':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -52px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			 case '2':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -104px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			 case '3':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -0px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			 case '4':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -156px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			}
+
+
+
+
+
+
+
+			dname=cutstr(name,10);
+
+
+
+
+
+
+
+			$li.append("<span class='equit_name'>"+dname+"</span>");
+
+
+
+
+
+
+
+			$li.append("<span id='"+n+"' title='"+mac+"'><span class='off hide'>离线</span><span class='equit_up'><span class='up'>上传:</span><span class='t_size' style='float:left;'>0.0kb/s</span></span><span class='equit_down'><span class='down'>下载:</span><span class='t_size' style='float:left;'>0.0kb/s</span></span></span>");
+
+
+
+
+
+
+
+			$li.append(createObj());
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+name+"' class='name'>");
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+device_type+"' class='deviceType'>");
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+user_type+"' class='userType'>");
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+mac+"'class='mac'>");
+
+
+
+
+
+
+
+			$parent.append($li);
+
+
+
+
+
+
+
+			break;
+
+
+
+
+
+
+
+			 case '3':
+
+
+
+
+
+
+
+	         $parent = $("#guests"); 
+
+
+
+
+
+
+
+			 $li= $("<li class='equ_li'></li>"); 
+
+
+
+
+
+
+
+			switch(device_type){
+
+
+
+
+
+
+
+			 case '1':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -52px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			 case '2':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -104px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			 case '3':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -0px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			 case '4':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -156px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			}
+
+
+
+
+
+
+
+			dname=cutstr(name,10);
+
+
+
+
+
+
+
+			$li.append("<span class='equit_name'>"+dname+"</span>");
+
+
+
+
+
+
+
+			$li.append("<span id='"+n+"' title='"+mac+"'><span class='off hide'>离线</span><span class='equit_up'><span class='up'>上传:</span><span class='t_size' style='float:left;'>0.0kb/s</span></span><span class='equit_down'><span class='down'>下载:</span><span class='t_size' style='float:left;'>0.0kb/s</span></span></span>");
+
+
+
+
+
+
+
+			$li.append(createObj());
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+name+"' class='name'>");
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+device_type+"' class='deviceType'>");
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+user_type+"' class='userType'>");
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+mac+"'class='mac'>");
+
+
+
+
+
+
+
+			$parent.append($li);
+
+
+
+
+
+
+
+			break;
+
+
+
+
+
+
+
+			 case '4':
+
+
+
+
+
+
+
+	         $parent = $("#other"); 
+
+
+
+
+
+
+
+			 $li= $("<li class='equ_li'></li>"); 
+
+
+
+
+
+
+
+			switch(device_type){
+
+
+
+
+
+
+
+			 case '1':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -52px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			 case '2':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -104px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			 case '3':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -0px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			 case '4':
+
+
+
+
+
+
+
+			 $li.append("<span class='equit_img' onclick='show(this);' style='background-position: -0px -156px; width: 42px; height: 42px;margin-top:15px;'></span>");
+
+
+
+
+
+
+
+			 break;
+
+
+
+
+
+
+
+			}
+
+
+
+
+
+
+
+			dname=cutstr(name,10);
+
+
+
+
+
+
+
+			$li.append("<span class='equit_name'>"+dname+"</span>");
+
+
+
+
+
+
+
+			$li.append("<span id='"+n+"' title='"+mac+"'><span class='off hide'>离线</span><span class='equit_up'><span class='up'>上传:</span><span class='t_size' style='float:left;'>0.0kb/s</span></span><span class='equit_down'><span class='down'>下载:</span><span class='t_size' style='float:left;'>0.0kb/s</span></span></span>");
+
+
+
+
+
+
+
+			$li.append(createObj());
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+name+"' class='name'>");
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+device_type+"' class='deviceType'>");
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+user_type+"' class='userType'>");
+
+
+
+
+
+
+
+			$li.append("<input type='hidden' value='"+mac+"'class='mac'>");
+
+
+
+
+
+
+
+			$parent.append($li);
+
+
+
+
+
+
+
+			break;
+
+
+
+
+
+
+
+	   }
+
+}
+
+function name_click(obj){
+
+
+
+var value=$(obj.parentNode).children(".name").attr("value");$(obj).html("<input  type='text'  value='"+value+"' style='width:75px;height:16px;float:left;' id='tmp_text'/><a href='javascript:;' title='确定'><span class='ic-chname-ok'></span></a><a href='javascript:;' title='取消'><span class='ic-chname-no'></span></a>");
+
+
+
+   $(".ic-chname-ok").click(function(){         
+
+
+
+		       setName(obj);
+
+
+
+	});
+
+
+
+   $(".ic-chname-no").click(function(){
+
+
+
+               value=cutstr(value,10);
+
+
+
+		       $(obj).html(value);
+
+
+
+			   setTimeout("name_click_delay()",500);	
+
+
+
+
+
+
+
+	});
+
+
+
+
+
+
+
+ $(obj).unbind();
+
+
+
+
+
+
+
+ setPos();
+
+
+
+}
+
+
+
+function name_click_delay(){
+
+
+
+ $(".equit_name").click(function(){
+
+
+
+        name_click(this);
+
+
+
+  });
+
+
+
+}
+
+var b=0;
+
+function saveLayout() {
+
+
+
+       if(b==0){
+
+       b=1;
+
+       setScroll();
+
+       var device_res="";
+
+
+
+
+
+
+
+	   if ($("#family li").hasClass('equ_li')) {
+
+
+
+
+
+
+
+                         $.each($("#family li"), function(d) {
+
+
+
+
+
+
+
+                          var mac=$(this).children(".mac").attr("value");
+
+
+
+
+
+
+
+						  var userType=$(this).children(".userType").attr("value");
+
+
+
+
+
+
+
+						  var deviceType=$(this).children(".deviceType").attr("value");
+
+
+
+
+
+
+
+						  var name=$(this).children(".name").attr("value");
+
+
+
+
+
+
+
+						  device_res=device_res+mac+"[1]["+deviceType+"]"+name+",";
+
+
+
+
+
+
+
+                        });
+
+
+
+
+
+
+
+                  };
+
+
+
+
+
+
+
+		if ($("#kids li").hasClass('equ_li')) {
+
+
+
+
+
+
+
+                         $.each($("#kids li"), function(d) {
+
+
+
+
+
+
+
+                          var mac=$(this).children(".mac").attr("value");
+
+
+
+
+
+
+
+						  var userType=$(this).children(".userType").attr("value");
+
+
+
+
+
+
+
+						  var deviceType=$(this).children(".deviceType").attr("value");
+
+
+
+
+
+
+
+						  var name=$(this).children(".name").attr("value");
+
+
+
+
+
+
+
+						  device_res=device_res+mac+"[2]["+deviceType+"]"+name+",";
+
+
+
+
+
+
+
+                        });
+
+
+
+
+
+
+
+                  };
+
+
+
+
+
+
+
+		if ($("#guests li").hasClass('equ_li')) {
+
+
+
+
+
+
+
+                         $.each($("#guests li"), function(d) {
+
+
+
+
+
+
+
+                          var mac=$(this).children(".mac").attr("value");
+
+
+
+
+
+
+
+						  var userType=$(this).children(".userType").attr("value");
+
+
+
+
+
+
+
+						  var deviceType=$(this).children(".deviceType").attr("value");
+
+
+
+
+
+
+
+						  var name=$(this).children(".name").attr("value");
+
+
+
+
+
+
+
+						  device_res=device_res+mac+"[3]["+deviceType+"]"+name+",";
+
+
+
+
+
+
+
+                        });
+
+
+
+
+
+
+
+                  };
+
+
+
+
+
+
+
+		if ($("#other li").hasClass('equ_li')) {
+
+
+
+
+
+
+
+                         $.each($("#other li"), function(d) {
+
+
+
+
+
+
+
+                          var mac=$(this).children(".mac").attr("value");
+
+
+
+
+
+
+
+						  var userType=$(this).children(".userType").attr("value");
+
+
+
+
+
+
+
+						  var deviceType=$(this).children(".deviceType").attr("value");
+
+
+
+
+
+
+
+						  var name=$(this).children(".name").attr("value");
+
+
+
+
+
+
+
+						  device_res=device_res+mac+"[4]["+deviceType+"]"+name+",";
+
+
+
+
+
+
+
+                        });
+
+
+
+
+
+
+
+                  };
+
+
+
+
+
+
+
+	        window.clearTimeout(timeout);
+
+			                 
+
+           t_a="";
+
+
+
+
+
+
+
+           t_b="";
+
+
+
+
+
+ 
+
+           t_c="";
+
+
+
+
+
+
+
+           t_d="";
+
+
+
+
+
+
+
+           t_e="";
+
+
+
+			$("#device_info").val(device_res);
+
+
+
+
+
+
+
+            $("#myform").ajaxSubmit(function(message) {
+
+
+
+                 traffic_late();
+
+
+
+
+
+            });
+
+
+
+        }
+
+
+
+}
+
+
+
+
+
+
+
+var setPos=function(){
+
+
+
+
+
+
+
+        var o=document.getElementById("tmp_text"); 
+
+
+
+
+
+
+
+		if(o.setSelectionRange){//W3C
+
+
+
+
+
+
+
+			setTimeout(function(){
+
+
+
+
+
+
+
+				o.setSelectionRange(o.value.length,o.value.length);
+
+
+
+
+
+
+
+
+
+				o.focus();
+
+
+
+
+
+
+
+			},0);
+
+
+
+
+
+
+
+		}else if(o.createTextRange){//IE
+
+
+
+
+
+
+
+			var textRange=o.createTextRange();
+
+
+
+
+
+
+
+			textRange.moveStart("character",o.value.length);
+
+
+
+
+
+
+
+			textRange.moveEnd("character",0);
+
+
+
+
+
+
+
+			textRange.select();
+
+
+
+
+
+
+
+		}
+
+
+
+
+
+
+
+	};
+
+
+
+
+
+
+
+var setName=function(o){
+
+
+
+
+
+var value=$(o).children("#tmp_text").attr("value");
+
+$(o.parentNode).children(".name").attr("value",value);
+
+value=cutstr(value,10);
+
+$(o).html(value);
+
+setTimeout("name_click_delay()",500);
+
+saveLayout();
+
+
+
+
+
+
+
+};
+
+
+
+
+
+
+
+function setScroll(){
+
+
+
+
+
+
+
+  var f_li_num=$("#family li").length;
+
+
+
+
+
+
+
+  if(f_li_num>4){
+
+
+
+
+
+  if($("#family").hasClass("mCustomScrollbar")){
+
+      $("#family").mCustomScrollbar("update");
+
+   }else{
+
+     $("#family").mCustomScrollbar({
+
+
+
+					autoHideScrollbar:true,
+
+
+
+                    scrollInertia:200,//滚动延迟
+
+
+
+					theme:"light-thin"
+
+
+
+				});
+
+   }
+
+
+
+  }else if($("#family").hasClass("mCustomScrollbar")){
+
+     $("#family").mCustomScrollbar("destroy");
+
+  } 
+
+
+
+
+
+
+
+  var k_li_num=$("#kids li").length;
+
+
+
+
+
+
+
+  if(k_li_num>4){
+
+
+
+ if($("#kids").hasClass("mCustomScrollbar")){
+
+    $("#kids").mCustomScrollbar("update");
+
+  }else{
+
+    $("#kids").mCustomScrollbar({
+
+
+
+					autoHideScrollbar:true,
+
+
+
+                    scrollInertia:200,//滚动延迟
+
+
+
+					theme:"light-thin"
+
+
+
+				});
+
+  }
+
+
+
+
+
+  }else if($("#kids").hasClass("mCustomScrollbar")){
+
+     $("#kids").mCustomScrollbar("destroy");
+
+  } 
+
+
+
+
+
+
+
+   var g_li_num=$("#guests li").length;
+
+
+
+
+
+
+
+   if(g_li_num>4){
+
+
+
+
+
+   if($("#guests").hasClass("mCustomScrollbar")){
+
+      $("#guests").mCustomScrollbar("update");
+
+   }else {
+
+     $("#guests").mCustomScrollbar({
+
+
+
+
+
+
+
+					autoHideScrollbar:true,
+
+
+
+					scrollInertia:200,//滚动延迟
+
+
+
+
+
+
+
+					theme:"light-thin"
+
+
+
+
+
+
+
+				});
+
+
+
+     }
+
+
+
+	}else if($("#guests").hasClass("mCustomScrollbar")){
+
+     $("#guests").mCustomScrollbar("destroy");
+
+  } 
+
+
+
+
+
+
+
+  var o_li_num=$("#other li").length;
+
+
+
+
+
+
+
+  if(o_li_num>4){
+
+
+
+   if($("#other").hasClass("mCustomScrollbar")){
+
+      $("#other").mCustomScrollbar("update");
+
+   }else {
+
+    $("#other").mCustomScrollbar({
+
+
+
+
+
+
+
+					autoHideScrollbar:true,
+
+
+
+                    scrollInertia:200,//滚动延迟
+
+
+
+					theme:"light-thin"
+
+
+
+
+
+
+
+				});
+
+
+
+    }
+
+
+
+	}else if($("#other").hasClass("mCustomScrollbar")){
+
+     $("#other").mCustomScrollbar("destroy");
+
+  } 
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+var late_info;
+
+var late_infos=[];
+
+var infos=[];
+
+var c;
+
+function traffic_late(){
+
+b=0;
+
+$("#device_form").ajaxSubmit(function(data,message) {
+
+  late_info=data;
+//alert("device_form: " + late_info);
+if(late_info.length > 23){ 
+  late_infos=late_info.split(" "); }
+if(info.length > 23){
+  infos=info.split(" "); }
+
+  if(late_infos.length!=infos.length){
+
+      info=late_info;
+
+      c=late_infos.length-infos.length;
+
+	  for(var i=0;i<c;i++){
+
+	  device_array.push(late_infos[late_infos.length-c+i]);
+
+	  mac=late_infos[late_infos.length-c+i].substring(0,17);
+
+      user_type=late_infos[late_infos.length-c+i].substring(18,19);
+
+	  if(late_infos[late_infos.length-c+i].length>23){
+
+	   name=late_infos[late_infos.length-c+i].substring(23,late_infos[late_infos.length-c+i].length);
+
+	  }else{
+
+	   name="设备";
+
+	  }
+
+	 device_type=late_infos[late_infos.length-c+i].substring(21,22);
+
+	 add_item($(".equ_li").length);
+
+	 }
+
+	 $(".equit_name").click(function(){
+
+	 
+
+        name_click(this);
+
+
+
+    });
+
+  }
+
+});
+
+$("#traffic_form").ajaxSubmit(function(data,message) {
+
+//alert("traffic_form: " + data);
+      t_e=data;
+	  t_a=t_b;
+	  t_b=t_c; 
+	  t_c=t_d;
+	  t_d=t_e;
+//      var n=device_array.length;
+	  for(var i=0;i<device_array.length;i++){
+	   if(t_e.indexOf($("#"+i+"").attr("title"))>=0){
+	     $("#"+i+" .off").addClass("hide");
+         $("#"+i+" .equit_up").removeClass("hide");
+		 $("#"+i+" .equit_down").removeClass("hide");
+         getTraffic(i);
+	   }else{
+         $("#"+i+" .equit_up").addClass("hide");
+		 $("#"+i+" .equit_down").addClass("hide");
+		 $("#"+i+" .off").removeClass("hide");
+	   }
+	  }
+//        if(i==n){
+	     timeout=window.setTimeout("traffic_late()",2000);
+//	   }
+//      }
+    });
+}
+
+var arr_a=[];
+
+var arr_e=[];
+
+function getTraffic(n){
+
+    var down1="0";
+
+	var down2="0";
+
+	var up1="0";
+
+	var up2="0";
+
+	var a_l;
+
+	var a_f;
+
+	var u;
+
+	var d;
+
+	var tmp=$("#"+n+"").attr("title");
+
+    if(t_a.indexOf("#")>=0&&t_e.indexOf("#")>=0){
+
+     arr_a=t_a.split("#");
+
+	 arr_e=t_e.split("#");
+
+	 for(var i=0;i<=arr_e.length-1;i++){
+
+	    a_l=arr_e[i].split(",");
+
+	    if(a_l[0]==tmp){
+
+               down1=a_l[1];
+
+			   up1=a_l[2];
+
+			   for(var j=0;j<=arr_a.length-1;j++){
+
+	             a_f=arr_a[j].split(",");
+
+	             if(a_f[0]==tmp){
+
+                  down2=a_f[1];
+
+			      up2=a_f[2];
+
+				  if((parseInt(down1)-parseInt(down2))>=0){
+
+				   $("#"+n+" .equit_down .t_size").html(toDecimal(((parseInt(down1)-parseInt(down2))/1000)/3)+"kb/s");
+
+			      }else{
+
+				   $("#"+n+" .equit_down .t_size").html("0.0kb/s");
+
+			     }
+
+				 if((parseInt(up1)-parseInt(up2))>=0){
+
+					$("#"+n+" .equit_up .t_size").html(toDecimal(((parseInt(up1)-parseInt(up2))/1000)/3)+"kb/s");
+
+			      }else{
+
+			        $("#"+n+" .equit_up .t_size").html("0.0kb/s");
+
+			     }
+
+	           } 
+
+	         }
+
+	    } 
+
+	  }
+
+	}
+
+}
+
+
+
+function left_next(object){
+
+
+
+
+
+
+
+ var lxfscroll_obj =$(object.nextSibling.firstChild);
+
+
+
+
+
+
+
+ lxfscroll_obj.stop(true,false).animate({"left":-0+"px"},200); 
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function right_next(object){
+
+
+
+
+
+
+
+ var lxfscroll_obj =$(object.previousSibling.firstChild);
+
+
+
+
+
+
+
+ lxfscroll_obj.stop(true,false).animate({"left":-140+"px"},200); 
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function perm_change(obj){
+
+
+
+
+
+
+
+var h=$(obj.parentNode.parentNode.parentNode).children(".perm_li").css("height");
+
+
+
+
+
+
+
+if(h=="0px"){
+
+
+
+
+
+
+
+$(obj).attr("title","返回");
+
+
+
+
+
+
+
+$(obj).css("background-position","-0px -0px");
+
+
+
+
+
+
+
+$(obj.parentNode.parentNode.parentNode).children(".perm_li").animate({height:"400px"},400);	
+
+
+
+
+
+
+
+}else{
+
+
+
+
+
+
+
+$(obj).attr("title","查看权限");
+
+
+
+
+
+
+
+$(obj).css("background-position","-0px -34px");
+
+
+
+
+
+
+
+$(obj.parentNode.parentNode.parentNode).children(".perm_li").animate({height:"0px"},400);	
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function show(object){
+
+
+
+
+
+
+
+  if($(object.nextSibling.nextSibling.nextSibling).hasClass("hide")){
+
+
+
+
+
+
+
+  $(object.nextSibling.nextSibling.nextSibling).removeClass("hide");
+
+
+
+
+
+
+
+ }else{
+
+
+
+
+
+
+
+  $(object.nextSibling.nextSibling.nextSibling).addClass("hide");
+
+
+
+
+
+
+
+ }
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function changeEquit(tmp,object){
+
+
+
+
+
+
+
+var parent=object.parentNode.parentNode.parentNode.parentNode.parentNode;
+
+
+
+
+
+
+
+switch (tmp){
+
+
+
+
+
+
+
+ case 0:
+
+
+
+
+
+
+
+ $(parent.firstChild).css('background-position','0px -0px');
+
+
+
+
+
+
+
+ $(parent).children(".deviceType").attr("value",'3');
+
+
+
+
+
+
+
+ break;
+
+
+
+
+
+
+
+ case 1:
+
+
+
+
+
+
+
+ $(parent.firstChild).css('background-position','0px -104px');
+
+
+
+
+
+
+
+ $(parent).children(".deviceType").attr("value",'2');
+
+
+
+
+
+
+
+ break;
+
+
+
+
+
+
+
+ case 2:
+
+
+
+
+
+
+
+ $(parent.firstChild).css('background-position','0px -156px');
+
+
+
+
+
+
+
+ $(parent).children(".deviceType").attr("value",'4');
+
+
+
+
+
+
+
+ break;
+
+
+
+
+
+
+
+ case 3:
+
+
+
+
+
+
+
+ $(parent.firstChild).css('background-position','0px -52px');
+
+
+
+
+
+
+
+ $(parent).children(".deviceType").attr("value",'1');
+
+
+
+
+
+
+
+ break;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+$(object.parentNode.parentNode.parentNode.parentNode).addClass("hide");
+
+
+
+
+
+
+
+saveLayout();
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function createObj(){
+
+
+
+
+
+
+
+var content='<div class="equit_list hide">'
+
+
+
+
+
+
+
+            +'<div class="equit_list_f">'
+
+
+
+
+
+
+
+            +'<div class="y">&#9670</div>'
+
+
+
+
+
+
+
+			+'<img src="<%=resource%>/images/left_dire.png" class="dire left" onclick="left_next(this);" style="float:left;margin-left:5px;">'
+
+
+
+
+
+
+
+			+'<div class="lxfscroll left"><div class="list">'
+
+
+
+
+
+
+
+			+'<span class="equit1_img" style="background-position: -0px -0px; width: 32px; height: 35px;float:left;margin-left:6px;cursor:pointer;" onclick="changeEquit(0,this);"></span>'
+
+
+
+
+
+
+
+			+'<span class="equit1_img" style="background-position: -0px -45px; width: 32px; height: 35px;float:left;cursor:pointer;" onclick="changeEquit(1,this);"></span>'
+
+
+
+
+
+
+
+			+'<span class="equit1_img" style="background-position: -0px -90px; width: 32px; height: 35px;float:left;cursor:pointer;" onclick="changeEquit(2,this);"></span>'
+
+
+
+
+
+
+
+			+'<span class="equit1_img" style="background-position: -0px -135px; width: 32px; height: 35px;float:left;margin-left:6px;cursor:pointer;" onclick="changeEquit(3,this);"></span>'
+
+
+
+
+
+
+
+			+'<span class="equit1_img" style="background-position: -0px -0px; width: 32px; height: 35px;float:left;margin-left:6px;cursor:pointer;" onclick="changeEquit(0,this);"></span>'
+
+
+
+
+
+
+
+			+'<span class="equit1_img" style="background-position: -0px -45px; width: 32px; height: 35px;float:left;cursor:pointer;" onclick="changeEquit(1,this);"></span>'
+
+
+
+
+
+
+
+			+'<span class="equit1_img" style="background-position: -0px -90px; width: 32px; height: 35px;float:left;cursor:pointer;" onclick="changeEquit(2,this);"></span>'
+
+
+
+
+
+
+
+			+'<span class="equit1_img" style="background-position: -0px -135px; width: 32px; height: 35px;float:left;margin-left:6px;cursor:pointer;" onclick="changeEquit(3,this);"></span>'
+
+
+
+
+
+
+
+			+'</div></div><img src="<%=resource%>/images/right_dire.png" class="dire left" onclick="right_next(this);"></div></div>';
+
+
+
+
+
+
+
+return content;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function loadCss(src){
+
+
+
+
+
+
+
+　　　  var _doc = document.getElementsByTagName('head')[0];  
+
+
+
+
+
+
+
+       var css = document.createElement('link');     
+
+
+
+
+
+
+
+       css.setAttribute('rel', 'stylesheet');       
+
+
+
+
+
+
+
+       css.setAttribute('type', 'text/css');    
+
+
+
+
+
+
+
+	   css.setAttribute('href', src);   
+
+
+
+
+
+
+
+	   _doc.appendChild(css); 
+
+
+
+
+
+
+
+	   if (css.readyState) { //IE
+
+
+
+
+
+
+
+	     css.onreadystatechange = function () {
+
+
+
+
+
+
+
+            if (css.readyState == "loaded" ||css.readyState == "complete") {
+
+
+
+
+
+
+
+                css.onreadystatechange = null;
+
+
+
+
+
+
+
+                loadmultijs(urls,function(){ load_data(); });
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+        };
+
+
+
+
+
+
+
+     } else{ //标准的DOM浏览器
+
+
+
+
+
+
+
+        css.onload = function () {
+
+
+
+
+
+
+
+              loadmultijs(urls,function(){ load_data(); });
+
+
+
+
+
+
+
+        };
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+　　} 
+
+
+
+
+
+
+
+ function cutstr(str,len)  
+
+
+
+
+
+
+
+{  
+
+
+
+
+
+
+
+   var str_length = 0;  
+
+
+
+
+
+
+
+   var str_len = 0;  
+
+
+
+
+
+
+
+      str_cut = new String();  
+
+
+
+
+
+
+
+      str_len = str.length;  
+
+
+
+
+
+
+
+      for(var i = 0;i<str_len;i++)  
+
+
+
+
+
+
+
+     {  
+
+
+
+
+
+
+
+        a = str.charAt(i);  
+
+
+
+
+
+
+
+        str_length++;  
+
+
+
+
+
+
+
+        if(escape(a).length > 4)  
+
+
+
+
+
+
+
+        {  
+
+
+
+
+
+
+
+         //中文字符的长度经编码之后大于4  
+
+
+
+
+
+
+
+         str_length++;  
+
+
+
+
+
+
+
+         }  
+
+
+
+
+
+
+
+         str_cut = str_cut.concat(a);  
+
+
+
+
+
+
+
+         if(str_length>=len)  
+
+
+
+
+
+
+
+         {  
+
+
+
+
+
+
+
+         str_cut = str_cut.concat("...");  
+
+
+
+
+
+
+
+         return str_cut;  
+
+
+
+
+
+
+
+         }  
+
+
+
+
+
+
+
+    }  
+
+
+
+
+
+
+
+    //如果给定字符串小于指定长度，则返回源字符串；  
+
+
+
+
+
+
+
+    if(str_length<len){  
+
+
+
+
+
+
+
+     return  str;  
+
+
+
+
+
+
+
+    }  
+
+
+
+
+
+
+
+}  
+
+
+
+ function toDecimal(x) {  
+
+
+
+
+
+
+
+            var f = parseFloat(x);  
+
+
+
+
+
+
+
+            if (isNaN(f)) {  
+
+
+
+
+
+
+
+                return false;  
+
+
+
+
+
+
+
+            }  
+
+
+
+
+
+
+
+            var f = Math.round(x*10)/10;  
+
+
+
+
+
+
+
+            var s = f.toString();  
+
+
+
+
+
+
+
+            var rs = s.indexOf('.');  
+
+
+
+
+
+
+
+            if (rs < 0) {  
+
+
+
+
+
+
+
+                rs = s.length;  
+
+
+
+
+
+
+
+                s += '.';  
+
+
+
+
+
+
+
+            }  
+
+
+
+
+
+
+
+            while (s.length <= rs + 1) {  
+
+
+
+
+
+
+
+                s += '0';  
+
+
+
+
+
+
+
+            }  
+
+
+
+
+
+
+
+            return s;  
+
+
+
+
+
+
+
+        }  
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+</head>
+
+
+
+
+
+
+
+<body onload="init();">
+
+
+
+
+
+
+
+<form id="myform" method="post" action="<%=luci.dispatcher.build_url("admin/newweb/device_manager")%>">
+
+
+
+
+
+
+
+	<input type="hidden" name="device_info" id="device_info"  value=""/>
+
+
+
+
+
+
+
+	<input type="hidden" name="action" value="Store">
+
+
+
+
+
+
+
+</form>
+
+
+
+
+
+
+
+<form id="traffic_form" method="post" action="<%=luci.dispatcher.build_url("admin/newweb/traffic")%>">
+
+
+
+
+
+
+
+    <input type="hidden" name="action" value="">
+
+
+
+
+
+
+
+</form>
+
+
+
+<form id="device_form" method="post" action="<%=luci.dispatcher.build_url("admin/newweb/device_refresh")%>">
+
+
+
+
+
+
+
+    <input type="hidden" name="action" value="">
+
+
+
+
+
+
+
+</form>
+
+
+
+
+
+<div id="body_center">
+
+
+
+
+
+
+
+<div id="top">
+
+
+
+
+
+
+
+     <a href="javascript:;" class="link"><div class="back left"></div></a><a href="javascript:;" class="link"><div class="title left">&nbsp;&nbsp;设备管理</div></a>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<div id="main">
+
+
+
+
+
+
+
+  <div class="content">
+
+
+
+
+
+
+
+      <div class="content_left left">
+
+
+
+
+
+
+
+        <span class="icon"></span>
+
+
+
+
+
+
+
+		<span class="caption" style="margin-top:10px;">&nbsp;&nbsp;&nbsp;&nbsp;设备权限分组</span>
+
+
+
+
+
+
+
+		<!--span class="current_equ" style="margin-top:10px;text-align:left;"><label class="t_label">当前登录设备:</label><input type="text"  value="李天天的Phone" class="t_l_text" readonly=""></span-->
+
+
+
+
+
+
+
+		<!--span class="current_info" style="margin-top:10px; text-align:left;">用户不可更改自己的分组</span-->
+
+
+
+
+
+
+
+		<!--span class="current_equ" style="margin-top:10px;text-align:left;"><label class="t_label">当前管理账号:</label><input type="text"  value="Robin" class="t_l_text" readonly=""></span-->
+
+
+
+
+
+
+
+	  </div>
+
+
+
+
+
+
+
+	  <div class="content_right left" style="text-align:center;">
+
+
+
+
+
+
+
+	     <ul style="width:812px; margin:auto;">
+
+
+
+
+
+
+
+		   <li style="float:left;position:relative;">
+
+
+
+
+
+
+
+		     <ul style="position:relative;">
+
+
+
+
+
+
+
+			   <li class="family"><span class="group_icon">家庭组</span><a href="javascript:goto(0);" onclick="return false"><span class="perm_icon" title="查看权限" onclick="perm_change(this);" style="background-position: -0px -34px; width: 24px; height: 24px; margin-top:5px;"></span></a></li>
+
+
+
+
+
+
+
+			   <li style="position:absolute; left:0px; top:36px;">
+
+
+
+
+
+
+
+			     <ul id="family" style="height:400px;width:195px;overflow-y:auto;overflow-x:hidden;"  class="connectedSortable">
+
+
+
+
+
+
+
+				 </ul>
+
+
+
+
+
+
+
+			   </li>
+
+
+
+
+
+
+
+			   <li style="height:0px;width:180px;position:absolute; left:0px; top:36px; background:#236DB8;z-index:1;" class="perm_li">
+
+
+
+
+
+
+
+			     <ul>
+
+
+
+
+
+
+
+				   <li class="perm_no">有限制上网</li>
+
+
+
+
+
+
+
+				   <li class="perm_yes">访问后台</li>
+
+
+
+
+
+
+
+				   <li class="perm_yes">APP访问摄像头</li>
+
+
+
+
+
+
+
+				 </ul>
+
+
+
+
+
+
+
+			   </li>
+
+
+
+
+
+
+
+			 </ul>
+
+
+
+
+
+
+
+		   </li>
+
+
+
+
+
+
+
+		   <li class="kids_li">
+
+
+
+
+
+
+
+		      <ul  style="position:relative;"> 
+
+
+
+
+
+
+
+			    <li class="kids"><span class="group_icon">儿童组</span><a href="javascript:goto(0);" onclick="return false"><span class="perm_icon"  title="查看权限" onclick="perm_change(this);" style="background-position: -0px -34px; width: 24px; height: 24px; margin-top:5px;"></span></a></li>
+
+
+
+
+
+
+
+				<li style="position:absolute; left:0px; top:36px;">
+
+
+
+
+
+
+
+			     <ul id="kids" style="height:400px;width:195px;overflow-y:auto;overflow-x:hidden;"  class="connectedSortable"></ul>
+
+
+
+
+
+
+
+			   </li>
+
+
+
+
+
+
+
+			   <li style="height:0px;width:180px;position:absolute; left:0px; top:36px; background:#236DB8;z-index:1;" class="perm_li">
+
+
+
+
+
+
+
+			     <ul>
+
+
+
+
+
+
+
+				   <li class="perm_yes">有限制上网</li>
+
+
+
+
+
+
+
+				   <li class="perm_no">访问后台</li>
+
+
+
+
+
+
+
+				   <li class="perm_no">APP访问摄像头</li>
+
+
+
+
+
+
+
+				 </ul>
+
+
+
+
+
+
+
+			   </li>
+
+
+
+
+
+
+
+			  </ul>
+
+
+
+
+
+
+
+		   </li>
+
+
+
+
+
+
+
+		   <li  class="guests_li">
+
+
+
+
+
+
+
+		      <ul  style="position:relative;">
+
+
+
+
+
+
+
+			    <li  class="guests"><span class="group_icon">客人组</span><a href="javascript:goto(0);" onclick="return false"><span class="perm_icon"  title="查看权限" onclick="perm_change(this);" style="background-position: -0px -34px; width: 24px; height: 24px; margin-top:5px;"></span></a></li>
+
+
+
+
+
+
+
+				<li style="position:absolute; left:0px; top:36px;">
+
+
+
+
+
+
+
+			     <ul id="guests" style="height:400px;width:195px;overflow-y:auto;overflow-x:hidden;"  class="connectedSortable"></ul>
+
+
+
+
+
+
+
+			   </li>
+
+
+
+
+
+
+
+			   <li style="height:0px;width:180px;position:absolute; left:0px; top:36px; background:#236DB8;z-index:1;" class="perm_li">
+
+
+
+
+
+
+
+			     <ul>
+
+
+
+
+
+
+
+				   <li class="perm_no">有限制上网</li>
+
+
+
+
+
+
+
+				   <li class="perm_no">访问后台</li>
+
+
+
+
+
+
+
+				   <li class="perm_no">APP访问摄像头</li>
+
+
+
+
+
+
+
+				 </ul>
+
+
+
+
+
+
+
+			   </li>
+
+
+
+
+
+
+
+			  </ul>
+
+
+
+
+
+
+
+		   </li>
+
+
+
+
+
+
+
+		   <li  class="other_li">
+
+
+
+
+
+
+
+		     <ul  style="position:relative;">
+
+
+
+
+
+
+
+		      <li class="other"><span class="group_icon">黑名单</span><a href="javascript:goto(0);" onclick="return false"><span class="perm_icon"  title="查看权限" onclick="perm_change(this);" style="background-position: -0px -34px; width: 24px; height: 24px; margin-top:5px;"></span></a></li>
+
+
+
+
+
+
+
+			  <li style="position:absolute; left:0px; top:36px;">
+
+
+
+
+
+
+
+			     <ul id="other" style="height:400px;width:195px;overflow-y:auto;overflow-x:hidden;"  class="connectedSortable"></ul>
+
+
+
+
+
+
+
+			   </li>
+
+
+
+
+
+
+
+			  <li style="height:0px;width:180px;position:absolute; left:0px; top:36px; background:#236DB8; z-index:1;" class="perm_li">
+
+
+
+
+
+
+
+			     <ul>
+
+
+
+
+
+
+
+				   <li class="perm_yes">有限制上网</li>
+
+
+
+
+
+
+
+				   <li class="perm_no">访问后台</li>
+
+
+
+
+
+
+
+				   <li class="perm_no">APP访问摄像头</li>
+
+
+
+
+
+
+
+				 </ul>
+
+
+
+
+
+
+
+			   </li>
+
+
+
+
+
+
+
+			 </ul>
+
+
+
+
+
+
+
+		   </li>
+
+
+
+
+
+
+
+		 </ul>
+
+
+
+
+
+
+
+	  </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+</html>
+
+
+
+
+
+
+

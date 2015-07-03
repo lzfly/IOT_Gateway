@@ -1,0 +1,4378 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+
+<head>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+
+<title>脱机下载</title>
+
+
+
+<style type="text/css">
+
+
+
+/* CSS Document */
+
+
+
+html,body {
+
+
+
+	height:100%;
+
+
+
+	margin:0px;
+
+
+
+}
+
+
+
+body {
+
+
+
+	background:#0A53A0;
+
+
+
+	filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);
+
+
+
+-ms-filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);/*IE8*/ 
+
+
+
+	background:-webkit-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	background:-o-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	background:-ms-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	background:-moz-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	background:adial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+}
+
+
+@media screen and (min-height: 681px) {
+#body_center{
+
+width:100%;
+
+height:680px;
+
+position:absolute;
+
+top:50%;
+
+margin-top:-345px;
+
+text-align:center;
+
+}
+#main {
+
+
+
+	width:80%;
+
+
+
+	max-width:1200px;
+
+
+
+	min-width:980px;
+
+
+
+	height:605px;
+
+
+
+	margin:auto;
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+	border-top:1px solid #407CB8;
+
+
+
+}
+.d_file_set {
+
+
+
+	width:100%;
+
+
+
+	height:350px;
+
+
+
+	float:left;
+
+
+
+	border:1px solid #5594D7;
+
+
+
+	background:#327ED1;
+
+
+
+}
+
+.td_h{
+height:50px;
+}
+}
+
+@media screen and (max-height: 680px) {
+#body_center{
+
+width:100%;
+
+height:590px;
+position:absolute;
+top:50%;
+margin-top:-305px;
+text-align:center;
+
+}
+#main {
+
+
+
+	width:80%;
+
+
+
+	max-width:1200px;
+
+
+
+	min-width:980px;
+
+
+
+	height:520px;
+
+
+
+	margin:auto;
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+	border-top:1px solid #407CB8;
+
+
+
+}
+.d_file_set {
+
+
+
+	width:100%;
+
+
+
+	height:300px;
+
+
+
+	float:left;
+
+
+
+	border:1px solid #5594D7;
+
+
+
+	background:#327ED1;
+
+
+
+}
+.td_h{
+height:42px;
+}
+}
+
+a{
+
+
+
+cursor:pointer;
+
+
+
+}
+
+
+
+a:link {
+
+
+
+	text-decoration:none;
+
+
+
+}
+
+
+
+a:visited {
+
+
+
+	text-decoration:none;
+
+
+
+}
+
+
+
+a:hover {
+
+
+
+	text-decoration:none;
+
+
+
+}
+
+
+
+a:active {
+
+
+
+	text-decoration:none;
+
+
+
+}
+
+
+
+.left {
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.right {
+
+
+
+	float:right;
+
+
+
+}
+
+
+
+img {
+
+
+
+	border:none;
+
+
+
+}
+
+
+
+span {
+
+
+
+	display:block;
+
+
+
+}
+
+
+
+.hide {
+
+
+
+	display:none;
+
+
+
+}
+
+
+
+#top .back {
+
+
+
+	width:42px;
+
+
+
+	height:75px;
+
+
+
+	background:url(images/back.png) no-repeat center center;
+
+
+
+}
+
+
+
+#top .title {
+
+
+
+	height:75px;
+
+
+
+	line-height:75px;
+
+
+
+	width:200px;
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:26px;
+
+
+
+	font-family:Microsoft YaHei,small;
+
+
+
+	font-weight:normal;
+
+
+
+	text-align:left;
+
+
+
+}
+
+
+
+.t_text {
+
+
+
+	width:300px;
+
+
+
+	height:30px;
+
+
+
+	border:1px solid #66FF00;
+
+
+
+}
+
+
+
+.t_lable {
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:18px;
+
+
+
+}
+
+
+
+#tip {
+
+
+
+	width:160px;
+
+
+
+	overflow:hidden;
+
+
+
+	text-align:center;
+
+
+
+	border:solid 2px #669999;
+
+
+
+	background:#6699CC;
+
+
+
+	display:none;
+
+
+
+}
+
+
+
+#tip .loading {
+
+
+
+	width:126px;
+
+
+
+	height:22px;
+
+
+
+	margin:auto;
+
+
+
+	margin-top:5px;
+
+
+
+}
+
+
+
+#tip .tip_info {
+
+
+
+	width:126px;
+
+
+
+	text-align:center;
+
+
+
+	margin:auto;
+
+
+
+	margin-top:5px;
+
+
+
+}
+
+
+
+#top {
+
+
+
+	width:80%;
+
+
+
+	max-width:1200px;
+
+
+
+	min-width:980px;
+
+
+
+	height:75px;
+
+
+
+	margin:auto;
+
+
+
+}
+
+
+
+
+
+
+.capacity {
+
+
+
+	border-left:1px solid #407CB8;
+
+
+
+	margin-top:20px;
+
+
+
+}
+
+
+
+.capacity .size {
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:14px;
+
+
+
+	margin-left:15px;
+
+
+
+	text-align:left;
+
+
+
+}
+
+
+
+.capacity .rate {
+
+
+
+	width:120px;
+
+
+
+	height:15px;
+
+
+
+	line-height:15px;
+
+
+
+	margin-top:5px;
+
+
+
+	margin-left:15px;
+
+
+
+	background:#FFFFFF;
+
+
+
+	padding:0px;
+
+
+
+	position:relative;
+
+
+
+}
+
+
+
+.capacity .rate .pro {
+
+
+
+	position:absolute;
+
+
+
+	margin:0px;
+
+
+
+	width:0px;
+
+
+
+	padding:0px;
+
+
+
+	left:0px;
+
+
+
+	top:0px;
+
+
+
+	height:15px;
+
+
+
+	background:#DD9541;
+
+
+
+	z-index:1;
+
+
+
+}
+
+
+
+.capacity .residue_t {
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:38px;
+
+
+
+	float:left;
+
+
+
+	margin-left:10px;
+
+
+
+}
+
+
+
+.capacity .residue_i {
+
+
+
+	color:#CCCCCC;
+
+
+
+	font-size:14px;
+
+
+
+	position:absolute;
+
+
+
+	top:20px;
+
+
+
+	right:-30px;
+
+
+
+}
+
+
+
+.protocol {
+
+
+
+	width:895px;
+
+
+
+	margin:auto;
+
+
+
+	position:relative;
+
+
+
+	top:30px;
+
+
+
+}
+
+
+
+.protocol .pro_title {
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:18px;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.protocol .pro_info {
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:14px;
+
+
+
+	float:left;
+
+
+
+	margin-top:5px;
+
+
+
+	margin-left:25px;
+
+
+
+}
+
+
+
+.protocol ul {
+
+
+
+	margin:0px;
+
+
+
+	padding:0px;
+
+
+
+	list-style:none;
+
+
+
+	float:left;
+
+
+
+	color:#CCCCCC;
+
+
+
+	font-size:14px;
+
+
+
+}
+
+
+
+.protocol .http {
+
+
+
+	height:24px;
+
+
+
+	line-height:24px;
+
+
+
+	width:65px;
+
+
+
+	text-align:right;
+
+
+
+	float:left;
+
+
+
+	margin-left:15px;
+
+
+
+	background:url(images/HTTP_icon.png) no-repeat left center;
+
+
+
+}
+
+
+
+.protocol .bt {
+
+
+
+	height:24px;
+
+
+
+	line-height:24px;
+
+
+
+	width:45px;
+
+
+
+	text-align:right;
+
+
+
+	float:left;
+
+
+
+	margin-left:15px;
+
+
+
+	background:url(images/BT_icon.png) no-repeat left center;
+
+
+
+}
+
+
+
+.protocol .ed2k {
+
+
+
+	height:24px;
+
+
+
+	line-height:24px;
+
+
+
+	width:65px;
+
+
+
+	text-align:right;
+
+
+
+	float:left;
+
+
+
+	margin-left:15px;
+
+
+
+	background:url(images/ED2K_icon.png) no-repeat left center;
+
+
+
+}
+
+
+
+.protocol .magnet {
+
+
+
+	height:24px;
+
+
+
+	line-height:24px;
+
+
+
+	width:89px;
+
+
+
+	text-align:right;
+
+
+
+	float:left;
+
+
+
+	margin-left:15px;
+
+
+
+	background:url(images/MAGNET_icon.png) no-repeat left center;
+
+
+
+}
+
+
+
+.mid_link {
+
+
+
+	width:895px;
+
+
+
+	margin:auto;
+
+
+
+	position:relative;
+
+
+
+    top:50px;
+
+
+
+}
+
+
+
+.mid_link .input_url {
+
+
+
+	height:45px;
+
+
+
+	width:755px;
+
+
+
+	background:#FFFFFF;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.mid_link .input_url .bt_btn {
+
+
+
+	height:45px;
+
+
+
+	width:130px;
+
+
+
+	line-height:45px;
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+	font-size:16px;
+
+
+
+	text-align:center;
+
+
+
+	border:0px;
+
+
+
+	margin:0px;
+
+
+
+	padding:0px;
+
+
+
+	background:#019CBA;
+
+
+
+	position:relative;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.mid_link .input_url .up-input {
+
+
+
+	position:absolute;
+
+
+
+	top:0;
+
+
+
+	left:0;
+
+
+
+	height:100%;
+
+
+
+	width:100%;
+
+
+
+	-moz-opacity:0;
+
+
+
+	filter:alpha(opacity:0);
+
+
+
+	opacity:0;
+
+
+
+	cursor:pointer;
+
+
+
+}
+
+
+
+.mid_link .input_url input[type="text"] {
+
+
+
+	height:43px;
+
+
+
+	line-height:43px;
+
+
+
+	width:613px;
+
+
+
+	margin:0px;
+
+
+
+	padding:0px;
+
+
+
+	border:0px;
+
+	padding-left:10px;
+
+
+
+	float:left;
+
+	 
+
+	vertical-align:middle;
+
+    border:1px solid #00AAA9;
+
+}
+
+
+
+.mid_link .down_btn {
+
+
+
+	background:#00AC00;
+
+
+
+	border:0px;
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+	font-size:16px;
+
+
+
+	height:45px;
+
+
+
+	width:130px;
+
+
+
+	float:left;
+
+
+
+	margin-left:10px;
+
+
+
+	cursor:pointer;
+
+
+
+}
+
+
+
+.download {
+
+
+
+	width:900px;
+
+
+
+	margin:auto;
+
+
+
+	position:relative;
+
+
+
+	top:90px;
+
+
+
+}
+
+
+
+.download .downloading {
+
+
+
+	width:50%;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.download .finish {
+
+
+
+	width:47%;
+
+
+
+	float:left;
+
+
+
+	margin-left:3%;
+
+
+
+}
+
+
+
+.downloading .downloading_top {
+
+
+
+	width:100%;
+
+
+
+}
+
+
+
+.downloading_top .d_t_title {
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:18px;
+
+
+
+	height:45px;
+
+
+
+	line-height:45px;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.d_file_list {
+
+
+
+	width:100%;
+
+
+
+	height:350px;
+
+
+
+	overflow:auto;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+
+
+.d_file_list ul {
+
+
+
+	padding:0px;
+
+
+
+	margin:0px;
+
+
+
+	list-style:none;
+
+
+
+}
+
+
+
+.d_file_list .task {
+
+
+
+	background:#5594D7;
+
+
+
+	width:400px;
+
+
+
+	height:45px;
+
+
+
+	margin:5px;
+
+
+
+	clear:left;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.finish .finish_top {
+
+
+
+	width:100%;
+
+
+
+}
+
+
+
+.finish_top .f_t_title {
+
+
+
+	color:#FFFFFF;
+
+
+
+	height:45px;
+
+
+
+	line-height:45px;
+
+
+
+	font-size:18px;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.f_file_list {
+
+
+
+	width:100%;
+
+
+
+	height:350px;
+
+
+
+	overflow:auto;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.f_file_list ul {
+
+
+
+	padding:0px;
+
+
+
+	margin:0px;
+
+
+
+	list-style:none;
+
+
+
+}
+
+
+
+.f_file_list .task {
+
+
+
+	background:#5594D7;
+
+
+
+	width:190px;
+
+
+
+	margin:5px;
+
+
+
+	height:45px;
+
+
+
+	padding:0px;
+
+
+
+	overflow:hidden;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.f_file_list .finish_li {
+
+
+
+	height:45px;
+
+
+
+	width:235px;
+
+
+
+	float:left;
+
+
+
+	position:relative;
+
+
+
+}
+
+
+
+.finish_li .finish_info {
+
+
+
+	width:135px;
+
+
+
+	color:#FFFFFF;
+
+
+
+	float:left;
+
+
+
+	margin-left:5px;
+
+
+
+}
+
+
+
+.f_file_list .finish_icon {
+
+
+
+	height:45px;
+
+
+
+	width:50px;
+
+
+
+	background:url(images/finish_icon.png) no-repeat center center;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.f_file_list .finish_name {
+
+
+
+	height:22px;
+
+
+
+	line-height:22px;
+
+
+
+	text-align:left;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.f_file_list .finish_time {
+
+
+
+	width:100%;
+
+
+
+	height:22px;
+
+
+
+	line-height:22px;
+
+
+
+	text-align:left;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.finish_delete {
+
+
+
+	height:45px;
+
+
+
+	width:45px;
+
+
+
+	background:url(images/finish_delete.png) no-repeat right center;
+
+
+
+	cursor:pointer;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.finish_delete1 {
+
+
+
+	height:45px;
+
+
+
+	width:24px;
+
+
+
+	background:url(images/finish_delete.png) no-repeat center center;
+
+
+
+	cursor:pointer;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.finish_top .f_t_menu ul {
+
+
+
+	padding:0px;
+
+
+
+	margin:0px;
+
+
+
+	list-style:none;
+
+
+
+	float:right;
+
+
+
+}
+
+
+
+.down_menu {
+
+
+
+	background: url('images/down_menu.png');
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.d_t_label {
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:16px;
+
+
+
+}
+
+
+
+.d_t_text {
+
+
+
+	width:100px;
+
+
+
+	height:25px;
+
+
+
+	border:none;
+
+
+
+	color:#2773C7;
+
+
+
+	font-size:16px;
+    border:1px solid #00AAA9;
+
+
+}
+
+
+
+.d_t_btn {
+
+
+
+	width:160px;
+
+
+
+	height:35px;
+
+
+
+	color:#362300;
+
+
+
+	font-size:16px;
+
+
+
+	background:#E6AB07;
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+	cursor:pointer;
+
+
+
+	border:none;
+
+
+
+}
+
+
+
+.switch {
+
+
+
+	background:url(images/switch.png);
+
+
+
+}
+
+
+
+.downing_pause {
+
+
+
+	height:45px;
+
+
+
+	width:45px;
+
+
+
+	background:#3CAA53 url(images/pause_icon.png) no-repeat center center;
+
+
+
+	float:left;
+
+
+
+	cursor:pointer;
+
+
+
+}
+
+.downing_start {
+
+
+
+	height:45px;
+
+
+
+	width:45px;
+
+
+
+	background:#3CAA53 url(images/start_icon.png) no-repeat center center;
+
+
+
+	float:left;
+
+
+
+	cursor:pointer;
+
+
+
+}
+
+
+
+.downing_info {
+
+
+
+	width:120px;
+
+
+
+	height:45px;
+
+
+
+	background:#1A9B36;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.downing_info .downing_name {
+
+
+
+	width:100%;
+
+
+
+	height:20px;
+
+
+
+	line-height:20px;
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:14px;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.downing_info .downing_size {
+
+
+
+	color:#FFFF00;
+
+
+
+	width:100%;
+
+
+
+	height:25px;
+
+
+
+	line-height:25px;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.downing_time {
+
+
+
+	color:#FFFFFF;
+
+
+
+	height:45px;
+
+
+
+	line-height:45px;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.downing_speed {
+
+
+
+	color:#FFFFFF;
+
+
+
+	height:45px;
+
+
+
+	line-height:45px;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.dropdown-menu {
+
+
+
+	position:absolute;
+
+
+
+	top:100%;
+
+
+
+	left:0;
+
+
+
+	z-index:1000;
+
+
+
+	display:none;
+
+
+
+	float:left;
+
+
+
+	min-width:160px;
+
+
+
+	padding:4px 0;
+
+
+
+	margin:1px 0 0;
+
+
+
+	list-style:none;
+
+
+
+	background-color:#fff;
+
+
+
+	border:1px solid #ccc;
+
+
+
+	border:1px solid rgba(0,0,0,0.2);
+
+
+
+	*border-right-width:2px;
+
+
+
+	*border-bottom-width:2px;
+
+
+
+	-webkit-border-radius:5px;
+
+
+
+	-moz-border-radius:5px;
+
+
+
+	border-radius:5px;
+
+
+
+	-webkit-box-shadow:0 5px 10px rgba(0,0,0,0.2);
+
+
+
+	-moz-box-shadow:0 5px 10px rgba(0,0,0,0.2);
+
+
+
+	box-shadow:0 5px 10px rgba(0,0,0,0.2);
+
+
+
+	-webkit-background-clip:padding-box;
+
+
+
+	-moz-background-clip:padding;
+
+
+
+	background-clip:padding-box}
+
+
+
+.dropdown-menu.pull-right {
+
+
+
+	right:0;
+
+
+
+	left:auto}
+
+
+
+.dropdown-menu .divider {
+
+
+
+	*width:100%;
+
+
+
+	height:1px;
+
+
+
+	margin:8px 1px;
+
+
+
+	*margin:-5px 0 5px;
+
+
+
+	overflow:hidden;
+
+
+
+	background-color:#e5e5e5;
+
+
+
+	border-bottom:1px solid #fff}
+
+
+
+.dropdown-menu a {
+
+
+
+	display:block;
+
+
+
+	padding:3px 15px;
+
+
+
+	clear:both;
+
+
+
+	font-weight:normal;
+
+
+
+	line-height:18px;
+
+
+
+	color:#333;
+
+
+
+	white-space:nowrap}
+
+
+
+.dropdown-menu li>a:hover,.dropdown-menu .active>a,.dropdown-menu .active>a:hover {
+
+
+
+	color:#fff;
+
+
+
+	text-decoration:none;
+
+
+
+	background-color:#08c}
+
+input:focus {
+		-webkit-box-shadow: 0px 0px 10px #00AAA9;
+		-moz-box-shadow: 0px 0px 10px #00AAA9;
+		box-shadow: 0px 0px 10px #00AAA9;
+	}
+
+
+</style>
+
+<!--[if lt IE 9]>
+<script src="js/css3-mediaqueries.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
+
+
+
+<script type="text/javascript" src="js/jsloader.js"></script>
+
+
+
+<script type="text/javascript">
+
+
+
+var usb_info;
+
+
+
+var urls=["js/jquery.mousewheel.js","js/jquery.mCustomScrollbar.concat.min.js","js/jquery.form.js","js/tip.js"];
+
+
+
+function init(){
+
+
+
+  loadCss("css/jquery.mCustomScrollbar.css");
+
+
+
+}
+
+
+
+function load_data(){  
+
+
+
+if(usb_info!=""&&usb_info!=null&&usb_info.indexOf(",")>=0){ 
+
+
+
+   $('.d_t_menu').bind('click', function(){ setFun(this); });
+
+
+
+   $('#setting-btn').click();
+
+
+
+   $('.f_t_clear').bind('mouseover', function(){ $(this).css("background-position"," -0px -138px");  });
+
+
+
+   $('.f_t_clear').bind('mouseout', function(){  $(this).css("background-position"," -0px -92px");});
+
+
+
+   $('.f_t_file').bind('mouseover', function(){  $(this).css("background-position"," -0px -46px"); });
+
+
+
+   $('.f_t_file').bind('mouseout', function(){ $(this).css("background-position"," -0px -0px");});
+
+
+
+  }else{
+
+
+
+    alert("没有发现可用磁盘");
+
+
+
+  }
+
+
+
+var navigatorName = "Microsoft Internet Explorer";
+
+
+
+if( navigator.appName == navigatorName ){
+
+
+
+if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE6.0") 
+
+
+
+{ 
+
+
+
+ $(".link").each(function(){
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+              });
+
+
+
+	  loadScript("js/jquery.JPlaceholder.js");
+
+
+
+      alert("脱机下载不支持此浏览器，请使用其他浏览器。");
+
+
+
+} 
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE7.0") 
+
+
+
+{ 
+
+
+
+ $(".link").each(function(){
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+              });
+
+
+
+ loadScript("js/jquery.JPlaceholder.js");
+
+
+
+ alert("脱机下载不支持此浏览器，请使用其他浏览器。");
+
+
+
+} 
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE8.0") 
+
+
+
+{ 
+
+
+
+ $(".link").each(function(){
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+              });
+
+
+
+ loadScript("js/jquery.JPlaceholder.js");
+
+
+
+ alert("脱机下载不支持此浏览器，请使用其他浏览器。");
+
+
+
+} else{
+
+
+
+ $('#top .back,#top .title').click(function(){
+
+
+
+     window.parent.closeFun("my_down");
+
+
+
+  });
+
+
+
+} 
+
+
+
+}else{
+
+
+
+$('#top .back,#top .title').click(function(){
+
+
+
+     window.parent.closeFun("my_down");
+
+
+
+  });
+
+
+
+}
+
+
+
+}
+
+
+
+var box1;
+
+
+
+function saveset(){
+
+
+
+    box1 = new LightBox("tip");
+
+
+
+    $(".tip_info").html("正在保存设置...");
+
+
+
+	box_show();
+
+
+
+	setTimeout("saver()",1000);
+
+
+
+}
+
+
+
+function saver(){
+
+
+
+ $(".tip_info").html("保存成功");
+
+
+
+ setTimeout("box_close()",1000);
+
+
+
+}
+
+
+
+function delayLoad(){
+
+
+
+var dl=$("#gsi-dl").attr("value");
+
+
+
+var ul=$("#gsi-ul").attr("value");
+
+
+
+if(dl=="0"&&ul=="0"){
+
+
+
+ $(".d_file_set .close").removeClass("hide");
+
+
+
+ $(".d_file_set .open").addClass("hide");
+
+
+
+}else{
+
+
+
+ $(".d_file_set .close").addClass("hide");
+
+
+
+ $(".d_file_set .open").removeClass("hide");
+
+
+
+}
+
+$('.f_file_list ul li').bind('mouseover', function(){$(this).children(".finish_li").stop(true,true).animate({"left":-45+"px"},400);});
+
+$('.f_file_list ul li').bind('mouseleave', function(){$(this).children(".finish_li").stop(true,true).animate({"left":-0+"px"},400);});
+
+
+
+if($(".f_file_list  ul li").length>12){
+
+   if(!$(".f_file_list").hasClass("mCustomScrollbar")){
+
+    $(".f_file_list").mCustomScrollbar({
+
+
+
+					autoHideScrollbar:true,
+
+
+
+					scrollInertia:200,//滚动延迟
+
+
+
+					theme:"light-thin"
+
+
+
+				});
+
+	 }
+
+  }else if($(".f_file_list").hasClass("mCustomScrollbar")){
+
+   $(".f_file_list").mCustomScrollbar("destroy");
+
+  }
+
+ 
+
+if($(".d_file_list  ul li").length>6){
+
+  if(!$(".d_file_list").hasClass("mCustomScrollbar")){
+
+   $(".d_file_list").mCustomScrollbar({
+
+
+
+					autoHideScrollbar:true,
+
+
+
+					scrollInertia:200,//滚动延迟
+
+
+
+					theme:"light-thin"
+
+
+
+				});
+
+  }
+
+ }else if($(".d_file_list").hasClass("mCustomScrollbar")){
+
+    $(".d_file_list").mCustomScrollbar("destroy");
+
+ }
+
+}
+
+function selectfun(obj){
+
+
+
+$(obj.parentNode).children(".select-box").click();
+
+
+
+}
+
+
+
+var a=0;
+
+
+
+var opacity;
+
+
+
+function setFun(obj){
+
+
+
+if(a==0){
+
+
+
+ $(obj).css("background-position","-0px -230px");
+
+
+
+ $(".d_file_list").addClass("hide");
+
+
+
+ $(".d_file_set").css("opacity","0.00");
+
+
+
+ $(".d_file_set").removeClass("hide");
+
+
+
+ opacity=0;
+
+
+
+ setShow("d_file_set");
+
+
+
+ a=1;
+
+
+
+}else{
+
+
+
+ $(obj).css("background-position","-0px -184px");
+
+
+
+ $(".d_file_set").addClass("hide");
+
+
+
+ $(".d_file_list").css("opacity","0.00");
+
+
+
+ $(".d_file_list").removeClass("hide");
+
+
+
+ opacity=0;
+
+
+
+ setShow("d_file_list");
+
+
+
+ a=0;
+
+
+
+}
+
+
+
+}
+
+
+
+function setShow(tmp){
+
+
+
+if(parseFloat($("."+tmp+"").css("opacity")) < 1)
+
+
+
+  {
+
+
+
+   opacity+=0.05;
+
+
+
+   $("."+tmp+"").css("opacity",opacity+"");
+
+
+
+   window.setTimeout("setShow('"+tmp+"')", 50);
+
+
+
+  } 
+
+
+
+}
+
+
+
+var dlv;
+
+
+
+var duv;
+
+
+
+var ddj=0;
+
+
+
+function switchFun(obj){
+
+
+
+ if(ddj==0){
+
+
+
+ dlv=$("#gsi-dl").attr("value");
+
+
+
+ duv=$("#gsi-dl").attr("value");
+
+
+
+ ddj=1;
+
+
+
+ }
+
+
+
+ $(obj).addClass("hide");
+
+
+
+ var c=$(obj).attr('class');
+
+
+
+ if(c.indexOf('open')>=0){
+
+
+
+   $(".d_file_set .close").removeClass("hide");
+
+
+
+   $("#gsi-dl").attr("value","0");
+
+
+
+   $("#gsi-ul").attr("value","0");
+
+
+
+   $("#gsi-dl").attr("disabled","disabled");
+
+
+
+   $("#gsi-ul").attr("disabled","disabled");
+
+
+
+ }else{
+
+
+
+   $(".d_file_set .open").removeClass("hide");
+
+
+
+   $("#gsi-dl").attr("value",dlv);
+
+
+
+   $("#gsi-ul").attr("value",duv);
+
+
+
+   $("#gsi-dl").removeAttr("disabled");
+
+
+
+   $("#gsi-ul").removeAttr("disabled");
+
+
+
+ }
+
+
+
+}
+
+
+
+function box_show(){
+
+
+
+	  box1.Show(); 
+
+
+
+  }
+
+
+
+ function box_close(){
+
+
+
+	  box1.Close(); 
+
+      $('.d_t_menu').click();
+
+ }
+
+function loadScript(src){
+
+
+
+
+
+
+
+       var _doc = document.getElementsByTagName('head')[0];  
+
+
+
+
+
+
+
+       var script = document.createElement('script');     
+
+
+
+    
+
+
+
+       script.setAttribute('type', 'text/javascript');    
+
+
+
+
+
+
+
+	   script.setAttribute('src', src);   
+
+
+
+
+
+
+
+	   _doc.appendChild(script); 
+
+
+
+
+
+
+
+　　} 
+
+function loadCss(src){
+
+
+
+       var _doc = document.getElementsByTagName('head')[0];  
+
+
+
+       var css = document.createElement('link');     
+
+
+
+       css.setAttribute('rel', 'stylesheet');       
+
+
+
+       css.setAttribute('type', 'text/css');    
+
+
+
+	   css.setAttribute('href', src);   
+
+
+
+	   _doc.appendChild(css); 
+
+
+
+	   if (css.readyState) { //IE
+
+
+
+	     css.onreadystatechange = function () {
+
+
+
+            if (css.readyState == "loaded" ||css.readyState == "complete") {
+
+
+
+                css.onreadystatechange = null;
+
+
+
+                loadmultijs(urls,function(){ load_data(); });
+
+
+
+            }
+
+
+
+        };
+
+
+
+     } else{ //标准的DOM浏览器
+
+
+
+        css.onload = function () {
+
+
+
+              loadmultijs(urls,function(){ load_data(); });
+
+
+
+        };
+
+
+
+    }
+
+
+
+　　} 
+
+
+
+function toDecimal(x) {  
+
+
+
+            var f = parseFloat(x);  
+
+
+
+            if (isNaN(f)) {  
+
+
+
+                return false;  
+
+
+
+            }  
+
+
+
+            var f = Math.round(x*10)/10;  
+
+
+
+            var s = f.toString();  
+
+
+
+            var rs = s.indexOf('.');  
+
+
+
+            if (rs < 0) {  
+
+
+
+                rs = s.length;  
+
+
+
+                s += '.';  
+
+
+
+            }  
+
+
+
+            while (s.length <= rs + 1) {  
+
+
+
+                s += '0';  
+
+
+
+            }  
+
+
+
+            return s;  
+
+
+
+        }
+
+
+
+</script>
+
+
+
+</head>
+
+
+
+<body onload="init();">
+
+
+
+<div id="body_center">
+
+
+
+<div id="tip">
+
+
+
+   <span class="loading"><img src="images/loading.gif"/></span>
+
+
+
+   <span class="tip_info"></span>
+
+
+
+</div>
+
+
+
+<input type="hidden" name="usb" id="usb_info" value="== usb_info(); ==">
+
+
+
+<div id="top">
+
+
+
+     <a href="javascript:;" class="link"><div class="back left"></div></a>
+
+
+
+	 <a href="javascript:;" class="link"><div class="title left">&nbsp;&nbsp;脱机下载</div></a>
+
+
+
+	 <div class="capacity left">
+
+
+
+	  <div class="left">
+
+
+
+	    <span class="size">磁盘容量:0.0G</span>
+
+
+
+	    <span class="rate"><span class="pro"></span></span>
+
+
+
+	  </div>
+
+
+
+	  <div class="left" style="position:relative;">
+
+
+
+	     <span class="residue_t">0.0G</span>	
+
+
+
+		 <span class="residue_i">可用</span>	   
+
+
+
+	  </div>
+
+
+
+	 </div>
+
+
+
+	  <script language="javascript">
+
+
+
+        usb_info=$("#usb_info").attr("value");
+
+
+
+		if(usb_info!=""&&usb_info!=null&&usb_info.indexOf(",")>=0){
+
+
+
+		 var usb_info_array=usb_info.split(",");
+
+
+
+		 var total=usb_info_array[0];
+
+
+
+		 total=parseInt(total);
+
+
+
+		 var residue=usb_info_array[1];
+
+
+
+		 residue=parseInt(residue);
+
+
+
+		 $(".capacity .size").html("磁盘容量:"+toDecimal(total/1024)+"G");
+
+
+
+		 $(".capacity .residue_t").html(toDecimal(residue/1024)+"G");
+
+
+
+	     var rate=0;
+
+
+
+		 rate=((total-residue)/total)*120;
+
+         if(rate>1){
+
+	      $(".rate > span").css("width", String(rate) + "px"); //控制.pro宽度
+
+         }else if(0<rate){
+
+		  $(".rate > span").css("width", "1px"); //控制.pro宽度
+
+		 }
+
+		}
+
+
+
+	   </script>
+
+
+
+</div>
+
+
+
+<div id="main">
+
+
+
+  <div class="protocol">
+
+
+
+     <span class="pro_title">新建下载链接</span>
+
+
+
+	 <span class="pro_info">支持下载协议:</span>
+
+
+
+	 <ul>
+
+
+
+	    <li class="ed2k">ED2K</li>
+
+
+
+	    <li class="http">HTTP</li>
+
+
+
+		<li class="bt">BT</li>
+
+
+
+		<li class="magnet">MAGNET</li>
+
+
+
+	 </ul>
+
+
+
+  </div>
+
+
+
+  <div class="mid_link">
+
+
+
+     <form id="add-task-uri" onSubmit="YAAW.add_task.submit(this);return false;">
+
+
+
+	 <span class="input_url">
+
+
+
+	 <a class="bt_btn">打开BT种子<input type="file" class="up-input" id="torrent-up-input"/></a>
+
+
+
+	 <input type="text" name="uri" id="uri-input" class="input-clear" placeholder="或在此输入下载地址" />
+
+
+
+    </span>
+
+
+
+	<textarea id="uri-textarea" rows=5 class="input-clear hide"></textarea>
+
+
+
+	<input type="button"  onClick="$('#add-task-uri').submit();" value="立即下载" class="down_btn">
+
+
+
+	</form>
+
+
+
+  </div>
+
+
+
+  <div class="download">
+
+
+
+     <div class="downloading">
+
+
+
+	     <div class="downloading_top">
+
+
+
+	      <span class="d_t_title">正在下载</span>
+
+
+
+		  <a data-toggle="modal"  href="#setting-modal" id="setting-btn"></a>
+
+
+
+		  <a href="javascript:;" title="设置"><span class="down_menu d_t_menu" style="background-position: -0px -184px; width: 36px; height: 36px; float:right; margin-top:4px;"></span></a>
+
+
+
+	    </div>
+
+
+
+		<div class="d_file_list">
+
+
+
+		<section id="active-tasks">
+
+
+
+           <ul class="tasks-table" id="active-tasks-table">
+
+
+
+            <li>
+
+
+
+              <div class="empty-tasks" style="width:400px;"></div>
+
+
+
+           </li>
+
+
+
+          </ul>
+
+          <ul id="waiting-tasks-table" class="tasks-table">
+
+
+
+           
+
+
+
+          </ul>
+
+         </section>
+
+
+
+		</div>
+
+		<div class="d_file_set hide">
+
+		<form id="setting-form" class="form-horizontal" onSubmit="YAAW.setting.submit();return false;">
+
+		  <table cellpadding="0" cellspacing="0" width="100%"   border="0"> 
+
+		 
+
+               <tr  class="d_t_label">
+
+			     <td width="33%"  class="td_h" align="right">自动刷新时间：</td>
+
+				 <td width="11%" align="left"> <input type="radio" name="refresh_interval" value="1000"> 1s</td>
+
+				 <td width="11%" align="left"> <input type="radio" name="refresh_interval" value="5000" checked> 5s</td>
+
+				 <td width="13%" align="left"> <input type="radio" name="refresh_interval" value="10000"> 10s</td>
+
+				 <td width="15%" align="left"> <input type="radio" name="refresh_interval" value="60000"> 1min</td>
+
+				 <td width="17%" align="left"> <input type="radio" name="refresh_interval" value="0"> off </td>
+
+			   </tr>
+
+
+
+</table>
+
+</form>
+
+		    <div id="aria2-gsetting" >
+
+
+
+	       </div>
+
+		</div>
+
+
+
+           
+
+
+
+
+
+	 </div>
+
+
+
+	 <div class="finish">
+
+
+
+	   <div class="finish_top">
+
+
+
+	     <span class="f_t_title">下载完成</span>
+
+
+
+		 <span class="f_t_menu">
+
+
+
+		    <ul>
+
+
+
+			  <a href="javascript:;"><li class="down_menu f_t_clear" style="background-position: -0px -92px; width: 36px; height: 36px;margin-top:4px;" title="清空页面所有任务" onClick="ARIA2.purge_download_result();"></li></a>
+
+
+
+			  <a href="javascript:;"><li class="down_menu f_t_file" style="background-position: -0px -0px; width: 36px; height: 36px;margin-top:4px;"></li></a>
+
+
+
+			</ul>
+
+
+
+		 </span>
+
+
+
+	    </div>
+
+
+
+	   <div class="f_file_list">
+
+
+
+		  <section id="other-tasks">
+
+
+
+          <div class="section-header"></div>
+
+
+
+         <ul id="stoped-tasks-table" class="tasks-table">
+
+             <li>
+
+
+
+             <div class="empty-tasks"> </div>
+
+
+
+            </li>
+
+		 </ul>
+
+
+
+      </section>
+
+
+
+		</div>
+
+
+
+	 </div>
+
+
+
+  </div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+<!--div id="main-alert" class="hide" style="display:none;">
+
+
+
+          <div id="main-alert-inline" class="alert">
+
+
+
+            <a href="###" onClick="$('#main-alert').hide();" class="close">×</a>
+
+
+
+            <span class="alert-msg">Loading</span>          </div>
+
+
+
+        </div-->
+
+
+
+        <div class="pull-right" id="other-grp">
+
+
+
+          <div class="btn-group">
+
+
+
+              <i class="icon-wrench"></i>            </a>          
+
+
+
+			  </div>
+
+
+
+        </div>
+
+
+
+      </div>
+
+
+
+     <section class="modal hide fade" id="add-task-modal">
+
+
+
+    <div class="modal-body">
+
+
+
+      <div id="add-task-alert" class="alert alert-error hide">
+
+
+
+         <span class="alert-msg"></span>      </div>
+
+
+
+      <div id="uri-more"><span class="or-and">&or;&or;&or;&or;&or;&or;</span><span class="or-and" style="display:none;">&and;&and;&and;&and;&and;&and;</span></div>
+
+
+
+      <div id="add-task-option-wrap"></div>
+
+
+
+    </div>
+
+
+
+    </section>
+
+
+
+    <section class="modal  fade" id="setting-modal">
+
+
+
+
+
+    </section>
+
+
+
+<script id="global-speed-tpl" type="text/mustache-template">
+
+
+
+      <i class="icon-download"></i> <span>{{#_v.format_size}}{{downloadSpeed}}{{/_v.format_size}}</span>/s
+
+
+
+        / 
+
+
+
+      <i class="icon-upload"></i>  <span>{{#_v.format_size}}{{uploadSpeed}}{{/_v.format_size}}</span>/s
+
+
+
+    </script>
+
+
+
+    <script id="active-task-tpl" type="text/mustache-template">
+
+
+
+      {{#tasks}}
+
+
+
+      <li class="task" id="task-gid-{{gid}}" data-status="{{status}}" data-gid="{{gid}}">
+
+
+
+	   <div style="width:400px;float:left;">
+
+
+
+                 <i class="select-box hide"></i>
+
+
+
+			     <div class="downing_pause" onClick="selectfun(this);YAAW.tasks.pause();YAAW.tasks.unSelectAll();" title='暂停'></div> 
+
+
+
+                 <div class="downing_info"><span clas="downing_size" style="color:#FFFF00;">{{#_v.format_size}}{{totalLength}}{{/_v.format_size}}</span><span title="{{title}}" class="downing_name" style='text-overflow:ellipsis;white-space:nowrap;width:120px;overflow:hidden;'>{{title}}</span></div>
+
+
+
+				 <div  clas="downing_progress" style="width:110px;height:45px; line-height:45px;color:#FFFFFF;font-size:25px;float:left;">{{progress}}%</div>
+
+
+
+				 <!--div  clas="downing_time" style="color:#FFFFFF;height:45px;line-height:45px;float:left;"> {{#_v.format_time}}{{etc}}{{/_v.format_time}}</div--> 
+
+
+
+				 <div  clas="downing_speed" style="color:#FFFFFF;height:45px;line-height:45px;float:left;">  {{#downloadSpeed}}<span class="download-speed"><i class="icon-download"></i> {{#_v.format_size}}{{downloadSpeed}}{{/_v.format_size}}/s</span>{{/downloadSpeed}}
+
+
+
+				 </div>
+
+
+
+                  <div class="finish_delete1" onClick="selectfun(this);YAAW.tasks.remove();YAAW.tasks.unSelectAll();" style='float:right;' title='删除'></div>	
+
+
+
+	   </div>
+
+
+
+      </li>
+
+
+
+      {{/tasks}}
+
+
+
+    </script>
+
+<script id="waiting-task-tpl" type="text/mustache-template">
+
+
+
+      {{#tasks}}
+
+
+
+      <li class="task" id="task-gid-{{gid}}" data-status="{{status}}" data-gid="{{gid}}">
+
+
+
+	   <div style="width:400px;float:left;">
+
+
+
+                 <i class="select-box hide"></i>
+
+
+
+			     <div class="downing_start" onClick="selectfun(this);YAAW.tasks.unpause();YAAW.tasks.unSelectAll();" title='开始'></div> 
+
+
+
+                 <div class="downing_info"><span clas="downing_size" style="color:#FFFF00;">{{#_v.format_size}}{{totalLength}}{{/_v.format_size}}</span><span title="{{title}}" class="downing_name" style='text-overflow:ellipsis;white-space:nowrap;width:120px;overflow:hidden;'>{{title}}</span></div>
+
+
+
+				 <div  clas="downing_progress" style="width:110px;height:45px; line-height:45px;color:#FFFFFF;font-size:25px;float:left;">{{progress}}%</div>
+
+
+
+				 <!--div  clas="downing_time" style="color:#FFFFFF;height:45px;line-height:45px;float:left;"> {{#_v.format_time}}{{etc}}{{/_v.format_time}}</div--> 
+
+
+
+				 <div  clas="downing_speed" style="color:#FFFFFF;height:45px;line-height:45px;float:left;"> 0 Kb/s
+
+				 </div>
+
+                 <div class="finish_delete1" onClick="selectfun(this);YAAW.tasks.remove();YAAW.tasks.unSelectAll();" style='float:right;' title='删除'></div>	 
+
+	   </div>
+
+
+
+      </li>
+
+
+
+      {{/tasks}}
+
+
+
+    </script>
+
+
+
+    <script id="other-task-tpl" type="text/mustache-template">
+
+
+
+      {{#tasks}}
+
+
+
+      <li class="task" id="task-gid-{{gid}}" data-status="{{status}}" data-gid="{{gid}}" data-infohash="{{infoHash}}">
+
+
+
+      <div class="finish_li">
+
+
+
+              <i class="select-box hide"></i>
+
+
+
+              <span class="finish_icon"></span>
+
+
+
+			    <div class="finish_info">
+
+
+
+                 <span class="finish_name" title="{{title}}" style='text-overflow:ellipsis;white-space:nowrap;width:135px;overflow:hidden;'>{{title}}{{progress}}%</span>
+
+
+
+	            <span class="finish_time">{{#_v.format_size}}{{totalLength}}{{/_v.format_size}}</span>
+
+
+
+           </div> 
+
+
+
+           <span class="finish_delete" onClick="selectfun(this);YAAW.tasks.remove();YAAW.tasks.unSelectAll();li_mouse();" title="删除"></span>		
+
+
+
+</div> 
+
+
+
+      </li>
+
+
+
+      {{/tasks}}
+
+
+
+    </script>
+
+
+
+    <script id="ib-files-tpl" type="text/mustache-template">
+
+
+
+      <div id="ib-file-btn">
+
+
+
+        <button id="ib-file-save" class="btn btn-primary">保存</button>
+
+
+
+        <button id="ib-file-select" class="btn">全部选中</button>
+
+
+
+        <button id="ib-file-unselect" class="btn">全部取消</button>
+
+
+
+		<button id="ib-file-rename" class="btn">自动改名</button>
+
+
+
+      </div>
+
+
+
+      <ul>
+
+
+
+        {{#files}}
+
+
+
+        <li>
+
+
+
+          <i class="select-box{{#selected}} icon-ok{{/selected}}" data-index="{{index}}"></i>
+
+
+
+          <span class="ib-file-title">{{title}}</span>
+
+
+
+          <span class="ib-file-size"> {{#_v.format_size}}{{completedLength}}{{/_v.format_size}} / {{#_v.format_size}}{{length}}{{/_v.format_size}}</span>
+
+
+
+        </li>
+
+
+
+        {{/files}}
+
+
+
+      </ul>
+
+
+
+    </script>
+
+
+
+    <script id="ib-options-tpl" type="text/mustache-template">
+
+
+
+      <div id="ib-options-btn">
+
+
+
+        <button id="ib-options-save" class="btn btn-primary">保存</button>
+
+
+
+      </div>
+
+
+
+      <form id="ib-options-form" class="form-horizontal" onsubmit="false">
+
+
+
+      <ul>
+
+
+
+        <li><span>下载限速:</span><input name="max-download-limit" class="active-allowed" value="{{max-download-limit}}" /></li>
+
+
+
+        <li><span>上传限速:</span><input name="max-upload-limit" class="active-allowed" value="{{max-upload-limit}}" /></li>
+
+
+
+        <li><span>分享率:</span><input name="split" value="{{split}}" /></li>
+
+
+
+        <li><span>线程:</span><input name="max-connection-per-server" value="{{max-connection-per-server}}" /></li>
+
+
+
+        <li><span>分块大小:</span><input name="min-split-size" value="{{min-split-size}}" /></li>
+
+
+
+      </form>
+
+
+
+    </script>
+
+
+
+    <script id="other-task-empty" type="text/mustache-template">
+
+
+
+      <li>
+
+
+
+        <div class="empty-tasks">
+
+
+
+          <strong>没有任务</strong>
+
+
+
+        </div>
+
+
+
+      </li>
+
+
+
+    </script>
+
+
+
+    <script id="add-task-option-tpl" type="text/mustache-template">
+
+
+
+      <hr />
+
+
+
+      <form id="add-task-option" class="form-horizontal" onsubmit="false">
+
+
+
+        <div class="control-group">
+
+
+
+          <label class="control-label" for="ati-out">重命名文件</label>
+
+
+
+          <div class="controls">
+
+
+
+            <input id="ati-out" class="input-xlarge input-clear" name="out" />
+
+
+
+          </div>
+
+
+
+        </div>
+
+
+
+        <div class="control-group">
+
+
+
+          <label class="control-label for="ati-dir">下载文件夹</label>
+
+
+
+          <div class="controls">
+
+
+
+            <input id="ati-dir" class="input-xlarge input-save" name="dir" value="{{dir}}" />
+
+
+
+          </div>
+
+
+
+        </div>
+
+
+
+        <div class="clearfix"></div>
+
+
+
+        <div class="control-group half">
+
+
+
+          <div class="controls">
+
+
+
+            <label class="checkbox">
+
+
+
+              <input type="checkbox" name="pause" class="input-save" {{#pause}}checked{{/pause}} />
+
+
+
+              添加后不立即开始
+
+
+
+            </label>
+
+
+
+          </div>
+
+
+
+        </div>
+
+
+
+        <div class="control-group half">
+
+
+
+          <div class="controls">
+
+
+
+            <label class="checkbox">
+
+
+
+              <input type="checkbox" name="parameterized-uri" class="input-save" {{#parameterized-uri}}checked{{/parameterized-uri}} />
+
+
+
+              统一标识符
+
+
+
+            </label>
+
+
+
+          </div>
+
+
+
+        </div>
+
+
+
+        <div class="clearfix"></div>
+
+
+
+        <div class="control-group half">
+
+
+
+          <label class="control-label" for="ati-split">线程</label>
+
+
+
+          <div class="controls">
+
+
+
+            <input id="ati-split" class="input-small input-save" name="split" value="{{split}}" />
+
+
+
+          </div>
+
+
+
+        </div>
+
+
+
+        <div class="control-group half">
+
+
+
+          <label class="control-label" for="ati-cps">服务器连接</label>
+
+
+
+          <div class="controls">
+
+
+
+            <input id="ati-cps" class="input-small input-save" name="max-connection-per-server" value="{{max-connection-per-server}}" />
+
+
+
+          </div>
+
+
+
+        </div>
+
+
+
+        <div class="control-group half">
+
+
+
+          <label class="control-label" for="ati-sr">分享率</label>
+
+
+
+          <div class="controls">
+
+
+
+            <input id="ati-sr" class="input-small input-save" name="seed-ratio" value="{{seed-ratio}}" />
+
+
+
+          </div>
+
+
+
+        </div>
+
+
+
+        <div class="control-group half">
+
+
+
+          <label class="control-label" for="ati-st">做种时间</label>
+
+
+
+          <div class="controls">
+
+
+
+            <input id="ati-st" class="input-small input-save" name="seed-time" value="{{seed-time}}" />
+
+
+
+          </div>
+
+
+
+        </div>
+
+
+
+        <div class="clearfix"></div>
+
+
+
+        <div class="control-group">
+
+
+
+          <label class="control-label" for="ati-header">验证码</label>
+
+
+
+          <div class="controls">
+
+
+
+            <textarea id="ati-header" class="input-xlarge input-save" name="header" warp="off">Cookie:gdriveid=0D3317FF4945A82DAF8BF3F43937D5D9</textarea>
+
+
+
+          </div>
+
+
+
+        </div>
+
+
+
+      </form>
+
+
+
+    </script>
+
+
+
+    <script id="aria2-global-setting-tpl" type="text/mustache-template">
+
+	
+
+
+
+      <form id="aria2-gs-form" class="form-horizontal" onsubmit="false">
+
+
+
+            <table cellpadding="0" cellspacing="0" width="100%" border="0">
+
+
+
+		 
+
+
+
+			  <tr>
+
+
+
+			    <td width="33%" align="right" class="d_t_label td_h">同时下载任务数：</td>
+
+
+
+				<td width="67%" align="left" colspan="4"><input type="text" id="gsi-cd" name="max-concurrent-downloads" class="input-small d_t_text" value="{{max-concurrent-downloads}}"/></td>
+
+
+
+			  </tr>
+
+
+
+			  <tr>
+
+
+
+			    <td  align="right" class="d_t_label td_h">限速：</td>
+
+
+
+				<td align="left" colspan="4">
+
+
+
+				 <a href='javascript:;'><span class='switch open hide' onclick='switchFun(this);' style='background-position: -0px -0px; width: 77px; height: 30px;'></span></a>
+
+
+
+		         <a href='javascript:;'><span class='switch close' onclick='switchFun(this);' style='background-position: -0px -40px; width: 77px; height: 30px;'></span></a>				</td>
+
+
+
+			  </tr>
+
+
+
+			  <tr>
+
+
+
+			    <td align="right" class="d_t_label td_h">最大下载速度：</td>
+
+
+
+				<td align="left" style='color:#FFFFFF;' colspan="4"><input type="text" id="gsi-dl" name="max-overall-download-limit" class="input-small d_t_text" value="{{max-overall-download-limit}}"/>&nbsp;KB/s</td>
+
+
+
+			  </tr>
+
+
+
+			  <tr>
+
+
+
+			    <td  align="right" class="d_t_label td_h">最大上传速度：</td>
+
+
+
+				<td align="left" style='color:#FFFFFF;' colspan="4"><input type="text"  id="gsi-ul" name="max-overall-upload-limit" class="input-small d_t_text" value="{{max-overall-upload-limit}}"/>&nbsp;KB/s</td>
+
+
+
+			  </tr>
+
+
+
+			  <tr>
+
+
+
+			    <td height="70" colspan="5" align="center" valign="bottom"><input type="button" value="保存"  class="d_t_btn" onClick="saveset();$('#setting-form').submit();"></td>
+
+
+
+			  </tr>
+
+
+
+			</table>
+
+
+
+      </form>
+
+
+
+    </script>
+
+
+
+    <script src="yaww/js/jquery-1.7.2.min.js"></script>
+
+
+
+    <script src="yaww/js/bootstrap.min.js"></script>
+
+
+
+    <script src="yaww/js/jquery.jsonrpc.js"></script>
+
+
+
+    <script src="yaww/js/jquery.Storage.js"></script>
+
+
+
+    <script src="yaww/js/jquery.base64.min.js"></script>
+
+
+
+    <script src="yaww/js/mustache.js"></script>
+
+
+
+    <script src="yaww/js/aria2.js"></script>
+
+
+
+    <script src="yaww/js/yaaw.js"></script>
+
+
+
+</body>
+
+
+
+</html>
+
+
+

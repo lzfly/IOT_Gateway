@@ -1,0 +1,4571 @@
+<%
+require("uci")
+local x = uci.cursor()
+
+local ssid = ""
+local pwd = ""
+local winame = ""
+
+x:foreach("wireless", "wifi-iface",
+	function(s)
+		if s.device == "radio0" and s.mode == "ap" then
+			winame = s['.name']
+			ssid = s.ssid
+			pwd = s.key
+			return false
+		end
+	end)
+
+local lanip = x:get("network", "lan", "ipaddr")
+local dhcpstart = x:get("dhcp", "lan", "start")
+local dhcpend = x:get("dhcp", "lan", "limit")
+
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+
+
+
+
+
+<head>
+
+
+
+
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+
+
+
+
+
+<title>无线设置</title>
+
+
+
+
+
+
+
+<style type="text/css">
+
+
+
+
+
+
+
+html,body {
+
+
+
+
+
+
+
+	height:100%;
+
+
+
+
+
+
+
+	margin:0px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+body {
+
+
+
+
+
+
+
+	background:#0A53A0;
+
+
+
+
+
+
+
+	filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);
+
+
+
+
+
+
+
+-ms-filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);/*IE8*/ 
+
+
+
+
+
+
+
+	background:-webkit-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:-o-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:-ms-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:-moz-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	background:adial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a{
+
+
+
+
+
+
+
+cursor: pointer;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+@media screen and (min-height: 631px) {
+
+#body_center{
+
+
+
+
+
+
+
+width:100%;
+
+
+
+height:630px;
+
+
+
+position:absolute;
+
+
+
+top:50%;
+
+
+
+margin-top:-328px;
+
+text-align:center;
+
+}
+
+#main {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	height:560px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+
+
+
+
+	border-top:1px solid #407CB8;
+
+
+
+
+
+
+
+}
+
+
+
+}
+
+@media screen and (max-height: 630px) {
+
+#body_center{
+
+width:100%;
+
+height:590px;
+
+position:absolute;
+
+top:50%;
+
+margin-top:-310px;
+
+text-align:center;
+
+}
+
+#main {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	height:520px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+
+
+
+
+	border-top:1px solid #407CB8;
+
+
+
+
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+a:link {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a:visited {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a:hover {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+a:active {
+
+
+
+
+
+
+
+	text-decoration:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.left {
+
+
+
+
+
+
+
+	float:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.right {
+
+
+
+
+
+
+
+	float:right;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+img {
+
+
+
+
+
+
+
+	border:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+span {
+
+
+
+
+
+
+
+	display:block;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.hide {
+
+
+
+
+
+
+
+	display:none;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#top .back {
+
+
+
+
+
+
+
+	width:42px;
+
+
+
+
+
+
+
+	height:75px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/back.png) no-repeat center center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#top .title {
+
+
+
+
+
+
+
+	height:75px;
+
+
+
+
+
+
+
+	line-height:75px;
+
+
+
+
+
+
+
+	width:200px;
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:26px;
+
+
+
+
+
+
+
+	font-family:Microsoft YaHei,small;
+
+
+
+
+
+
+
+	font-weight:normal;
+
+
+
+
+
+
+
+	text-align:left;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_text {
+
+
+
+
+
+
+
+	width:300px;
+
+
+
+
+
+
+
+	height:30px;
+
+
+
+
+
+
+
+	line-height:30px;
+
+
+
+
+
+
+
+	border:1px solid #00AAA9;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_lable {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:16px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#tip {
+
+
+
+
+
+
+
+	width:160px;
+
+
+
+
+
+
+
+	overflow:hidden;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+	border:solid 2px #669999;
+
+
+
+
+
+
+
+	background:#6699CC;
+
+
+
+    display:none;
+
+ 
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#tip .loading {
+
+
+
+
+
+
+
+	width:126px;
+
+
+
+
+
+
+
+	height:22px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	margin-top:5px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#tip .tip_info {
+
+
+
+
+
+
+
+	width:126px;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	margin-top:5px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#top {
+
+
+
+
+
+
+
+	width:80%;
+
+
+
+
+
+
+
+	max-width:1200px;
+
+
+
+
+
+
+
+	min-width:980px;
+
+
+
+
+
+
+
+	height:75px;
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#main .content {
+
+
+
+
+
+
+
+	margin-top:50px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content .content_left {
+
+
+
+
+
+
+
+	width:49%;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content_left .icon {
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	width:210px;
+
+
+
+
+
+
+
+	height:210px;
+
+
+
+
+
+
+
+	background:url(<%=resource%>/images/wireless_icon.png) no-repeat center center;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content_left .caption {
+
+
+
+
+
+
+
+	margin:auto;
+
+
+
+
+
+
+
+	width:100%;
+
+
+
+
+
+
+
+	color:#E6A606;
+
+
+
+
+
+
+
+	font-size:22px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+#main .content .content_right {
+
+
+
+
+
+
+
+	width:50%;
+
+
+
+
+
+
+
+	text-align:center;
+
+
+
+
+
+
+
+	border-left:1px solid #4886C9;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_btn {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	width:302px;
+
+
+
+
+
+
+
+	height:32px;
+
+
+
+
+
+
+
+	border:none;
+
+
+
+
+
+
+
+	font-size:18px;
+
+
+
+
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+
+
+
+
+	background:#E6AB07;
+
+
+
+
+
+
+
+	cursor:pointer;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.t_instr {
+
+
+
+
+
+
+
+	color:#FFFFFF;
+
+
+
+
+
+
+
+	font-size:12px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.view_pwd{
+
+
+
+
+
+
+
+width:36px;
+
+
+
+
+
+
+
+height:36px;
+
+
+
+
+
+
+
+background:url(<%=resource%>/images/view_pwd1.png) no-repeat center center;
+
+
+
+
+
+
+
+filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/view_pwd1.png');
+
+
+
+
+
+
+
+}
+
+input:focus {
+
+		-webkit-box-shadow: 0px 0px 10px #00AAA9;
+
+		-moz-box-shadow: 0px 0px 10px #00AAA9;
+
+		box-shadow: 0px 0px 10px #00AAA9;
+
+	}
+
+.mainlevel {
+
+	POSITION:absolute; 
+
+	PADDING-LEFT: 20px;
+
+	display:none;
+
+	left:10px;
+
+	background:#FFFFFF;	
+
+	text-align:left;
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+	font-size:12px;
+
+	border:solid 1px #E6E9ED;
+
+	-moz-border-radius: 8px;
+
+	-khtml-border-radius: 8px;
+
+	-webkit-border-radius: 8px;
+
+	border-radius: 8px;  
+
+	box-shadow: 5px 5px 5px #888888;
+
+	z-index:1;
+
+    behavior: url(ie-css3.htc);
+
+}
+
+/*上尖角 */
+
+.cornerT{ 
+
+    border-style: solid;
+
+    border-width: 15px;
+
+    font-size: 0;
+
+    height: 0;
+
+    overflow: hidden;
+
+    position:inherit;
+
+    width: 0;
+
+	border-color: transparent transparent #FFFFFF ;
+
+    top: -29px;
+
+    left: 28px;
+
+}
+
+.ssid_tip{
+
+height:25px;
+
+line-height:25px;
+
+width:420px;
+
+background:#FFF9C9;
+
+border: solid 1px #C7BF93;
+
+-webkit-border-radius: 6px;
+
+-moz-border-radius: 6px;
+
+border-radius: 6px;
+
+font-size:15px;
+
+margin-top:28px;
+
+display:none;
+
+}
+
+</style>
+
+<!--[if lt IE 9]>
+
+<script src="<%=resource%>/js/css3-mediaqueries.js"></script>
+
+<![endif]-->
+
+
+
+
+
+<script type="text/javascript" src="<%=resource%>/js/jquery-1.8.1.min.js"></script>
+
+
+
+
+
+
+
+<script type="text/javascript" src="<%=resource%>/js/jsloader.js"></script>
+
+
+
+
+
+
+
+<script language="javascript">
+
+
+
+
+
+
+
+var box1;
+
+
+
+
+
+
+
+var a=0;
+
+
+
+
+
+
+
+var regIp=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+
+
+
+
+
+
+
+var urls=["<%=resource%>/js/jquery.poshytip.js","<%=resource%>/js/jquery.form.js","<%=resource%>/js/tip.js"];
+
+
+
+
+
+
+
+function init(){
+
+
+
+
+
+
+
+  loadCss("<%=resource%>/js/tip-yellowsimple/tip-yellowsimple.css");
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function load_data(){
+
+
+
+
+
+ box1 = new LightBox("tip");
+
+
+
+
+
+
+
+	if(a==1){
+
+
+
+
+
+
+
+	 box1.Close(); 
+
+
+
+
+
+
+
+	}
+
+
+
+var p_ssid=getCookie("p_ssid");
+
+var ssid="== jianluyou_nvram_get(\"wl0_ssid\"); ==";
+
+if(p_ssid!=""&&p_ssid!=null&&p_ssid!=ssid){
+
+setCookie("p_ssid",ssid);
+
+$(".ssid_tip").css("display","block");
+
+setTimeout("out_div()",3000);
+
+}
+
+
+
+setPos();
+
+
+
+
+
+
+
+var navigatorName = "Microsoft Internet Explorer";
+
+
+
+
+
+
+
+if( navigator.appName == navigatorName ){
+
+
+
+
+
+
+
+if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE6.0") 
+
+
+
+
+
+
+
+{ 
+
+
+
+
+
+
+
+ $(".link").each(function(){
+
+
+
+
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+
+
+
+
+              });
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE7.0") 
+
+
+
+
+
+
+
+{ 
+
+
+
+
+
+
+
+  $(".link").each(function(){
+
+
+
+
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+
+
+
+
+              });
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE8.0") 
+
+
+
+
+
+
+
+{ 
+
+
+
+
+
+
+
+ $(".link").each(function(){
+
+
+
+
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+
+
+
+
+              });
+
+
+
+
+
+
+
+}else{
+
+
+
+
+
+
+
+ $('#top .back,#top .title').click(function(){
+
+
+
+
+
+
+
+     window.parent.closeFun("wireless_set");
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+}else{
+
+
+
+
+
+
+
+  $('#top .back,#top .title').click(function(){
+
+
+
+
+
+
+
+     window.parent.closeFun("wireless_set");
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+	$("#wl_ssid").blur(function(){
+
+
+
+
+
+
+
+    var value=$(this).attr("value");
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(value==""||value==null){
+
+
+
+
+
+
+
+	  $(this).poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+   $("#wan_wireless_passwd").blur(function(){
+
+
+
+
+
+
+
+    var value=$(this).attr("value");
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(value==""||value==null){
+
+
+
+
+
+
+
+	  $(this).poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+	 if(value.length<8||value.length>63){
+
+
+
+
+
+
+
+	   $(this).poshytip({
+
+
+
+
+
+
+
+			    content: '密码不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+  $("#lan_ipaddr").blur(function(){
+
+
+
+
+
+
+
+    var value=$(this).attr("value");
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(value==""||value==null){
+
+
+
+
+
+
+
+	$(this).poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+	 if(!value.match(regIp)){
+
+
+
+
+
+
+
+	   $(this).poshytip({
+
+
+
+
+
+
+
+			    content: 'Ip地址不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+  $("#dhcp_start").blur(function(){
+
+
+
+
+
+
+
+    var value=$(this).attr("value");
+
+
+
+
+
+
+
+	var ip=$("#lan_ipaddr").attr("value");
+
+
+
+
+
+
+
+	var ip_arr=ip.split(".");
+
+
+
+
+
+
+
+	var v_arr=value.split(".");
+
+
+
+
+
+
+
+	ip=ip_arr[2];
+
+
+
+
+
+
+
+	var v=v_arr[2];
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(value==""||value==null){
+
+
+
+
+
+
+
+	$(this).poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+	 if(!value.match(regIp)){
+
+
+
+
+
+
+
+	   $(this).poshytip({
+
+
+
+
+
+
+
+			    content: 'Ip地址不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+
+
+
+
+      }else if(ip!=v){
+
+
+
+
+
+
+
+	   $(this).poshytip({
+
+
+
+
+
+
+
+			    content: '和Ip地址不在同一网段！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	    $(this).poshytip('show');
+
+
+
+
+
+
+
+	  }
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+   $("#dhcp_end").blur(function(){
+
+
+
+
+
+
+
+    var value=$(this).attr("value");
+
+
+
+
+
+
+
+	var ip=$("#lan_ipaddr").attr("value");
+
+
+
+
+
+
+
+	var sip=$("#dhcp_start").attr("value");
+
+
+
+
+
+
+
+	var ip_arr=ip.split(".");
+
+
+
+
+
+
+
+	var s_arr=sip.split(".");
+
+
+
+
+
+
+
+	var e_arr=value.split(".");
+
+
+
+
+
+
+
+	ip=ip_arr[2];
+
+
+
+
+
+
+
+	var v=e_arr[2];
+
+
+
+
+
+
+
+	$(this).poshytip('hide');
+
+
+
+
+
+
+
+    if(value==""||value==null){
+
+
+
+
+
+
+
+	$(this).poshytip({
+
+
+
+
+
+
+
+			    content: '不能为空！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	  $(this).poshytip('show');
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+	 if(!value.match(regIp)){
+
+
+
+
+
+
+
+	   $(this).poshytip({
+
+
+
+
+
+
+
+			    content: 'Ip地址不合法！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	   $(this).poshytip('show');
+
+
+
+
+
+
+
+      }else if(ip!=v){
+
+
+
+
+
+
+
+	   $(this).poshytip({
+
+
+
+
+
+
+
+			    content: '和Ip地址不在同一网段！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	    $(this).poshytip('show');
+
+
+
+
+
+
+
+	  }else{
+
+
+
+
+
+
+
+	    for (var i = 0; i < 4; i++) {
+
+
+
+
+
+
+
+	      if (parseInt(e_arr[i])<parseInt(s_arr[i])){
+
+
+
+
+
+
+
+		    $(this).poshytip({
+
+
+
+
+
+
+
+			    content: '不能小于开始IP！',
+
+
+
+
+
+
+
+				className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+				showOn: 'none',
+
+
+
+
+
+
+
+				alignTo: 'target',
+
+
+
+
+
+
+
+				alignX: 'right',
+
+
+
+
+
+
+
+				alignY: 'center',
+
+
+
+
+
+
+
+				offsetX: 5
+
+
+
+
+
+
+
+			});
+
+
+
+
+
+
+
+	      $(this).poshytip('show');
+
+
+
+
+
+
+
+		   break;
+
+
+
+
+
+
+
+	      }
+
+
+
+
+
+
+
+	   }  
+
+
+
+
+
+
+
+	  }
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function setPos(){
+
+
+
+
+
+
+
+        var o=document.getElementById("wl_ssid"); 
+
+
+
+
+
+
+
+		if(o.setSelectionRange){//W3C
+
+
+
+
+
+
+
+			setTimeout(function(){
+
+
+
+
+
+
+
+				o.setSelectionRange(o.value.length,o.value.length);
+
+
+
+
+
+
+
+				o.focus();
+
+
+
+
+
+
+
+			},0);
+
+
+
+
+
+
+
+		}else if(o.createTextRange){//IE
+
+
+
+
+
+
+
+			var textRange=o.createTextRange();
+
+
+
+
+
+
+
+			textRange.moveStart("character",o.value.length);
+
+
+
+
+
+
+
+			textRange.moveEnd("character",0);
+
+
+
+
+
+
+
+			textRange.select();
+
+
+
+
+
+
+
+		}
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+function change_src(obj){
+
+
+
+
+
+
+
+	var src=$(obj).css("backgroundImage");
+
+
+
+
+
+
+
+	src=src.substring(src.lastIndexOf("/")+1,src.indexOf("png")-1);
+
+
+
+
+
+
+
+	if(src=="view_pwd"){
+
+
+
+
+
+
+
+		 $(obj).css("background","url(<%=resource%>/images/view_pwd1.png) no-repeat center center");
+
+
+
+
+
+
+
+		 $(obj).css("filter","progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/view_pwd1.png')");
+
+
+
+
+
+
+
+		 document.getElementById("wireless_passwd").innerHTML="<input type='password' name='wl_wpa_psk' class='t_text' value='"+document.getElementById("wan_wireless_passwd").value+"' id='wan_wireless_passwd'/>";
+
+
+
+
+
+
+
+	}else{
+
+
+
+
+
+
+
+		  $(obj).css("background","url(<%=resource%>/images/view_pwd.png) no-repeat center center");
+
+
+
+
+
+
+
+          $(obj).css("filter","progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/view_pwd.png')");
+
+
+
+
+
+
+
+		 document.getElementById("wireless_passwd").innerHTML="<input type='text'   name='wl_wpa_psk' class='t_text' value='"+document.getElementById("wan_wireless_passwd").value+"' id='wan_wireless_passwd'/>";
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function saveReport() {
+
+
+
+
+
+  var p_ssid="<%=ssid%>";
+
+  var ssid=$("#wl_ssid").attr("value");
+
+
+
+
+
+
+
+  var pwd=$("#wan_wireless_passwd").attr("value");
+
+
+
+
+
+
+
+  var ip=$("#lan_ipaddr").attr("value");
+
+
+
+
+
+
+
+  var sip=$("#dhcp_start").attr("value");
+
+
+
+
+
+
+
+  var eip=$("#dhcp_end").attr("value");
+
+
+
+
+
+
+
+  var ip_arr=ip.split(".");
+
+
+
+
+
+
+
+  var sip_arr=sip.split(".");
+
+
+
+
+
+
+
+  var eip_arr=eip.split(".");
+
+
+
+
+
+
+
+  var j=0;
+
+
+
+
+
+
+
+  for (var i = 0; i < 4; i++) {
+
+
+
+
+
+
+
+	      if(parseInt(eip_arr[i])<parseInt(sip_arr[i])){
+
+
+
+
+
+
+
+		    j=1;
+
+
+
+
+
+
+
+		    break;
+
+
+
+
+
+
+
+		  }
+
+
+
+
+
+
+
+	   }  
+
+
+
+
+
+
+
+  //if(ssid!=""&&ssid!=null&&pwd.length>=8&&pwd.length<=63&&ip.match(regIp)&&sip.match(regIp)&&eip.match(regIp)&&ip_arr[2]==sip_arr[2]&&ip_arr[2]==eip_arr[2]&&j==0){
+  if(ssid!=""&&ssid!=null&&pwd.length>=8&&pwd.length<=63&&ip.match(regIp)){//&&sip.match(regIp)&&eip.match(regIp)&&ip_arr[2]==sip_arr[2]&&ip_arr[2]==eip_arr[2]&&j==0){
+
+
+
+  if(p_ssid!=ssid){
+
+   setCookie("p_ssid",p_ssid);
+
+  }
+
+
+
+  box_show();
+
+
+
+
+
+
+//document.getElementById("myform").submit();
+  $("#myform").ajaxSubmit(function(message) {
+
+
+
+
+
+
+
+     setTimeout("box_delay()",3000);	 
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+  }else{
+
+
+
+
+
+
+
+  $("#wl_ssid,#wan_wireless_passwd,#lan_ipaddr,#dhcp_start,#dhcp_end").blur();
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+function box_show(){
+
+
+
+
+
+
+
+	  box1.Show(); 
+
+
+
+
+
+
+
+}
+
+function box_delay(){
+
+   $(".tip").css("width","172px");
+
+   $(".tip_info").css("width","170px");
+
+   $(".tip_info").html("保存成功,请重新连接.");
+
+   setTimeout("box_close()",600);
+
+ }
+
+function box_close(){
+
+
+
+
+
+
+
+	  a=1;
+
+
+
+
+
+
+
+	  $(".tip_info").html("加载中...");
+
+
+
+      
+
+
+
+	  var l_ip="== nvram_get(\"lan_ipaddr\"); ==";
+
+
+
+	  var n_ip=$("#lan_ipaddr").attr("value");
+
+
+
+	  if(l_ip==n_ip){
+
+
+
+	    location.reload();
+
+
+
+	  }else{
+
+
+
+	    window.location.href = "http://"+n_ip;
+
+
+
+	  }
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function loadCss(src){
+
+
+
+
+
+
+
+  var _doc = document.getElementsByTagName('head')[0];  
+
+
+
+
+
+
+
+       var css = document.createElement('link');     
+
+
+
+
+
+
+
+       css.setAttribute('rel', 'stylesheet');       
+
+
+
+
+
+
+
+       css.setAttribute('type', 'text/css');    
+
+
+
+
+
+
+
+	   css.setAttribute('href', src);   
+
+
+
+
+
+
+
+	   _doc.appendChild(css); 
+
+
+
+
+
+
+
+	   if (css.readyState) { //IE
+
+
+
+
+
+
+
+	     css.onreadystatechange = function () {
+
+
+
+
+
+
+
+            if (css.readyState == "loaded" ||css.readyState == "complete") {
+
+
+
+
+
+
+
+                css.onreadystatechange = null;
+
+
+
+
+
+
+
+                loadmultijs(urls,function(){ load_data(); });
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+        };
+
+
+
+
+
+
+
+     } else{ //标准的DOM浏览器
+
+
+
+
+
+
+
+        css.onload = function () {
+
+
+
+
+
+
+
+              loadmultijs(urls,function(){ load_data(); });
+
+
+
+
+
+
+
+        };
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+　　} 
+
+
+
+function showTip(t){
+
+$("#"+t+"").css("display","block");
+
+}
+
+function hideTip(t){
+
+$("#"+t+"").css("display","none");
+
+}
+
+function getCookie(name){
+
+    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+
+    if(arr=document.cookie.match(reg))
+
+        return unescape(arr[2]);
+
+    else
+
+        return null;
+
+     } 
+
+function setCookie(name,value){
+
+	var Days = 30;
+
+    var exp = new Date();
+
+    exp.setTime(exp.getTime() + Days*24*60*60*1000);
+
+    document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString(); 
+
+	}
+
+function out_div(){
+
+$(".ssid_tip").fadeOut("slow");
+
+}
+
+</script>
+
+
+
+
+
+
+
+</head>
+
+
+
+
+
+
+
+<body onload="init();">
+
+
+
+
+
+
+
+<div id="body_center">
+
+
+
+
+
+
+
+<div id="top">
+
+
+
+
+
+
+
+     <a href="javascript:;" class="link"><div class="back left"></div></a> <a href="javascript:;" class="link"><div class="title left">&nbsp;&nbsp;无线设置</div></a>
+
+     <div class="ssid_tip left">您已经修改您的无线网络名称,请重新选择连接新的无线网络.</div>
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<div id="main">
+
+
+
+
+
+
+
+  <div class="content">
+
+
+
+
+
+
+
+      <div class="content_left left">
+
+
+
+
+
+
+
+        <span class="icon"></span>
+
+
+
+
+
+
+
+		<span class="caption" style="margin-top:10px;">无线WIFI设置</span>
+
+
+
+
+
+
+
+	  </div>
+
+
+
+
+
+
+
+	  <div class="content_right right">
+
+
+
+
+
+
+
+	   <form method="post" action="<%=luci.dispatcher.build_url("admin/newweb/wireless_update")%>" id="myform">
+
+
+
+
+
+
+
+         <input type="hidden" name="wl_unit" value="0">
+
+
+
+
+
+
+
+		 <input type="hidden" name="lan_netmask" value="== nvram_get(\"lan_netmask\"); =="/>
+
+
+<input type="hidden" name="winame" value="<%=winame%>"/>
+
+
+
+
+         <input type="hidden" name="action" value="Apply">
+
+
+
+
+
+
+
+	    <table width="487" border="0" align="center" cellpadding="0" cellspacing="0">
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		    <td width="135" height="55" align="right"  onmouseover="showTip('name_tip');" onmouseout="hideTip('name_tip');"><label class="t_lable">无线网络名称:</label></td>
+
+			 <td style="position:relative;">
+
+			 <input type="text" name="wl_ssid" value="<%=ssid%>" class="t_text" id="wl_ssid"/>
+
+			 <div class="mainlevel" style="width:250px;height:36px; padding-top:5px; padding-left:5px;bottom:-44px; " id="name_tip">
+
+			  <span class="cornerT"></span>     
+
+			  即SSID,是您手机/电脑/平板等设备搜索WIFI网络时找到的由间路由组建的WIFI网络名
+
+			 </div>
+
+			 </td>
+
+
+
+
+
+
+
+			 <td width="36"></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		    <td height="55" align="right" onmouseover="showTip('pwd_tip');" onmouseout="hideTip('pwd_tip');"><label class="t_lable">无线网络密码:</label></td>
+
+			 <td style="position:relative;"><span id="wireless_passwd"><input type="password" class="t_text"  id="wan_wireless_passwd" name="wl_wpa_psk" value="<%=pwd%>"/></span>
+
+			 <div class="mainlevel" style="width:250px;height:36px; padding-top:5px; padding-left:5px;bottom:-44px;" id="pwd_tip">
+
+			  <span class="cornerT"></span>     
+
+			  密码为8-63个字符,默认密码为产品序列号,密码为空时则表示不设置密码
+
+			 </div>
+
+			 </td>
+
+
+
+
+
+
+
+			 <td><a href="javascript:goto(0);" onclick="return false"><span class="view_pwd"  onclick="change_src(this);"></span></a></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="55" align="right"><label class="t_lable">路由器IP地址:</label></td>
+
+
+
+
+
+
+
+			 <td><input type="text" class="t_text" name="lan_ipaddr"  value="<%=lanip%>" id="lan_ipaddr"/></td>
+
+
+
+
+
+
+
+			 <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="55" align="right"><label class="t_lable">内网IP开始地址:</label></td>
+
+
+
+
+
+
+
+			 <td><input type="text" class="t_text" name="dhcp_start"  value="<%=dhcpstart%>" id="dhcp_start"/></td>
+
+
+
+
+
+
+
+			 <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="55" align="right"><label class="t_lable">内网IP地址数量:</label></td>
+
+
+
+
+
+
+
+			 <td><input type="text" class="t_text" name="dhcp_end"   value="<%=dhcpend%>" id="dhcp_end"/></td>
+
+
+
+
+
+
+
+			 <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		   <tr>
+
+
+
+
+
+
+
+		     <td height="100"></td>
+
+
+
+
+
+
+
+		     <td><input type="button" value="保存"  class="t_btn" onclick="saveReport();"/></td>
+
+
+
+
+
+
+
+			 <td></td>
+
+
+
+
+
+
+
+		   </tr>
+
+
+
+
+
+
+
+		</table>
+
+
+
+
+
+
+
+		</form>
+
+
+
+
+
+
+
+	  </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<div id="tip">
+
+
+
+
+
+
+
+   <span class="loading"><img src="<%=resource%>/images/loading.gif"/></span>
+
+
+
+
+
+
+
+   <span class="tip_info">保存中...</span>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+</html>
+
+
+
+
+
+
+

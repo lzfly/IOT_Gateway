@@ -1,0 +1,3028 @@
+<%
+	require("uci")
+	local x = uci.cursor()
+	local l_switch=x:get("energy","green_energy","led_switch")
+	local w_switch=x:get("energy","green_energy","wifi_switch")	
+	local l_time=x:get("energy","green_energy","led_time")	
+	local w_time=x:get("energy","green_energy","wifi_time")	
+%>
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+
+<head>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+
+<title>绿色节能</title>
+
+
+
+<style type="text/css">
+
+
+
+/* CSS Document */
+
+
+
+html,body {
+
+
+
+	height:100%;
+
+
+
+	margin:0px;
+
+
+
+}
+
+
+
+body {
+
+
+
+	background:#0A53A0;
+
+
+
+	filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);
+
+
+
+-ms-filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);/*IE8*/ 
+
+
+
+	background:-webkit-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	background:-o-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	background:-ms-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	background:-moz-radial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	background:adial-gradient(center center,#2F80D7,#0A53A0);
+
+
+
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+
+
+
+}
+
+@media screen and (min-height: 631px) {
+
+#body_center{
+
+
+
+width:100%;
+
+
+
+height:630px;
+
+
+
+position:absolute;
+
+
+
+top:50%;
+
+
+
+margin-top:-328px;
+
+
+
+text-align:center;}
+
+#main {
+
+
+
+	width:80%;
+
+
+
+	max-width:1200px;
+
+
+
+	min-width:980px;
+
+
+
+	height:560px;
+
+
+
+	margin:auto;
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+	border-top:1px solid #407CB8;
+
+
+
+}
+
+}
+
+@media screen and (max-height: 630px) {
+
+#body_center{
+
+
+
+width:100%;
+
+height:590px;
+
+position:absolute;
+
+top:50%;
+
+margin-top:-310px;
+
+text-align:center;}
+
+#main {
+
+
+
+	width:80%;
+
+
+
+	max-width:1200px;
+
+
+
+	min-width:980px;
+
+
+
+	height:520px;
+
+
+
+	margin:auto;
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+
+
+
+　　-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF')"; /* IE8 */
+
+
+
+	background:rgba(255,255,255,0.02);
+
+
+
+	border-top:1px solid #407CB8;
+
+
+
+}
+
+}
+
+a{
+
+
+
+cursor:pointer;
+
+
+
+}
+
+
+
+a:link {
+
+
+
+	text-decoration:none;
+
+
+
+	color: #FFFFFF;
+
+
+
+}
+
+
+
+a:visited {
+
+
+
+	text-decoration:none;
+
+
+
+	color: #FFFFFF;
+
+
+
+}
+
+
+
+a:hover {
+
+
+
+	text-decoration:none;
+
+
+
+	color: #FFFFFF;
+
+
+
+}
+
+
+
+a:active {
+
+
+
+	text-decoration:none;
+
+
+
+	color: #FFFFFF;
+
+
+
+}
+
+
+
+.left {
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.right {
+
+
+
+	float:right;
+
+
+
+}
+
+
+
+img {
+
+
+
+	border:none;
+
+
+
+}
+
+
+
+span {
+
+
+
+	display:block;
+
+
+
+}
+
+
+
+.hide {
+
+
+
+	display:none;
+
+
+
+}
+
+
+
+#top {
+
+
+
+	width:80%;
+
+
+
+	height:75px;
+
+
+
+	margin:auto;
+
+
+
+}
+
+
+
+#top .back {
+
+
+
+	width:42px;
+
+
+
+	height:75px;
+
+
+
+	background:url(<%=resource%>/images/back.png) no-repeat center center;
+
+
+
+}
+
+
+
+#top .title {
+
+
+
+	height:75px;
+
+
+
+	line-height:75px;
+
+
+
+	width:200px;
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:26px;
+
+
+
+	font-family:Microsoft YaHei,small;
+
+
+
+	font-weight:normal;
+
+
+
+	text-align:left;
+
+
+
+}
+
+
+
+.t_text {
+
+
+
+	width:300px;
+
+
+
+	height:30px;
+
+
+
+	border:1px solid #66FF00;
+
+
+
+}
+
+
+
+.t_lable {
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:18px;
+
+
+
+}
+
+
+
+#tip {
+
+
+
+	width:160px;
+
+
+
+	overflow:hidden;
+
+
+
+	text-align:center;
+
+
+
+	border:solid 2px #669999;
+
+
+
+	background:#6699CC;
+
+
+
+	display:none;
+
+
+
+}
+
+
+
+#tip .loading {
+
+
+
+	width:126px;
+
+
+
+	height:22px;
+
+
+
+	margin:auto;
+
+
+
+	margin-top:5px;
+
+
+
+}
+
+
+
+#tip .tip_info {
+
+
+
+	width:126px;
+
+
+
+	text-align:center;
+
+
+
+	margin:auto;
+
+
+
+	margin-top:5px;
+
+
+
+}
+
+
+
+#top {
+
+
+
+	width:80%;
+
+
+
+	max-width:1200px;
+
+
+
+	min-width:980px;
+
+
+
+	height:75px;
+
+
+
+	margin:auto;
+
+
+
+}
+
+
+
+#top .intro {
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:14px;
+
+
+
+	padding-top:35px;
+
+
+
+}
+
+
+
+
+
+
+
+#main .content {
+
+
+
+	width:100%;
+
+
+
+	padding-top:60px;
+
+
+
+}
+
+
+
+.content_left {
+
+
+
+	width:49%;
+
+
+
+	text-align:center;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.content_right {
+
+
+
+	width:50%;
+
+
+
+	text-align:center;
+
+
+
+	border-left:1px solid #4886C9;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.light {
+
+
+
+	width:100%;
+
+
+
+	height:240px;
+
+
+
+	background:url(<%=resource%>/images/s_light2.png) center center no-repeat;
+
+
+
+}
+
+
+
+.wifi_sign {
+
+
+
+	width:100%;
+
+
+
+	height:240px;
+
+
+
+	background:url(<%=resource%>/images/wifi-sign1.png) center center no-repeat;
+
+
+
+}
+
+
+
+.m_title {
+
+
+
+	width:100%;
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:18px;
+
+
+
+	margin-top:40px;
+
+
+
+}
+
+
+
+.m_title .m_left {
+
+
+
+	width:50%;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.m_title .m_right {
+
+
+
+	width:50%;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.state {
+
+
+
+	width:100%;
+
+
+
+	text-align:center;
+
+
+
+}
+
+
+
+.state_t {
+
+
+
+	margin:auto;
+
+
+
+	width:76px;
+
+
+
+	height:35px;
+
+
+
+}
+
+
+
+.state_s {
+
+
+
+	margin:auto;
+
+
+
+	width:188px;
+
+
+
+	height:30px;
+
+
+
+	background:#1160B3;
+
+
+
+}
+
+
+
+.hand {
+
+
+
+	width:100%;
+
+
+
+	text-align:center;
+
+
+
+}
+
+
+
+.hand_info {
+
+
+
+	width:350px;
+
+
+
+	height:64px;
+
+
+
+	margin:auto;
+
+
+
+	padding-top:40px;
+
+
+
+}
+
+
+
+.icon {
+
+
+
+	width:64px;
+
+
+
+	height:64px;
+
+
+
+	background:url(<%=resource%>/images/ds_icon.png) center center no-repeat;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.h_i {
+
+
+
+	color:#FFFFFF;
+
+
+
+	height:32px;
+
+
+
+	line-height:32px;
+
+
+
+	font-size:16px;
+
+
+
+	width:230px;
+
+
+
+	text-align:left;
+
+
+
+	float:left;
+
+
+
+	margin-left:10px;
+
+
+
+}
+
+
+
+.h_t {
+
+
+
+	color:#FFFFFF;
+
+
+
+	height:32px;
+
+
+
+	line-height:32px;
+
+
+
+	font-size:16px;
+
+
+
+	width:230px;
+
+
+
+	text-align:left;
+
+
+
+	float:left;
+
+
+
+	margin-left:10px;
+
+
+
+}
+
+
+
+.set {
+
+
+
+	width:36px;
+
+
+
+	height:64px;
+
+
+
+	background:url(<%=resource%>/images/perm_yes.png) center center no-repeat;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.state_s ul {
+
+
+
+	margin:0px;
+
+
+
+	padding:0px;
+
+
+
+	color:#FFFFFF;
+
+
+
+	font-size:16px;
+
+
+
+	list-style:none;
+
+
+
+}
+
+
+
+.state_s ul li {
+
+
+
+	height:28px;
+
+
+
+	width:45px;
+
+
+
+	line-height:26px;
+
+
+
+	margin:1px;
+
+
+
+	padding:0px;
+
+
+
+	float:left;
+
+
+
+}
+
+
+
+.li_bg {
+
+
+
+	background:#4B94E3;
+
+
+
+}
+
+
+
+.switch {
+
+
+
+background:url(<%=resource%>/images/switch.png);
+
+
+
+}
+
+
+
+.energy_icon {
+
+
+
+	background:url(<%=resource%>/images/energy_icon.png) center center no-repeat;
+
+
+
+</style>
+
+<!--[if lt IE 9]>
+
+<script src="<%=resource%>/js/css3-mediaqueries.js"></script>
+
+<![endif]-->
+
+<script type="text/javascript" src="<%=resource%>/js/jquery-1.8.1.min.js"></script>
+
+
+
+<script type="text/javascript" src="<%=resource%>/js/jsloader.js"></script>
+
+
+
+<script type="text/javascript">
+
+
+
+var a=0;
+
+
+
+var box1;
+
+
+
+var urls=["<%=resource%>/js/jquery.form.js","<%=resource%>/js/tip.js"];
+
+
+
+function init(){
+
+
+
+loadmultijs(urls,function(){ load_data(); });
+
+
+
+}
+
+
+
+function load_data(){
+
+
+
+box1 = new LightBox("tip");
+
+
+
+	if(a==1){
+
+
+
+	 box1.Close(); 
+
+
+
+	}
+
+
+
+var navigatorName = "Microsoft Internet Explorer";
+
+
+
+if( navigator.appName == navigatorName ){
+
+
+
+if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE6.0") 
+
+
+
+{ 
+
+
+
+  $(".link").each(function(){
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+              });
+
+
+
+} 
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE7.0") 
+
+
+
+{ 
+
+
+
+ $(".link").each(function(){
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+              });
+
+
+
+} 
+
+
+
+else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .split(";")[1].replace(/[ ]/g,"")=="MSIE8.0") 
+
+
+
+{ 
+
+
+
+  $(".link").each(function(){
+
+
+
+                   $(this).attr('href','index.asp')
+
+
+
+              });
+
+
+
+}else{
+
+
+
+ $('#top .back,#top .title').click(function(){
+
+
+
+     window.parent.closeFun("energy_save");
+
+
+
+    });
+
+
+
+}  
+
+
+
+}else{
+
+
+
+$('#top .back,#top .title').click(function(){
+
+
+
+     window.parent.closeFun("energy_save");
+
+
+
+    });
+
+
+
+}
+
+
+
+}
+
+
+
+function li_fun(obj,n){
+
+
+
+ $('.state_s ul li').removeClass("li_bg");
+
+
+
+ $(obj).addClass("li_bg");
+
+
+
+ switch(n){
+
+
+
+   case 0:
+
+
+
+   $(".wifi_sign").css('background-position','-0px -420px');
+
+
+
+   $("#green_energy_wifi_signal").attr("value","0");
+
+
+
+   break;
+
+
+
+   case 1:
+
+
+
+   $(".wifi_sign").css('background-position','-0px -630px');
+
+
+
+   $("#green_energy_wifi_signal").attr("value","1");
+
+
+
+   break;
+
+
+
+   case 2:
+
+
+
+   $(".wifi_sign").css('background-position','-0px -840px');
+
+
+
+   $("#green_energy_wifi_signal").attr("value","2");
+
+
+
+   break;
+
+
+
+   case 3:
+
+
+
+   $(".wifi_sign").css('background-position','-0px -1050px');
+
+
+
+   $("#green_energy_wifi_signal").attr("value","3");
+
+
+
+   break;
+
+
+
+ }
+
+
+
+   $("#ws_form").ajaxSubmit(function(message) {
+
+
+
+
+
+  });
+
+
+
+}
+
+
+
+function switchFun(obj){
+
+
+
+ var enable=$("#green_energy_led_switch").attr('value');
+
+
+
+ if(enable=="0"){
+
+
+
+   $("#green_energy_led_switch").attr("value","1");
+
+   $(obj.parentNode.parentNode.parentNode.parentNode).children(".energy_icon").css("background-position","-0px -0px");
+
+   $(obj).css("background-position","-0px -40px");
+
+
+
+ }else{
+
+   $(obj.parentNode.parentNode.parentNode.parentNode).children(".energy_icon").css("background-position","-0px -210px");
+
+   $(obj).css("background-position","-0px -0px");
+
+   $("#green_energy_led_switch").attr("value","0");
+
+
+
+ }
+
+
+
+  $("#ls_form").ajaxSubmit(function(message) {
+
+
+
+
+
+  });
+
+
+
+}
+
+
+
+function save_ltime(){
+
+var s_time=$(".content_left .start_value").val(); 
+
+
+
+var e_time=$(".content_left .end_value").val();
+
+ 
+
+var start_time_arr=s_time.split(":");
+
+var end_time_arr=e_time.split(":");
+
+if(parseInt(end_time_arr[0])<parseInt(start_time_arr[0])){
+
+	  alert("时间不合法");
+
+}else if((parseInt(end_time_arr[0])==parseInt(start_time_arr[0]))&&(parseInt(end_time_arr[1])<=parseInt(start_time_arr[1]))){
+
+	  alert("时间不合法");
+
+}else{
+
+ $(".tip_info").html("正在保存...");
+
+
+
+ box_show();
+
+ var time=s_time+"-"+e_time;
+
+
+
+ $("#green_energy_led_off_time").attr("value",time);
+
+
+
+ $("#lt_form").ajaxSubmit(function(message) {
+
+
+
+   $(".tip_info").html("保存成功");
+
+
+
+   setTimeout("box_delay()",600);	
+
+
+
+  });
+
+}
+
+}
+
+
+
+function save_wtime(){
+
+ var s_time=$(".content_right .start_value").val(); 
+
+
+
+ var e_time=$(".content_right .end_value").val(); 
+
+var start_time_arr=s_time.split(":");
+
+var end_time_arr=e_time.split(":");
+
+if(parseInt(end_time_arr[0])<parseInt(start_time_arr[0])){
+
+	  alert("时间不合法");
+
+}else if((parseInt(end_time_arr[0])==parseInt(start_time_arr[0]))&&(parseInt(end_time_arr[1])<=parseInt(start_time_arr[1]))){
+
+	  alert("时间不合法");
+
+}else{
+
+ $(".tip_info").html("正在保存...");
+
+
+
+ box_show();
+
+
+
+
+
+
+
+ var time=s_time+"-"+e_time;
+
+
+
+ $("#green_energy_wifi_off_time").attr("value",time);
+
+
+
+ $("#wt_form").ajaxSubmit(function(message) {
+
+
+
+  $(".tip_info").html("保存成功");
+
+
+
+   setTimeout("box_delay()",600);	
+
+
+
+  });
+
+}
+
+}
+
+
+
+function box_show(){
+
+
+
+	  box1.Show(); 
+
+
+
+}
+
+function box_delay(){
+
+  $(".tip_info").html("保存成功");
+
+   setTimeout("box_close()",400);
+
+ }
+
+
+
+function box_close(){
+
+
+
+	  a=1;
+
+      $(".tip_info").html("加载中...");
+
+	  location.reload();
+
+
+
+}
+
+
+
+function times(){
+
+
+
+var t="<option>00:00</option>";
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>00:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>00:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	   t=t+"<option>01:00</option>"
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>01:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>01:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	   t=t+"<option>02:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>02:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>02:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>03:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>03:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>03:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>04:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>04:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>04:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>05:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>05:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>05:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>06:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>06:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>06:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>07:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>07:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>07:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>08:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>08:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>08:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>09:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>09:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>09:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>10:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>10:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>10:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>11:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>11:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>11:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>12:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>12:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>12:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>13:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>13:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>13:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>14:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>14:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>14:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>15:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>15:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>15:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>16:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>16:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>16:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>17:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>17:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>17:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>18:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>18:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>18:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>19:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>19:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>19:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>20:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>20:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>20:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>21:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>21:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>21:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	    t=t+"<option>22:00</option>" 
+
+
+
+	   for(var i=1;i<=59;i++){
+
+
+
+	   if(i<=9){
+
+
+
+	    t=t+"<option>23:0"+i+"</option>";
+
+
+
+	   }else{
+
+
+
+	    t=t+"<option>23:"+i+"</option>";
+
+
+
+		}
+
+
+
+	   }
+
+
+
+	  return  t;
+
+
+
+}
+
+
+
+</script>
+
+
+
+</head>
+
+
+
+<body onload="init();">
+
+
+
+<form  method="post" action="<%=luci.dispatcher.build_url("admin/newweb/ls_set")%>" id="ls_form">
+
+
+
+<input type="hidden" name="action" value="Store">
+
+
+
+<input type="hidden" name="green_energy" value="0">
+
+
+
+<input type="hidden" name="green_energy_led_switch"  value="" id="green_energy_led_switch">
+
+
+
+</form>
+
+
+
+<form  method="post" action="<%=luci.dispatcher.build_url("admin/newweb/lt_set")%>" id="lt_form">
+
+
+
+<input type="hidden" name="action" value="Store">
+
+
+
+<input type="hidden" name="green_energy" value="0">
+
+
+
+<input type="hidden" name="green_energy_led_off_time"  value="" id="green_energy_led_off_time">
+
+
+
+</form>
+
+
+
+<form  method="post" action="<%=luci.dispatcher.build_url("admin/newweb/ws_set")%>" id="ws_form">
+
+
+
+<input type="hidden" name="action" value="Store">
+
+
+
+<input type="hidden" name="green_energy" value="0">
+
+
+
+<input type="hidden" name="green_energy_wifi_signal"  value="" id="green_energy_wifi_signal">
+
+
+
+</form>
+
+
+
+<form  method="post" action="<%=luci.dispatcher.build_url("admin/newweb/wt_set")%>" id="wt_form">
+
+
+
+<input type="hidden" name="action" value="Store">
+
+
+
+<input type="hidden" name="green_energy" value="0">
+
+
+
+<input type="hidden" name="green_energy_wifi_off_time"  value="" id="green_energy_wifi_off_time">
+
+
+
+</form>
+
+
+
+<div id="body_center">
+
+
+
+<div id="top">
+
+
+
+     <a href="javascript:;" class="link"><div class="back left"></div></a><a href="javascript:;" class="link"><div class="title left">&nbsp;&nbsp;绿色节能</div></a>
+
+
+
+	 <div class="intro right">节能环保 从我做起</div>
+
+
+
+</div>
+
+
+
+<div id="main">
+
+
+
+  <div class="m_title">
+
+
+
+     <div class="m_left">路由器信号灯</div>
+
+
+
+	 <div class="m_right">WIFI信号强度</div>
+
+
+
+  </div>
+
+
+
+  <div class="content">
+
+
+
+     <div class="content_left">
+
+
+
+         <script>
+
+
+
+		    //var  led_switch="== nvram_get(\"green_energy_led_switch\"); ==";
+			var led_switch="<%=l_switch%>"
+
+
+			if(led_switch=="1"){
+
+
+
+			  document.write('<div class="energy_icon light" style="background-position: -0px -0px; width: 200px; height: 210px; margin:auto;"></div>');
+
+
+
+			  document.write('<div class="state">');
+
+
+
+			  document.write('<div class="state_t">');
+
+
+
+			  document.write("<a href='javascript:;'><span class='switch' onclick='switchFun(this);' style='background-position: -0px -40px; width: 77px; height: 30px;'></span></a>");
+
+
+
+			  document.write('</div>');
+
+
+
+			  document.write('</div>');
+
+
+
+			  $("#green_energy_led_switch").attr("value","1");
+				
+
+
+			}else{
+
+
+
+			  document.write('<div class="energy_icon light" style="background-position: -0px -210px; width: 200px; height: 210px; margin:auto;"></div>');
+
+
+
+			  document.write('<div class="state">');
+
+
+
+			  document.write('<div class="state_t">');
+
+
+
+			  document.write("<a href='javascript:;'><span class='switch' onclick='switchFun(this);' style='background-position: -0px -0px; width: 77px; height: 30px;'></span></a>");
+
+
+
+			  document.write('</div>');
+
+
+
+			  document.write('</div>');
+
+
+
+			  $("#green_energy_led_switch").attr("value","0");
+			
+
+
+			}
+
+
+
+		 </script>
+
+
+
+		 <div class="hand">
+
+
+
+		     <div class="hand_info">
+
+
+
+			   <span class="icon"></span>
+
+
+
+			    <div class="left" style="width:240px;height:64px;">
+
+
+
+			     <span class="h_i">定时关闭</span><br/>
+
+
+
+			     <span class="h_t">
+
+
+
+				  <script>
+
+
+
+				  //var led_time="== nvram_get(\"green_energy_led_off_time\"); ==";
+				    var led_time="<%=l_time%>"
+
+
+				 var led_arr=[]; 
+
+
+
+				  document.write("<select style='border:none;width:65px;' class='start_value'>"+times()+"</select>至<select style='border:none;width:65px;' class='end_value'>"+times()+"</select>关闭信号灯");
+
+
+
+				  if(led_time.indexOf("-")>=0){
+
+
+
+				    led_arr=led_time.split("-");
+
+
+
+				  }
+
+
+
+				  if(led_arr.length>0){
+
+
+
+				    $(".content_left .start_value").val(led_arr[0]);  
+
+
+
+				    $(".content_left .end_value").val(led_arr[1]);  
+
+
+
+				  }else{
+
+
+
+				    $(".content_left .start_value").val("00:00");  
+
+
+
+				    $(".content_left .end_value").val("00:00");  
+
+
+
+				  }
+
+
+
+				   </script>
+
+
+
+				  </span>
+
+
+
+				 </div>
+
+
+
+			   <a href="javascript:;"><span class="set" title="保存" onclick="save_ltime();"></span></a>
+
+
+
+			 </div>
+
+
+
+		 </div>
+
+
+
+	 </div>
+
+
+
+	 <div class="content_right">
+
+
+
+			      <script>
+
+
+
+		    //       var  led_switch="== nvram_get(\"green_energy_wifi_signal\"); ==";
+					 var led_switch="<%=w_switch%>"
+                    
+
+			       switch(led_switch){
+
+
+
+				    case '0':
+
+
+
+					document.write('<div class="energy_icon wifi_sign" style="background-position: -0px -420px; width: 200px; height: 210px; margin:auto;"></div>');
+
+
+
+					document.write('<div class="state">');
+
+
+
+					document.write('<div class="state_s">');
+
+
+
+					document.write('<ul>');
+
+
+
+					document.write('<a href="javascript:;"><li class="li_bg" onclick="li_fun(this,0);">关</li></a>');
+
+
+
+					document.write('<a href="javascript:;"><li onclick="li_fun(this,1);">弱</li></a>');
+
+
+
+					document.write('<a href="javascript:;"><li onclick="li_fun(this,2);">中</li></a>');
+
+
+
+					document.write('<a href="javascript:;"><li onclick="li_fun(this,3);">强</li></a>');
+
+
+
+					document.write('</ul>');
+
+
+
+					document.write('</div>');
+
+
+
+					document.write('</div>');
+
+
+
+					break;
+
+
+
+					case '1':
+
+
+
+					document.write('<div class="energy_icon wifi_sign" style="background-position: -0px -630px; width: 200px; height: 210px; margin:auto;"></div>');
+
+
+
+					document.write('<div class="state">');
+
+
+
+					document.write('<div class="state_s">');
+
+
+
+					document.write('<ul>');
+
+
+
+					document.write('<a href="javascript:;"><li onclick="li_fun(this,0);">关</li></a>');
+
+
+
+					document.write('<a href="javascript:;"><li class="li_bg" onclick="li_fun(this,1);">弱</li></a>');
+
+
+
+					document.write('<a href="javascript:;"><li onclick="li_fun(this,2);">中</li></a>');
+
+
+
+					document.write('<a href="javascript:;"><li onclick="li_fun(this,3);">强</li></a>');
+
+
+
+					document.write('</ul>');
+
+
+
+					document.write('</div>');
+
+
+
+					document.write('</div>');
+
+
+
+					break;
+
+
+
+					case '2':
+
+
+
+					document.write('<div class="energy_icon wifi_sign" style="background-position: -0px -840px; width: 200px; height: 210px; margin:auto;"></div>');
+
+
+
+					document.write('<div class="state">');
+
+
+
+					document.write('<div class="state_s">');
+
+
+
+					document.write('<ul>');
+
+
+
+					document.write('<a href="javascript:;"><li onclick="li_fun(this,0);">关</li></a>');
+
+
+
+					document.write('<a href="javascript:;"><li onclick="li_fun(this,1);">弱</li></a>');
+
+
+
+					document.write('<a href="javascript:;"><li class="li_bg" onclick="li_fun(this,2);">中</li></a>');
+
+
+
+					document.write('<a href="javascript:;"><li onclick="li_fun(this,3);">强</li></a>');
+
+
+
+					document.write('</ul>');
+
+
+
+					document.write('</div>');
+
+
+
+					document.write('</div>');
+
+
+
+					break;
+
+
+
+					default:
+
+
+
+					document.write('<div class="energy_icon wifi_sign" style="background-position: -0px -1050px; width: 200px; height: 210px; margin:auto;"></div>');
+
+
+
+					document.write('<div class="state">');
+
+
+
+					document.write('<div class="state_s">');
+
+
+
+					document.write('<ul>');
+
+
+
+					document.write('<a href="javascript:;"><li onclick="li_fun(this,0);">关</li></a>');
+
+
+
+					document.write('<a href="javascript:;"><li onclick="li_fun(this,1);">弱</li></a>');
+
+
+
+					document.write('<a href="javascript:;"><li onclick="li_fun(this,2);">中</li></a>');
+
+
+
+					document.write('<a href="javascript:;"><li class="li_bg" onclick="li_fun(this,3);">强</li></a>');
+
+
+
+					document.write('</ul>');
+
+
+
+					document.write('</div>');
+
+
+
+					document.write('</div>');
+
+
+
+					break;
+
+
+
+				   }
+
+
+
+		          </script>				 
+
+
+
+		 <div class="hand">
+
+
+
+		     <div class="hand_info">
+
+
+
+			   <span class="icon"></span>
+
+
+
+			   <div class="left" style="width:240px;height:64px;">
+
+
+
+			    <span class="h_i">定时关闭</span><br/>
+
+
+
+			    <span class="h_t">
+
+
+
+				<script>
+
+
+
+				 // var wifi_time="== nvram_get(\"green_energy_wifi_off_time\"); ==";
+					var wifi_time="<%=w_time%>"
+
+
+				  var wifi_arr=[];
+
+
+
+				  document.write("<select style='border:none;width:65px;' class='start_value'>"+times()+"</select>至<select style='border:none;width:65px;' class='end_value'>"+times()+"</select>关闭WIFI");
+
+
+
+				  if(wifi_time.indexOf("-")>=0){
+
+
+
+				    wifi_arr=wifi_time.split("-");
+
+
+
+				  }
+
+
+
+				  if(wifi_arr.length>0){
+
+
+
+				    $(".content_right .start_value").val(wifi_arr[0]);  
+
+
+
+				    $(".content_right .end_value").val(wifi_arr[1]); 
+
+
+
+				  }else{
+
+
+
+				    $(".content_right .start_value").val("00:00");  
+
+
+
+				    $(".content_right .end_value").val("00:00"); 
+
+
+
+				  }
+
+
+
+				   </script>
+
+
+
+				</span>
+
+
+
+			   </div>
+
+
+
+			   <a href="javascript:;"><span class="set" title="保存" onclick="save_wtime();"></span></a>
+
+
+
+			 </div>
+
+
+
+		 </div>
+
+
+
+	 </div>
+
+
+
+  </div>
+
+
+
+</div>
+
+
+
+<div id="tip">
+
+
+
+   <span class="loading"><img src="<%=resource%>/images/loading.gif"/></span>
+
+
+
+   <span class="tip_info"></span>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</body>
+
+
+
+</html>
+
+
+
