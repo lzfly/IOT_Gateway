@@ -511,6 +511,24 @@ int32_t  modbus_conv_long( uint8_t * puc )
     int32_t  temp;
 
     /**/
+    temp = puc[0];
+    temp = temp << 8;
+    temp = temp | puc[1];
+    temp = temp << 8;
+    temp = temp | puc[2];
+    temp = temp << 8;
+    temp = temp | puc[3];
+
+    /**/
+    return temp;
+}
+
+
+int32_t  modbus_conv_longm( uint8_t * puc )
+{
+    int32_t  temp;
+
+    /**/
     temp = puc[2];
     temp = temp << 8;
     temp = temp | puc[3];

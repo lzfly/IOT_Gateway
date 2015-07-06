@@ -299,9 +299,12 @@ int startSearchDevice()
 		    //printf("getDeviceState");
 			printf("[startSearchDevice] endpoint=%d\r\n", g_devices[i].endpoint);
 			printf("device SN = %s\n", g_devices[i].SN);
-		    printf("device shortaddr = 0x%x\n", g_devices[i].shortaddr);
+		    printf("device shortaddr = %d\n", g_devices[i].shortaddr);
+                    
+                        printf("device ieee = 0x%02x%02x%02x%02x%02x%02x%02x%02x\n", g_devices[i].IEEE[0], g_devices[i].IEEE[1], g_devices[i].IEEE[2], g_devices[i].IEEE[3], g_devices[i].IEEE[4], g_devices[i].IEEE[5], g_devices[i].IEEE[6], g_devices[i].IEEE[7]);
 
-            if(g_devices[i].shortaddr != 14824)
+
+            /*if(g_devices[i].shortaddr =!= 14824)
 				continue;
             printf("getDeviceState------1\n");
 
@@ -317,6 +320,7 @@ int startSearchDevice()
 					getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
 					break;
 			}
+                */
 		}
 		sleep(10);
 

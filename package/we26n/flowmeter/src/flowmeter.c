@@ -134,7 +134,7 @@ int  test_server_add( void )
 }
 
 
-char  g_mac_addr[20];
+char  g_mac_addr[200];
 
 // FILE *popen(const char *command, const char *type);
 // char *fgets(char *s, int size, FILE *stream);
@@ -180,6 +180,11 @@ int  test_get_macaddr( void )
     }
 
     /**/
+    if ( *(dst-1) == 0x0a )
+    {
+        *(dst-1) = '\0';
+    }
+    
     *dst = '\0';
     return 0;
     
@@ -196,7 +201,7 @@ typedef struct  powermeter_info
 } powermeter_info_t;
 
 
-int  test_ubus_01_send_report( powermeter_info_t * pinfo, int32_t value )
+int  test_ubus_01_send_report( powermeter_info_t * pinfo, double value )
 {
     int  iret;
     uint32_t id;
@@ -221,14 +226,14 @@ int  test_ubus_01_send_report( powermeter_info_t * pinfo, int32_t value )
 
     /**/
     blob_buf_init( &b, 0 );
-    sprintf( tstr, "we26n_", g_mac_addr );
+    sprintf( tstr, "we26n_%s", g_mac_addr );
     blobmsg_add_string( &b, "gatewayid", tstr );
     sprintf( tstr, "rf433_enn_%s", "12345678" );
     blobmsg_add_string( &b, "deviceid", tstr );
     blobmsg_add_string( &b, "devicetype", ENN_DEVICE_TYPE_POWERMETER );
     sprintf( tstr, "%d", ENN_DEVICE_ATTR_POWERMETER_VALUE );
     blobmsg_add_string( &b, "attr", tstr );
-    sprintf( tstr, "%d", value );
+    sprintf( tstr, "%f", value );
     blobmsg_add_string( &b, "data", tstr );
     
     ubus_invoke(ctx, id, "report", b.head, NULL, NULL, 200);
@@ -244,6 +249,7 @@ int  test_ubus_01_send_report( powermeter_info_t * pinfo, int32_t value )
 int  test_modbus_01_data_cbk( intptr_t arg, int tlen, void * pdat )
 {
     int32_t  aaa;
+    double  ddd;
     uint8_t * puc;
     powermeter_info_t * pinfo;
 
@@ -256,9 +262,12 @@ int  test_modbus_01_data_cbk( intptr_t arg, int tlen, void * pdat )
         puc = (uint8_t *)pdat;
 
         aaa = modbus_conv_long( &(puc[3]) );
-        printf( "%d\n", aaa );
+        ddd = aaa;
+        ddd = aaa * 250 * 60;
+        ddd = ddd / 18000000;
+        printf( "%f\n", ddd );
 
-        test_ubus_01_send_report( pinfo, aaa );
+        test_ubus_01_send_report( pinfo, ddd );
     }
     
     test_modbus_cbk( arg, tlen, pdat );
@@ -266,6 +275,32 @@ int  test_modbus_01_data_cbk( intptr_t arg, int tlen, void * pdat )
     
 }
 
+
+int  test_modbus_01_data_cbkaaa( intptr_t arg, int tlen, void * pdat )
+{
+    int32_t  aaa;
+    uint8_t * puc;
+    powermeter_info_t * pinfo;
+
+    /**/
+    pinfo = (powermeter_info_t *)arg;
+
+#if 0
+    if ( tlen == 5 )
+    {
+        //puc = (uint8_t *)pdat;
+
+        //aaa = modbus_conv_long( &(puc[3]) );
+        printf( "%d\n", aaa );
+
+        test_ubus_01_send_report( pinfo, aaa );
+    }
+#endif
+
+    test_modbus_cbk( arg, tlen, pdat );
+    return 0;
+    
+}
 
 void  test_modbus_01_timer_cbk( struct uloop_timeout * ptmr )
 {
@@ -278,6 +313,7 @@ void  test_modbus_01_timer_cbk( struct uloop_timeout * ptmr )
 
     /**/
     modbus_send_req( mctx, 1, 0x14, 0x2, test_modbus_01_data_cbk, (intptr_t)pinfo );
+    // modbus_send_req( mctx, 1, 0x40, 0x1, test_modbus_01_data_cbkaaa, (intptr_t)pinfo );
 
     /**/
     uloop_timeout_set( ptmr, 30000 );
@@ -327,7 +363,7 @@ int  test_ubus_02_send_report( flowmeter_info_t * pinfo, double value )
 
     /**/
     blob_buf_init( &b, 0 );
-    sprintf( tstr, "we26n_", g_mac_addr );
+    sprintf( tstr, "we26n_%s", g_mac_addr );
     blobmsg_add_string( &b, "gatewayid", tstr );
     sprintf( tstr, "rf433_enn_%s", pinfo->devsn );
     blobmsg_add_string( &b, "deviceid", tstr );
@@ -363,7 +399,7 @@ int  test_modbus_02_data_cbk( intptr_t arg, int tlen, void * pdat )
     {
         puc = (uint8_t *)pdat;
 
-        aaa = modbus_conv_long( &(puc[3]) );
+        aaa = modbus_conv_longm( &(puc[3]) );
         bbb = modbus_conv_real4( &(puc[7]) );
         ccc = bbb;
         ccc = ccc + aaa;
@@ -372,7 +408,7 @@ int  test_modbus_02_data_cbk( intptr_t arg, int tlen, void * pdat )
         test_ubus_02_send_report( pinfo, ccc );
     }
     
-    // test_modbus_cbk( arg, tlen, pdat );
+    test_modbus_cbk( arg, tlen, pdat );
     return 0;
     
 }
@@ -425,7 +461,7 @@ void  test_modbus_02_timer_cbk( struct uloop_timeout * ptmr )
         break;
 
     case 1:
-        modbus_send_req( mctx, 2, 136, 0x4, test_modbus_02_data_cbk, (intptr_t)pinfo );
+        modbus_send_req( mctx, 2, 144, 0x4, test_modbus_02_data_cbk, (intptr_t)pinfo );
         uloop_timeout_set( ptmr, 30000 );        
         break;
     }

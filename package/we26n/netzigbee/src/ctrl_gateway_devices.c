@@ -71,7 +71,8 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 	const char * deviceIdstr;
 	const char * attrstr;
 	const char * datastr;
-	w26n_uint16 shortaddr ;
+	//w26n_uint16 shortaddr ;
+        char ieeestr[32];
 	w26n_uint8 endpoint;
 	w26n_uint32 attr;
 	w26n_uint32 data;
@@ -109,7 +110,7 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 	
     {
 	   char *ptr,*ptr1, c = '_';
-	   char shortaddrstr[32];
+	   //char ieeestr[32];
 	   char endpiontstr[32];
 	   ptr = strchr(deviceIdstr, c);
 	   printf( "deviceid parse 1\n");
@@ -137,21 +138,21 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 
 	   while(i < ptr1 - ptr - 1)
 	   {
-	      shortaddrstr[i] = ptr[i+1];
+	      ieeestr[i] = ptr[i+1];
 		  i++;
 	   }
-	   shortaddrstr[ptr1 - ptr - 1] = 0;
+	   ieeestr[ptr1 - ptr - 1] = 0;
 	   
 	   stpcpy(endpiontstr, ptr1 + 1);
 	   endpiontstr[strlen(ptr1) - 1] = 0;
 	   
-	   printf( "shortaddrstr = %s\n", shortaddrstr );
+	   printf( "ieeestr = %s\n", ieeestr );
 	   printf( "endpiontstr = %s\n", endpiontstr );
 	   
-	   shortaddr = strtoul(shortaddrstr, NULL, 10);
+	   //shortaddr = strtoul(shortaddrstr, NULL, 10);
 	   endpoint = strtoul(endpiontstr, NULL, 10);
 	   
-	   printf( "shortaddr = %d\n", shortaddr );
+	   printf( "ieeestr = %s ieeelen=%d\n", ieeestr, strlen(ieeestr) );
 	   printf( "endpoint = %d\n", endpoint );
 	   
 	   attr = strtoul(attrstr, NULL, 10);
@@ -166,12 +167,13 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
         int i;
 		for(i = 0; i < g_devices_count; i++)
 		{
-			printf("[startSearchDevice] shrtaddr=%d endpoint=%d\r\n", g_devices[i].shortaddr, g_devices[i].endpoint);
 
-			if(g_devices[i].endpoint == endpoint && g_devices[i].shortaddr == shortaddr)
+                        
+			printf("[ctrlcmd] ieeestr=%s ieeelen=%d endpoint=%d\r\n", g_devices[i].ieeestr,strlen(g_devices[i].ieeestr), g_devices[i].endpoint);
+			if(g_devices[i].endpoint == endpoint && (strcmp(g_devices[i].ieeestr,  ieeestr) == 0))
 			{
 				printf("device SN = %s", g_devices[i].SN);
-				printf("device shortaddr = 0x%x", g_devices[i].shortaddr);
+				printf("device ieeestr = %s", g_devices[i].ieeestr);
 				
 				switch(g_devices[i].deviceId)
 				{
@@ -215,7 +217,7 @@ done:
 
     /* send reply */
 	blob_buf_init( &b, 0 );
-	blobmsg_add_string( &b, "return",  "ok" );
+	blobmsg_add_string( &b, "return",  "ok777" );
     
     /**/
     ubus_send_reply( ctx, req, b.head );
@@ -237,7 +239,8 @@ static int zigbee_getstatecmd( struct ubus_context *ctx, struct ubus_object *obj
 	const char * deviceIdstr;
 	const char * attrstr;
 	const char * datastr;
-	w26n_uint16 shortaddr ;
+	//w26n_uint16 shortaddr ;
+        char ieeestr[32];
 	w26n_uint8 endpoint;
 	w26n_uint32 attr;
 	w26n_uint32 data;
@@ -265,16 +268,22 @@ static int zigbee_getstatecmd( struct ubus_context *ctx, struct ubus_object *obj
 		attrstr = blobmsg_data( tb[CTRLCMD_ATTR] );
 		printf( "attr = %s\n", attrstr );
 	}
+
+
+	
 	
     {
 	   char *ptr,*ptr1, c = '_';
-	   char shortaddrstr[32];
+	   //char ieeestr[32];
 	   char endpiontstr[32];
 	   ptr = strchr(deviceIdstr, c);
+	   printf( "deviceid parse 1\n");
 
 	   ptr = strchr(ptr + 1, c);
+	   printf( "deviceid parse 2\n");
 
 	   ptr1 = strchr(ptr + 1, c);
+	   printf( "deviceid parse 3\n");
 
        printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", ptr,ptr1);
 
@@ -293,37 +302,38 @@ static int zigbee_getstatecmd( struct ubus_context *ctx, struct ubus_object *obj
 
 	   while(i < ptr1 - ptr - 1)
 	   {
-	      shortaddrstr[i] = ptr[i+1];
+	      ieeestr[i] = ptr[i+1];
 		  i++;
 	   }
-	   shortaddrstr[ptr1 - ptr - 1] = 0;
+	   ieeestr[ptr1 - ptr - 1] = 0;
 	   
 	   stpcpy(endpiontstr, ptr1 + 1);
 	   endpiontstr[strlen(ptr1) - 1] = 0;
 	   
-	   printf( "shortaddrstr = %s\n", shortaddrstr );
+	   printf( "ieeestr = %s\n", ieeestr );
 	   printf( "endpiontstr = %s\n", endpiontstr );
 	   
-	   shortaddr = strtoul(shortaddrstr, NULL, 10);
+	   //shortaddr = strtoul(shortaddrstr, NULL, 10);
 	   endpoint = strtoul(endpiontstr, NULL, 10);
 	   
-	   printf( "shortaddr = %d\n", shortaddr );
+	   printf( "ieeestr = %s\n", ieeestr );
 	   printf( "endpoint = %d\n", endpoint );
 	   
 	   attr = strtoul(attrstr, NULL, 10);
 	   printf( "attr = %d\n", attr );
-	    
+	   
+
 	}
 	{
         int i;
 		for(i = 0; i < g_devices_count; i++)
 		{
-			printf("[startSearchDevice] shrtaddr=%d endpoint=%d\r\n", g_devices[i].shortaddr, g_devices[i].endpoint);
+	                printf("[startSearchDevice] ieeestr=%d endpoint=%d\r\n", g_devices[i].ieeestr, g_devices[i].endpoint);
 
-			if(g_devices[i].endpoint == endpoint && g_devices[i].shortaddr == shortaddr)
+			if(g_devices[i].endpoint == endpoint && (strcmp(g_devices[i].ieeestr,  ieeestr) == 0))
 			{
 				printf("device SN = %s", g_devices[i].SN);
-				printf("device shortaddr = 0x%x", g_devices[i].shortaddr);
+				printf("device ieeestr = 0x%x", g_devices[i].ieeestr);
 				
 				switch(g_devices[i].deviceId)
 				{

@@ -28,6 +28,7 @@ struct deviceBean{
 	w26n_uint8 IEEE[8];
 	w26n_uint8 SNlen ;
 	w26n_char SN[101];
+        w26n_char ieeestr[20];
 	
 };
 extern struct GatewayBean g_Gate;

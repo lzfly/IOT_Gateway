@@ -58,7 +58,7 @@ void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
 }
 
 
-int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoint, w26n_uint16 attr, w26n_uint32 data)
+int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint, w26n_uint16 attr, w26n_uint32 data)
 {
     int  iret;
     uint32_t  id;
@@ -90,9 +90,12 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_uint16 shortaddr, w26n_uint8 endpoi
 	char gatewayidstr[32];
 	sprintf(gatewayidstr, "we26n_%s", g_localMAC);
 	blobmsg_add_string( &b, "gatewayid", gatewayidstr );
+
+        printf("[sendMsgToWeb] start--3\r\n");
 	
 	char deviceidstr[64];
-	sprintf(deviceidstr, "zigbee_fbee_%d_%d", shortaddr, endpoint);
+	sprintf(deviceidstr, "zigbee_fbee_%s_%d", ieeestr, endpoint);
+        printf("[sendMsgToWeb] start--%s\r\n", deviceidstr);
 	blobmsg_add_string( &b, "deviceid", deviceidstr);
 	
 	char devicetypestr[8];
@@ -233,7 +236,9 @@ int receiveDeviceMsg(char *buf, int len)
 					w26n_byte IEEE[8];
 					memcpy(&IEEE[0], &buffer[12 + g_devices[g_devices_count].namelen], 8);
 					memcpy(&g_devices[g_devices_count].IEEE[0], &buffer[12 + g_devices[g_devices_count].namelen], 8);
-					printf("[receiveDeviceMsg]IEEE=%d\r\n",g_devices[g_devices_count].IEEE);
+                                        sprintf(g_devices[g_devices_count].ieeestr,"%02x%02x%02x%02x%02x%02x%02x%02x", IEEE[0], IEEE[1], IEEE[2], IEEE[3], IEEE[4], IEEE[5], IEEE[6], IEEE[7]);
+
+                                        printf("[receiveDeviceMsg]IEEE=%s\r\n",g_devices[g_devices_count].ieeestr);
 
 					g_devices[g_devices_count].SNlen = buffer[20 + g_devices[g_devices_count].namelen];
 					printf("[receiveDeviceMsg]SNlen=%d\r\n",g_devices[g_devices_count].SNlen);
@@ -289,10 +294,10 @@ int receiveDeviceMsg(char *buf, int len)
 					{
 					 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 					 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
-                         sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE, status);
+                         sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE, status);
 						 break;
 					 default:
-					     sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, 0, status);
+					     sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, status);
 						 break;
 					}
 					
@@ -338,10 +343,10 @@ int receiveDeviceMsg(char *buf, int len)
 					{
 					 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 					 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
-                         sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE, level);
+                         sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE, level);
 						 break;
 					 default:
-					     sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, 0, level);
+					     sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, level);
 						 break;
 					}
 				}
@@ -388,7 +393,7 @@ int receiveDeviceMsg(char *buf, int len)
 					    continue;
 					g_colorTmp[index] = colortmp;
 					 
-                     sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE, colortmp);
+                     sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE, colortmp);
 				}
 				else if(resptype == RPCS_DEVICE_REPORT)
 				{
@@ -448,7 +453,7 @@ int receiveDeviceMsg(char *buf, int len)
 						w26n_byte value = buffer[11];
 						printf("[receiveDeviceMsg] value=%d\r\n",value);
 						
-						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, 0, value);
+						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, value);
 					}
 					else if(g_devices[index].deviceId == FB_DEVICE_TYPE_TEMP_HUM || g_devices[index].deviceId == FB_DEVICE_TYPE_TEMP_HUM_2)
 					{
@@ -474,8 +479,8 @@ int receiveDeviceMsg(char *buf, int len)
 						w26n_byte value1 = buffer[16];
 						printf("[receiveDeviceMsg] value1=%d\r\n",value1);
 						
-						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, ENN_DEVICE_ATTR_TEMP_VALUE, value);
-						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].shortaddr, g_devices[index].endpoint, ENN_DEVICE_ATTR_HUM_VALUE, value1);
+						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_TEMP_VALUE, value);
+						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_HUM_VALUE, value1);
 					}
 					else{
 
