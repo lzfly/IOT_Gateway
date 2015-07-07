@@ -100,52 +100,78 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
 	
 	char devicetypestr[8];
 	char deviceattrstr[16];
+	char devicedatastr[64];
+	
 	switch(deviceId)
 	{
 	 case FB_DEVICE_TYPE_GAS:
 	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_GAS);
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_GAS_ALERT);
+		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_TEMP_HUM:
 	 case FB_DEVICE_TYPE_TEMP_HUM_2:
 	     sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_TEMP_HUM);
 		 if(attr == ENN_DEVICE_ATTR_TEMP_VALUE)
+		 {
+		     double data1 = data;
+			 data1 = data1/100;
+			 sprintf(devicedatastr, "%2.2f", data1);
+			 
 		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_TEMP_VALUE);
-		 else
+		 }
+		 else{
 		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_HUM_VALUE);
+			 sprintf(devicedatastr, "%d", data);
+		}
 	     break;
 		 
 	 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
 	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_ON_OFF_THREE);
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_ON_OFF_THREE_STATE);
+		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_WINDOWS:
 	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_WINDOWS);
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_WINDOWS_VALUE);
+		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
 	     sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_COLOR_TEMP_LAMP);
-		 if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE)
+		 if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE){
 		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE);
-		 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE)
+			 sprintf(devicedatastr, "%d", data);
+		}
+		 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE){
 		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE);
-		 else
+			 data = (data)*100/255 ;
+			 sprintf(devicedatastr, "%d", data);
+		}
+		 else{
 		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE);
+			 if(data < 2700)
+			     data =2700;
+			 if(data > 6500)
+			     data =6500;
+			 data = (data - 2700)*100/(6500-2700) + 1 ;
+			 sprintf(devicedatastr, "%d", data);
+		}
 	     break;
 		 
 	 default:
+	     sprintf(devicedatastr, "%d", data);
 	     break;
 	}
 	blobmsg_add_string( &b, "devicetype", devicetypestr);
 	
 	blobmsg_add_string( &b, "attr", deviceattrstr );
 	
-	char devicedatastr[64];
-	sprintf(devicedatastr, "%d", data);
+
+	
 	blobmsg_add_string( &b, "data", devicedatastr);	
 
-	printf("[sendMsgToWeb]ubus_invoke\r\n");
+	printf("[sendMsgToWeb]ubus_invoke data = %s\r\n", devicedatastr);
 	/**/
 	ubus_invoke( ctx, id, "report", b.head, test_data_cback, 0, 3000);
 
