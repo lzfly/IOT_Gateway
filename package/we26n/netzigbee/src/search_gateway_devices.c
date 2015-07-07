@@ -243,12 +243,9 @@ int startSearchDevice()
 	int cmd_length=1;
 	w26n_byte msg[cmd_length];
 
-	char buffer1[512];
-	char *buffer;
 	int index = 0;
 	int iret;
 
-	int resp_length=0;
 	msg[SRPC_CMD_ID_POS]=RPCS_GET_DEVICES;
     printf("[startSearchDevice]\r\n");
 
@@ -274,7 +271,7 @@ int startSearchDevice()
 			}
 		}
 		
-		sleep(10);
+		sleep(20);
 
 /*        int i;
 		index++;
@@ -301,11 +298,9 @@ int startSearchDevice()
 			printf("device SN = %s\n", g_devices[i].SN);
 		    printf("device shortaddr = %d\n", g_devices[i].shortaddr);
                     
-                        printf("device ieee = 0x%02x%02x%02x%02x%02x%02x%02x%02x\n", g_devices[i].IEEE[0], g_devices[i].IEEE[1], g_devices[i].IEEE[2], g_devices[i].IEEE[3], g_devices[i].IEEE[4], g_devices[i].IEEE[5], g_devices[i].IEEE[6], g_devices[i].IEEE[7]);
+            printf("device ieee = %s\n", g_devices[i].ieeestr);
 
 
-            /*if(g_devices[i].shortaddr =!= 14824)
-				continue;
             printf("getDeviceState------1\n");
 
 			switch(g_devices[i].deviceId)
@@ -320,9 +315,11 @@ int startSearchDevice()
 					getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
 					break;
 			}
-                */
+			
+			sleep(3);
+                
 		}
-		sleep(10);
+		sleep(20);
 
 
 	}

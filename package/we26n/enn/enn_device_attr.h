@@ -24,9 +24,9 @@
 //可调亮度色温灯属性 
 //数据类型： int 32bit 
 #define ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE  1001
-//数据类型： int 32bit  min:0 max:255
+//数据类型： int 32bit  min:1 max:100
 #define ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE 1002
-//数据类型： int 32bit min:2700 max:6500
+//数据类型： int 32bit min:1 max:100
 #define ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE 1003
 
 //温湿度 

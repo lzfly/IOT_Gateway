@@ -121,7 +121,7 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 	   ptr1 = strchr(ptr + 1, c);
 	   printf( "deviceid parse 3\n");
 
-       printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", ptr,ptr1);
+       printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", (int)ptr,(int)ptr1);
 
 
 	   if(ptr == 0 || ptr1 == 0)
@@ -132,7 +132,7 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 	   }
 	   int i = 0;
 
-	   printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", ptr,ptr1);
+	   printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", (int)ptr,(int)ptr1);
 
 	   printf( "deviceid parse count=%d\n", ptr1-ptr-1);
 
@@ -143,7 +143,7 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 	   }
 	   ieeestr[ptr1 - ptr - 1] = 0;
 	   
-	   stpcpy(endpiontstr, ptr1 + 1);
+	   strcpy(endpiontstr, ptr1 + 1);
 	   endpiontstr[strlen(ptr1) - 1] = 0;
 	   
 	   printf( "ieeestr = %s\n", ieeestr );
@@ -240,12 +240,12 @@ static int zigbee_getstatecmd( struct ubus_context *ctx, struct ubus_object *obj
     const char * gatewayidstr;
 	const char * deviceIdstr;
 	const char * attrstr;
-	const char * datastr;
+
 	//w26n_uint16 shortaddr ;
         char ieeestr[32];
 	w26n_uint8 endpoint;
 	w26n_uint32 attr;
-	w26n_uint32 data;
+
     static struct blob_buf b;
 
 	printf("[zigbee_getstatecmd]start\r\n");
@@ -287,7 +287,7 @@ static int zigbee_getstatecmd( struct ubus_context *ctx, struct ubus_object *obj
 	   ptr1 = strchr(ptr + 1, c);
 	   printf( "deviceid parse 3\n");
 
-       printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", ptr,ptr1);
+       printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", (int)ptr,(int)ptr1);
 
 
 	   if(ptr == 0 || ptr1 == 0)
@@ -298,7 +298,7 @@ static int zigbee_getstatecmd( struct ubus_context *ctx, struct ubus_object *obj
 	   }
 	   int i = 0;
 
-	   printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", ptr,ptr1);
+	   printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", (int)ptr,(int)ptr1);
 
 	   printf( "deviceid parse count=%d\n", ptr1-ptr-1);
 
@@ -309,7 +309,7 @@ static int zigbee_getstatecmd( struct ubus_context *ctx, struct ubus_object *obj
 	   }
 	   ieeestr[ptr1 - ptr - 1] = 0;
 	   
-	   stpcpy(endpiontstr, ptr1 + 1);
+	   strcpy(endpiontstr, ptr1 + 1);
 	   endpiontstr[strlen(ptr1) - 1] = 0;
 	   
 	   printf( "ieeestr = %s\n", ieeestr );
@@ -539,8 +539,6 @@ int sendDeviceState(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPo
 	int cmd_length=15;
 	w26n_byte msg[cmd_length];
 
-	char buffer[512];
-	int resp_length=0;
 	
 	printf( "[sendDeviceState]start");
 	
@@ -571,9 +569,6 @@ int sendDeviceLevel(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPo
 
 	int cmd_length=17;
 	w26n_byte msg[cmd_length];
-
-	char buffer[512];
-	int resp_length=0;
 	
 	printf( "[sendDeviceLevel]start");
 	
@@ -606,9 +601,6 @@ int sendDeviceColorTemp(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 e
 
 	int cmd_length=18;
 	w26n_byte msg[cmd_length];
-
-	char buffer[512];
-	int resp_length=0;
 	
 	printf( "[sendDeviceColorTemp]start");
 	
@@ -643,8 +635,6 @@ int getDeviceState(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoi
 	int cmd_length=14;
 	w26n_byte msg[cmd_length];
 
-	char buffer[512];
-	int resp_length=0;
 	
 	printf( "[getDeviceState]start");
 	
@@ -674,9 +664,6 @@ int getDeviceLevel(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoi
 
 	int cmd_length=14;
 	w26n_byte msg[cmd_length];
-
-	char buffer[512];
-	int resp_length=0;
 	
 	printf( "[sendDeviceLevel]start");
 	
@@ -706,9 +693,6 @@ int getDeviceColorTemp(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 en
 
 	int cmd_length=14;
 	w26n_byte msg[cmd_length];
-
-	char buffer[512];
-	int resp_length=0;
 	
 	printf( "[sendDeviceColorTemp]start");
 	

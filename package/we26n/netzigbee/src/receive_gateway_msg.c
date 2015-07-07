@@ -36,8 +36,8 @@
 void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
 {
 	static const struct blobmsg_policy policy[2] = { { "args", BLOBMSG_TYPE_INT32 }, { "argv", BLOBMSG_TYPE_INT32 } };
-	struct blob_attr * cur[2];
-	uint32_t  a,b;
+	//struct blob_attr * cur[2];
+	//uint32_t  a,b;
 	
 	/**/
 	if ( type == UBUS_MSG_DATA )
@@ -219,21 +219,6 @@ int receiveDeviceMsg(char *buf, int len)
 					g_devices[g_devices_count].endpoint = buffer[4];
 					printf("[receiveDeviceMsg]endpoint=%d\r\n",g_devices[g_devices_count].endpoint);
                     
-					int i;
-					int olddevice = 0;
-                    for(i = 0; i < g_devices_count; i++)
-					{
-						//printf("[receiveDeviceMsg] i  endpoint=%d\r\n",g_devices[i].endpoint);
-
-						if(g_devices[g_devices_count].endpoint == g_devices[i].endpoint && g_devices[g_devices_count].shortaddr == g_devices[i].shortaddr)
-						{
-							//printf("[receiveDeviceMsg] find old device\r\n");
-							olddevice = 1;
-							break;
-						}
-					}
-					if(olddevice)
-						continue;
 
                     printf("[receiveDeviceMsg] find new device\r\n");
 
@@ -275,6 +260,41 @@ int receiveDeviceMsg(char *buf, int len)
 					g_devices[g_devices_count].SN[g_devices[g_devices_count].SNlen] = 0;
                    
 					printf("[receiveDeviceMsg]SN=%s\r\n",g_devices[g_devices_count].SN);
+					
+					
+					int i;
+					int olddevice = 0;
+                    for(i = 0; i < g_devices_count; i++)
+					{
+						//printf("[receiveDeviceMsg] i  endpoint=%d\r\n",g_devices[i].endpoint);
+
+						if(g_devices[g_devices_count].endpoint == g_devices[i].endpoint && (strcmp(g_devices[i].ieeestr,  g_devices[g_devices_count].ieeestr) == 0))
+						{
+							//printf("[receiveDeviceMsg] find old device\r\n");
+							g_devices[i].shortaddr = g_devices[g_devices_count].shortaddr;
+							olddevice = 1;
+						    if(g_openStatus[i] != 2 && g_devices[g_devices_count].status == 0)
+							{
+								g_openStatus[i] = 2;
+							    sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, g_openStatus[i]);
+							}
+							else if(g_openStatus[i] == 2 && g_devices[g_devices_count].status != 0)
+							{
+							    if(g_devices[index].deviceId == FB_DEVICE_TYPE_COLOR_TEMP_LAMP || g_devices[index].deviceId == FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2)
+					                g_openStatus[i] = 1;
+								else
+								    g_openStatus[i] = 0;
+									
+							    sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, g_openStatus[i] );
+							}
+
+							break;
+						}
+					}
+					if(olddevice)
+						continue;
+					
+					
 					
 					g_devices_count++;
 			   }

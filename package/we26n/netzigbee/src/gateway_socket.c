@@ -106,10 +106,6 @@ int sendCommandRevMsg(int fd,w26n_byte* cmd, int cmd_length,char* resp_body, int
 int sendCommand(int fd,w26n_byte* cmd, int cmd_length)
 {
 
-		char buffer[1024]={0};
-		int recbytes;
-
-
 
 		w26n_byte msg[128];
 		int msg_length=0;
