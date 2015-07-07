@@ -300,7 +300,7 @@ int startSearchDevice()
                     
             printf("device ieee = %s\n", g_devices[i].ieeestr);
             printf("openstatus=%d", g_openStatus[i]);
-            if(g_openStatus[i] == 2)
+            if(g_openStatus[i] == 5)
 			    continue;
             printf("getDeviceState------1\n");
 
@@ -312,8 +312,11 @@ int startSearchDevice()
 					getDeviceLevel(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
 					getDeviceColorTemp(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
 					break;
-				default:
+				case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
+				case FB_DEVICE_TYPE_WINDOWS:
 					getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+					break;
+				default:
 					break;
 			}
 			
