@@ -582,7 +582,7 @@ int sendDeviceLevel(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPo
 	printf( "[sendDeviceLevel]start");
 	
 	msg[0] = RPCS_SET_DEV_LEVEL;
-	msg[1] = 0x0D;
+	msg[1] = 0x0F;
 	msg[2] = addrmode;
 	msg[3] = shortaddr&0xFF;
 	msg[4] = (shortaddr&0xFF00)>>8;
@@ -614,7 +614,7 @@ int sendDeviceColorTemp(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 e
 	printf( "[sendDeviceColorTemp]start");
 	
 	msg[0] = RPCS_SET_COLORTMP;
-	msg[1] = 0x0D;
+	msg[1] = 0x10;
 	msg[2] = addrmode;
 	msg[3] = shortaddr&0xFF;
 	msg[4] = (shortaddr&0xFF00)>>8;
@@ -648,7 +648,7 @@ int getDeviceState(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoi
 	printf( "[getDeviceState]start");
 	
 	msg[0] = RPCS_GET_DEV_STATE;
-	msg[1] = 0x0D;
+	msg[1] = 0x0C;
 	msg[2] = addrmode;
 	msg[3] = shortaddr&0xFF;
 	msg[4] = (shortaddr&0xFF00)>>8;
@@ -677,7 +677,7 @@ int getDeviceLevel(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoi
 	printf( "[sendDeviceLevel]start");
 	
 	msg[0] = RPCS_GET_DEV_LEVEL;
-	msg[1] = 0x0D;
+	msg[1] = 0x0C;
 	msg[2] = addrmode;
 	msg[3] = shortaddr&0xFF;
 	msg[4] = (shortaddr&0xFF00)>>8;
@@ -706,7 +706,7 @@ int getDeviceColorTemp(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 en
 	printf( "[sendDeviceColorTemp]start");
 	
 	msg[0] = RPCS_GET_COLORTMP;
-	msg[1] = 0x0D;
+	msg[1] = 0x0C;
 	msg[2] = addrmode;
 	msg[3] = shortaddr&0xFF;
 	msg[4] = (shortaddr&0xFF00)>>8;
@@ -720,6 +720,43 @@ int getDeviceColorTemp(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 en
 	msg[12] = 0x0;
 	msg[13] = 0x0;
 
+
+	sendCommand(g_monitor_socket,msg,cmd_length);
+
+	return 0;
+
+}
+
+
+int sendTmpHumAlertInterval(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint, w26n_uint16 alertInterval)
+{
+
+	int cmd_length=21;
+	w26n_byte msg[cmd_length];
+	
+	printf( "[sendDeviceColorTemp]start");
+	
+	msg[0] = RPCS_SET_DEVICE_REPORT_INT;
+	msg[1] = 0x13;
+	msg[2] = addrmode;
+	msg[3] = shortaddr&0xFF;
+	msg[4] = (shortaddr&0xFF00)>>8;
+    msg[5] = 0x0;
+	msg[6] = 0x0;
+	msg[7] = 0x0;
+	msg[8] = 0x0;
+	msg[9] = 0x0;
+	msg[10] = 0x0;
+	msg[11] = endPoint;
+	msg[12] = 0x0;
+	msg[13] = 0x0;
+	msg[14] = 0x01;
+	msg[15] = 0x02;
+	msg[16] = 0x00
+	msg[17] = 0x00;
+	msg[18] = 0x21;
+	msg[19] = alertInterval&0xFF;
+	msg[20] = (alertInterval&0xFF00)>>8;
 
 	sendCommand(g_monitor_socket,msg,cmd_length);
 
