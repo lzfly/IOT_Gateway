@@ -317,7 +317,7 @@ int startSearchDevice()
 					getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
 					break;
 				case FB_DEVICE_TYPE_TEMP_HUM:
-				case FB_DEVICE_TYPE_TEMP_HUM2:
+				case FB_DEVICE_TYPE_TEMP_HUM_2:
 				    sendTmpHumAlertInterval(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, 0xffff);
 					break;
 				default:

@@ -752,7 +752,7 @@ int sendTmpHumAlertInterval(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uin
 	msg[13] = 0x0;
 	msg[14] = 0x01;
 	msg[15] = 0x02;
-	msg[16] = 0x00
+	msg[16] = 0x00;
 	msg[17] = 0x00;
 	msg[18] = 0x21;
 	msg[19] = alertInterval&0xFF;
