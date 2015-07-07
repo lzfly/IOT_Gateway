@@ -189,11 +189,20 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 					 }
 					 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE)
 					 {
+					 	 if(data < 1)
+                             data = 1;
+          				 if(data > 100)
+                             data = 100;   
+							 
 					     data = data * 255 / 100;
 						 sendDeviceLevel(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
 					 }
 					 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE)
-					 {
+					 {  
+					     if(data < 1)
+                             data = 1;
+          				 if(data > 100)
+                             data = 100;               							 
 					     data = 2700 + (data - 1) * (6500 - 2700) / 100;
 						 sendDeviceColorTemp(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
 					 }
