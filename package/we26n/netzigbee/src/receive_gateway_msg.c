@@ -220,8 +220,6 @@ int receiveDeviceMsg(char *buf, int len)
 					printf("[receiveDeviceMsg]endpoint=%d\r\n",g_devices[g_devices_count].endpoint);
                     
 
-                    printf("[receiveDeviceMsg] find new device\r\n");
-
 					g_devices[g_devices_count].profileId = (buffer[5]&0xFF)|((buffer[6]&0xFF)<<8);
 					//printf("buffer[5] = 0x%x", buffer[5]);
 					//printf("buffer[6] = 0x%x", buffer[6]);
@@ -270,23 +268,25 @@ int receiveDeviceMsg(char *buf, int len)
 
 						if(g_devices[g_devices_count].endpoint == g_devices[i].endpoint && (strcmp(g_devices[i].ieeestr,  g_devices[g_devices_count].ieeestr) == 0))
 						{
-							//printf("[receiveDeviceMsg] find old device\r\n");
+							printf("[receiveDeviceMsg] find old device\r\n");
 							g_devices[i].shortaddr = g_devices[g_devices_count].shortaddr;
 							g_devices[i].status = g_devices[g_devices_count].status;
 							olddevice = 1;
 						    if(g_openStatus[i] != 2 && g_devices[g_devices_count].status == 0)
 							{
 								g_openStatus[i] = 2;
-							    sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, g_openStatus[i]);
+								printf("status=%d", g_openStatus[i]);
+							    sendMsgToWeb(g_devices[i].deviceId, g_devices[i].ieeestr, g_devices[i].endpoint, 0, g_openStatus[i]);
 							}
 							else if(g_openStatus[i] == 2 && g_devices[g_devices_count].status != 0)
 							{
-							    if(g_devices[index].deviceId == FB_DEVICE_TYPE_COLOR_TEMP_LAMP || g_devices[index].deviceId == FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2)
+							    if(g_devices[i].deviceId == FB_DEVICE_TYPE_COLOR_TEMP_LAMP || g_devices[i].deviceId == FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2)
 					                g_openStatus[i] = 1;
 								else
 								    g_openStatus[i] = 0;
-									
-							    sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, g_openStatus[i] );
+								printf("status=%d", g_openStatus[i]);
+
+							    sendMsgToWeb(g_devices[i].deviceId, g_devices[i].ieeestr, g_devices[i].endpoint, 0, g_openStatus[i] );
 							}
 
 							break;
@@ -295,8 +295,21 @@ int receiveDeviceMsg(char *buf, int len)
 					if(olddevice)
 						continue;
 					
-					
-					
+				    printf("[receiveDeviceMsg] find new device\r\n");
+                    if(g_devices[g_devices_count].status != 0)
+					{
+                        if(g_devices[g_devices_count].deviceId == FB_DEVICE_TYPE_COLOR_TEMP_LAMP || g_devices[g_devices_count].deviceId ==                         FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2)
+						    g_openStatus[g_devices_count] = 1;
+					    else
+						    g_openStatus[g_devices_count] = 0;
+					    printf("status=%d", g_openStatus[g_devices_count]);
+					    sendMsgToWeb(g_devices[g_devices_count].deviceId, g_devices[g_devices_count].ieeestr, g_devices[g_devices_count].endpoint, 0, g_openStatus[g_devices_count] );
+                    }
+					else{
+						 g_openStatus[g_devices_count] = 2;
+			             printf("status=%d", g_openStatus[g_devices_count]);
+					     sendMsgToWeb(g_devices[g_devices_count].deviceId, g_devices[g_devices_count].ieeestr, g_devices[g_devices_count].endpoint, 0, g_openStatus[g_devices_count]);
+					}
 					g_devices_count++;
 			   }
 

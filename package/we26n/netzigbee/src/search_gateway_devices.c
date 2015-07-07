@@ -299,7 +299,7 @@ int startSearchDevice()
 		    printf("device shortaddr = %d\n", g_devices[i].shortaddr);
                     
             printf("device ieee = %s\n", g_devices[i].ieeestr);
-
+            printf("openstatus=%d", g_openStatus[i]);
             if(g_openStatus[i] == 2)
 			    continue;
             printf("getDeviceState------1\n");
