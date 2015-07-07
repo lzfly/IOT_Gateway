@@ -272,6 +272,7 @@ int receiveDeviceMsg(char *buf, int len)
 						{
 							//printf("[receiveDeviceMsg] find old device\r\n");
 							g_devices[i].shortaddr = g_devices[g_devices_count].shortaddr;
+							g_devices[i].status = g_devices[g_devices_count].status;
 							olddevice = 1;
 						    if(g_openStatus[i] != 2 && g_devices[g_devices_count].status == 0)
 							{

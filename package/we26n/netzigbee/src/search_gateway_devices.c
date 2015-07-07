@@ -300,7 +300,8 @@ int startSearchDevice()
                     
             printf("device ieee = %s\n", g_devices[i].ieeestr);
 
-
+            if(g_openStatus[i] == 2)
+			    continue;
             printf("getDeviceState------1\n");
 
 			switch(g_devices[i].deviceId)
