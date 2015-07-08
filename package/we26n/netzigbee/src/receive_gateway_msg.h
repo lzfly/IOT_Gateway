@@ -2,6 +2,7 @@
 #ifndef RECEIVEGATEWAYMSG_H_
 #define RECEIVEGATEWAYMSG_H_
 
+#define ALERTINTERVAL 60*1   //1 minute
 
 
 #endif /* RECEIVEGATEWAYMSG_H_ */

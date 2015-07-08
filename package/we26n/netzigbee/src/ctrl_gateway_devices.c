@@ -734,7 +734,7 @@ int sendTmpHumAlertInterval(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uin
 	int cmd_length=21;
 	w26n_byte msg[cmd_length];
 	
-	printf( "[sendDeviceColorTemp]start");
+	printf( "[sendtmpHumAlertInterval]start");
 	
 	msg[0] = RPCS_SET_DEVICE_REPORT_INT;
 	msg[1] = 0x13;

@@ -31,7 +31,9 @@
 #include "fbee_protocol.h"
 #include "enn_device_type.h"
 #include "enn_device_attr.h"
+#include "receive_gateway_msg.h"
 
+static int alertcount = 0;
 
 void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
 {
@@ -538,9 +540,12 @@ int receiveDeviceMsg(char *buf, int len)
 
 						w26n_byte value1 = buffer[16];
 						printf("[receiveDeviceMsg] value1=%d\r\n",value1);
-						
-						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_TEMP_VALUE, value);
-						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_HUM_VALUE, value1);
+                        if(alertcount > (ALERTINTERVAL/5)){						
+						    sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_TEMP_VALUE, value);
+						    sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_HUM_VALUE, value1);
+						    alertcount = 0;
+						}
+						alertcount++;
 					}
 					else{
 
