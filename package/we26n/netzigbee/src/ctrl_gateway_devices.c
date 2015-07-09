@@ -43,6 +43,7 @@ enum {
     CTRLCMD_DEVICEID,
     CTRLCMD_ATTR,
     CTRLCMD_DATA,
+	CTRLCMD_DEVICETYPE,
     __CTRLCMD_MAX
 };
 
@@ -58,6 +59,10 @@ static const struct blobmsg_policy  getstatecmd_policy[] = {
 	[CTRLCMD_GATEWAY] = { .name = "gatewayid", .type = BLOBMSG_TYPE_STRING },
 	[CTRLCMD_DEVICEID] = { .name = "deviceid", .type = BLOBMSG_TYPE_STRING },
 	[CTRLCMD_ATTR] = { .name = "attr", .type = BLOBMSG_TYPE_STRING },	
+};
+
+static const struct blobmsg_policy  getdevicescmd_policy[] = {
+	[CTRLCMD_DEVICETYPE] = { .name = "devicetype", .type = BLOBMSG_TYPE_STRING },
 };
 
 
@@ -399,9 +404,100 @@ done:
 }
 
 
+static int zigbee_getdevicescmd( struct ubus_context *ctx, struct ubus_object *obj,
+                struct ubus_request_data *req, const char *method,
+                struct blob_attr *msg )
+{
+	struct blob_attr * tb[__CTRLCMD_MAX];
+	const char * devicetypestr;
+	w26n_uint32 devicetype;
+
+
+    static struct blob_buf b;
+
+	printf("[zigbee_getdevicescmd]start\r\n");
+	
+    /**/
+	blobmsg_parse( ctrlcmd_policy, ARRAY_SIZE(ctrlcmd_policy), tb, blob_data(msg), blob_len(msg));
+
+	if ( tb[CTRLCMD_DEVICETYPE] )
+	{
+		devicetypestr = blobmsg_data( tb[CTRLCMD_DEVICETYPE] );
+		printf( "devicetypestr = %s\n", devicetypestr );
+	}
+    devicetype = strtoul(devicetypestr, NULL, 10);
+	
+        int i;
+		int add = 0;
+		char devicesstr[2048];
+		devicesstr[0] = 0;
+		sprintf(&devicesstr[strlen(devicesstr)], "{");
+		for(i = 0; i < g_devices_count; i++)
+		{
+		    add = 0;
+			switch(g_devices[i].deviceId)
+			{
+				case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
+				case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
+                    if(devicetype == 1)
+					{
+					    add = 1;
+					}
+					break;
+				case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
+                    if(devicetype == 4)
+					{
+					    add = 1;
+					}
+					break;
+				case FB_DEVICE_TYPE_WINDOWS:
+                    if(devicetype == 2)
+					{
+					    add = 1;
+					}
+					break;
+				case FB_DEVICE_TYPE_TEMP_HUM:
+				case FB_DEVICE_TYPE_TEMP_HUM_2:
+                    if(devicetype == 3)
+					{
+					    add = 1;
+					}
+					break;
+				default:
+					break;
+			}
+			
+			if(add){
+			    sprintf(&devicesstr[strlen(devicesstr)], "{");
+				sprintf(&devicesstr[strlen(devicesstr)], "deviceid:zigbee_fbee_%s_%d,", g_devices[i].ieeestr, g_devices[i].endpoint);
+				sprintf(&devicesstr[strlen(devicesstr)], "status:%d", g_openStatus[i]);
+				
+				sprintf(&devicesstr[strlen(devicesstr)], "},");
+	        }
+			
+        }
+	    sprintf(&devicesstr[strlen(devicesstr)], "}");
+	
+	
+    /* send reply */
+	blob_buf_init( &b, 0 );
+	
+	blobmsg_add_string( &b, "devices",  devicesstr );
+    
+    /**/
+    ubus_send_reply( ctx, req, b.head );
+	
+	/**/
+	
+    return UBUS_STATUS_OK;
+    
+}
+
+
 static const struct ubus_method zigbee_methods[] = {
 	UBUS_METHOD( "ctrlcmd",  zigbee_ctrlcmd, ctrlcmd_policy ),
 	UBUS_METHOD( "getstatecmd",  zigbee_getstatecmd, getstatecmd_policy ),
+	UBUS_METHOD( "getdevicescmd",  zigbee_getdevicescmd, getdevicescmd_policy ),
 };
 
 
