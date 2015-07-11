@@ -277,8 +277,9 @@ int receiveDeviceMsg(char *buf, int len)
 						    if(g_openStatus[i] != 5 && g_devices[g_devices_count].status == 0)
 							{
 								g_openStatus[i] = 5;
+
 								printf("status=%d", g_openStatus[i]);
-							    sendMsgToWeb(g_devices[i].deviceId, g_devices[i].ieeestr, g_devices[i].endpoint, 0, g_openStatus[i]);
+							    //sendMsgToWeb(g_devices[i].deviceId, g_devices[i].ieeestr, g_devices[i].endpoint, 0, g_openStatus[i]);
 							}
 							else if(g_openStatus[i] == 5 && g_devices[g_devices_count].status != 0)
 							{
@@ -310,7 +311,7 @@ int receiveDeviceMsg(char *buf, int len)
 					else{
 						 g_openStatus[g_devices_count] = 5;
 			             printf("status=%d", g_openStatus[g_devices_count]);
-					     sendMsgToWeb(g_devices[g_devices_count].deviceId, g_devices[g_devices_count].ieeestr, g_devices[g_devices_count].endpoint, 0, g_openStatus[g_devices_count]);
+					     //sendMsgToWeb(g_devices[g_devices_count].deviceId, g_devices[g_devices_count].ieeestr, g_devices[g_devices_count].endpoint, 0, g_openStatus[g_devices_count]);
 					}
 					g_devices_count++;
 			   }
