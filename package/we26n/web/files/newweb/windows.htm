@@ -1,3 +1,39 @@
+<%
+require("uci")
+
+local isRun=false;
+
+function getdevices( type )
+
+--[[	if isRun~=true then
+		require "ubus"
+		
+		conn = ubus.connect();
+		if not conn then
+			return "Failed to connect to ubusd";		
+		end
+	
+		local r = conn:call("we26n_zigbee_febee", "getdevicescmd", { devicetype = type});
+		local value="mm";
+		if r ~= nil then
+			for k, v in pairs(r) do
+				print("key=" .. k .. " value=" .. tostring(v));
+				value=tostring(v);
+			end
+			
+		else
+			print("getdevices return nil.");	
+		end
+	else
+		value=result;
+	end
+]]			
+	return "{{deviceid:zigbee_fbee_05402d04004b1200_15,status:1},{deviceid:zigbee_fbee_05402d04004b1200_14,status:1},}";  	
+end
+
+
+local result=getdevices("2");
+%>
 <!doctype html>
 <html>
 <head>
@@ -8,16 +44,18 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .big_box{ background-color:#115baa; height:760px;}
 .big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
 .big_top img,.big_top a{ float:left; padding-left:5px; padding-bottom:15px;}
-.big_top a{font-size:26px; color:white;padding-left:15px; padding-top:8px; }
+.big_top a{font-size:26px; color:white;padding-left:15pxcgi-bin/luci/;stok=b8e2dbe63ef9aa48b789aaf112467803/admin/newweb/newweb_index; padding-top:8px; }
 
 .big_bottom{width:1198px;height:760px; background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
-
 .nav{ width:100%; height:50px; background-color:#8eb3db;}
 .lights{ overflow:hidden;}
+result=a
 .lights a{ float:left; padding-left:380px; padding-top:10px;text-decoration:none; font-size:30px;}
 
 table{
 	width:100%;
+
+	
 }
 
 table, th, td {
@@ -32,9 +70,27 @@ th,td{
 </style>
 <meta charset="utf-8">
 <title>zigbee设备设备</title>
+
+<script type="text/javascript">
+
+
+	
+function init()
+{
+	
+	//var lightdata ="<%=tostring(getdevices(2))%>";
+	var lightdata="<%=result%>";	
+	alert(lightdata);
+	
+//	var lightdata="hello world";
+//	alert(lightdata); 
+
+}
+
+</script>
 </head>
 
-<body>
+<body onload="init();">
 
 <div class="big_box">
 

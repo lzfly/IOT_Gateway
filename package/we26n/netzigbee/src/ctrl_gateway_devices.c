@@ -418,15 +418,17 @@ static int zigbee_getdevicescmd( struct ubus_context *ctx, struct ubus_object *o
 	printf("[zigbee_getdevicescmd]start\r\n");
 	
     /**/
-	blobmsg_parse( ctrlcmd_policy, ARRAY_SIZE(ctrlcmd_policy), tb, blob_data(msg), blob_len(msg));
+	blobmsg_parse( getdevicescmd_policy, ARRAY_SIZE(getdevicescmd_policy), tb, blob_data(msg), blob_len(msg));
+
 
 	if ( tb[CTRLCMD_DEVICETYPE] )
 	{
 		devicetypestr = blobmsg_data( tb[CTRLCMD_DEVICETYPE] );
 		printf( "devicetypestr = %s\n", devicetypestr );
 	}
+	printf("[zigbee_getdevicescmd]blobmsg_parse 2222 devicetypestr = %s\r\n",devicetypestr);
     devicetype = strtoul(devicetypestr, NULL, 10);
-	
+    printf("[zigbee_getdevicescmd]blobmsg_parse 333333333\r\n");
         int i;
 		int add = 0;
 		char devicesstr[2048];
@@ -476,6 +478,7 @@ static int zigbee_getdevicescmd( struct ubus_context *ctx, struct ubus_object *o
 	        }
 			
         }
+		printf("[zigbee_getdevicescmd]blobmsg_parse 444444444444\r\n");
 	    sprintf(&devicesstr[strlen(devicesstr)], "}");
 	
 	

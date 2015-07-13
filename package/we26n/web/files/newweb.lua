@@ -69,6 +69,7 @@ function index()
     -- entry({"admin", "network", "iface_reconnect"}, call("iface_reconnect"), nil)
 	--Zigbee…Ë±∏
     entry({"admin", "newweb", "ernn_internet"}, template("newweb/ernn_internet"), _("ernn_internet"), 11)
+	entry({"admin", "newweb", "windows"}, template("newweb/windows"), _("windows"), 12)
     entry({"admin","newweb","light_control"},call("light_control"),nil)
 end
 
