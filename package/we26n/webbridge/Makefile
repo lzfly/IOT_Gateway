@@ -39,6 +39,7 @@ define Package/webbridge/install
 	$(INSTALL_BIN) ./files/datareport.lua  $(1)/usr/bin/datareport.lua
 	$(INSTALL_BIN) ./files/commanddispatcher.lua  $(1)/usr/bin/commanddispatcher.lua
 	$(INSTALL_BIN) ./files/syncdevstate.lua  $(1)/usr/bin/syncdevstate.lua
+	$(INSTALL_BIN) ./files/webdevice.lua  $(1)/usr/bin/webdevice.lua
 endef
 
 $(eval $(call BuildPackage,webbridge))

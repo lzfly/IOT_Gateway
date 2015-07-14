@@ -433,7 +433,7 @@ static int zigbee_getdevicescmd( struct ubus_context *ctx, struct ubus_object *o
 		int add = 0;
 		char devicesstr[2048];
 		devicesstr[0] = 0;
-		sprintf(&devicesstr[strlen(devicesstr)], "{");
+		sprintf(&devicesstr[strlen(devicesstr)], "[");
 		for(i = 0; i < g_devices_count; i++)
 		{
 		    add = 0;
@@ -471,21 +471,25 @@ static int zigbee_getdevicescmd( struct ubus_context *ctx, struct ubus_object *o
 			
 			if(add){
 			    sprintf(&devicesstr[strlen(devicesstr)], "{");
-				sprintf(&devicesstr[strlen(devicesstr)], "deviceid:zigbee_fbee_%s_%d,", g_devices[i].ieeestr, g_devices[i].endpoint);
-				sprintf(&devicesstr[strlen(devicesstr)], "status:%d", g_openStatus[i]);
+				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"zigbee_fbee_%s_%d\",", g_devices[i].ieeestr, g_devices[i].endpoint);
+				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"%d\"", g_openStatus[i]);
 				
-				sprintf(&devicesstr[strlen(devicesstr)], "},");
+				if(i<g_devices_count-1)
+					sprintf(&devicesstr[strlen(devicesstr)], "},");
+				else
+					sprintf(&devicesstr[strlen(devicesstr)], "}");
 	        }
 			
         }
 		printf("[zigbee_getdevicescmd]blobmsg_parse 444444444444\r\n");
-	    sprintf(&devicesstr[strlen(devicesstr)], "}");
+	    sprintf(&devicesstr[strlen(devicesstr)], "]");
 	
 	
     /* send reply */
 	blob_buf_init( &b, 0 );
 	
-	blobmsg_add_string( &b, "devices",  devicesstr );
+	//blobmsg_add_string( &b, "devices",  devicesstr );
+	blobmsg_add_string( &b, devicetypestr,  devicesstr );
     
     /**/
     ubus_send_reply( ctx, req, b.head );
