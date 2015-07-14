@@ -236,6 +236,13 @@ int getGateDetailInfo()
 }
 
 static int sendFailCount = 0;
+
+#define SEARCHDEVICEMAX  5
+#define GETDEVICESTATEMAX 20
+#define ENTRYNETMAX 3
+static int searchDeviceCount = 0;
+static int getDeviceStateCount = 0;
+static int entryNetCount = 0;
 //static int alertint = 0;
 int startSearchDevice()
 {
@@ -252,10 +259,10 @@ int startSearchDevice()
 	while(1)
 	{
 		printf("[startSearchDevice] g_devices_count=%d\r\n", g_devices_count);
-
-		iret = sendCommand(g_monitor_socket,msg,cmd_length);
-		if(iret)
-		{
+                if(searchDeviceCount >= SEARCHDEVICEMAX){
+		    iret = sendCommand(g_monitor_socket,msg,cmd_length);
+		    if(iret)
+		    {  
 			sendFailCount++;
 			if(sendFailCount > 3)
 			{
@@ -269,27 +276,14 @@ int startSearchDevice()
 				sendFailCount = 0;
 				
 			}
-		}
-		
-		sleep(20);
+		    } 
+		    searchDeviceCount = 0;
+		    sleep(20);
+               }
+               searchDeviceCount++;
 
-/*        int i;
-		index++;
-		for(i = 0; i < g_devices_count; i++)
-		{
-			 printf("[startSearchDevice] endpoint=%d\r\n", g_devices[i].endpoint);
-
-			if(g_devices[i].endpoint == 11)
-			{
-				printf("device SN = %s", g_devices[i].SN);
-				printf("device shortaddr = 0x%x", g_devices[i].shortaddr);
-                sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, index%2);
-				printf("[startSearchDevice] sendDeviceState=%d\r\n", index%2);
-
-			}
-		i}*/
-		
-        int i;
+            if(getDeviceStateCount >= GETDEVICESTATEMAX){		
+                int i;
 		index++;
 		for(i = 0; i < g_devices_count; i++)
 		{
@@ -298,11 +292,11 @@ int startSearchDevice()
 			printf("device SN = %s\n", g_devices[i].SN);
 		    printf("device shortaddr = %d\n", g_devices[i].shortaddr);
                     
-            printf("device ieee = %s\n", g_devices[i].ieeestr);
-            printf("openstatus=%d", g_openStatus[i]);
-            if(g_openStatus[i] == 5)
+                    printf("device ieee = %s\n", g_devices[i].ieeestr);
+                    printf("openstatus=%d", g_openStatus[i]);
+                    if(g_openStatus[i] == 5)
 			    continue;
-            printf("getDeviceState------1\n");
+                    printf("getDeviceState------1\n");
 
 			switch(g_devices[i].deviceId)
 			{
@@ -326,12 +320,20 @@ int startSearchDevice()
 					break;
 			}
 			
-			sleep(3);
+			sleep(20);
                 
-		}
-		sleep(20);
+		    }
+                    getDeviceStateCount = 0;
+                }
+                getDeviceStateCount++;
 
+            if(entryNetCount >= ENTRYNETMAX){
+            
+                entryNetCount = 0; 
+            }
+            entryNetCount++;     
 
+            sleep(10);
 	}
 
 }
