@@ -155,7 +155,7 @@ int waitMessage(int socket_descriptor)
 int beginSearch()
 {
 	int sock=-1;
-	sleep(30);
+	sleep(10);
 
 
     getLocalIPandMAC();
@@ -239,7 +239,7 @@ static int sendFailCount = 0;
 
 #define SEARCHDEVICEMAX  5
 #define GETDEVICESTATEMAX 20
-#define ENTRYNETMAX 3
+#define ENTRYNETMAX 6
 static int searchDeviceCount = 0;
 static int getDeviceStateCount = 0;
 static int entryNetCount = 0;
