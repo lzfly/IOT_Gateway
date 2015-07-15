@@ -866,3 +866,21 @@ int sendTmpHumAlertInterval(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uin
 	return 0;
 
 }
+
+
+int sendEntryNet()
+{
+
+        int cmd_length=1;
+        w26n_byte msg[cmd_length];
+
+        printf( "[sendEntryNet]start");
+
+        msg[0] = RPCS_ALLOW_ADDDEVICES;
+
+        sendCommand(g_monitor_socket,msg,cmd_length);
+
+        return 0;
+
+}
+

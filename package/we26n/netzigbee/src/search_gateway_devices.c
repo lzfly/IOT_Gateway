@@ -328,7 +328,9 @@ int startSearchDevice()
                 getDeviceStateCount++;
 
             if(entryNetCount >= ENTRYNETMAX){
-            
+                printf("can enrty zigbee net\n");
+
+                sendEntryNet();         
                 entryNetCount = 0; 
             }
             entryNetCount++;     
