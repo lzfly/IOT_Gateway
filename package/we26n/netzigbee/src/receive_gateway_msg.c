@@ -276,7 +276,7 @@ int receiveDeviceMsg(char *buf, int len)
 							olddevice = 1;
 						    if(g_openStatus[i] != 5 && g_devices[g_devices_count].status == 0)
 							{
-								g_openStatus[i] = 5;
+							//	g_openStatus[i] = 5;
 
 								printf("status=%d", g_openStatus[i]);
 							    //sendMsgToWeb(g_devices[i].deviceId, g_devices[i].ieeestr, g_devices[i].endpoint, 0, g_openStatus[i]);
