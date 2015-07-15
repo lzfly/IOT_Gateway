@@ -25,6 +25,41 @@
 #include "myuart.h"
 
 
+typedef struct  powermeter_info
+{
+    int  state;
+    
+    /**/
+    uint32_t  scount;
+    uint32_t  rcount;
+
+    /**/
+    double  value;
+    
+} powermeter_info_t;
+
+
+typedef struct  flowmeter_info
+{
+    int  state;
+    char  devsn[10];
+
+    /**/
+    uint32_t  scount;
+    uint32_t  rcount;
+
+    /**/
+    double  value;
+    
+} flowmeter_info_t;
+
+
+/**/
+powermeter_info_t * gp_powermeter_info;
+flowmeter_info_t * gp_flowmeter_info;
+
+
+
 enum {
     CTRLCMD_GATEWAY,
     CTRLCMD_DEVICEID,
@@ -40,6 +75,7 @@ static const struct blobmsg_policy  ctrlcmd_policy[] = {
     [CTRLCMD_ATTR] = { .name = "attr", .type = BLOBMSG_TYPE_STRING },
     [CTRLCMD_DATA] = { .name = "data", .type = BLOBMSG_TYPE_STRING },   
 };
+
 
 
 static int flow_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
@@ -90,8 +126,98 @@ static int flow_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 }
 
 
+
+enum {
+    GETDEVS_DEVTYPE,
+    __GETDEVS_MAX
+};
+
+
+static const struct blobmsg_policy  getdevs_policy[] = {
+    [GETDEVS_DEVTYPE] = { .name = "devicetype", .type = BLOBMSG_TYPE_STRING },
+};
+
+
+static int flow_getdevs( struct ubus_context *ctx, struct ubus_object *obj,
+                struct ubus_request_data *req, const char *method,
+                struct blob_attr *msg )
+{
+
+    struct blob_attr * tb[__GETDEVS_MAX];
+    const char * ptr;
+    static struct blob_buf  b;
+    char  tstr[100];
+    uint32_t  temp;
+    void * tkie;    
+
+    /**/
+    blobmsg_parse( getdevs_policy, ARRAY_SIZE(getdevs_policy), tb, blob_data(msg), blob_len(msg));
+
+    if ( NULL == tb[GETDEVS_DEVTYPE] )
+    {
+        /* send reply */
+        blob_buf_init( &b, 0 );
+        blobmsg_add_string( &b, "return",  "fail1" );
+        
+        /**/
+        ubus_send_reply( ctx, req, b.head );
+    }
+
+    /**/
+    ptr = blobmsg_data( tb[GETDEVS_DEVTYPE] );
+    temp = strtoul( ptr, NULL, 10 );
+    sprintf( tstr, "%04d", temp );
+
+    /**/
+    blob_buf_init( &b, 0 );
+
+    /**/
+    if ( 0 == strcmp(tstr, ENN_DEVICE_TYPE_WATERMETER) )
+    {
+        tkie = blobmsg_open_table( &b, NULL );
+
+        sprintf( tstr, "rf433_enn_%s", gp_flowmeter_info->devsn );        
+        blobmsg_add_string( &b, "deviceid",  tstr );
+        blobmsg_add_string( &b, "devicetype", ENN_DEVICE_TYPE_WATERMETER );
+        sprintf( tstr, "%d", ENN_DEVICE_ATTR_POWERMETER_VALUE );
+        blobmsg_add_string( &b, "attr", tstr );
+        sprintf( tstr, "%f", gp_flowmeter_info->value );
+        blobmsg_add_string( &b, "data", tstr );
+        
+        blobmsg_close_table( &b, tkie );
+       
+    }
+    else if ( 0 == strcmp(tstr, ENN_DEVICE_TYPE_POWERMETER) )
+    {
+        tkie = blobmsg_open_table( &b, NULL );
+
+        sprintf( tstr, "rf433_enn_%s", "12345678" );        
+        blobmsg_add_string( &b, "deviceid",  tstr );
+        blobmsg_add_string( &b, "devicetype", ENN_DEVICE_TYPE_POWERMETER );
+        sprintf( tstr, "%d", ENN_DEVICE_ATTR_POWERMETER_VALUE );
+        blobmsg_add_string( &b, "attr", tstr );
+        sprintf( tstr, "%f", gp_powermeter_info->value );
+        blobmsg_add_string( &b, "data", tstr );
+        
+        blobmsg_close_table( &b, tkie );
+
+    }
+    else
+    {
+        blobmsg_add_string( &b, "return",  "fail1" );    
+    }
+    
+    /**/
+    ubus_send_reply( ctx, req, b.head );
+    return UBUS_STATUS_OK;
+    
+}
+
+
+
 static const struct ubus_method flow_methods[] = {
     UBUS_METHOD( "ctrlcmd",  flow_ctrlcmd, ctrlcmd_policy ),
+    UBUS_METHOD( "getdevicescmd",  flow_getdevs, getdevs_policy ),    
 };
 
 
@@ -104,6 +230,8 @@ static struct ubus_object flow_object = {
     .methods = flow_methods,
     .n_methods = ARRAY_SIZE(flow_methods),
 };
+
+
 
 
 int  test_server_add( void )
@@ -191,14 +319,6 @@ int  test_get_macaddr( void )
 }
 
 
-typedef struct  powermeter_info
-{
-    int  state;
-    
-    /**/
-    int  count;
-    
-} powermeter_info_t;
 
 
 int  test_ubus_01_send_report( powermeter_info_t * pinfo, double value )
@@ -267,40 +387,19 @@ int  test_modbus_01_data_cbk( intptr_t arg, int tlen, void * pdat )
         ddd = ddd / 18000000;
         printf( "%f\n", ddd );
 
+        /**/
+        pinfo->value = ddd;
+
+        /**/
         test_ubus_01_send_report( pinfo, ddd );
     }
     
-    test_modbus_cbk( arg, tlen, pdat );
+    // test_modbus_cbk( arg, tlen, pdat );
     return 0;
     
 }
 
 
-int  test_modbus_01_data_cbkaaa( intptr_t arg, int tlen, void * pdat )
-{
-    int32_t  aaa;
-    uint8_t * puc;
-    powermeter_info_t * pinfo;
-
-    /**/
-    pinfo = (powermeter_info_t *)arg;
-
-#if 0
-    if ( tlen == 5 )
-    {
-        //puc = (uint8_t *)pdat;
-
-        //aaa = modbus_conv_long( &(puc[3]) );
-        printf( "%d\n", aaa );
-
-        test_ubus_01_send_report( pinfo, aaa );
-    }
-#endif
-
-    test_modbus_cbk( arg, tlen, pdat );
-    return 0;
-    
-}
 
 void  test_modbus_01_timer_cbk( struct uloop_timeout * ptmr )
 {
@@ -313,28 +412,11 @@ void  test_modbus_01_timer_cbk( struct uloop_timeout * ptmr )
 
     /**/
     modbus_send_req( mctx, 1, 0x14, 0x2, test_modbus_01_data_cbk, (intptr_t)pinfo );
-    // modbus_send_req( mctx, 1, 0x40, 0x1, test_modbus_01_data_cbkaaa, (intptr_t)pinfo );
 
     /**/
     uloop_timeout_set( ptmr, 30000 );
     return;
 }
-
-
-
-extern int  test_modbus_cbk( intptr_t arg, int tlen, void * pdat );
-
-
-typedef struct  flowmeter_info
-{
-    int  state;
-    char  devsn[10];
-
-    /**/
-    int  count;
-    
-} flowmeter_info_t;
-
 
 
 
@@ -405,10 +487,14 @@ int  test_modbus_02_data_cbk( intptr_t arg, int tlen, void * pdat )
         ccc = ccc + aaa;
         printf( "%f\n", ccc );
 
+        /**/
+        pinfo->value = ccc;
+
+        /**/
         test_ubus_02_send_report( pinfo, ccc );
     }
     
-    test_modbus_cbk( arg, tlen, pdat );
+    // test_modbus_cbk( arg, tlen, pdat );
     return 0;
     
 }
@@ -424,7 +510,7 @@ int  test_modbus_02_sn_cbk( intptr_t arg, int tlen, void * pdat )
     puc = (uint8_t *)pdat;
 
 
-    test_modbus_cbk( arg, tlen, pdat );
+    // test_modbus_cbk( arg, tlen, pdat );
 
     /**/
     if ( tlen == 7 )
@@ -494,6 +580,9 @@ int  test_prepare_timer( intptr_t mctx )
     *((intptr_t *)(ptmr + 1)) = mctx;
     pinfo2 = (flowmeter_info_t *)(((intptr_t *)(ptmr + 1)) + 1);
     pinfo2->state = 0;
+    pinfo2->value = 0;
+    sprintf( pinfo2->devsn, "%02x%02x%02x%02x", 6,7,8,9 );    
+    gp_flowmeter_info = pinfo2;
     uloop_timeout_set( ptmr, 2000 );
     
     /* power meter */
@@ -511,6 +600,8 @@ int  test_prepare_timer( intptr_t mctx )
     *((intptr_t *)(ptmr + 1)) = mctx;
     pinfo1 = (powermeter_info_t *)(((intptr_t *)(ptmr + 1)) + 1);
     pinfo1->state = 0;
+    pinfo1->value = 0;
+    gp_powermeter_info = pinfo1;
     uloop_timeout_set( ptmr, 4000 );    
     return 0;
     

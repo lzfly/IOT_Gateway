@@ -19,6 +19,7 @@ int  modbus_proc_timeout( intptr_t ctx );
 /**/
 int32_t  modbus_conv_long( uint8_t * puc );
 float  modbus_conv_real4( uint8_t * puc );
+int32_t  modbus_conv_longm( uint8_t * puc );
 
 #endif
 
