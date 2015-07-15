@@ -115,6 +115,7 @@ int sendCommand(int fd,w26n_byte* cmd, int cmd_length)
 		if(-1 == write(fd,msg,msg_length))
 		{
 			printf("[sendCommand]write fail!\r\n");
+                        sendCmdFailCount++;
 			return 2;
 		}
 

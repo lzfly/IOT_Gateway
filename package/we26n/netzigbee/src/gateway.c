@@ -15,6 +15,7 @@ char  g_localMAC[16];
 w26n_uint8  g_openStatus[MAX_DEVICES];
 w26n_uint8  g_level[MAX_DEVICES];
 w26n_uint16  g_colorTmp[MAX_DEVICES];
+int sendCmdFailCount = 0;
 //
 //w26n_bool void we26n_read_gateIP(char *ip)
 //{

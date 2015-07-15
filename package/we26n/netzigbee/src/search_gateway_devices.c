@@ -235,12 +235,12 @@ int getGateDetailInfo()
 	return 0;
 }
 
-static int sendFailCount = 0;
+//static int sendFailCount = 0;
 
 #define SEARCHDEVICEMAX  5
 #define GETDEVICESTATEMAX 20
 #define ENTRYNETMAX 6
-static int searchDeviceCount = 0;
+static int searchDeviceCount = 5;
 static int getDeviceStateCount = 0;
 static int entryNetCount = 0;
 //static int alertint = 0;
@@ -263,8 +263,8 @@ int startSearchDevice()
 		    iret = sendCommand(g_monitor_socket,msg,cmd_length);
 		    if(iret)
 		    {  
-			sendFailCount++;
-			if(sendFailCount > 3)
+			sendCmdFailCount++;
+			if(sendCmdFailCount > 3)
 			{
 			    printf("[startSearchDevice]send command fail 3 times\n"); 
 				printf("[startSearchDevice]restart Gateway Service\n");
@@ -273,7 +273,7 @@ int startSearchDevice()
 				sleep(2);
 				connectGateway();
 				restartGatewayService();
-				sendFailCount = 0;
+				sendCmdFailCount = 0;
 				
 			}
 		    } 
