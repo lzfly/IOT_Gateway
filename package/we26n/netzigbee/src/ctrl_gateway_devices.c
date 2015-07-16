@@ -475,15 +475,26 @@ static int zigbee_getdevicescmd( struct ubus_context *ctx, struct ubus_object *o
 				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"zigbee_fbee_%s_%d\",", g_devices[i].ieeestr, g_devices[i].endpoint);
 				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"%d\"", g_openStatus[i]);
 				
-				if(i<g_devices_count-1)
-					sprintf(&devicesstr[strlen(devicesstr)], "},");
-				else
-					sprintf(&devicesstr[strlen(devicesstr)], "}");
+				sprintf(&devicesstr[strlen(devicesstr)], "},");
+				printf("[zigbee_getdevicescmd]i=%d,total_count=%d,deviceid=zigbee_fbee_%s_%d\r\n",i,g_devices_count,g_devices[i].ieeestr,g_devices[i].endpoint);
+
+//				if(i<g_devices_count-1)
+//				{
+//					sprintf(&devicesstr[strlen(devicesstr)], "},");
+//					printf("[zigbee_getdevicescmd]i=%d,total_count=%d,deviceid=zigbee_fbee_%s_%d\r\n",i,g_devices_count,g_devices[i].ieeestr,g_devices[i].endpoint);
+//				}
+//				else
+//				{
+//					sprintf(&devicesstr[strlen(devicesstr)], "}");
+//					printf("[zigbee_getdevicescmd]i=%d,total_count=%d,deviceid=zigbee_fbee_%s_%d\r\n",i,g_devices_count,g_devices[i].ieeestr,g_devices[i].endpoint);
+//				}
 	        }
 			
         }
+		//remove last ,
+
 		printf("[zigbee_getdevicescmd]blobmsg_parse 444444444444\r\n");
-	    sprintf(&devicesstr[strlen(devicesstr)], "]");
+	    sprintf(&devicesstr[strlen(devicesstr)-1], "]");
 	
 	
     /* send reply */
