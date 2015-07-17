@@ -95,27 +95,33 @@ td.img{
 		
 		function switchLightState(item)
 		{
-			//alert("aaa");
-			if (lightState == 0)
+			var state = document.getElementById("currLightState" + item).value;
+		
+			if (state == 0)
 			{
-				document.getElementById("currLightState").value = "1";
+				document.getElementById("currLightState" + item).value = "1";
 			}
 			else
 			{
-				document.getElementById("currLightState").value = "0";
+				document.getElementById("currLightState" + item).value = "0";
 			}
 
-			 $("#lightSet").ajaxSubmit(function(message) {
-				 lightState = document.getElementById("currLightState").value;
-				 //for(var item=0;item<k;item++){
-				 if (lightState == 0) {
-					document.getElementById("lightShow").src = resPath + "light_01.png";
-					document.getElementById("lightBtn").src = resPath + "button_01.png";
-				 } else {
-					document.getElementById("lightShow").src = resPath + "light.png";
-					document.getElementById("lightBtn").src = resPath + "button_02.png";
+			 $("#lightSet" + item).ajaxSubmit(function(message) {
+				 state = document.getElementById("currLightState" + item).value;				
+				 if (state == 1) 
+				 {
+				 	document.getElementById("lightShow" + item).src = resPath + "light.png";
+					document.getElementById("lightBtn" + item).src = resPath + "button_02.png";
+					document.getElementById("hintTD" + item).innerHTML = "开";										
+				 } 
+				 else 
+				 {
+				 	document.getElementById("lightShow" + item).src = resPath + "light_01.png";
+					document.getElementById("lightBtn" + item).src = resPath + "button_01.png";
+					document.getElementById("hintTD" + item).innerHTML = "关";
+					
 				 }
-				//}
+				
 			 });
 		}
 	</script>
@@ -161,18 +167,22 @@ td.img{
 		document.write("<tr>") ;
 		document.write("<td>灯"+(i+1)+"</td>"); 
 		document.write("<td>"+devId+"</td>"); 
-		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
-		document.write('<input type="hidden" value="0" id="currLightState"/>');
-		document.write('<td><img  id="lightShow" src="<%=resource%>/images/light_01.png"</td>') ;
-		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
+		document.write('<form method="post" id="lightSet' + i + '" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
+		document.write('<input type="hidden" value=status id="currLightState' + i + '"/>');
+		document.write('<td><img  id="lightShow' + i + '" src="<%=resource%>/images/light_01.png"</td>') ;
+		document.write('<td><img  id="lightBtn' + i + '" src="<%=resource%>/images/button_01.png" onclick="switchLightState(' + i + ');"></td>') ;	
 		document.write("</form>");
 		if(status=="1")
 		{
-			document.write("<td>"+"开"+"</td>");
+			document.write("<td id='hintTD" + i + "'>"+"开"+"</td>");
 		}
-		else
+		else if(status=="5")
+		{
+			document.write("<td id='hintTD" + i + "'>"+"不在线"+"</td>");
+		}
+		else		
 		{		
-			document.write("<td>"+"关"+"</td>");
+			document.write("<td id='hintTD" + i + "'>"+"关"+"</td>");
 		}
 		//document.write("<td>色温</td>"); 
 		//document.write("<td>亮度</td>"); 
