@@ -4,18 +4,14 @@ require("uci")
 local io = require "io"
 
 function getdevices( type )
-	local file = io.open("/tmp/devices.ini","r");
+	local file = io.open("/tmp/devices_2.ini","r");
 	assert(file);
 	local datad = file:read("*a");
 	
 	datad = string.gsub(datad, "\r", "");
 	datad = string.gsub(datad, "\n", "");	
-	local filew = io.open("/tmp/devices_w.ini","w");
-	filew:write(tostring(datad));
-	filew:close();
 	
 	file:close();
-	--local t="[{\"deviceid\":\"zigbee_fbee_05402d04004b1200_15\",\"status\":\"1\"},{\"deviceid\":\"zigbee_fbee_05402d04004b1200_15\",\"status\":\"1\"}]";
 	return datad;
 end
 
@@ -37,7 +33,7 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 
 .nav{ width:100%; height:50px; background-color:#8eb3db;}
 .lights{ overflow:hidden;}
-.lights a{ float:left; padding-left:380px; padding-top:10px;text-decoration:none; font-size:30px;}
+.lights a{ float:left; padding-left:250px; padding-top:10px;text-decoration:none; font-size:30px;}
 
 table{
 	width:100%;
@@ -92,6 +88,7 @@ function init()
     	<div class="lights">
         	<a href="ernn_internet">灯</a>
         	<a href="windows">窗帘</a>
+        	<a href="elewater">水电表</a>
         </div>
     </div>
     
