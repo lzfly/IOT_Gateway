@@ -238,8 +238,8 @@ int getGateDetailInfo()
 //static int sendFailCount = 0;
 
 #define SEARCHDEVICEMAX  5
-#define GETDEVICESTATEMAX 20
-#define ENTRYNETMAX 6
+#define GETDEVICESTATEMAX 30
+#define ENTRYNETMAX 3
 static int searchDeviceCount = 5;
 static int getDeviceStateCount = 0;
 static int entryNetCount = 0;
@@ -279,6 +279,8 @@ int startSearchDevice()
 		    } 
 		    searchDeviceCount = 0;
 		    sleep(20);
+                    entryNetCount++;
+                    entryNetCount++;
                }
                searchDeviceCount++;
 
@@ -320,20 +322,20 @@ int startSearchDevice()
 					break;
 			}
 			
-			sleep(20);
+			sleep(10);
                 
 		    }
                     getDeviceStateCount = 0;
                 }
                 getDeviceStateCount++;
 
-            if(entryNetCount >= ENTRYNETMAX){
+            /*if(entryNetCount >= ENTRYNETMAX){
                 printf("can enrty zigbee net\n");
 
                 sendEntryNet();         
                 entryNetCount = 0; 
             }
-            entryNetCount++;     
+            entryNetCount++;*/     
 
             sleep(10);
 	}
