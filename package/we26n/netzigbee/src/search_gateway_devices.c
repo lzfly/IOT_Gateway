@@ -28,6 +28,8 @@
 #include "gateway_socket.h"
 #include "ctrl_gateway_devices.h"
 
+
+
 extern int startSearchDevice();
 
 static int PORT=9090;
@@ -111,21 +113,33 @@ int waitMessage(int socket_descriptor)
 
     int iFind=0;
 
+
+
     while(iWaitFlag<MaxWaitCount)
     {
-        recvfrom(socket_descriptor,message,sizeof(message),0,(struct sockaddr *)&sin,&sin_len);
 
-        if(message!=NULL)
+        recvfrom(socket_descriptor,message,sizeof(message),0,(struct sockaddr *)&sin,&sin_len);
+        printf("waitMessage ---msg =%s \n", message);
+        if(sin_len > 0)
         {
-        	if(strstr(message,"IP:"))
+//               write_gateway_config_file("IP:192.168.0.1\r\nSN:FFFFFFFF\r\n");
+//iFind=1;
+
+
+        	if(strstr(message,"SN:"))
         	{
+                        char str[128];
         		printf("Found IP gateway:\n%s\n",message);
-        		write_gateway_config_file(message);
+                        sprintf(str, "IP:%s\r\n", inet_ntoa(sin.sin_addr));
+                        sprintf(&str[strlen(str)],"%s" ,message);
+                        printf("str=%s", str);
+        		write_gateway_config_file(str);
         		iFind=1;
         		break;
         	}
         }
         sleep(1);
+
         iWaitFlag++;
     }
 
@@ -335,7 +349,7 @@ int startSearchDevice()
                 sendEntryNet();         
                 entryNetCount = 0; 
             }
-            entryNetCount++;*/     
+            entryNetCount++;*/    
 
             sleep(10);
 	}
