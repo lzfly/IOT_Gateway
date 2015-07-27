@@ -282,7 +282,7 @@ int  nuart_decode( nuart_context_t * pctx, int tlen, uint8_t * pdat )
         else
         {
             /**/
-            printf( "encode ret = %02x %d\n", pdat[i], iret );
+            // printf( "encode ret = %02x %d\n", pdat[i], iret );
         }
     }
 
@@ -300,7 +300,7 @@ void  nuart_read_cbk( evutil_socket_t ufd, short event, void * parg )
     /**/
     pctx = (nuart_context_t *)parg;
 
-    printf( "nuart read event %d\n", event  );
+    //printf( "nuart read event %d\n", event  );
 
     /**/
     while(1)

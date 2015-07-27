@@ -182,6 +182,7 @@ int  ptmx_init( struct event_base * pevbase, int tno, intptr_t * pret )
     int  iret;
     int  mfd;
     char  tbuf[100];
+    char  cmdn[200];
     ptmx_context_t * pctx;
     struct termios  settings;
     unsigned int fl;
@@ -225,6 +226,11 @@ int  ptmx_init( struct event_base * pevbase, int tno, intptr_t * pret )
 
     /**/
     printf( "name = %s\n", tbuf );
+    sprintf( cmdn, "rm -f /dev/ttyS%d", tno );
+    system( cmdn );
+
+    sprintf( cmdn, "ln -s %s /dev/ttyS%d", tbuf, tno );
+    system( cmdn );
 
     /**/
     pctx = (ptmx_context_t *)malloc( sizeof(ptmx_context_t) );

@@ -77,20 +77,120 @@ void  dump_hex( const unsigned char * ptr, size_t  len )
 }
 
 
+typedef struct _tag_test_context
+{
+    intptr_t  uctx;
+    intptr_t  mctx0;    
+    intptr_t  mctx1;
+    intptr_t  mctx2;
+    intptr_t  mctx3;
+    
+} test_context_t;
+
 
 void  test_nuart_callbk( intptr_t arg, int tidx, int tlen, void * pdat )
 {
+    test_context_t * pctx;
+
+    /**/
+    pctx = (test_context_t *)arg;
+
+    /**/
     printf( "uart recv : %d : ", tidx );
     dump_hex( pdat, tlen );
-    ptmx_send( arg, tlen, pdat );
+    
+    switch ( tidx )
+    {
+    case 0:
+        ptmx_send( pctx->mctx0, tlen, pdat );
+        break;
+    case 1:
+        ptmx_send( pctx->mctx1, tlen, pdat );
+        break;
+    case 2:
+        ptmx_send( pctx->mctx2, tlen, pdat );
+        break;
+    case 3:
+        ptmx_send( pctx->mctx3, tlen, pdat );
+        break;
+        
+    default:
+        break;
+    }
+
     return;
+    
 }
+
 
 void  test_ptmx0_callbk( intptr_t arg, int tlen, void * pdat )
 {
-    printf( "ptmx recv : " );
+    test_context_t * pctx;
+
+    /**/
+    pctx = (test_context_t *)arg;
+
+    
+    /**/
+    printf( "ptmx 0 recv : " );
     dump_hex( pdat, tlen );
-    nuart_send( arg, 2, tlen, pdat );
+
+    /**/
+    nuart_send( pctx->uctx, 0, tlen, pdat );
+    return;
+}
+
+
+void  test_ptmx1_callbk( intptr_t arg, int tlen, void * pdat )
+{
+    test_context_t * pctx;
+
+    /**/
+    pctx = (test_context_t *)arg;
+
+    
+    /**/
+    printf( "ptmx 1 recv : " );
+    dump_hex( pdat, tlen );
+
+    /**/
+    nuart_send( pctx->uctx, 1, tlen, pdat );
+    return;
+}
+
+
+void  test_ptmx2_callbk( intptr_t arg, int tlen, void * pdat )
+{
+    test_context_t * pctx;
+
+    /**/
+    pctx = (test_context_t *)arg;
+
+    
+    /**/
+    printf( "ptmx 2 recv : " );
+    dump_hex( pdat, tlen );
+
+    /**/
+    nuart_send( pctx->uctx, 2, tlen, pdat );
+    return;
+}
+
+
+void  test_ptmx3_callbk( intptr_t arg, int tlen, void * pdat )
+{
+    test_context_t * pctx;
+
+    /**/
+    pctx = (test_context_t *)arg;
+
+    
+    /**/
+    printf( "ptmx 3 recv : " );
+    dump_hex( pdat, tlen );
+
+    /**/
+    nuart_send( pctx->uctx, 3, tlen, pdat );
     return;
 }
 
@@ -98,30 +198,62 @@ void  test_ptmx0_callbk( intptr_t arg, int tlen, void * pdat )
 int  test_init( struct event_base * pevbase )
 {
     int  iret;
-    intptr_t  uctx;
-    intptr_t  mctx0;
+    test_context_t * pctx;
 
     /**/
-    iret = nuart_init( pevbase, 0, &uctx );
+    pctx = (test_context_t *)malloc( sizeof(test_context_t) );
+    if (NULL == pctx )
+    {
+        return 1;
+    }
+    
+    /**/
+    iret = nuart_init( pevbase, 0, &(pctx->uctx) );
     if ( 0 != iret )
     {
         printf( "uart init ret = %d\n", iret );
-        return 1;
+        return 2;
     }
 
     /**/
-    iret = ptmx_init( pevbase, 10, &mctx0 );
+    iret = ptmx_init( pevbase, 10, &(pctx->mctx0) );
     if ( 0 != iret )
     {
         printf( "ptmx0 init ret = %d\n", iret );
-        return 1;
+        return 3;
     }
 
+    /**/
+    iret = ptmx_init( pevbase, 11, &(pctx->mctx1) );
+    if ( 0 != iret )
+    {
+        printf( "ptmx1 init ret = %d\n", iret );
+        return 3;
+    }
+
+    /**/
+    iret = ptmx_init( pevbase, 12, &(pctx->mctx2) );
+    if ( 0 != iret )
+    {
+        printf( "ptmx2 init ret = %d\n", iret );
+        return 3;
+    }
+
+    /**/
+    iret = ptmx_init( pevbase, 13, &(pctx->mctx3) );
+    if ( 0 != iret )
+    {
+        printf( "ptmx3 init ret = %d\n", iret );
+        return 3;
+    }
     
     /**/
-    nuart_set_callbk( uctx, test_nuart_callbk, mctx0 );
-    ptmx_set_callbk( mctx0, test_ptmx0_callbk, uctx );
-    
+    nuart_set_callbk( pctx->uctx, test_nuart_callbk, (intptr_t)pctx );
+    ptmx_set_callbk( pctx->mctx0, test_ptmx0_callbk, (intptr_t)pctx );
+    ptmx_set_callbk( pctx->mctx1, test_ptmx1_callbk, (intptr_t)pctx );
+    ptmx_set_callbk( pctx->mctx2, test_ptmx2_callbk, (intptr_t)pctx );
+    ptmx_set_callbk( pctx->mctx3, test_ptmx3_callbk, (intptr_t)pctx );    
+
     return 0;
     
 }
