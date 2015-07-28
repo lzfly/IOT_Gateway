@@ -172,8 +172,11 @@ static int flow_getdevs( struct ubus_context *ctx, struct ubus_object *obj,
     blob_buf_init( &b, 0 );
 
     /**/
+#if  0    
     if ( 0 == strcmp(tstr, ENN_DEVICE_TYPE_WATERMETER) )
     {
+#endif
+
         tkie = blobmsg_open_table( &b, NULL );
 
         sprintf( tstr, "rf433_enn_%s", gp_flowmeter_info->devsn );        
@@ -185,10 +188,12 @@ static int flow_getdevs( struct ubus_context *ctx, struct ubus_object *obj,
         blobmsg_add_string( &b, "data", tstr );
         
         blobmsg_close_table( &b, tkie );
-       
+#if 0       
     }
     else if ( 0 == strcmp(tstr, ENN_DEVICE_TYPE_POWERMETER) )
     {
+#endif
+
         tkie = blobmsg_open_table( &b, NULL );
 
         sprintf( tstr, "rf433_enn_%s", "12345678" );        
@@ -200,13 +205,14 @@ static int flow_getdevs( struct ubus_context *ctx, struct ubus_object *obj,
         blobmsg_add_string( &b, "data", tstr );
         
         blobmsg_close_table( &b, tkie );
-
+#if 0
     }
     else
     {
         blobmsg_add_string( &b, "return",  "fail1" );    
     }
-    
+#endif
+
     /**/
     ubus_send_reply( ctx, req, b.head );
     return UBUS_STATUS_OK;
