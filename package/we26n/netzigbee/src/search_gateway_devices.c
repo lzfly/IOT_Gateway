@@ -28,6 +28,8 @@
 #include "gateway_socket.h"
 #include "ctrl_gateway_devices.h"
 
+
+
 extern int startSearchDevice();
 
 static int PORT=9090;
@@ -111,21 +113,33 @@ int waitMessage(int socket_descriptor)
 
     int iFind=0;
 
+
+
     while(iWaitFlag<MaxWaitCount)
     {
-        recvfrom(socket_descriptor,message,sizeof(message),0,(struct sockaddr *)&sin,&sin_len);
 
-        if(message!=NULL)
+        recvfrom(socket_descriptor,message,sizeof(message),0,(struct sockaddr *)&sin,&sin_len);
+        printf("waitMessage ---msg =%s \n", message);
+        if(sin_len > 0)
         {
-        	if(strstr(message,"IP:"))
+//               write_gateway_config_file("IP:192.168.0.1\r\nSN:FFFFFFFF\r\n");
+//iFind=1;
+
+
+        	if(strstr(message,"SN:"))
         	{
+                        char str[128];
         		printf("Found IP gateway:\n%s\n",message);
-        		write_gateway_config_file(message);
+                        sprintf(str, "IP:%s\r\n", inet_ntoa(sin.sin_addr));
+                        sprintf(&str[strlen(str)],"%s" ,message);
+                        printf("str=%s", str);
+        		write_gateway_config_file(str);
         		iFind=1;
         		break;
         	}
         }
         sleep(1);
+
         iWaitFlag++;
     }
 
@@ -238,8 +252,8 @@ int getGateDetailInfo()
 //static int sendFailCount = 0;
 
 #define SEARCHDEVICEMAX  5
-#define GETDEVICESTATEMAX 20
-#define ENTRYNETMAX 6
+#define GETDEVICESTATEMAX 30
+#define ENTRYNETMAX 3
 static int searchDeviceCount = 5;
 static int getDeviceStateCount = 0;
 static int entryNetCount = 0;
@@ -279,6 +293,8 @@ int startSearchDevice()
 		    } 
 		    searchDeviceCount = 0;
 		    sleep(20);
+                    entryNetCount++;
+                    entryNetCount++;
                }
                searchDeviceCount++;
 
@@ -320,20 +336,20 @@ int startSearchDevice()
 					break;
 			}
 			
-			sleep(20);
+			sleep(10);
                 
 		    }
                     getDeviceStateCount = 0;
                 }
                 getDeviceStateCount++;
 
-            if(entryNetCount >= ENTRYNETMAX){
+            /*if(entryNetCount >= ENTRYNETMAX){
                 printf("can enrty zigbee net\n");
 
                 sendEntryNet();         
                 entryNetCount = 0; 
             }
-            entryNetCount++;     
+            entryNetCount++;*/    
 
             sleep(10);
 	}

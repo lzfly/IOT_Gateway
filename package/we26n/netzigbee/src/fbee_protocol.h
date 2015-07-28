@@ -125,5 +125,8 @@
 //点阵显示器	0x0340
 //声光报警	0x0403
 
+//允许入网
+#define FB_DEVICE_ENTRYNET_ID zigbee_fbee_entrynet_ffffffffffffffff_99
+#define FB_DEVICE_ENTRYENT_ATTR 9999
 
 #endif
