@@ -481,7 +481,7 @@ static int zigbee_getdevicescmd( struct ubus_context *ctx, struct ubus_object *o
 				
 				sprintf(&devicesstr[strlen(devicesstr)], "},");
 				printf("[zigbee_getdevicescmd]i=%d,total_count=%d,deviceid=zigbee_fbee_%s_%d\r\n",i,g_devices_count,g_devices[i].ieeestr,g_devices[i].endpoint);
-
+				
 //				if(i<g_devices_count-1)
 //				{
 //					sprintf(&devicesstr[strlen(devicesstr)], "},");

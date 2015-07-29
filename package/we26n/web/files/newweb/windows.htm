@@ -30,8 +30,9 @@ img{display:block};
 a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .big_box{ background-color:#115baa; height:1560px;}
 .big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
-.big_top img,.big_top a{ float:left; padding-left:5px; padding-bottom:15px;}
-.big_top a{font-size:26px; color:white;padding-left:15px; padding-top:8px; }
+.big_top img,.big_top a{ float:left; padding-left:5px; padding-bottom:15px;text-decoration:none;}
+.zig{font-size:26px; color:white;padding-left:15px; padding-top:8px; }
+.button{margin-left:900px;color:white;padding-top:10px;}
 
 .big_bottom{width:1198px;height:13<script type="text/javascript">
 
@@ -41,7 +42,7 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 
 .nav{ width:100%; height:50px; background-color:#8eb3db;}
 .lights{ overflow:hidden;}
-.lights a{ float:left; padding-left:250px; padding-top:10px;text-decoration:none; font-size:30px;}
+.lights a{ float:left; padding-left:400px; padding-top:10px;text-decoration:none; font-size:30px;}
 
 table{
 	width:100%;
@@ -73,8 +74,10 @@ td.img{
 <div class="big_box">
 
 	<div class="big_top">
-    	<img src="<%=resource%>/images/picture_01.png">
-        <a>ZIGBEE设备设备</a>
+    	<a href="newweb_index"><img src="<%=resource%>/images/picture_01.png"></a>
+        <a class="zig">ZIGBEE设备设备</a>
+        <a class="button" href=""><img src="<%=resource%>/images/network.png" title="允许入网"></a>
+        
     </div>
     
 <div class="big_bottom">
@@ -82,7 +85,6 @@ td.img{
     	<div class="lights">
         	<a href="ernn_internet">灯</a>
         	<a href="windows">窗帘</a>
-        	<a href="elewater">水电表</a>
         </div>
     </div>
     

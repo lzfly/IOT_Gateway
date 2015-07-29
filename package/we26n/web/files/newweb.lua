@@ -7,6 +7,16 @@ local io = require "io"
 require "luci.fs"
 require "luci.sys"
 
+require "ubus"
+
+conn = ubus.connect();
+if not conn then
+	error("Failed to connect to ubusd");
+end
+local macReader = io.popen("eth_mac r lan");
+local macAddr = macReader:read("*all");
+macAddr = string.gsub(macAddr, ":", "");
+macAddr = "we26n_" .. macAddr;
 
 --local uci = require "luci.controller.admin.uci"
 
@@ -71,7 +81,9 @@ function index()
     entry({"admin", "newweb", "ernn_internet"}, template("newweb/ernn_internet"), _("ernn_internet"), 11)
 	entry({"admin", "newweb", "windows"}, template("newweb/windows"), _("windows"), 12)
 	entry({"admin", "newweb", "elewater"}, template("newweb/elewater"), _("elewater"), 13)
-    entry({"admin","newweb","light_control"},call("light_control"),nil)
+	entry({"admin", "newweb", "ern_internet"}, template("newweb/ern_internet"), _("ern_internet"), 14)
+        entry({"admin","newweb","light_control"},call("light_control"),nil)
+        entry({"admin","newweb","entrynet_control"},call("entrynet_control"),nil)
 end
 
 
@@ -83,6 +95,11 @@ function light_control()
 
 
   luci.http.redirect(luci.dispatcher.build_url("admin/newweb/ernn_internet"))
+end
+function entrynet_control()
+
+	local result = conn:call("we26n_zigbee_febee", "ctrlcmd", { gatewayid =macAddr , deviceid = "zigbee_fbee_entrynet_ffffffffffffffff_99", attr = "9999", data = "0" });
+        luci.http.redirect(luci.dispatcher.build_url("admin/newweb/ernn_internet"))
 end
 
 function wireless_update()
