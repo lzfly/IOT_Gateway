@@ -5,13 +5,17 @@ local io = require "io"
 
 function getdevices( type )
 	local file = io.open("/tmp/devices_2.ini","r");
-	assert(file);
+	
+	if(file==nil) then
+		return;
+	end	
 	local datad = file:read("*a");
 	
 	datad = string.gsub(datad, "\r", "");
 	datad = string.gsub(datad, "\n", "");	
 	
 	file:close();
+	
 	return datad;
 end
 
@@ -29,7 +33,11 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .big_top img,.big_top a{ float:left; padding-left:5px; padding-bottom:15px;}
 .big_top a{font-size:26px; color:white;padding-left:15px; padding-top:8px; }
 
-.big_bottom{width:1198px;height:1360px; background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
+.big_bottom{width:1198px;height:13<script type="text/javascript">
+
+	var lightdata='<%=result%>';
+
+</script>60px; background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
 
 .nav{ width:100%; height:50px; background-color:#8eb3db;}
 .lights{ overflow:hidden;}
@@ -56,25 +64,11 @@ td.img{
 <title>zigbee设备设备</title>
 
 <script type="text/javascript">
-
-var lightdata='<%=result%>';
-	
-function init()
-{
-	
-	//var lightdata ='<%=tostring(getdevices(2))%>';
-
-//	alert(lightdata);
-	
-//	var lightdata="hello world";
-//	alert(lightdata); 
-
-}
-
+	var lightdata='<%=result%>';
 </script>
 </head>
 
-<body onload="init();">
+<body>
 
 <div class="big_box">
 
