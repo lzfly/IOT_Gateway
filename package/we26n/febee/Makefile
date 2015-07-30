@@ -36,7 +36,7 @@ endef
 
 define Package/febee/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) ./files/zll  $(1)/mnt/zll
+	$(INSTALL_BIN) ./files/zll  $(1)/usr/bin/zll
 	$(INSTALL_BIN) ./files/zlldaemon  $(1)/usr/bin/zlldaemon
 endef
 
