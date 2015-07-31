@@ -260,6 +260,9 @@ int receiveDeviceMsg(char *buf, int len)
                                         printf("[receiveDeviceMsg]IEEE=%s\r\n",g_devices[g_devices_count].ieeestr);
 
 					g_devices[g_devices_count].SNlen = buffer[20 + g_devices[g_devices_count].namelen];
+                                        if(g_devices[g_devices_count].SNlen > 100)
+                                            g_devices[g_devices_count].SNlen = 100;
+
 					printf("[receiveDeviceMsg]SNlen=%d\r\n",g_devices[g_devices_count].SNlen);
 
 
