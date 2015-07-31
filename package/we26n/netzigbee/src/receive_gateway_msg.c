@@ -248,6 +248,8 @@ int receiveDeviceMsg(char *buf, int len)
 					memcpy(&IEEE[0], &buffer[12 + g_devices[g_devices_count].namelen], 8);
 					memcpy(&g_devices[g_devices_count].IEEE[0], &buffer[12 + g_devices[g_devices_count].namelen], 8);
                                         sprintf(g_devices[g_devices_count].ieeestr,"%02x%02x%02x%02x%02x%02x%02x%02x", IEEE[0], IEEE[1], IEEE[2], IEEE[3], IEEE[4], IEEE[5], IEEE[6], IEEE[7]);
+
+					printf("%s",g_devices[g_devices_count].ieeestr);
 					for(iii=0;iii<=7;iii++)
 					{
 						printf("\n");
