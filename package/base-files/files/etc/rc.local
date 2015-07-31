@@ -6,6 +6,7 @@ start-stop-daemon -b -S -x commanddispatcher.lua
 start-stop-daemon -b -S -x flowmeter
 start-stop-daemon -b -S -x ttyswitch
 sleep 1
+start-stop-daemon -b -S -x zll -- /dev/ttyS13
 start-stop-daemon -b -S -x netzigbee
 start-stop-daemon -b -S -x webdevice.lua
 
