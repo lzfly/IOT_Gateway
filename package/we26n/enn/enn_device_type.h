@@ -31,5 +31,12 @@
 
 //烟雾
 #define ENN_DEVICE_TYPE_SMOKE "0006"
+//开关插座
+#define ENN_DEVICE_TYPE_POWER_OUTLET "0017"
+
+//门磁
+#define ENN_DEVICE_TYPE_MAGNETIC_DOOR "0018"
+//人体红外
+#define ENN_DEVICE_TYPE_BODY_INFRARED "0019"
 
 #endif

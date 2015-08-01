@@ -224,7 +224,10 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 				     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
                                      g_openStatus[i] = data;
 					 break;
-				 default:
+				 case FB_DEVICE_TYPE_POWER_OUTLET:
+				     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
+				         break; 
+				default:
 					 break;
 				}
                 
@@ -359,7 +362,13 @@ static int zigbee_getstatecmd( struct ubus_context *ctx, struct ubus_object *obj
 				switch(g_devices[i].deviceId)
 				{
 				 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
-                     getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+                    			 getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+					 break;
+				 case FB_DEVICE_TYPE_BODY_INFRARED:
+					getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+					 break;
+				 case FB_DEVICE_TYPE_MAGNETIC_DOOR:
+					getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
 					 break;
 				 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 				 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:

@@ -111,6 +111,16 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_GAS_ALERT);
 		  sprintf(devicedatastr, "%d", data);
 	     break;
+	 case FB_DEVICE_TYPE_MAGNETIC_DOOR:
+	      sprintf(devicetypestr,"%s",ENN_DEVICE_TYPE_MAGNETIC_DOOR);
+	      sprintf(deviceattrstr,"%d",ENN_DEVICE_ATTR_MAGNETIC_DOOR_ALERT);
+	      sprintf(devicedatastr, "%d", data);
+	     break;
+	 case FB_DEVICE_TYPE_BODY_INFRARED:
+	      sprintf(devicetypestr,"%s",ENN_DEVICE_TYPE_BODY_INFRARED);
+	      sprintf(deviceattrstr,"%d",ENN_DEVICE_ATTR_BODY_INFRARED);
+	      sprintf(devicedatastr, "%d", data);
+	     break;
 	 case FB_DEVICE_TYPE_TEMP_HUM:
 	 case FB_DEVICE_TYPE_TEMP_HUM_2:
 	     sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_TEMP_HUM);
@@ -529,6 +539,44 @@ int receiveDeviceMsg(char *buf, int len)
 						
 						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, value);
 					}
+					
+					else if(g_devices[index].deviceId == FB_DEVICE_TYPE_MAGNETIC_DOOR)
+					{
+
+						printf("[receiveDeviceMsg]FB_DEVICE_TYPE_MAGNETIC_DOOR\r\n");
+						w26n_byte num = buffer[7];
+						printf("[receiveDeviceMsg]num=%d\r\n",num);
+
+						int attr = (buffer[8]&0xFF)|((buffer[9]&0xFF)<<8);
+						printf("[receiveDeviceMsg]attr=%d\r\n",attr);
+
+						w26n_byte type = buffer[10];
+						printf("[receiveDeviceMsg]type=%d\r\n",type);
+
+						w26n_byte value = buffer[11];
+						printf("[receiveDeviceMsg] value=%d\r\n",value);
+						
+						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_MAGNETIC_DOOR_ALERT, value);
+					}
+					else if(g_devices[index].deviceId == FB_DEVICE_TYPE_BODY_INFRARED)
+					{
+
+						printf("[receiveDeviceMsg]FB_DEVICE_TYPE_BODY_INFRARED\r\n");
+						w26n_byte num = buffer[7];
+						printf("[receiveDeviceMsg]num=%d\r\n",num);
+
+						int attr = (buffer[8]&0xFF)|((buffer[9]&0xFF)<<8);
+						printf("[receiveDeviceMsg]attr=%d\r\n",attr);
+
+						w26n_byte type = buffer[10];
+						printf("[receiveDeviceMsg]type=%d\r\n",type);
+
+						w26n_byte value = buffer[11];
+						printf("[receiveDeviceMsg] value=%d\r\n",value);
+						
+						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_BODY_INFRARED, value);
+					}
+
 					else if(g_devices[index].deviceId == FB_DEVICE_TYPE_TEMP_HUM || g_devices[index].deviceId == FB_DEVICE_TYPE_TEMP_HUM_2)
 					{
 					    printf("[receiveDeviceMsg]FB_DEVICE_TYPE_TEMP_HUM\r\n");
