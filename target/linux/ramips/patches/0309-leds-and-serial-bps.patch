@@ -52,7 +52,7 @@
 +        {
 +	    ralink_gpio_led_info  tinfo;
 +		
-+	    tinfo.gpio = 13;
++	    tinfo.gpio = 11;
 +	    tinfo.on = 4;
 +	    tinfo.off = 4;
 +	    tinfo.blinks = 0;
