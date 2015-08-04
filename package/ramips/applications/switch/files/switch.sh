@@ -171,7 +171,7 @@ config6855Esw()
 # work for 7620 and 7621
 setup_switch()
 {
-	config6855Esw LLLLW
+	config6855Esw WLLLL
 }
 
 reset_switch()
