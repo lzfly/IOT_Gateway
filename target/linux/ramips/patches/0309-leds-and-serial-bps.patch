@@ -57,7 +57,7 @@
 +	    tinfo.off = 4;
 +	    tinfo.blinks = 0;
 +	    tinfo.rests = 0;
-+	    tinfo.times = 1000;
++	    tinfo.times = RALINK_GPIO_LED_INFINITY;
 +	    
 +	    ralink_gpio_led_set( tinfo );
 +        }
