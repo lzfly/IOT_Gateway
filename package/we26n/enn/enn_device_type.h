@@ -33,7 +33,7 @@
 //燃气表
 #define ENN_DEVICE_TYPE_GAS_METER "0020"
 //热表
-#define ENN_DEVICE_TYPE_HOTLIST "0021"
+#define ENN_DEVICE_TYPE_HEAT_METER "0021"
 
 
 #endif
