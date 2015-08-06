@@ -1,6 +1,7 @@
 #ifndef ENN_DEVICE_ATTR_H
 #define ENN_DEVICE_ATTR_H
 
+#define SHANGSHANYIYUAN 0
 
 //水表-用水量 
 //数据类型： double 64bit
@@ -12,7 +13,11 @@
 
 //开关状态控制
 //数据类型： int 32bit
-#define ENN_DEVICE_ATTR_ON_OFF_THREE_STATE 1016
+#if SHANGSHANYIYUAN 
+    #define ENN_DEVICE_ATTR_ON_OFF_THREE_STATE 1016
+#else
+    #define ENN_DEVICE_ATTR_ON_OFF_THREE_STATE 1001
+#endif
 //数据类型： int 32bit
 
 //窗帘控制 
@@ -51,8 +56,14 @@
 #define ENN_DEVICE_ATTR_MAGNETIC_DOOR_ALERT 1018
 //人体红外
 #define ENN_DEVICE_ATTR_BODY_INFRARED 1019
-//开关插座
-#define ENN_DEVICE_ATTR_POWER_OUTLET 1020
+
+//开关插座i
+#if SHANGSHANYIYUAN
+    #define ENN_DEVICE_ATTR_POWER_OUTLET 1020
+#else
+    #define ENN_DEVICE_ATTR_POWER_OUTLET 1001
+#endif
+
 //烟雾
 #define ENN_DEVICE_ATTR_SMOKE_CONCENTRATION 1010
 //CONCENTRATION
