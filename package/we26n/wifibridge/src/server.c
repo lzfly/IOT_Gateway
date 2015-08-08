@@ -17,6 +17,8 @@
 #include <libubox/uloop.h>
 #include <libubus.h>
 
+#include <pthread.h> 
+
 #include "enn_device_type.h"
 #include "enn_device_attr.h"
 
@@ -25,6 +27,9 @@
 #define MAXINTERFACES   16
 char g_localMAC[16];
 struct sockaddr_in g_localAddr;
+
+char *ieeestr="A01511504001758";
+	
 int getLocalIPandMAC ()
 {
    register int fd, intrface, retn = 0;
@@ -262,48 +267,26 @@ int  sendMsgToWeb(char *ieeestr,unsigned short int attr,long double data)
 	
 }
 
-int main(int argc,char *argv[])
-{
-    char *ieeestr="A01511504001758";
-    int sockfd,connectfd;
+
+void* gas_meter_thread( void *arg )  
+{  
     int i,j,p,q,k;
     int m=0,n=0,t=0;
     long double d;
-    struct sockaddr_in server_addr,client_addr;
+	int connectfd;
+	
     char buf[N],buf_f[N],buf_ff[N];
    // char buff[N]={0x3C,0X00,0X01,0X00,0XDE,0XAA,0X03,0X18,0X22,0X00,0X08,0X03,0XEA,0XAE,0X01,0X6A};
     char buf_wake[N]={0X3C,0X00,0X01,0X00,0X00,0X00,0X00,0X00,0XF9,0X00,0X08,0X08,0X01,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X85,0X4F};
     char buf_read[N]={0x3C,0X00,0X01,0X00,0XDE,0XAA,0X03,0X18,0X22,0X00,0X08,0X03,0XEA,0XAE,0X01,0X6A};
     char buf_open[N]={0x3C,0xFF,0x01,0x00,0xDE,0xAA,0x03,0x18,0x31,0x00,0x08,0x06,0x0E,0x00,0x02,0x00,0x00,0x00,0xF2};
-   getLocalIPandMAC ();
-   if( (sockfd = socket(AF_INET,SOCK_STREAM,0)) < 0)
-    {
-        perror("socket");
-    }
-    printf("sockfd =%d\n",sockfd);
-    memset(&server_addr,0,sizeof(server_addr));
-    memset(&client_addr,0,sizeof(client_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(9000);
-    server_addr.sin_addr.s_addr = inet_addr("0.0.0.0");
-    if(bind (sockfd,(struct sockaddr *)&server_addr,sizeof(server_addr)) < 0)
-    {
-        perror("bind");
-    }
-    listen(sockfd,5);
-
-    socklen_t addrlen = sizeof(client_addr);
-    while(1)
-    {
-
-        if(  (connectfd = accept(sockfd,(struct sockaddr*)&client_addr,&addrlen)) < 0)
-        {
-            perror("accept");
-        }
-        printf("connectfd = %d\n",connectfd);
-        printf("client IP and Port %s:%d\n",inet_ntoa(client_addr.sin_addr),ntohs(client_addr.sin_port));
-	while(1)
 	
+    printf( "gas_meter_thread init\n");  
+ 
+	connectfd = arg;
+
+	
+	while(1)
 	{      
 		sleep(2);
 		printf("AAAAAAA");
@@ -354,9 +337,55 @@ int main(int argc,char *argv[])
      			sleep(60);
         		t++;
 	}
+	close(connectfd);
 	
+} 
 
-       // close(connectfd);
+
+int main(int argc,char *argv[])
+{
+
+    int sockfd,connectfd;
+	pthread_t th;  
+	int ret;  
+	int *thread_ret = NULL;  
+		
+    struct sockaddr_in server_addr,client_addr;
+
+   getLocalIPandMAC ();
+   if( (sockfd = socket(AF_INET,SOCK_STREAM,0)) < 0)
+    {
+        perror("socket");
+    }
+    printf("sockfd =%d\n",sockfd);
+    memset(&server_addr,0,sizeof(server_addr));
+    memset(&client_addr,0,sizeof(client_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(9000);
+    server_addr.sin_addr.s_addr = inet_addr("0.0.0.0");
+    if(bind (sockfd,(struct sockaddr *)&server_addr,sizeof(server_addr)) < 0)
+    {
+        perror("bind");
+    }
+    listen(sockfd,5);
+
+    socklen_t addrlen = sizeof(client_addr);
+    while(1)
+    {
+        if((connectfd = accept(sockfd,(struct sockaddr*)&client_addr,&addrlen)) < 0)
+        {
+            perror("accept error");
+        }
+        printf("new socket connectfd = %d\n",connectfd);
+        printf("client IP and Port %s:%d\n",inet_ntoa(client_addr.sin_addr),ntohs(client_addr.sin_port));
+		
+		ret = pthread_create( &th, NULL, gas_meter_thread, connectfd );  
+		if( ret != 0 ){  
+			printf( "Create thread error!\n");  
+			continue;  
+		}  
+		printf( "This is the main process.\n" );  
+		
     }
     close(sockfd);
 
