@@ -357,7 +357,7 @@ void* enn_meter_thread( void *arg )
     	char buf_power[N],buf_water[N],buf_heat[N];
      	char buff_power[N] = {0x01,0X03,0X00,0X14,0X00,0X02,0X84,0X0F};
 	 char buff_water[N]={0x02,0X03,0X00,0X90,0X00,0X04,0X44,0X17};
-	 char buff_heat[N]={0x03,0X03,0X00,0X04,0X00,0X02,0X84,0X28};
+	 char buff_heat[N]={0x02,0X03,0X00,0X78,0X00,0X02,0X44,0X21};
 
 	
 	
@@ -434,9 +434,9 @@ void* enn_meter_thread( void *arg )
 		}
 		dump_hex(buf_heat,len_h);
 		puc_heat = (uint8_t *)buf_heat;
-		aaa_h = modbus_conv_long(&(puc_heat[3]));
+		aaa_h = modbus_conv_real4(&(puc_heat[3]));
 		
-		printf("The water meter reading is :%f\n",aaa_h);
+		printf("The heat meter reading is :%f\n",aaa_h);
 		sendMsgToWeb(heatid,HEAT,aaa_h);
 		sleep(10);
 		

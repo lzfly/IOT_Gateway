@@ -39,11 +39,15 @@ define Package/web/install
 	$(INSTALL_DIR)  $(1)/usr/lib/lua/luci/controller/admin/
 	$(INSTALL_DIR)  $(1)/www/
 	$(INSTALL_DIR) 	$(1)/www/luci-static/resources/
+	$(INSTALL_DIR) 	$(1)/www/luci-static/bootstrap/
 	$(INSTALL_DIR)  $(1)/usr/lib/lua/luci/view/
+	$(INSTALL_DIR)  $(1)/usr/lib/lua/luci/view/thems/
 	$(INSTALL_BIN) ./files/newweb.lua  $(1)/usr/lib/lua/luci/controller/admin/newweb.lua
+	$(INSTALL_BIN) ./files/cascade.css  $(1)/www/luci-static/bootstrap/cascade.css
 	$(INSTALL_BIN) ./files/index.htm  $(1)/www/index.htm
 	$(CP) ./files/resources/  $(1)/www/luci-static/
 	$(CP) ./files/newweb/  $(1)/usr/lib/lua/luci/view/
+	$(CP) ./files/bootstrap/ $(1)/usr/lib/lua/luci/view/themes/
 
 endef
 

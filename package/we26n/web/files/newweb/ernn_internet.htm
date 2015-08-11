@@ -34,13 +34,15 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
 .big_top img,.big_top a{ float:left; padding-left:5px; padding-bottom:15px;text-decoration:none;}
 .zig{font-size:26px; color:white;padding-left:15px; padding-top:8px; }
-.button{margin-left:900px;color:white;padding-top:10px;}
+.button{margin-left:860px;color:white;padding-top:10px;}
+.big_top p{ padding-top:20px; padding-left:5px; color:#FFF; font-size:12px;}
 
 .big_bottom{width:1198px;height:1360px; background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
 
 .nav{ width:100%; height:50px; background-color:#8eb3db;}
 .lights{ overflow:hidden;}
-.lights a{ float:left; padding-left:400px; padding-top:10px;text-decoration:none; font-size:30px;}
+.lights a{ float:left; padding:0 90px; padding-top:8px;text-decoration:none; font-size:26px; color:#FFF;}
+.lights a:hover{color:#009;text-decoration:none}
 
 table{
 	width:100%;
@@ -137,16 +139,20 @@ td.img{
 <div class="big_box">
 
 	<div class="big_top">
-    	<a href="newweb_index"><img src="<%=resource%>/images/picture_01.png"></a>
+    	<a href="newweb_index"> <img src="<%=resource%>/images/picture_01.png"></a>
         <a class="zig">ZIGBEE设备设备</a>
-        <a class="button" href="<%=luci.dispatcher.build_url("admin/newweb/entrynet_control")%>"><img src="<%=resource%>/images/network.png" title="允许入网"></a>
+        <a class="button" href=""><img src="<%=resource%>/images/network.png"></a>
+        <p>允许入网</p>
     </div>
     
-<div class="big_bottom">
+<div class="big_top">
 	<div class="nav">
     	<div class="lights">
         	<a href="ernn_internet">灯</a>
         	<a href="windows">窗帘</a>
+            <a href="switch">开关</a>
+            <a href="sensor">传感器</a>
+            <a href="alertor">报警器</a>
         </div>
     </div>
     <script type="text/javascript">
@@ -155,7 +161,7 @@ td.img{
     
 	var i=0;
 	var item=0;
-	for(i=0;i<winArr.length;i++){  
+	for(i=0;i<winArr.length;i++){   
 		
 		var winData = winArr[i];
 		var devId = winData["deviceid"];
@@ -191,82 +197,7 @@ td.img{
 	
 	</script>
     
-    <!--<table>
-     
-            
-    	<tr>
-        	<th>灯一</th>
-            <th></th>
-            <th><img src="<%=resource%>/images/light_01.png"></th>
-            <th><img src="<%=resource%>/images/button_01.png"></th>
-            <th><select >
-        	<option >开</option> 
-            <option >关</option>
-            <option >不在线</option>
-       		</select></th>
-            <th>色温</th>
-            <th>亮度</th>
-        </tr>
-     </table>-->
-  <!--   <table>
-    	<tr>
-        	<td>灯二</td>
-            <td></td>
-            <td><img src="<%=resource%>/images/light_01.png"></td>
-            <td><img src="<%=resource%>/images/button_01.png"></td>
-            <td><select >
-        	<option >开</option> 
-            <option >关</option>
-            <option >不在线</option>
-       		</select></td>
-            <td>色温</td>
-            <td>亮度</td>
-        </tr>
-     </table>
-     <table>
-    	<tr>
-        	<td>灯三</td>
-            <td></td>
-            <td><img src="<%=resource%>/images/light_01.png"></td>
-            <td><img src="<%=resource%>/images/button_01.png"></td>
-            <td><select >
-        	<option >开</option> 
-            <option >关</option>
-            <option >不在线</option>
-       		</select></td>
-            <td>色温</td>
-            <td>亮度</td>
-        </tr>
-     </table>
-     <table>
-    	<tr>
-        	<td>灯四</td>
-            <td></td>
-            <td><img src="<%=resource%>/images/light_01.png"></td>
-            <td><img src="<%=resource%>/images/button_01.png"></td>
-            <td><select >
-        	<option >开</option> 
-            <option >关</option>
-            <option >不在线</option>
-       		</select></td>
-            <td>色温</td>
-            <td>亮度</td>
-        </tr>
-     </table>
-     <table>
-    	<tr>
-        	<td>灯五</th>
-            <td></td>
-            <td><img src="<%=resource%>/images/light_01.png"></td>
-            <td><img src="<%=resource%>/images/button_01.png"></td>
-            <td><select >
-        	<option >开</option> 
-            <option >关</option>
-            <option >不在线</option>
-       		</select></td>
-            <td>色温</td>
-            <td>亮度</td>
-        </tr>-->
+
      </table>
 
 </div>
