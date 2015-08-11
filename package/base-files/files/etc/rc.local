@@ -9,6 +9,7 @@ sleep 1
 start-stop-daemon -b -S -x zlldaemon
 start-stop-daemon -b -S -x netzigbee
 start-stop-daemon -b -S -x webdevice.lua
-
+start-stop-daemon -b -S -x wifibridge
+start-stop-daemon -b -S -x wifibridge_1
 
 exit 0

@@ -22,13 +22,18 @@
 #include "enn_device_type.h"
 #include "enn_device_attr.h"
 
+#include <uci.h>
+
 #define N 128
 
 #define MAXINTERFACES   16
 char g_localMAC[16];
 struct sockaddr_in g_localAddr;
 
-char *ieeestr="A01511504001758";
+//char *ieeestr="A01511504001758";
+static char gas_meter_id[32];
+static struct uci_context * uci_ctx;
+static struct uci_package * uci_jianyoucfg;
 	
 int getLocalIPandMAC ()
 {
@@ -198,7 +203,7 @@ printf( "len = %d\n", len);
     
 }
 
-int  sendMsgToWeb(char *ieeestr,unsigned short int attr,long double data)
+int  sendMsgToWeb(char *meterid,unsigned short int attr,long double data)
 {
     int  iret;
     uint32_t  id;
@@ -217,14 +222,11 @@ int  sendMsgToWeb(char *ieeestr,unsigned short int attr,long double data)
 	    return -1;
 	}
 
-    printf("[sendMsgToWeb] start--1\r\n");
-
     /**/
 	if ( ubus_lookup_id(ctx, "jianyou", &id) ) {
 		fprintf(stderr, "Failed to look up jianyou object\n");
 		return;
 	}
-	printf("[sendMsgToWeb] start--2\r\n");
 
 	blob_buf_init( &b, 0 );
 	char gatewayidstr[32];
@@ -234,7 +236,7 @@ int  sendMsgToWeb(char *ieeestr,unsigned short int attr,long double data)
         printf("[sendMsgToWeb] start--3\r\n");
 	
 	char deviceidstr[64];
-	sprintf(deviceidstr, "wifi_gas_%s", ieeestr);
+	sprintf(deviceidstr, "wifi_gas_%s", meterid);
         printf("[sendMsgToWeb] start--%s\r\n", deviceidstr);
 	blobmsg_add_string( &b, "deviceid", deviceidstr);
 	
@@ -332,7 +334,7 @@ void* gas_meter_thread( void *arg )
 			if(q<=0)
 			break;
 			d=(float)k/10;
-			sendMsgToWeb(ieeestr,ENN_DEVICE_ATTR_GASMETER_VALUE,d);
+			sendMsgToWeb(gas_meter_id,ENN_DEVICE_ATTR_GASMETER_VALUE,d);
 			dump_hex( buf_f, q );
      			sleep(60);
         		t++;
@@ -352,6 +354,54 @@ int main(int argc,char *argv[])
 		
     struct sockaddr_in server_addr,client_addr;
 
+
+    strcpy(gas_meter_id, "A01511504001758");
+	
+    if (!uci_ctx)
+    {
+        uci_ctx = uci_alloc_context();
+    }
+    else
+    {
+        uci_jianyoucfg = uci_lookup_package(uci_ctx, "jyconfig");
+        if (uci_jianyoucfg)
+            uci_unload(uci_ctx, uci_jianyoucfg);
+    }
+
+    if (uci_load(uci_ctx, "jyconfig", &uci_jianyoucfg))
+    {
+        printf("uci load jianyou config fail\n");
+    }else
+	{
+	    char *value = NULL;
+            struct uci_element *e   = NULL;
+            printf("uci load jianyou config success\n");
+
+
+            /* scan jianyou config ! */
+            uci_foreach_element(&uci_jianyoucfg->sections, e)
+            {
+                struct uci_section *s = uci_to_section(e);
+                if(0 == strcmp(s->type, "deviceid"))
+                {
+                    printf("%s(), type: %s\n", __FUNCTION__, s->type);
+
+                    value = uci_lookup_option_string(uci_ctx, s, "gasmeter");
+                    if(value){
+                            strcpy(gas_meter_id, value);
+                            printf("%s(), gas_meter_id: %s\n", __FUNCTION__, gas_meter_id);
+                        }else{
+                            printf("%s(), gas_meter_id not found\n", __FUNCTION__);
+                     }
+                     break;
+                 }
+
+             }
+             
+    }
+
+	
+	
    getLocalIPandMAC ();
    if( (sockfd = socket(AF_INET,SOCK_STREAM,0)) < 0)
     {
