@@ -1,0 +1,19 @@
+config gatewaye
+    option keeplive	     5   
+	
+config zigbee
+    option temp_interval     2	
+    option hum_interval      2
+    option pm2dot5_interval  3
+    option form_interval     3
+	
+config ble
+    option gas_interval	     3  
+	
+config 470m
+    option power_interval    5  
+    option water_interval    6  
+    option heat_interval     5  
+	
+config wifi
+    option gas_interval	     3  
