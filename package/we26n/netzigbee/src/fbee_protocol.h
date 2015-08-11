@@ -122,7 +122,9 @@
 #define FB_DEVICE_TYPE_GAS  0x0308
 
 //PM2.5	0x0309
+#define FB_DEVICE_TYPE_PM 0x0309
 //烟雾	0x0310
+#define FB_DEVICE_TYPE_SMOGE 0x310
 //点阵显示器	0x0340
 //声光报警	0x0403
 

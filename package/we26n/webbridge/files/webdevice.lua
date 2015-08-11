@@ -10,10 +10,11 @@ require "luci.fs"
 require "luci.sys"
 local LAMP_TYPE="1";
 local WINDOWS_TYPE="2";
-local HUM_TYPE="3";
+local SENSOR_TYPE="3";
 local SWITCH_TYPE="4";
-local WATER_TYPE="0008";
-local ELEC_TYPE="0007";
+local ALERT_TYPE="5";
+local METER_TYPE="10";
+
 
 
 conn = ubus.connect();
@@ -146,11 +147,13 @@ while true do
 	socket.sleep(2);
 	processCommand(WINDOWS_TYPE);
 	socket.sleep(2);
-	processCommand(HUM_TYPE);
+	processCommand(SENSOR_TYPE);
 	socket.sleep(2);
 	processCommand(SWITCH_TYPE);
 	socket.sleep(2);
-	processElecWater(WATER_TYPE);
+	processCommand(ALERT_TYPE);
+	socket.sleep(2);
+	processElecWater(METER_TYPE);
 
 	end
 		processing = false;

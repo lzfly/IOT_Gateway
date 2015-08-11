@@ -19,7 +19,7 @@ function getdevices( type )
 	return datad;
 end
 
-local result=getdevices("1");
+local result1=getdevices("1");
 %>
 
 
@@ -99,7 +99,7 @@ td.img{
 			}
 		}
 		
-		function switchLightState(item)
+		function switchLightState()
 		{
 			//alert("aaa");
 			if (lightState == 0)
@@ -129,7 +129,7 @@ td.img{
 	
 <script type="text/javascript">
 
-	var lightdata='<%=result%>';
+	var lightdata='<%=result1%>';
 
 </script>
 </head>
@@ -157,15 +157,16 @@ td.img{
     </div>
     <script type="text/javascript">
     
-    var winArr = eval(lightdata);
+    var lightArr = eval(lightdata);
     
 	var i=0;
-	var item=0;
-	for(i=0;i<winArr.length;i++){   
+	//var item=0;
+	//var k=0;
+	for(i=0;i<lightArr.length;i++){   
 		
-		var winData = winArr[i];
-		var devId = winData["deviceid"];
-		var status=winData["status"];
+		var lightData = lightArr[i];
+		var devId = lightData["deviceid"];
+		var status=lightData["status"];
 		
 		document.write("<table>");
 		document.write("<tr>") ;

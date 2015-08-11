@@ -455,6 +455,8 @@ static int zigbee_getdevicescmd( struct ubus_context *ctx, struct ubus_object *o
 			{
 				case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 				case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
+				case FB_DEVICE_TYPE_PM:
+				case FB_DEVICE_TYPE_SMOGE:
                     if(devicetype == 1)
 					{
 					    add = 1;
@@ -475,6 +477,14 @@ static int zigbee_getdevicescmd( struct ubus_context *ctx, struct ubus_object *o
 				case FB_DEVICE_TYPE_TEMP_HUM:
 				case FB_DEVICE_TYPE_TEMP_HUM_2:
                     if(devicetype == 3)
+					{
+					    add = 1;
+					}
+					break;
+				case FB_DEVICE_TYPE_BODY_INFRARED:
+				case FB_DEVICE_TYPE_MAGNETIC_DOOR:
+				case FB_DEVICE_TYPE_GAS:
+                    if(devicetype == 5)
 					{
 					    add = 1;
 					}
