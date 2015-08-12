@@ -7,6 +7,7 @@ start-stop-daemon -b -S -x flowmeter
 start-stop-daemon -b -S -x ttyswitch
 sleep 1
 start-stop-daemon -b -S -x zlldaemon
+sleep 1
 start-stop-daemon -b -S -x netzigbee
 start-stop-daemon -b -S -x webdevice.lua
 start-stop-daemon -b -S -x wifibridge
