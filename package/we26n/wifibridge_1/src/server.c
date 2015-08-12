@@ -345,6 +345,8 @@ int  sendMsgToWeb(char *ieeestr,unsigned short int type,double data)
 
 void* enn_meter_thread( void *arg )  
 {  
+	char *path="/tmp/devices_7.ini";
+        FILE *fp;
 	int i,j,p,q,k;
 	int m=0,n=0,t=0;
 	float bbb;
@@ -439,6 +441,7 @@ void* enn_meter_thread( void *arg )
 		printf("The heat meter reading is :%f\n",aaa_h);
 		sendMsgToWeb(heatid,HEAT,aaa_h);
 		sleep(10);
+		
 		
 	}
 	close(connectfd);
