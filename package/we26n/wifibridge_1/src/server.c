@@ -345,6 +345,8 @@ int  sendMsgToWeb(char *ieeestr,unsigned short int type,double data)
 
 void* enn_meter_thread( void *arg )  
 {  
+	char devicesstr[2048];
+        devicesstr[0] = 0;
 	char *path="/tmp/devices_7.ini";
         FILE *fp;
 	int i,j,p,q,k;
@@ -441,6 +443,38 @@ void* enn_meter_thread( void *arg )
 		printf("The heat meter reading is :%f\n",aaa_h);
 		sendMsgToWeb(heatid,HEAT,aaa_h);
 		sleep(10);
+		
+		
+		sprintf(&devicesstr[0], "[");
+				sprintf(&devicesstr[0], "{");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"power_meter_%s\",",powerid);
+				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"ENN_DEVICE_TYPE_POWERMETER\",");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ddd);	
+				sprintf(&devicesstr[strlen(devicesstr)], "},");
+				sprintf(&devicesstr[strlen(devicesstr)], "{");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"water_meter_%s\",",waterid);
+				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"ENN_DEVICE_TYPE_WATERMETER\",");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ccc);	
+				sprintf(&devicesstr[strlen(devicesstr)], "},");
+				sprintf(&devicesstr[strlen(devicesstr)], "{");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"heat_meter_%s\",",heatid);
+				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"ENN_DEVICE_TYPE_HEAT_METER\",");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",aaa_h);	
+				sprintf(&devicesstr[strlen(devicesstr)], "},");
+				sprintf(&devicesstr[strlen(devicesstr)-1], "]");
+				printf("devicesstr= %s\n",devicesstr);
+				if((fp=fopen(path,"w+")) == NULL)
+				{
+					printf("fail to open\n");
+					return -1;
+				}
+			
+				fwrite(devicesstr,1,strlen(devicesstr),fp);
+				fclose(fp);
+				
 		
 		
 	}

@@ -339,8 +339,8 @@ void* gas_meter_thread( void *arg )
 			if(q<=0)
 			break;
 			d=(float)k/10;
-			//if(30 == f)
-			//{
+			if(30 == f)
+			{
 				sprintf(&devicesstr[0], "[");
 				sprintf(&devicesstr[strlen(devicesstr)], "{");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"gas_meter_%s\",",gas_meter_id);
@@ -359,7 +359,7 @@ void* gas_meter_thread( void *arg )
 				fwrite(devicesstr,1,strlen(devicesstr),fp);
 				fclose(fp);
 				f=0;
-			//}
+			}
 			sendMsgToWeb(gas_meter_id,ENN_DEVICE_ATTR_GASMETER_VALUE,d);
 			dump_hex( buf_f, q );
      			sleep(60);
