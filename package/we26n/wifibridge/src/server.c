@@ -272,8 +272,13 @@ int  sendMsgToWeb(char *meterid,unsigned short int attr,long double data)
 
 void* gas_meter_thread( void *arg )  
 {  
+    char devicesstr[2048];
+    devicesstr[0] = 0;
+    char *path="/tmp/devices_6.ini";
+    FILE *fp;
+    char buff_path[N];
     int i,j,p,q,k;
-    int m=0,n=0,t=0;
+    int m=0,n=0,t=0,f=0;
     long double d;
 	int connectfd;
 	
@@ -334,10 +339,32 @@ void* gas_meter_thread( void *arg )
 			if(q<=0)
 			break;
 			d=(float)k/10;
+			//if(30 == f)
+			//{
+				sprintf(&devicesstr[0], "[");
+				sprintf(&devicesstr[strlen(devicesstr)], "{");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"gas_meter_%s\",",gas_meter_id);
+				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"ENN_DEVICE_TYPE_GAS_METER\",");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",d);	
+				sprintf(&devicesstr[strlen(devicesstr)], "},");
+				sprintf(&devicesstr[strlen(devicesstr)-1], "]");
+				printf("devicesstr= %s\n",devicesstr);
+				if((fp=fopen(path,"w+")) == NULL)
+				{
+					printf("fail to open\n");
+					return -1;
+				}
+			
+				fwrite(devicesstr,1,strlen(devicesstr),fp);
+				fclose(fp);
+				f=0;
+			//}
 			sendMsgToWeb(gas_meter_id,ENN_DEVICE_ATTR_GASMETER_VALUE,d);
 			dump_hex( buf_f, q );
      			sleep(60);
         		t++;
+        		f++;
 	}
 	close(connectfd);
 	
