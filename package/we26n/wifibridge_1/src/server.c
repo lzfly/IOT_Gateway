@@ -23,9 +23,15 @@
 #include "enn_device_attr.h"
 #include "type.h"
 
+
+#include <uci.h>
 #include <stdint.h>
 
 #define N 128
+
+static char powerid[32],waterid[32],heatid[32];
+static struct uci_context * uci_ctx;
+static struct uci_package * uci_jianyoucfg;
 
 int32_t  modbus_conv_longm( uint8_t * puc )
 {
@@ -87,9 +93,9 @@ int32_t  modbus_conv_long( uint8_t * puc )
 char g_localMAC[16];
 struct sockaddr_in g_localAddr;
 
-char *powerid="1507080600179";
-char *waterid="TS0004482";
-char *heatid="50001482";
+//char *powerid="1507080600179";
+//char *waterid="TS0004482";
+//char *heatid="50001482";
 	
 int getLocalIPandMAC ()
 {
@@ -357,6 +363,79 @@ void* enn_meter_thread( void *arg )
 	uint8_t * puc_power,* puc_water,*puc_heat;
 	double d,aaa_h;
 	int connectfd;
+	
+	
+   if (!uci_ctx)
+    {
+        uci_ctx = uci_alloc_context();
+    }
+    else
+    {
+        uci_jianyoucfg = uci_lookup_package(uci_ctx, "jyconfig");
+        if (uci_jianyoucfg)
+            uci_unload(uci_ctx, uci_jianyoucfg);
+    }
+
+    if (uci_load(uci_ctx, "jyconfig", &uci_jianyoucfg))
+    {
+        printf("uci load jianyou config fail\n");
+    }else
+	{
+	    char *value_p = NULL;
+	    char *value_w = NULL;
+	    char *value_h = NULL;
+            struct uci_element *e   = NULL;
+            printf("uci load jianyou config success\n");
+
+
+            /* scan jianyou config ! */
+            uci_foreach_element(&uci_jianyoucfg->sections, e)
+            {
+                struct uci_section *s = uci_to_section(e);
+                if(0 == strcmp(s->type, "deviceid"))
+                {
+                    printf("%s(), type: %s\n", __FUNCTION__, s->type);
+
+                    value_p = uci_lookup_option_string(uci_ctx, s, "powermeter");
+                   
+                    if(value_p)
+                    {
+                            strcpy(powerid, value_p);
+                            printf("%s(), powerid: %s\n", __FUNCTION__, powerid);
+                     }
+                     else{
+                            printf("%s(), gas_meter_id not found\n", __FUNCTION__);
+                     }
+                      value_w = uci_lookup_option_string(uci_ctx, s, "watermeter"); 
+                   
+                      if(value_w)
+                    {
+                            strcpy(waterid, value_w);
+                            printf("%s(), waterid: %s\n", __FUNCTION__, waterid);
+                     }
+                     else{
+                            printf("%s(), water_meter_id not found\n", __FUNCTION__);
+                     }
+                      value_h = uci_lookup_option_string(uci_ctx, s, "heatmeter"); 
+                       if(value_h)
+                    {
+                            strcpy(heatid, value_h);
+                            printf("%s(), heatid: %s\n", __FUNCTION__, heatid);
+                     }
+                     else{
+                            printf("%s(), heat_meter_id not found\n", __FUNCTION__);
+                  }
+                     break;
+            }
+
+          }
+             
+   }
+
+	
+	
+	
+	
 	
     	char buf_power[N],buf_water[N],buf_heat[N];
      	char buff_power[N] = {0x01,0X03,0X00,0X14,0X00,0X02,0X84,0X0F};
