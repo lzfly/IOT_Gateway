@@ -34,6 +34,21 @@ struct sockaddr_in g_localAddr;
 static char gas_meter_id[32];
 static struct uci_context * uci_ctx;
 static struct uci_package * uci_jianyoucfg;
+
+
+uint8_t sub(char *buff_sub,int len_sub)
+{
+	int i_sub = 1;
+	int tmp = 0;
+	uint8_t ret_sub; 
+	for(i_sub = 1;i_sub < len_sub;i_sub ++)
+	{
+		tmp = tmp + buff_sub[i_sub];
+	}
+	printf("tmp = %hhx\n",tmp);
+	ret_sub = (uint8_t )(tmp & 0xff);
+	return ret_sub;
+}
 	
 int getLocalIPandMAC ()
 {
@@ -272,6 +287,7 @@ int  sendMsgToWeb(char *meterid,unsigned short int attr,long double data)
 
 void* gas_meter_thread( void *arg )  
 {  
+	extern int errno;
     char devicesstr[2048];
     devicesstr[0] = 0;
     char *path="/tmp/devices_6.ini";
@@ -280,14 +296,49 @@ void* gas_meter_thread( void *arg )
     int i,j,p,q,k;
     int m=0,n=0,t=0,f=0;
     long double d;
-	int connectfd;
-	
+    int connectfd;
+    uint8_t crc,crc_o;	
+
     char buf[N],buf_f[N],buf_ff[N];
+    
+    	char *id;
+     	char str[32];
+        //id = gas_meter_id;
+        //printf("ga_sid = %s\n",id);
+        //id = id +3;
+        printf("ddd=%s\n",&gas_meter_id[3]);
+        uint64_t d_ata;
+        if((d_ata = strtoull(&gas_meter_id[3], NULL, 10))<0)
+        {
+        	printf("errno=%d\n",errno);
+        }
+	printf("d_ata = %llu \n",d_ata);
+	//printf("%hhx-%hhx-%hhx-%hhx\r\n", (uint8_t)(d_ata & 0xff), (uint8_t)((d_ata >> 8) & 0xff), (uint8_t)((d_ata >> 16) & 0xff), (uint8_t)((d_ata >> 24) & 0xff) );
+	
+       
+	
+    
+    
    // char buff[N]={0x3C,0X00,0X01,0X00,0XDE,0XAA,0X03,0X18,0X22,0X00,0X08,0X03,0XEA,0XAE,0X01,0X6A};
     char buf_wake[N]={0X3C,0X00,0X01,0X00,0X00,0X00,0X00,0X00,0XF9,0X00,0X08,0X08,0X01,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X85,0X4F};
     char buf_read[N]={0x3C,0X00,0X01,0X00,0XDE,0XAA,0X03,0X18,0X22,0X00,0X08,0X03,0XEA,0XAE,0X01,0X6A};
+    buf_read[4] = (uint8_t)(d_ata & 0xff);
+    buf_read[5] = (uint8_t)(d_ata >>8 & 0xff);
+    buf_read[6] = (uint8_t)(d_ata >>16 & 0xff);
+    buf_read[7] = (uint8_t)(d_ata >>24 & 0xff);
+    crc = sub(buf_read,15);
+    printf("CRC = %x\n",crc);
+    printf("%hhx-%hhx-%hhx-%hhx\r\n",buf_read[4],buf_read[5],buf_read[6],buf_read[7]);
+    buf_read[15] = crc;
     char buf_open[N]={0x3C,0xFF,0x01,0x00,0xDE,0xAA,0x03,0x18,0x31,0x00,0x08,0x06,0x0E,0x00,0x02,0x00,0x00,0x00,0xF2};
-	
+    buf_open[4] = buf_read[4];
+    buf_open[5] = buf_read[5];
+    buf_open[6] = buf_read[6];
+    buf_open[7] = buf_read[7];
+    printf("%hhx-%hhx-%hhx-%hhx\r\n",buf_open[4],buf_open[5],buf_open[6],buf_open[7]);
+    buf_open[18] = 0; 
+    crc_o = sub(buf_open,18);
+    printf("buf[18]= %x\n",crc_o);
     printf( "gas_meter_thread init\n");  
  
 	connectfd = arg;
