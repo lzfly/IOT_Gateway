@@ -30,6 +30,7 @@ Contributors:
 #include <mosquitto.h>
 #include "client_shared.h"
 
+
 bool process_messages = true;
 int msg_count = 0;
 
@@ -72,8 +73,302 @@ void my_message_callback(struct mosquitto *mosq, void *obj, const struct mosquit
 				printf("\n");
 			}
 			fflush(stdout);
+			
+			
+		    char jsondata[256];
+			printf("payloadlen=%d\n", message->payloadlen);
+			if(message->payloadlen < 255)
+			{
+			    memcpy(jsondata,message->payload, message->payloadlen);
+			    jsondata[message->payloadlen] = 0;
+				printf("jsondata=%s\n", jsondata);
+				
+				char *haystack=jsondata;
+				char *haystack1;
+				char *needle="|";
+				char* buf = strstr( haystack, needle);
+				if( buf != NULL )
+					buf[0]='\0';
+				if(strlen(haystack) != 0 )
+				{
+					printf( "CMD=%s\n ", haystack);
+					
+				    char *needle1=":";
+					char* buf1 = strstr( haystack, needle1);
+					if( buf1 != NULL )
+					    buf1[0]='\0';
+					if(strlen(haystack) != 0  && strcmp(haystack, "C") == 0) //CMD 
+					{
+					    if(buf1 == NULL)
+						{
+							printf("mqtt message find not S/G/N \n");
+							goto exit;
+						}
+						haystack1 = buf1 + strlen(needle1);
+					    if(strlen(haystack1) != 0  && strcmp(haystack1, "S") == 0) // SET
+						{
+						    if( buf == NULL )
+							{
+								printf("mqtt message find not M \n");
+								goto exit;
+							}
+						    haystack = buf + strlen(needle);
+							if(strlen(haystack) == 0)
+							{
+								printf("mqtt message find not M \n");
+								goto exit;
+							}
+					        /* Get next token: */
+				            buf = strstr( haystack, needle);
+							if( buf != NULL )
+							    buf[0]='\0';
+							if(strlen(haystack) != 0)
+							{
+
+					             printf( "MODULE=%s\n ", haystack);
+					             buf1 = strstr( haystack, needle1);
+								 if( buf1 != NULL )
+					                buf1[0]='\0';
+								 if(strlen(haystack) != 0  && strcmp(haystack, "M") == 0) //MODULE
+								 {
+								 	if(buf1 == NULL)
+						           {
+							           printf("mqtt message find not Z/W/4/B/G \n");
+							           goto exit;
+						            }
+									haystack1 = buf1 + strlen(needle1);
+								     if(strlen(haystack1) != 0  && strcmp(haystack1, "Z") == 0) // ZIGBEE
+									 {
+									    if( buf == NULL )
+							           {
+								           printf("mqtt message find not DEVICEID \n");
+								           goto exit;
+							            }
+									    haystack = buf + strlen(needle);
+										if(strlen(haystack) == 0)
+										{
+											printf("mqtt message find DEVICEID\n");
+											goto exit;
+										}
+					                    /* Get next token: */
+				                        buf = strstr( haystack, needle);
+										if(buf != NULL)
+										    buf[0]='\0';
+										if(strlen(haystack) != 0)
+										{
+					                        printf( "DEVICEID=%s\n ", haystack);
+										}
+										else
+										{
+										    printf("mqtt message find DEVICEID\n");
+											goto exit;
+										}
+										
+									    if( buf == NULL )
+							           {
+								           printf("mqtt message find not ATTR \n");
+								           goto exit;
+							            }
+										
+									    haystack = buf + strlen(needle);
+										
+										/* Get next token: */
+				                        buf = strstr( haystack, needle);
+										if(buf != NULL)
+										    buf[0]='\0';
+										if(strlen(haystack) != 0)
+										{
+					                        printf( "ATTR=%s\n ", haystack);
+										}
+										else
+										{
+										    printf("mqtt message find ATTR\n");
+											goto exit;
+										}
+										
+										if( buf == NULL )
+							           {
+								           printf("mqtt message find not DATA \n");
+								           goto exit;
+							            }
+																			 
+									    buf = buf +1;
+										if(strlen(buf) > 0)
+										{
+					                        printf( "DATA=%s\n ", buf);
+										}
+										else
+										{
+										    printf("mqtt message find DATA\n");
+											goto exit;
+										}
+										
+									 }
+									 else if(strcmp(&buf1[1], "B") == 0) // BLE
+									 {}
+									 else if(strcmp(&buf1[1], "4") == 0) // 470M
+									 {}
+									 else if(strcmp(&buf1[1], "W") == 0) // WIFI
+									 {}
+									 else if(strcmp(&buf1[1], "G") == 0) // GATEWAY
+									 {}
+									 else
+									 {
+									     printf("mqtt message find not Z/W/4/B/G \n");
+										 goto exit;
+									 }
+								 }
+								 else
+								 {
+								     printf("mqtt message find not M \n");
+									 goto exit;
+								 }
+								 
+							}
+							else
+							{
+							    printf("mqtt message find not M \n");
+								goto exit;
+							}
+						}
+						else if(strcmp(&buf1[1], "G") == 0)
+						{
+						    if( buf == NULL )
+							{
+								printf("mqtt message find not M \n");
+								goto exit;
+							}
+						    haystack = buf + strlen(needle);
+							if(strlen(haystack) == 0)
+							{
+								printf("mqtt message find not M \n");
+								goto exit;
+							}
+					        /* Get next token: */
+				            buf = strstr( haystack, needle);
+							if( buf != NULL )
+							    buf[0]='\0';
+							if(strlen(haystack) != 0)
+							{
+
+					             printf( "MODULE=%s\n ", haystack);
+					             buf1 = strstr( haystack, needle1);
+								 if( buf1 != NULL )
+					                buf1[0]='\0';
+								 if(strlen(haystack) != 0  && strcmp(haystack, "M") == 0) //MODULE
+								 {
+								 	if(buf1 == NULL)
+						           {
+							           printf("mqtt message find not Z/W/4/B/G \n");
+							           goto exit;
+						            }
+									haystack1 = buf1 + strlen(needle1);
+								     if(strlen(haystack1) != 0  && strcmp(haystack1, "Z") == 0) // ZIGBEE
+									 {
+									    if( buf == NULL )
+							           {
+								           printf("mqtt message find not DEVICEID \n");
+								           goto exit;
+							            }
+									    haystack = buf + strlen(needle);
+										if(strlen(haystack) == 0)
+										{
+											printf("mqtt message find DEVICEID\n");
+											goto exit;
+										}
+					                    /* Get next token: */
+				                        buf = strstr( haystack, needle);
+										if(buf != NULL)
+										    buf[0]='\0';
+										if(strlen(haystack) != 0)
+										{
+					                        printf( "DEVICEID=%s\n ", haystack);
+										}
+										else
+										{
+										    printf("mqtt message find DEVICEID\n");
+											goto exit;
+										}
+													
+										if( buf == NULL )
+							           {
+								           printf("mqtt message find not ATTR \n");
+								           goto exit;
+							            }
+																			 
+									    buf = buf +1;
+										if(strlen(buf) > 0)
+										{
+					                        printf( "ATTR=%s\n ", buf);
+										}
+										else
+										{
+										    printf("mqtt message find ATTR\n");
+											goto exit;
+										}
+										
+									 }
+									 else if(strcmp(&buf1[1], "B") == 0) // BLE
+									 {}
+									 else if(strcmp(&buf1[1], "4") == 0) // 470M
+									 {}
+									 else if(strcmp(&buf1[1], "W") == 0) // WIFI
+									 {}
+									 else if(strcmp(&buf1[1], "G") == 0) // GATEWAY
+									 {}
+									 else
+									 {
+									     printf("mqtt message find not Z/W/4/B/G \n");
+										 goto exit;
+									 }
+								 }
+								 else
+								 {
+								     printf("mqtt message find not M \n");
+									 goto exit;
+								 }
+								 
+							}
+							else
+							{
+							    printf("mqtt message find not M \n");
+								goto exit;
+							}
+						}
+						else if(strcmp(&buf1[1], "N") == 0)
+						{
+						
+						}
+						else
+						{
+						   printf("mqtt message find not S/G/N \n");
+						   goto exit;
+						}
+					
+					}
+					else{
+					    printf("mqtt message find not C \n");
+						goto exit;
+					}
+
+				}
+				else
+				{
+				    printf("mqtt message find not C \n");
+					goto exit;
+				}
+				
+			}
+			else
+			{
+				printf("mqtt message length is too large\n");
+				goto exit;
+			}
+			
 		}
 	}
+	
+exit:
 	if(cfg->msg_count>0){
 		msg_count++;
 		if(cfg->msg_count == msg_count){
@@ -215,6 +510,12 @@ int main(int argc, char *argv[])
 	struct mosq_config cfg;
 	struct mosquitto *mosq = NULL;
 	int rc;
+	
+/*char *out = create();
+printf("%s\n\n\n",out);
+parse(out);*/
+
+	
 	
 	rc = client_config_load(&cfg, CLIENT_SUB, argc, argv);
 	if(rc){
