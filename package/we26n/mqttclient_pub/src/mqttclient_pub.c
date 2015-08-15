@@ -31,6 +31,10 @@ Contributors:
 #include <mosquitto.h>
 #include "client_shared.h"
 
+#include <libubox/blobmsg_json.h>
+#include <libubox/uloop.h>
+#include <libubus.h>
+
 #define STATUS_CONNECTING 0
 #define STATUS_CONNACK_RECVD 1
 #define STATUS_WAITING 2
@@ -52,6 +56,9 @@ static char *username = NULL;
 static char *password = NULL;
 static bool disconnect_sent = false;
 static bool quiet = false;
+static struct mosq_config cfg;
+
+#define MAX_MESSAGE 128
 
 void my_connect_callback(struct mosquitto *mosq, void *obj, int result)
 {
@@ -282,25 +289,12 @@ void print_usage(void)
 	printf("\nSee http://mosquitto.org/ for more information.\n\n");
 }
 
-int main(int argc, char *argv[])
+int mqttclient_pub()
 {
-	struct mosq_config cfg;
 	char buf[1024];
 	struct mosquitto *mosq = NULL;
 	int rc;
 	int rc2;
-
-	rc = client_config_load(&cfg, CLIENT_PUB, argc, argv);
-	if(rc){
-		client_config_cleanup(&cfg);
-		if(rc == 2){
-			/* --help */
-			print_usage();
-		}else{
-			fprintf(stderr, "\nUse 'mosquitto_pub --help' to see usage.\n");
-		}
-		return 1;
-	}
 
 	topic = cfg.topic;
 	message = cfg.message;
@@ -407,9 +401,162 @@ int main(int argc, char *argv[])
 	}
 	mosquitto_destroy(mosq);
 	mosquitto_lib_cleanup();
-
 	if(rc){
 		fprintf(stderr, "Error: %s\n", mosquitto_strerror(rc));
 	}
 	return rc;
+}
+
+struct uloop_fd ufd;
+
+enum {
+    ALERT_MODULE,
+    ALERT_NOTICE,
+    __CTRLCMD_MAX
+};
+
+
+static const struct blobmsg_policy  alertnotice_policy[] = {
+    [ALERT_MODULE] = { .name = "alertmodule", .type = BLOBMSG_TYPE_STRING },
+	[ALERT_NOTICE] = { .name = "alertnotice", .type = BLOBMSG_TYPE_STRING },
+};
+
+static int mqttclient_pub_alertnotice( struct ubus_context *ctx, struct ubus_object *obj,
+                struct ubus_request_data *req, const char *method,
+                struct blob_attr *msg )
+{
+
+	struct blob_attr * tb[__CTRLCMD_MAX];
+    const char * alertmodule;
+	const char * alertnotice;
+    static struct blob_buf b;
+
+	printf("[mqttclient_pub_alertnotice]start\r\n");
+	
+    /**/
+	blobmsg_parse( alertnotice_policy, ARRAY_SIZE(alertnotice_policy), tb, blob_data(msg), blob_len(msg));
+
+	if ( tb[ALERT_MODULE] )
+	{
+		alertmodule = blobmsg_data( tb[ALERT_MODULE] );
+		printf( "alertmodule = %s\n", alertmodule );
+	}
+
+	if ( tb[ALERT_NOTICE] )
+	{
+		alertnotice = blobmsg_data( tb[ALERT_NOTICE] );
+		printf( "alertnotice = %s\n", alertnotice );
+	}
+    char* message[MAX_MESSAGE + 1];
+	if(strlen(alertmodule) > 1)
+	{
+	    printf("module length error");
+	}
+	if(strlen(alertnotice) > 110)
+	{
+	    printf("notice length error");
+	}
+	
+	sprintf(message, "C:N|M:%s|%s", alertmodule, alertnotice);
+	printf("mqtt notice = %s", message);
+	
+	strcpy(cfg.message, message);
+	cfg.msglen = strlen(message);
+
+	mqttclient_pub();
+	
+done:
+
+    /* send reply */
+	blob_buf_init( &b, 0 );
+	blobmsg_add_string( &b, "return",  "ok" );
+    
+    /**/
+    ubus_send_reply( ctx, req, b.head );
+	
+	/**/
+	
+	
+    return UBUS_STATUS_OK;
+    
+}
+
+
+static const struct ubus_method mqttclient_pub_methods[] = {
+	UBUS_METHOD( "alertnotice",  mqttclient_pub_alertnotice, alertnotice_policy ),
+};
+
+
+static struct ubus_object_type system_object_type =
+	UBUS_OBJECT_TYPE("mqttclient_pub_iface", mqttclient_pub_methods);
+
+static struct ubus_object mqttclient_pub_object = {
+	.name = "we26n_mqttclient_pub",
+	.type = &system_object_type,
+	.methods = mqttclient_pub_methods,
+	.n_methods = ARRAY_SIZE(mqttclient_pub_methods),
+};
+
+
+int  ubus_server_init( void )
+{
+    struct ubus_context *ctx;
+	int ret;
+	
+    printf("[ubus_server_init]start\r\n");
+		
+    /**/
+	uloop_init();
+
+	signal(SIGPIPE, SIG_IGN);	
+    
+    /**/
+	ctx = ubus_connect( NULL );
+	if ( NULL == ctx) 
+	{
+	    return 1;
+	}
+
+    /**/
+	ubus_add_uloop( ctx );
+
+    /**/
+	ret = ubus_add_object( ctx, &mqttclient_pub_object );
+	if (ret)
+	{
+		fprintf(stderr, "Failed to add object: %s\n", ubus_strerror(ret));
+		return 2;
+    }
+    printf("[ubus_server_init] ok\r\n");
+	
+	uloop_run();
+    printf("[ubus_server_init]exit run\r\n");
+
+	uloop_done();
+	
+    return 0;
+    
+}
+
+int main(int argc, char *argv[])
+{
+	char buf[1024];
+	struct mosquitto *mosq = NULL;
+	int rc;
+	int rc2;
+
+	rc = client_config_load(&cfg, CLIENT_PUB, argc, argv);
+	if(rc){
+		client_config_cleanup(&cfg);
+		if(rc == 2){
+			/* --help */
+			print_usage();
+		}else{
+			fprintf(stderr, "\nUse 'mosquitto_pub --help' to see usage.\n");
+		}
+		return 1;
+	}
+    cfg.message = malloc(MAX_MESSAGE+1);
+	ubus_server_init();
+	return 0;
 }
