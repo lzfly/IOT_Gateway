@@ -35,6 +35,11 @@ static char gas_meter_id[32];
 static struct uci_context * uci_ctx;
 static struct uci_package * uci_jianyoucfg;
 
+static struct uci_context * uci_ctx_s;
+static struct uci_package * uci_ennconfig;
+
+static char time_s[8];
+ int times = 0;
 
 uint8_t sub(char *buff_sub,int len_sub)
 {
@@ -287,7 +292,7 @@ int  sendMsgToWeb(char *meterid,unsigned short int attr,long double data)
 
 void* gas_meter_thread( void *arg )  
 {  
-	extern int errno;
+    extern int errno;
     char devicesstr[2048];
     devicesstr[0] = 0;
     char *path="/tmp/devices_6.ini";
@@ -300,6 +305,58 @@ void* gas_meter_thread( void *arg )
     uint8_t crc,crc_o;	
 
     char buf[N],buf_f[N],buf_ff[N];
+    
+    
+    
+  	//读取配置文件数据上报时间	
+	if (!uci_ctx_s)
+    {
+        uci_ctx_s = uci_alloc_context();
+    }
+    else
+    {
+        uci_ennconfig = uci_lookup_package(uci_ctx_s, "ennconfig");
+        if (uci_ennconfig)
+            uci_unload(uci_ctx_s, uci_ennconfig);
+    }
+
+    if (uci_load(uci_ctx_s, "ennconfig", &uci_ennconfig))
+    {
+        printf("uci load ENN config fail\n");
+    }else
+	{
+	    char *value_s = NULL;
+            struct uci_element *e_s   = NULL;
+            printf("uci load ENN config success\n");
+
+
+            /* scan enn config ! */
+            uci_foreach_element(&uci_ennconfig->sections, e_s)
+            {
+                struct uci_section *s_s = uci_to_section(e_s);
+                if(0 == strcmp(s_s->type, "wifi"))
+                {
+                    printf("%s(), type: %s\n", __FUNCTION__, s_s->type);
+
+                    value_s = uci_lookup_option_string(uci_ctx_s, s_s, "gas_interval");
+                    if(value_s){
+                            strcpy(time_s, value_s);
+                            printf("%s(), sleep time: %s\n", __FUNCTION__, time_s);
+                             times=strtoul(time_s,NULL,10);
+                             printf("%d\n",times);
+                        }else{
+                            printf("%s(), sleep time_id not found\n", __FUNCTION__);
+                     }
+                     break;
+                 }
+
+             }
+            
+             
+    }
+
+    
+    
     
     	char *id;
      	char str[32];
@@ -314,10 +371,7 @@ void* gas_meter_thread( void *arg )
         }
 	printf("d_ata = %llu \n",d_ata);
 	//printf("%hhx-%hhx-%hhx-%hhx\r\n", (uint8_t)(d_ata & 0xff), (uint8_t)((d_ata >> 8) & 0xff), (uint8_t)((d_ata >> 16) & 0xff), (uint8_t)((d_ata >> 24) & 0xff) );
-	
-       
-	
-    
+	 
     
    // char buff[N]={0x3C,0X00,0X01,0X00,0XDE,0XAA,0X03,0X18,0X22,0X00,0X08,0X03,0XEA,0XAE,0X01,0X6A};
     char buf_wake[N]={0X3C,0X00,0X01,0X00,0X00,0X00,0X00,0X00,0XF9,0X00,0X08,0X08,0X01,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X85,0X4F};
@@ -413,7 +467,8 @@ void* gas_meter_thread( void *arg )
 			}
 			sendMsgToWeb(gas_meter_id,ENN_DEVICE_ATTR_GASMETER_VALUE,d);
 			dump_hex( buf_f, q );
-     			sleep(60);
+     			sleep(times);
+     			printf("\nsleep=%d\n",times);
         		t++;
         		f++;
 	}
@@ -477,6 +532,7 @@ int main(int argc,char *argv[])
              }
              
     }
+
 
 	
 	

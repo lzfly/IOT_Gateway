@@ -29,9 +29,93 @@
 
 #define N 128
 
+static char time_p[8],time_w[8],time_h[8];
+int timep=0,timew=0,timeh=0; 
+
+
 static char powerid[32],waterid[32],heatid[32];
 static struct uci_context * uci_ctx;
 static struct uci_package * uci_jianyoucfg;
+
+static struct uci_context * uci_ctx_s;
+static struct uci_package * uci_ennconfig;
+
+int get_sleep_time()
+{
+ if (!uci_ctx_s)
+    {
+        uci_ctx_s = uci_alloc_context();
+    }
+    else
+    {
+        uci_ennconfig = uci_lookup_package(uci_ctx_s, "ennconfig");
+        if (uci_ennconfig)
+            uci_unload(uci_ctx_s, uci_ennconfig);
+    }
+
+    if (uci_load(uci_ctx_s, "ennconfig", &uci_ennconfig))
+    {
+        printf("uci load ENN config fail\n");
+    }else
+	{
+	    char *value_sp = NULL;
+	    char *value_sw = NULL;
+	    char *value_sh = NULL;
+            struct uci_element *e_s   = NULL;
+            printf("uci load ENN config success\n");
+
+
+            /* scan ENN config ! */
+            uci_foreach_element(&uci_ennconfig->sections, e_s)
+            {
+                struct uci_section *s_s = uci_to_section(e_s);
+                if(0 == strcmp(s_s->type, "470m"))
+                {
+                    printf("%s(), type: %s\n", __FUNCTION__, s_s->type);
+
+                    value_sp = uci_lookup_option_string(uci_ctx_s, s_s, "power_interval");
+                   
+                    if(value_sp)
+                    {
+                            strcpy(time_p, value_sp);
+                            printf("%s(), power meter sleep: %s\n", __FUNCTION__, time_p);
+                            timep=strtoul(time_p,NULL,10);
+                            printf("%d\n",timep);
+                     }
+                     else{
+                            printf("%s(), sleep time not found\n", __FUNCTION__);
+                     }
+                      value_sw = uci_lookup_option_string(uci_ctx_s, s_s, "water_interval"); 
+                   
+                      if(value_sw)
+                    {
+                            strcpy(time_w, value_sw);
+                            printf("%s(), water sleep time: %s\n", __FUNCTION__, time_w);
+                            timew=strtoul(time_w,NULL,10);
+                            printf("%d\n",timew);
+                     }
+                     else{
+                            printf("%s(), water meter sleep time not found\n", __FUNCTION__);
+                     }
+                      value_sh = uci_lookup_option_string(uci_ctx_s, s_s, "heat_interval"); 
+                       if(value_sh)
+                    {
+                            strcpy(time_h, value_sh);
+                            printf("%s(), heat sleep time: %s\n", __FUNCTION__, time_h);
+                            timeh=strtoul(time_h,NULL,10);
+                            printf("%d\n",timeh);
+                     }
+                     else{
+                            printf("%s(), heat meter sleep time not found\n", __FUNCTION__);
+                  }
+                     break;
+            }
+
+          }
+             
+   }
+
+}
 
 int32_t  modbus_conv_longm( uint8_t * puc )
 {
@@ -364,6 +448,7 @@ void* enn_meter_thread( void *arg )
 	double d,aaa_h;
 	int connectfd;
 	
+	get_sleep_time();
 	
    if (!uci_ctx)
     {
@@ -474,7 +559,8 @@ void* enn_meter_thread( void *arg )
 		ddd = ddd/18000000;
 		printf("The power meter reading is :%f\n",ddd);
 		sendMsgToWeb(powerid,POWER,ddd);
-		sleep(10);
+		sleep(timep);
+		printf("power sleep time:%d\n",timep);
 		printf("sleep ok\n");
 		//水表
 		p=send(connectfd,buff_water,8,0);
@@ -499,7 +585,8 @@ void* enn_meter_thread( void *arg )
 		ccc = ccc + aaa_w; 
 		printf("The water meter reading is :%f\n",ccc);
 		sendMsgToWeb(waterid,WATER,ccc);
-		sleep(10);
+		sleep(timew);
+		printf("water sleep time:%d\n",timew);
 		
 		//热表
 		m=send(connectfd,buff_heat,8,0);
@@ -521,8 +608,8 @@ void* enn_meter_thread( void *arg )
 		
 		printf("The heat meter reading is :%f\n",aaa_h);
 		sendMsgToWeb(heatid,HEAT,aaa_h);
-		sleep(10);
-		
+		sleep(timeh);
+		printf("heat sleep time:%d\n",timeh);
 		
 		sprintf(&devicesstr[0], "[");
 				sprintf(&devicesstr[0], "{");
