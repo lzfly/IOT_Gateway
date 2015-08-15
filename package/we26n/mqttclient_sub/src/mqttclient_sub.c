@@ -30,6 +30,126 @@ Contributors:
 #include <mosquitto.h>
 #include "client_shared.h"
 
+#include <libubox/blobmsg_json.h>
+#include <libubox/uloop.h>
+#include <libubus.h>
+
+
+
+void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
+{
+	//static const struct blobmsg_policy policy[2] = { { "args", BLOBMSG_TYPE_INT32 }, { "argv", BLOBMSG_TYPE_INT32 } };
+	//struct blob_attr * cur[2];
+	//uint32_t  a,b;
+	
+	/**/
+	if ( type == UBUS_MSG_DATA )
+	{
+		/* req.priv */
+		printf( "data cback, %d\n", type );
+//		blobmsg_parse( &policy, 2, &cur, blob_data(msg), blob_len(msg) );
+		
+		/**/
+//		a = blobmsg_get_u32( cur[0] );
+//		b = blobmsg_get_u32( cur[1] );
+		
+//		printf( "a = %d, b = %d\n", a, b );
+		
+	}
+
+	return;
+}
+
+
+int  send_set_msg_to_zigbee(char *deviceid, char *attr, char *data)
+{
+    int  iret;
+    uint32_t  id;
+    struct ubus_context *ctx;
+	static struct blob_buf b;
+
+    printf("[send_set_msg_to_zigbee] start\r\n");
+
+    /**/
+	ctx = ubus_connect( NULL );
+	if ( NULL == ctx) 
+	{
+	    fprintf(stderr, "Failed to connect to ubus\n");
+	    return -1;
+	}
+
+    /**/
+	if ( ubus_lookup_id(ctx, "we26n_zigbee_febee", &id) ) {
+		fprintf(stderr, "Failed to look up we26n_zigbee_febee object\n");
+		return;
+	}
+	
+	blob_buf_init( &b, 0 );
+
+	blobmsg_add_string( &b, "gatewayid", "xxxx" ); // not need
+
+	blobmsg_add_string( &b, "deviceid", deviceid);
+
+	blobmsg_add_string( &b, "devicetype", "xxxx");// not need
+	
+	blobmsg_add_string( &b, "attr", attr );
+	
+	blobmsg_add_string( &b, "data", data);	
+
+	printf("[send_set_msg_to_zigbee]ubus_invoke data = %s\r\n", data);
+	/**/
+	ubus_invoke( ctx, id, "ctrlcmd", b.head, test_data_cback, 0, 3000);
+
+    /**/
+	ubus_free(ctx);
+	return 0;
+	
+}
+
+
+int  send_get_msg_to_zigbee(char *deviceid, char *attr)
+{
+    int  iret;
+    uint32_t  id;
+    struct ubus_context *ctx;
+	static struct blob_buf b;
+
+    printf("[send_get_msg_to_zigbee] start\r\n");
+
+    /**/
+	ctx = ubus_connect( NULL );
+	if ( NULL == ctx) 
+	{
+	    fprintf(stderr, "Failed to connect to ubus\n");
+	    return -1;
+	}
+
+    /**/
+	if ( ubus_lookup_id(ctx, "we26n_zigbee_febee", &id) ) {
+		fprintf(stderr, "Failed to look up we26n_zigbee_febee object\n");
+		return;
+	}
+	
+	blob_buf_init( &b, 0 );
+
+	blobmsg_add_string( &b, "gatewayid", "xxxx" ); // not need
+
+	blobmsg_add_string( &b, "deviceid", deviceid);
+
+	blobmsg_add_string( &b, "devicetype", "xxxx");// not need
+	
+	blobmsg_add_string( &b, "attr", attr );
+
+	printf("[send_get_msg_to_zigbee]ubus_invoke attr = %s\r\n", attr);
+	/**/
+	ubus_invoke( ctx, id, "getstatecmd", b.head, test_data_cback, 0, 3000);
+
+    /**/
+	ubus_free(ctx);
+	return 0;
+	
+}
+
 
 bool process_messages = true;
 int msg_count = 0;
@@ -139,6 +259,9 @@ void my_message_callback(struct mosquitto *mosq, void *obj, const struct mosquit
 									haystack1 = buf1 + strlen(needle1);
 								     if(strlen(haystack1) != 0  && strcmp(haystack1, "Z") == 0) // ZIGBEE
 									 {
+									    char deviceid[65];
+										char attr[33];
+										char data[33];
 									    if( buf == NULL )
 							           {
 								           printf("mqtt message find not DEVICEID \n");
@@ -157,6 +280,12 @@ void my_message_callback(struct mosquitto *mosq, void *obj, const struct mosquit
 										if(strlen(haystack) != 0)
 										{
 					                        printf( "DEVICEID=%s\n ", haystack);
+											if(strlen(haystack) > 64)
+											{
+												printf("DEVICEID is too large\n");
+											    goto exit;
+											}    
+											strcpy(deviceid, haystack);
 										}
 										else
 										{
@@ -179,6 +308,12 @@ void my_message_callback(struct mosquitto *mosq, void *obj, const struct mosquit
 										if(strlen(haystack) != 0)
 										{
 					                        printf( "ATTR=%s\n ", haystack);
+											if(strlen(haystack) > 32)
+											{
+												printf("ATTR is too large\n");
+											    goto exit;
+											}    
+											strcpy(attr, haystack);
 										}
 										else
 										{
@@ -196,12 +331,20 @@ void my_message_callback(struct mosquitto *mosq, void *obj, const struct mosquit
 										if(strlen(buf) > 0)
 										{
 					                        printf( "DATA=%s\n ", buf);
+											if(strlen(buf) > 32)
+											{
+												printf("DATA is too large\n");
+											    goto exit;
+											}    
+											strcpy(data, buf);
 										}
 										else
 										{
 										    printf("mqtt message find DATA\n");
 											goto exit;
 										}
+										
+										send_set_msg_to_zigbee(deviceid, attr, data);
 										
 									 }
 									 else if(strcmp(&buf1[1], "B") == 0) // BLE
@@ -265,6 +408,9 @@ void my_message_callback(struct mosquitto *mosq, void *obj, const struct mosquit
 									haystack1 = buf1 + strlen(needle1);
 								     if(strlen(haystack1) != 0  && strcmp(haystack1, "Z") == 0) // ZIGBEE
 									 {
+									 	char deviceid[65];
+										char attr[33];
+										
 									    if( buf == NULL )
 							           {
 								           printf("mqtt message find not DEVICEID \n");
@@ -283,6 +429,12 @@ void my_message_callback(struct mosquitto *mosq, void *obj, const struct mosquit
 										if(strlen(haystack) != 0)
 										{
 					                        printf( "DEVICEID=%s\n ", haystack);
+											if(strlen(haystack) > 64)
+											{
+												printf("DEVICEID is too large\n");
+											    goto exit;
+											}    
+											strcpy(deviceid, haystack);
 										}
 										else
 										{
@@ -300,12 +452,20 @@ void my_message_callback(struct mosquitto *mosq, void *obj, const struct mosquit
 										if(strlen(buf) > 0)
 										{
 					                        printf( "ATTR=%s\n ", buf);
+											if(strlen(buf) > 32)
+											{
+												printf("ATTR is too large\n");
+											    goto exit;
+											}    
+											strcpy(attr, buf);
 										}
 										else
 										{
 										    printf("mqtt message find ATTR\n");
 											goto exit;
 										}
+										
+										send_get_msg_to_zigbee(deviceid, attr);
 										
 									 }
 									 else if(strcmp(&buf1[1], "B") == 0) // BLE
