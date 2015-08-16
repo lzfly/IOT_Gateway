@@ -447,7 +447,7 @@ static int mqttclient_pub_alertnotice( struct ubus_context *ctx, struct ubus_obj
 		alertnotice = blobmsg_data( tb[ALERT_NOTICE] );
 		printf( "alertnotice = %s\n", alertnotice );
 	}
-    char* message[MAX_MESSAGE + 1];
+    char message[MAX_MESSAGE + 1];
 	if(strlen(alertmodule) > 1)
 	{
 	    printf("module length error");
