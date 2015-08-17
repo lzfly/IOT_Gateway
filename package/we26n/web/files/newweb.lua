@@ -118,7 +118,7 @@ function wireless_update()
 
 	if not winame or winame == "" then
 		winame = x:add("wireless", "wifi-iface")
-		x:set("wireless", winame, "device", "radio0")
+		x:set("wireless", winame, "device", "mt7620")
 		x:set("wireless", winame, "network", "lan")
 		x:set("wireless", winame, "mode", "ap")
 	end
