@@ -139,6 +139,7 @@ function wireless_update()
 	x:commit("dhcp")
 	
 	luci.sys.call("/etc/init.d/network restart >/dev/null")
+    luci.http.redirect(luci.dispatcher.build_url("admin/newweb/wireless_set"))
 end
 
 function pppoe_update()
