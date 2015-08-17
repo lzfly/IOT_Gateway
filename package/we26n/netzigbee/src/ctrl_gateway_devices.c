@@ -114,7 +114,7 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 	if(0==strcmp(deviceIdstr,"zigbee_fbee_entrynet_ffffffffffffffff_99")&&0==strcmp(attrstr,"9999"))
 	{
 		sendEntryNet();
-		return;
+		goto done;;
 	}
 	
     {
@@ -123,13 +123,28 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 	   char endpiontstr[32];
 	   ptr = strchr(deviceIdstr, c);
 	   printf( "deviceid parse 1\n");
-
+       if(ptr == NULL)
+	   {
+	       printf( "deviceid fromat is error\n");
+	       goto done;
+	    }
+		   
 	   ptr = strchr(ptr + 1, c);
 	   printf( "deviceid parse 2\n");
-
+       if(ptr == NULL)
+	   {
+	       printf( "deviceid fromat is error\n");
+	       goto done;
+	    }
+		   
 	   ptr1 = strchr(ptr + 1, c);
 	   printf( "deviceid parse 3\n");
-
+       if(ptr1 == NULL)
+	   {
+	       printf( "deviceid fromat is error\n");
+	       goto done;
+	    }
+		   
        printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", (int)ptr,(int)ptr1);
 
 
@@ -302,12 +317,27 @@ static int zigbee_getstatecmd( struct ubus_context *ctx, struct ubus_object *obj
 	   char endpiontstr[32];
 	   ptr = strchr(deviceIdstr, c);
 	   printf( "deviceid parse 1\n");
+	   if(ptr == NULL)
+	   {
+	       printf( "deviceid fromat is error\n");
+	       goto done;
+	    }
 
 	   ptr = strchr(ptr + 1, c);
 	   printf( "deviceid parse 2\n");
+       if(ptr == NULL)
+	   {
+	       printf( "deviceid fromat is error\n");
+	       goto done;
+	    }
 
 	   ptr1 = strchr(ptr + 1, c);
 	   printf( "deviceid parse 3\n");
+       if(ptr1 == NULL)
+	   {
+	       printf( "deviceid fromat is error\n");
+	       goto done;
+	    }
 
        printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", (int)ptr,(int)ptr1);
 
