@@ -85,6 +85,7 @@ function index()
 	entry({"admin", "newweb", "switch"}, template("newweb/switch"), _("switch"), 15)
 	entry({"admin", "newweb", "sensor"}, template("newweb/sensor"), _("sensor"), 16)
 	entry({"admin", "newweb", "alertor"}, template("newweb/alertor"), _("alertor"), 17)
+	entry({"admin", "newweb", "bluetooth"}, template("newweb/bluetooth"), _("bluetooth"), 18)
         entry({"admin","newweb","light_control"},call("light_control"),nil)
         entry({"admin","newweb","entrynet_control"},call("entrynet_control"),nil)
 end
