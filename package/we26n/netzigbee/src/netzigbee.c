@@ -17,6 +17,91 @@
 #include <libubus.h>
 #include "we26n_type.h"
 
+#include "gateway.h"
+#include <uci.h>
+#include <stdint.h>
+
+static struct uci_context * uci_ctx;
+static struct uci_package * uci_ennconfig;
+char ReportTime_tem[8];
+char ReportTime_hum[8];
+int GetReportTime()
+{
+
+ if (!uci_ctx)
+    {
+        uci_ctx = uci_alloc_context();
+    }
+    else
+    {
+        uci_ennconfig = uci_lookup_package(uci_ctx, "ennconfig");
+        if (uci_ennconfig)
+            uci_unload(uci_ctx, uci_ennconfig);
+    }
+
+    if (uci_load(uci_ctx, "ennconfig", &uci_ennconfig))
+    {
+        printf("uci load ENN config fail\n");
+    }else
+	{
+	    char *value_tem = NULL;
+	    char *value_hum = NULL;
+            struct uci_element *e   = NULL;
+            printf("uci load jianyou config success\n");
+
+
+            /* scan ENN config ! */
+            uci_foreach_element(&uci_ennconfig->sections, e)
+            {
+                struct uci_section *s = uci_to_section(e);
+                if(0 == strcmp(s->type, "zigbee"))
+                {
+                    printf("%s(), type: %s\n", __FUNCTION__, s->type);
+
+                    value_tem = uci_lookup_option_string(uci_ctx, s, "temp_interval");
+                   
+                    if(value_tem)
+                    {
+                            strcpy(ReportTime_tem, value_tem);
+                            printf("%s(), tem report time: %s\n", __FUNCTION__, ReportTime_tem);
+                            g_ReportTime.tem_time=strtoul(ReportTime_tem,NULL,10);
+                            printf("report time:%d\n",g_ReportTime.tem_time);
+                     }
+                     else{
+                            printf("%s(), tem report time not found\n", __FUNCTION__);
+                     }
+                      value_hum = uci_lookup_option_string(uci_ctx, s, "hum_interval"); 
+                   
+                      if(value_hum)
+                    {
+                            strcpy(ReportTime_hum, value_hum);
+                            printf("%s(), hum report time: %s\n", __FUNCTION__, ReportTime_hum);
+                            g_ReportTime.hum_time=strtoul(ReportTime_hum,NULL,10);
+                            printf("hum report time:%d\n",g_ReportTime.hum_time);
+                     }
+                     else{
+                            printf("%s(), hum report time not found\n", __FUNCTION__);
+                     }
+                   /*   value_h = uci_lookup_option_string(uci_ctx, s, "heatmeter"); 
+                       if(value_h)
+                    {
+                            strcpy(heatid, value_h);
+                            printf("%s(), heatid: %s\n", __FUNCTION__, heatid);
+                     }
+                     else{
+                            printf("%s(), heat_meter_id not found\n", __FUNCTION__);
+                  }*/
+                     break;
+            }
+
+          }
+             
+   }
+	return 0;
+
+
+}
+
 /*static struct blob_buf b;
 
 static int zigbee_info( struct ubus_context *ctx, struct ubus_object *obj,
@@ -89,7 +174,7 @@ int  main( void )
 {
     int  iret;
     struct ubus_context *ctx;
-
+    GetReportTime();
     /**/
     iret = prepare_threads();
     if ( 0 != iret )

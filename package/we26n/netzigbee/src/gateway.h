@@ -17,6 +17,13 @@ struct GatewayBean {
 
 };
 
+struct ZigbeeReportTime{
+	w26n_uint32 tem_time;
+	w26n_uint32 hum_time;
+	w26n_uint32 pm25_time;
+	w26n_uint32 form_time;
+};
+
 struct deviceBean{
 	w26n_uint16 shortaddr ;
 	w26n_uint8 endpoint;					
@@ -31,6 +38,8 @@ struct deviceBean{
         w26n_char ieeestr[20];
 	
 };
+
+extern struct ZigbeeReportTime g_ReportTime;
 extern struct GatewayBean g_Gate;
 extern struct deviceBean g_devices[MAX_DEVICES];
 extern int g_devices_count;
