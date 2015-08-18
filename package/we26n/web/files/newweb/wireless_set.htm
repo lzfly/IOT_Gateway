@@ -8,7 +8,7 @@ local winame = ""
 
 x:foreach("wireless", "wifi-iface",
 	function(s)
-		if s.device == "radio0" and s.mode == "ap" then
+		if s.device == "mt7620" and s.mode == "ap" then
 			winame = s['.name']
 			ssid = s.ssid
 			pwd = s.key
@@ -52,7 +52,6 @@ local dhcpend = x:get("dhcp", "lan", "limit")
 
 
 
-dhcpend
 
 <title>无线设置</title>
 

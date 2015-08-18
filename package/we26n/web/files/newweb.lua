@@ -118,7 +118,7 @@ function wireless_update()
 
 	if not winame or winame == "" then
 		winame = x:add("wireless", "wifi-iface")
-		x:set("wireless", winame, "device", "radio0")
+		x:set("wireless", winame, "device", "mt7620")
 		x:set("wireless", winame, "network", "lan")
 		x:set("wireless", winame, "mode", "ap")
 	end
@@ -139,6 +139,7 @@ function wireless_update()
 	x:commit("dhcp")
 	
 	luci.sys.call("/etc/init.d/network restart >/dev/null")
+    luci.http.redirect(luci.dispatcher.build_url("admin/newweb/wireless_set"))
 end
 
 function pppoe_update()

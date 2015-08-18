@@ -22,6 +22,7 @@ define Package/netzigbee
   TITLE:=netzigbee gateway interface (using eth to zigbee module)
   MAINTAINER:=wangmingdong <wang_leaf@sina.com>
   DEPENDS:=+libpthread +libubus +libubox
+  DEPENDS:=+libpthread +libubox +libubus +libuci
 endef
 
 define Package/netzigbee/description
@@ -41,6 +42,7 @@ define Build/Compile
 	CC="$(TARGET_CC)" \
 	CFLAGS="$(TARGET_CFLAGS) -Wall -I ./enn" \
 	LDFLAGS="$(TARGET_LDFLAGS) -lubox -lubus -lpthread" \
+	LDFLAGS="$(TARGET_LDFLAGS) -lpthread -lubox -lubus -luci" \
 	-f test.mk
 endef
 

@@ -7,6 +7,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+struct ZigbeeReportTime g_ReportTime;
+
 struct GatewayBean g_Gate;
 struct deviceBean g_devices[MAX_DEVICES];
 int g_devices_count = 0;
