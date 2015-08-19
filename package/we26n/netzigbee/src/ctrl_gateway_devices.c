@@ -35,6 +35,9 @@
 #include "enn_device_type.h"
 #include "enn_device_attr.h"
 
+#include <uci.h>
+
+
 
 struct uloop_fd ufd;
 
@@ -46,6 +49,9 @@ enum {
 	CTRLCMD_DEVICETYPE,
     __CTRLCMD_MAX
 };
+
+
+  
 
 
 static const struct blobmsg_policy  ctrlcmd_policy[] = {
@@ -192,62 +198,67 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
 		for(i = 0; i < g_devices_count; i++)
 		{
 
-                        
-			printf("[ctrlcmd] ieeestr=%s ieeelen=%d endpoint=%d\r\n", g_devices[i].ieeestr,strlen(g_devices[i].ieeestr), g_devices[i].endpoint);
-			if(g_devices[i].endpoint == endpoint && (strcmp(g_devices[i].ieeestr,  ieeestr) == 0))
+                                               
+			printf("[ctrlcmd] ieeestr=%s ieeelen=%d endpoint=%d\r\n", g_devices[i].ieeestr,strlen(g_devices[i].ieeestr), g_devices[i].endpoint);		if(strstr(ZigbeeId,g_devices[i].ieeestr) != NULL)
 			{
-				printf("device SN = %s", g_devices[i].SN);
-				printf("device ieeestr = %s", g_devices[i].ieeestr);
-				
-				switch(g_devices[i].deviceId)
+				if(g_devices[i].endpoint == endpoint && (strcmp(g_devices[i].ieeestr,  ieeestr) == 0))
 				{
-				 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
-                     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
-					 break;
-				 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
-				 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
-					 if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE)
-					 {
-					     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
+					printf("device SN = %s", g_devices[i].SN);
+					printf("device ieeestr = %s", g_devices[i].ieeestr);
+				
+					switch(g_devices[i].deviceId)
+					{
+					 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
+		             sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
+						 break;
+					 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
+					 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
+						 if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE)
+						 {
+						     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
 						
-					 }
-					 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE)
-					 {
-					 	 if(data < 1)
-                             data = 1;
-          				 if(data > 100)
-                             data = 100;   
-							 
-					     data = data * 255 / 100;
-						 sendDeviceLevel(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
-					 }
-					 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE)
-					 {  
-					     if(data < 1)
-                             data = 1;
-          				 if(data > 100)
-                             data = 100;               							 
-					     data = 2700 + (data - 1) * (6500 - 2700) / 100;
-						 sendDeviceColorTemp(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
-					 }
-					 else
-					 {
-					     printf("[startSearchDevice] error attr\r\n");
+						 }
+						 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE)
+						 {
+						 	 if(data < 1)
+		                     data = 1;
+		  				 if(data > 100)
+		                     data = 100;   
+								 
+						     data = data * 255 / 100;
+							 sendDeviceLevel(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
+						 }
+						 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE)
+						 {  
+						     if(data < 1)
+		                     data = 1;
+		  				 if(data > 100)
+		                     data = 100;               							 
+						     data = 2700 + (data - 1) * (6500 - 2700) / 100;
+							 sendDeviceColorTemp(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
+						 }
+						 else
+						 {
+						     printf("[startSearchDevice] error attr\r\n");
+						}
+						 break;
+					 case FB_DEVICE_TYPE_WINDOWS:
+					     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
+		                             g_openStatus[i] = data;
+						 break;
+					 case FB_DEVICE_TYPE_POWER_OUTLET:
+					     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
+						 break; 
+					default:
+						 break;
 					}
-					 break;
-				 case FB_DEVICE_TYPE_WINDOWS:
-				     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
-                                     g_openStatus[i] = data;
-					 break;
-				 case FB_DEVICE_TYPE_POWER_OUTLET:
-				     sendDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, data);
-				         break; 
-				default:
-					 break;
-				}
-                
-				printf("[startSearchDevice] sendDeviceState=%d\r\n", data);
+		        
+					printf("[startSearchDevice] sendDeviceState=%d\r\n", data);
 
+				}
+			}else 
+			{
+				goto done;;
 			}
 		}
 	}
@@ -383,7 +394,6 @@ static int zigbee_getstatecmd( struct ubus_context *ctx, struct ubus_object *obj
 		for(i = 0; i < g_devices_count; i++)
 		{
 	                printf("[startSearchDevice] ieeestr=%d endpoint=%d\r\n", g_devices[i].ieeestr, g_devices[i].endpoint);
-
 			if(g_devices[i].endpoint == endpoint && (strcmp(g_devices[i].ieeestr,  ieeestr) == 0))
 			{
 				printf("device SN = %s", g_devices[i].SN);

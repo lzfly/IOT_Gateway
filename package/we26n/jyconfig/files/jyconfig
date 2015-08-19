@@ -1,4 +1,4 @@
-config deviceid
+config interface deviceid
 	option gasmeter	     A01511504001758   
 	option powermeter    1507080600179	
         option watermeter    TS0004482

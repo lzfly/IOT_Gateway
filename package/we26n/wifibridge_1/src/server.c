@@ -385,7 +385,7 @@ int  sendMsgToWeb(char *ieeestr,unsigned short int type,double data)
         printf("[sendMsgToWeb] start--3\r\n");
 		
 	char deviceidstr[64];
-	sprintf(deviceidstr, "wifi_meters_%s", ieeestr);
+	sprintf(deviceidstr, "wifi_meter_%s", ieeestr);
         printf("[sendMsgToWeb] start--%s\r\n", deviceidstr);
 	blobmsg_add_string( &b, "deviceid", deviceidstr);
 	
@@ -529,18 +529,21 @@ void* enn_meter_thread( void *arg )
 
 	
 	
-    printf( "enn_meter_thread init\n");  
- 
+    printf( "enn_meter_thread 89789789 init\n");  
+ 	
 	connectfd = arg;
-
-	
+	printf("connectfd = %d\n",connectfd);
+	printf("out of while\n");
 	while(1)
 	{      
+		printf("in while \n");
 		//电表
 		sleep(2);
+		printf("sleep ok\n");
 		j=send(connectfd,buff_power,8,0);
 		if(j<0)
 	        break;
+	        printf("power meter send ok\n");
 		int len_p=0,count_p=0;
 	    	while(count_p < 5 && len_p < 9)
 	    	{
@@ -551,6 +554,7 @@ void* enn_meter_thread( void *arg )
 			count_p++;
 			
 		}
+		  printf("power meter recv ok\n");
 		printf("count_p=%d\n",count_p);
 		dump_hex(buf_power,len_p);
 		puc_power = (uint8_t *)buf_power;
@@ -566,7 +570,7 @@ void* enn_meter_thread( void *arg )
 		p=send(connectfd,buff_water,8,0);
 		if(p<0)
 	        break;
-	        
+	        printf("water meter send ok\n");
 		int len_w=0,count_w=0;
 	    	while(count_w < 5 && len_w < 13)
 	    	{
@@ -576,6 +580,7 @@ void* enn_meter_thread( void *arg )
 			len_w = len_w + q;
 			count_w++;
 		}
+		printf("water meter recv ok\n");
 		printf("count_w=%d\n",count_w);
 		dump_hex(buf_water,len_w);
 		puc_water = (uint8_t *)buf_water;
@@ -592,7 +597,7 @@ void* enn_meter_thread( void *arg )
 		m=send(connectfd,buff_heat,8,0);
 		if(m<0)
 	        break;
-	        
+	        printf("heat meter send ok\n");
 		int len_h=0,count_h=0;
 	    	while(count_h < 5 && len_h < 9)
 	    	{
@@ -602,6 +607,7 @@ void* enn_meter_thread( void *arg )
 			len_h = len_h + n;
 			count_h++;
 		}
+		printf("heat meter recv ok\n");
 		dump_hex(buf_heat,len_h);
 		puc_heat = (uint8_t *)buf_heat;
 		aaa_h = modbus_conv_real4(&(puc_heat[3]));
