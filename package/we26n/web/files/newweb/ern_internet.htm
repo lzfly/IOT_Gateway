@@ -32,10 +32,10 @@ local result7=getdevices(7);
 <html>
 <head>
 <style> 
-body{ margin:auto;}
+body{ margin:auto; background-color:#1c69bb;}
 img{display:block};
 a{ display:block; text-decoration:none; font-family:"微软雅黑";}
-.big_box{ background-color:#115baa;height:auto;}
+.big_box{height:auto;}
 .big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
 .big_top img,.big_top a{ float:left; padding-left:5px; padding-bottom:15px;}
 .big_top a{font-size:26px; text-decoration:none;  color:white;padding-left:15px; padding-top:8px; }
@@ -43,12 +43,11 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .button{margin-left:1000px;color:white;padding-top:10px;}
 .big_top p{ padding-top:20px; padding-left:5px; color:#FFF; font-size:12px;}
 
-.big_bottom{width:1198px;height:auto; background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
-.bottom{width:1198px; height:auto background-color:#226fc0; margin:auto;overflow:hidden; padding-bottom:50px;}
+.big_bottom{width:1198px;background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
 
 .nav{ width:100%; height:50px; background-color:#8eb3db;}
 .lights{ overflow:hidden;}
-.lights a{ float:left; padding-left:600px; padding-top:10px;text-decoration:none; font-size:30px;}
+.lights a{ float:left; padding-left:600px; padding-top:10px;text-decoration:none; font-size:30px;color:#ffffff;}
 
 table{
 	width:100%;
@@ -172,14 +171,7 @@ td.img{
 	    document.write("</table>");
 	}
 	</script>
-</div>   <!--big_bottom结束-->
-<div class="bottom">
-   <form action="<%= luci.dispatcher.build_url("admin/newweb/gas_meter_set") %>" method="post">
-       <p>气表:<input type="text"  name="id"/></p>
-       <input type="submit"  value="保存" onClick="add()"/>
-   </form>
 </div>
-
 </div>
 
 </body>
