@@ -85,8 +85,10 @@ function index()
 	entry({"admin", "newweb", "switch"}, template("newweb/switch"), _("switch"), 15)
 	entry({"admin", "newweb", "sensor"}, template("newweb/sensor"), _("sensor"), 16)
 	entry({"admin", "newweb", "alertor"}, template("newweb/alertor"), _("alertor"), 17)
+	entry({"admin", "newweb", "bluetooth"}, template("newweb/bluetooth"), _("bluetooth"), 18)
         entry({"admin","newweb","light_control"},call("light_control"),nil)
         entry({"admin","newweb","entrynet_control"},call("entrynet_control"),nil)
+		entry({"admin","newweb","gas_meter_set"},call("gas_meter_set"),nil)
 end
 
 
@@ -103,6 +105,17 @@ function entrynet_control()
 
 	local result = conn:call("we26n_zigbee_febee", "ctrlcmd", { gatewayid =macAddr , deviceid = "zigbee_fbee_entrynet_ffffffffffffffff_99", attr = "9999", data = "0" });
         luci.http.redirect(luci.dispatcher.build_url("admin/newweb/ernn_internet"))
+end
+
+function gas_meter_set()
+
+	local c_gas_id=luci.http.formvalue("id")
+	
+	x:set("jyconfig","deviceid","gasmeter", "123456")
+
+	x:commit("jyconfig")
+		
+	luci.http.redirect(luci.dispatcher.build_url("admin/newweb/ern_internet"))
 end
 
 function wireless_update()
