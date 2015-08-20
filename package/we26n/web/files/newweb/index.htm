@@ -413,7 +413,7 @@ margin:auto;
 
  }
 
- #middle .content .content_items .t2{
+ #middle .content .content_items{
 
  width:870px;
 
@@ -457,17 +457,17 @@ margin:auto;
 
  }
 
- #my_down{
 
- width:230px;
 
- height:310px;
 
- float:left;
 
- background-color:#2673EC;
 
- }
+
+
+
+
+
+
 
  #middle .energy_store{
 
@@ -558,9 +558,29 @@ margin:auto;
  
 
  
+    #safe{
+
+ width:220px;
+   
+ height:150px;
+
+
+ float:left;
+ margin-left:10px;
+ 
+
+ position:relative;
+
+ background-color:#bf5af0;
+
+ }
+
+ 
+ 
+ 
    #ern_internet{
 
- width:470px;
+ width:240px;
    
  height:150px;
 
@@ -1180,7 +1200,7 @@ function error(){
 
 <div id="middle"> 
 
-<a href="javascript:goto(0);"><div id="up_page" class="hide turn_page" style="background-position: -0px -148px; width: 42px; height: 64px"></div></a>
+
 
  <div class="content">
 
@@ -1206,9 +1226,9 @@ function error(){
        
        
        
-       
+       <a href="javascript:goto(0);" class="link"><div id="safe" class="big" data-page="safe"><img src="<%=resource%>/images/safe.png" style=" margin-top:30px;"><p>安全中心</p></div></a>
        <a href="javascript:goto(0);" class="link"><div id="ern_internet" class="big" data-page="ern_internet"><img src="<%=resource%>/images/wi.png" style=" margin-top:30px;"><p>470设备</p></div></a>
-       <a href="javascript:goto(0);" class="link"><div id="ernn_internet" class="big" data-page="ernn_internet"><img src="<%=resource%>/images/z.png" style="margin-top:10px;"><span class="index" style="hiden: -0px -400px;  margin-top:20px;"></span><p>ZIGBEE设备设备</p></div></a>
+       <a href="javascript:goto(0);" class="link"><div id="ernn_internet" class="big" data-page="ernn_internet"><img src="<%=resource%>/images/z.png" style="margin-top:10px;"><span class="index" style="hiden: -0px -400px;  margin-top:20px;"></span><p>ZIGBEE设备</p></div></a>
        <a href="javascript:goto(0);" class="link"><div id="bluetooth" class="big" data-page="bluetooth"><img src="<%=resource%>/images/lan.png" style="margin-top:10px;"><span class="index" style="background-position: -0px -400px;  margin-top:30px;"></span><p>蓝牙设备</p></div></a>
        
        
@@ -1229,17 +1249,18 @@ function error(){
 
 	</div>
 
-	<div class="t2">
 
-	   <a href="javascript:goto(0);" class="link"><div id="my_down" class="big" data-page="my_down"><span class="index" style="background-position: -0px -700px; width: 90px; height: 90px;margin-top:90px;"></span><p>脱机下载</p></div></a>
 
-	</div>
 
-  </div>
+
+
+
+
+
 
  </div>
 
-<a href="javascript:goto(0);"><div id="next_page" class="turn_page" style="background-position: -0px -0px; width: 42px; height: 64px"></div></a>
+
 
 </div>
 
@@ -1247,7 +1268,7 @@ function error(){
 
   <ul>
 
-    <li>@2015&nbsp;<a href="" target="_blank" style="border-bottom:1px solid #FFFFFF;"></a>&nbsp;版权所有</li>
+    <li>@新奥燃气&nbsp;<a href="" target="_blank" style="border-bottom:1px solid #FFFFFF;"></a>&nbsp;版权所有</li>
 
 	<li id="last_version">当前版本 V0.1</li>
 
