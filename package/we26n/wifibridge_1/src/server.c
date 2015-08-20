@@ -524,7 +524,7 @@ void* enn_meter_thread( void *arg )
 	
     	char buf_power[N],buf_water[N],buf_heat[N];
      	char buff_power[N] = {0x01,0X03,0X00,0X14,0X00,0X02,0X84,0X0F};
-	 char buff_water[N]={0x02,0X03,0X00,0X90,0X00,0X04,0X44,0X17};
+	 char buff_water[N]={0x02,0X03,0X00,0X1C,0X00,0X04,0X85,0XFC};
 	 char buff_heat[N]={0x02,0X03,0X00,0X78,0X00,0X02,0X44,0X21};
 
 	
@@ -532,6 +532,10 @@ void* enn_meter_thread( void *arg )
     printf( "enn_meter_thread 89789789 init\n");  
  	
 	connectfd = arg;
+	
+	struct timeval timeout = {3,0};  
+        setsockopt(connectfd,SOL_SOCKET,SO_RCVTIMEO,(char *)&timeout,sizeof(struct timeval));
+	
 	printf("connectfd = %d\n",connectfd);
 	printf("out of while\n");
 	while(1)
@@ -542,16 +546,17 @@ void* enn_meter_thread( void *arg )
 		printf("sleep ok\n");
 		j=send(connectfd,buff_power,8,0);
 		if(j<0)
-	        break;
+	        continue;
 	        printf("power meter send ok\n");
 		int len_p=0,count_p=0;
 	    	while(count_p < 5 && len_p < 9)
 	    	{
 			i=recv(connectfd,buf_power,9,0);
-			if(i<=0)
-			    break;
-			len_p = len_p + i;
 			count_p++;
+			if(i<=0)
+			    continue;
+			len_p = len_p + i;
+			
 			
 		}
 		  printf("power meter recv ok\n");
@@ -567,18 +572,20 @@ void* enn_meter_thread( void *arg )
 		printf("power sleep time:%d\n",timep);
 		printf("sleep ok\n");
 		//水表
+		
 		p=send(connectfd,buff_water,8,0);
 		if(p<0)
-	        break;
+	        continue;
 	        printf("water meter send ok\n");
 		int len_w=0,count_w=0;
 	    	while(count_w < 5 && len_w < 13)
 	    	{
 			q=recv(connectfd,buf_water,13,0);
-			if(q<=0)
-			    break;
-			len_w = len_w + q;
 			count_w++;
+			if(q<=0)
+			    continue;
+			len_w = len_w + q;
+			
 		}
 		printf("water meter recv ok\n");
 		printf("count_w=%d\n",count_w);
@@ -596,16 +603,17 @@ void* enn_meter_thread( void *arg )
 		//热表
 		m=send(connectfd,buff_heat,8,0);
 		if(m<0)
-	        break;
+	        continue;
 	        printf("heat meter send ok\n");
 		int len_h=0,count_h=0;
 	    	while(count_h < 5 && len_h < 9)
 	    	{
 			n=recv(connectfd,buf_heat,9,0);
-			if(n<=0)
-			    break;
-			len_h = len_h + n;
 			count_h++;
+			if(n<=0)
+			    continue;
+			len_h = len_h + n;
+			
 		}
 		printf("heat meter recv ok\n");
 		dump_hex(buf_heat,len_h);

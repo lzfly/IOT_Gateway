@@ -397,7 +397,8 @@ void* gas_meter_thread( void *arg )
     printf( "gas_meter_thread init\n");  
  
 	connectfd = arg;
-
+	struct timeval timeout = {3,0};  
+        setsockopt(connectfd,SOL_SOCKET,SO_RCVTIMEO,(char *)&timeout,sizeof(struct timeval));
 	
 	while(1)
 	{      
@@ -412,22 +413,36 @@ void* gas_meter_thread( void *arg )
 			dump_hex( buf, i );
 			sleep(6);
     			
-			
+			printf("\n******gas_meter send cmd********\n");
 			p=send(connectfd,buf_read,16,0);
 			if(p<0)
 			continue;
-			
+			dump_hex( buf_read, 16 );
+			//sleep(2);
 			int len_g=0,count_g=0;
+			//char buff2[41];
+			printf("\n******gas_meter read  data before********\n");
 	    		while(count_g < 5 && len_g < 41)
 	    		{
 				q=recv(connectfd,buf_f,41,0);
-				if(q<=0)
-				    break;
-				len_g = len_g + q;
+				printf("q=%d\n", q);
 				count_g++;
+				if(q<0)
+				    continue;
+				//memcpy(buf_f+len_g, buff2, q);
+				len_g = len_g + q;
+				
+				//sleep(1);
 			
 			}
-			printf("\n******gas_meter read ********\n");
+			printf("count_g=%d, len_g=%d\n", count_g,len_g);
+			dump_hex( buf_f, len_g );
+			printf("\n******gas_meter read  data after********\n");
+			if(len_g != 41){
+			    printf("read short for 41\n");
+			    continue;
+			    }
+			
 			
 			/*k = buf_f[18];
 			k = (k * 256) + buf_f[17];
@@ -466,7 +481,7 @@ void* gas_meter_thread( void *arg )
 				f=0;
 			}
 			sendMsgToWeb(gas_meter_id,ENN_DEVICE_ATTR_GASMETER_VALUE,d);
-			dump_hex( buf_f, q );
+			//dump_hex( buf_f, q );
 			
 			j=send(connectfd,buf_sleep,21,0);
 			if(j<0)
