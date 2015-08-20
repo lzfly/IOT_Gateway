@@ -298,7 +298,7 @@ void* gas_meter_thread( void *arg )
     char *path="/tmp/devices_6.ini";
     FILE *fp;
     char buff_path[N];
-    int i,j,p,q,k;
+    int i,j,p,q,k,l;
     int m=0,n=0,t=0,f=0;
     long double d;
     int connectfd;
@@ -393,6 +393,7 @@ void* gas_meter_thread( void *arg )
     buf_open[18] = 0; 
     crc_o = sub(buf_open,18);
     printf("buf[18]= %x\n",crc_o);
+    char buf_sleep[21]={0X3C,0X00,0X01,0X00,0X00,0X00,0X00,0X00,0XFD,0X00,0X08,0X08,0X00,0X00,0X00,0X00,0X05,0X00,0X00,0X00,0X13};
     printf( "gas_meter_thread init\n");  
  
 	connectfd = arg;
@@ -400,33 +401,34 @@ void* gas_meter_thread( void *arg )
 	
 	while(1)
 	{      
-		sleep(2);
-		printf("AAAAAAA");
-		if(0==m)
-		{
+			sleep(2);
+			printf("\n******gas_meter awake ********\n");
 			j=send(connectfd,buf_wake,22,0);
-			printf("BBBBBBB");
 			if(j<0)
-			break;
-			m=1;
+			continue;
 		 	i=recv(connectfd,buf,18,0);
 			if(i<=0)
-			break;
+			continue;
 			dump_hex( buf, i );
 			sleep(6);
-    		}
-			if(20==t)
-			{
-				printf("11111111111111111111111111111");
-				send(connectfd,buf_open,19,0);
-				recv(connectfd,buf_ff,N,0);
-			}
+    			
 			
 			p=send(connectfd,buf_read,16,0);
-			printf("CCCCCCCC");
 			if(p<0)
-			break;
-		 	q=recv(connectfd,buf_f,N,0);
+			continue;
+			
+			int len_g=0,count_g=0;
+	    		while(count_g < 5 && len_g < 41)
+	    		{
+				q=recv(connectfd,buf_f,41,0);
+				if(q<=0)
+				    break;
+				len_g = len_g + q;
+				count_g++;
+			
+			}
+			printf("\n******gas_meter read ********\n");
+			
 			/*k = buf_f[18];
 			k = (k * 256) + buf_f[17];
 			k = (k * 256) + buf_f[16];
@@ -441,8 +443,6 @@ void* gas_meter_thread( void *arg )
 			/*
 			k = *(int *)&(buf_f[15]);
 			printf("kx=%2x\nkd=%d\n",k,k);*/
-			if(q<=0)
-			break;
 			d=(float)k/10;
 			if(30 == f)
 			{
@@ -467,7 +467,12 @@ void* gas_meter_thread( void *arg )
 			}
 			sendMsgToWeb(gas_meter_id,ENN_DEVICE_ATTR_GASMETER_VALUE,d);
 			dump_hex( buf_f, q );
-     			sleep(times);
+			
+			j=send(connectfd,buf_sleep,21,0);
+			if(j<0)
+			continue;
+			printf("\n******gas_meter sleep ********\n");
+     			sleep(times*60);
      			printf("\nsleep=%d\n",times);
         		t++;
         		f++;
