@@ -89,6 +89,7 @@ function index()
         entry({"admin","newweb","light_control"},call("light_control"),nil)
         entry({"admin","newweb","entrynet_control"},call("entrynet_control"),nil)
 		entry({"admin","newweb","gas_meter_set"},call("gas_meter_set"),nil)
+		entry({"admin","newweb","blegas_meter_set"},call("blegas_meter_set"),nil)
 end
 
 
@@ -111,11 +112,22 @@ function gas_meter_set()
 
 	local c_gas_id=luci.http.formvalue("id")
 	
-	x:set("jyconfig","deviceid","gasmeter", "123456")
+	x:set("jyconfig","deviceid","gasmeter", c_gas_id)
 
 	x:commit("jyconfig")
 		
 	luci.http.redirect(luci.dispatcher.build_url("admin/newweb/ern_internet"))
+end
+
+function blegas_meter_set()
+
+	local c_blegas_id=luci.http.formvalue("id")
+	
+	x:set("jyconfig","deviceid","blegasmeter", c_blegas_id)
+
+	x:commit("jyconfig")
+		
+	luci.http.redirect(luci.dispatcher.build_url("admin/newweb/bluetooth"))
 end
 
 function wireless_update()
