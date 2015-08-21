@@ -23,6 +23,7 @@
 #include "enn_device_attr.h"
 
 #include <uci.h>
+#include<syslog.h>
 
 #define N 128
 
@@ -404,12 +405,15 @@ void* gas_meter_thread( void *arg )
 	{      
 			sleep(2);
 			printf("\n******gas_meter awake ********\n");
+			
 			j=send(connectfd,buf_wake,22,0);
 			if(j<0)
 			continue;
+			syslog(LOG_CRIT,"[gas_meter]gas meter awake send ok");
 		 	i=recv(connectfd,buf,18,0);
 			if(i<=0)
 			continue;
+			syslog(LOG_CRIT,"[gas_meter]gas meter awake recv ok");
 			dump_hex( buf, i );
 			sleep(6);
     			
@@ -417,6 +421,7 @@ void* gas_meter_thread( void *arg )
 			p=send(connectfd,buf_read,16,0);
 			if(p<0)
 			continue;
+			syslog(LOG_CRIT,"[gas_meter]gas meter read meter send ok");
 			dump_hex( buf_read, 16 );
 			//sleep(2);
 			int len_g=0,count_g=0;
@@ -435,11 +440,12 @@ void* gas_meter_thread( void *arg )
 				//sleep(1);
 			
 			}
+			syslog(LOG_CRIT,"[gas_meter]gas meter read meter recv ok");
 			printf("count_g=%d, len_g=%d\n", count_g,len_g);
 			dump_hex( buf_f, len_g );
 			printf("\n******gas_meter read  data after********\n");
-			if(len_g != 41){
-			    printf("read short for 41\n");
+			if(len_g != 41 && len_g != 59){
+			    printf("read not 41 and 59\n");
 			    continue;
 			    }
 			
@@ -486,6 +492,7 @@ void* gas_meter_thread( void *arg )
 			j=send(connectfd,buf_sleep,21,0);
 			if(j<0)
 			continue;
+			syslog(LOG_CRIT,"[gas_meter]gas meter sleep send ok");
 			printf("\n******gas_meter sleep ********\n");
      			sleep(times*60);
      			printf("\nsleep=%d\n",times);

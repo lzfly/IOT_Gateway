@@ -23,6 +23,7 @@
 #include "enn_device_attr.h"
 #include "type.h"
 
+#include<syslog.h>
 
 #include <uci.h>
 #include <stdint.h>
@@ -441,9 +442,9 @@ void* enn_meter_thread( void *arg )
         FILE *fp;
 	int i,j,p,q,k;
 	int m=0,n=0,t=0;
-	float bbb;
+	float bbb,bbb_h;
 	int32_t aaa,aaa_w;
-	double ddd,ccc;
+	double ddd,ccc,ccc_h;
 	uint8_t * puc_power,* puc_water,*puc_heat;
 	double d,aaa_h;
 	int connectfd;
@@ -524,10 +525,10 @@ void* enn_meter_thread( void *arg )
 	
     	char buf_power[N],buf_water[N],buf_heat[N];
      	char buff_power[N] = {0x01,0X03,0X00,0X14,0X00,0X02,0X84,0X0F};
-	 char buff_water[N]={0x02,0X03,0X00,0X1C,0X00,0X04,0X85,0XFC};
-	 char buff_heat[N]={0x02,0X03,0X00,0X78,0X00,0X02,0X44,0X21};
-
-	
+	 //char buff_water[N]={0x02,0X03,0X00,0X1C,0X00,0X04,0X85,0XFC};
+	 //char buff_heat[N]={0x03,0X03,0X00,0X78,0X00,0X02,0X45,0XF0};
+	char buff_water[N]={0x02,0X03,0X00,0X1E,0X00,0X04,0X24,0X3C};
+	char buff_heat[N]={0x03,0X03,0X00,0X1C,0X00,0X04,0X84,0X2D};
 	
     printf( "enn_meter_thread 89789789 init\n");  
  	
@@ -547,6 +548,7 @@ void* enn_meter_thread( void *arg )
 		j=send(connectfd,buff_power,8,0);
 		if(j<0)
 	        continue;
+	        syslog(LOG_CRIT,"[power_meter]power meter  send ok");
 	        printf("power meter send ok\n");
 		int len_p=0,count_p=0;
 	    	while(count_p < 5 && len_p < 9)
@@ -559,7 +561,14 @@ void* enn_meter_thread( void *arg )
 			
 			
 		}
+		if(len_p != 9)
+		{
+			syslog(LOG_CRIT,"[power_meter]power meter read not 9");
+			printf("power meter read not 9\n");
+			continue;
+		}
 		  printf("power meter recv ok\n");
+		  syslog(LOG_CRIT,"[power_meter]power meter  recv ok");
 		printf("count_p=%d\n",count_p);
 		dump_hex(buf_power,len_p);
 		puc_power = (uint8_t *)buf_power;
@@ -576,6 +585,7 @@ void* enn_meter_thread( void *arg )
 		p=send(connectfd,buff_water,8,0);
 		if(p<0)
 	        continue;
+	        syslog(LOG_CRIT,"[water_meter]water meter  send ok");
 	        printf("water meter send ok\n");
 		int len_w=0,count_w=0;
 	    	while(count_w < 5 && len_w < 13)
@@ -587,9 +597,16 @@ void* enn_meter_thread( void *arg )
 			len_w = len_w + q;
 			
 		}
+		if(len_w != 13)
+		{
+			syslog(LOG_CRIT,"[water_meter]water meter read not 13");
+			printf("water meter read not 13\n");
+			continue;
+		}
 		printf("water meter recv ok\n");
 		printf("count_w=%d\n",count_w);
 		dump_hex(buf_water,len_w);
+		syslog(LOG_CRIT,"[water_meter]water meter  recv ok");
 		puc_water = (uint8_t *)buf_water;
 		aaa_w = modbus_conv_longm(&(puc_water[3]));
 		bbb = modbus_conv_real4(&(puc_water[7]));
@@ -604,24 +621,39 @@ void* enn_meter_thread( void *arg )
 		m=send(connectfd,buff_heat,8,0);
 		if(m<0)
 	        continue;
+	        syslog(LOG_CRIT,"[heat_meter]heat meter  send ok");
 	        printf("heat meter send ok\n");
 		int len_h=0,count_h=0;
-	    	while(count_h < 5 && len_h < 9)
+	    	while(count_h < 5 && len_h < 13)
 	    	{
-			n=recv(connectfd,buf_heat,9,0);
+			n=recv(connectfd,buf_heat,13,0);
 			count_h++;
 			if(n<=0)
 			    continue;
 			len_h = len_h + n;
+			//printf("\nlen_h = %d,count_h = %d\n")
 			
 		}
+		if(len_h != 13)
+		{
+			syslog(LOG_CRIT,"[heat_meter]heat meter read not 13");
+			printf("heat meter read not 13\n");
+			continue;
+		}
 		printf("heat meter recv ok\n");
+		syslog(LOG_CRIT,"[heat_meter]heat meter  recv ok");
+		printf("\n*****heat meter*******\n");
 		dump_hex(buf_heat,len_h);
 		puc_heat = (uint8_t *)buf_heat;
-		aaa_h = modbus_conv_real4(&(puc_heat[3]));
-		
-		printf("The heat meter reading is :%f\n",aaa_h);
-		sendMsgToWeb(heatid,HEAT,aaa_h);
+		aaa_h = modbus_conv_long(&(puc_heat[3]));
+		bbb_h = modbus_conv_real4(&(puc_heat[7]));
+		printf("\n************\n");
+		printf("aaa_h = %ld\n",aaa_h);
+		printf("\n************\n");
+		ccc_h = bbb_h;
+		ccc_h = ccc_h + aaa_h;
+		printf("The heat meter reading is :%f\n",ccc_h);
+		sendMsgToWeb(heatid,HEAT,ccc_h);
 		sleep(timeh);
 		printf("heat sleep time:%d\n",timeh);
 		
@@ -642,7 +674,7 @@ void* enn_meter_thread( void *arg )
 				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"heat_meter_%s\",",heatid);
 				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"ENN_DEVICE_TYPE_HEAT_METER\",");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",aaa_h);	
+				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ccc_h);	
 				sprintf(&devicesstr[strlen(devicesstr)], "},");
 				sprintf(&devicesstr[strlen(devicesstr)-1], "]");
 				printf("devicesstr= %s\n",devicesstr);
