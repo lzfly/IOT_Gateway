@@ -658,7 +658,7 @@ void* enn_meter_thread( void *arg )
 		printf("heat sleep time:%d\n",timeh);
 		
 		sprintf(&devicesstr[0], "[");
-				sprintf(&devicesstr[0], "{");
+				sprintf(&devicesstr[strlen(devicesstr)], "{");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"power_meter_%s\",",powerid);
 				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"ENN_DEVICE_TYPE_POWERMETER\",");

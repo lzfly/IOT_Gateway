@@ -67,11 +67,7 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
     uint32_t  id;
     struct ubus_context *ctx;
 	static struct blob_buf b;
-    if(strstr(ZigbeeId,ieeestr) == NULL)
-	{
-		printf("sleep time:%d\n",g_ReportTime.hum_time);
-		return;
-	}
+
  
     printf("[sendMsgToWeb] start\r\n");
 
@@ -362,11 +358,7 @@ int receiveDeviceMsg(char *buf, int len)
 					{
 						//printf("[receiveDeviceMsg] report i  endpoint=%d\r\n",g_devices[i].endpoint);
 						 //printf("[receiveDeviceMsg] report i  shortaddr=%d\r\n",g_devices[i].shortaddr);
-						if(strstr(ZigbeeId,g_devices[i].ieeestr) == NULL)
-						{
-							printf("\n**************\n");
-							continue;
-						}
+
 						if(shortaddr == g_devices[i].shortaddr && endpoint == g_devices[i].endpoint)
 						{
 							printf("[receiveDeviceMsg]report find device\r\n");
@@ -416,11 +408,6 @@ int receiveDeviceMsg(char *buf, int len)
 					{
 						//printf("[receiveDeviceMsg] report i  endpoint=%d\r\n",g_devices[i].endpoint);
 						 //printf("[receiveDeviceMsg] report i  shortaddr=%d\r\n",g_devices[i].shortaddr);
-						if(strstr(ZigbeeId,g_devices[i].ieeestr) == NULL)
-						{
-							printf("\n**************\n");
-							continue;
-						}
 
 						if(shortaddr == g_devices[i].shortaddr && endpoint == g_devices[i].endpoint)
 						{
@@ -521,9 +508,9 @@ int receiveDeviceMsg(char *buf, int len)
 					int i, index = -1;
                     for(i = 0; i < g_devices_count; i++)
 					{
-						
 						//printf("[receiveDeviceMsg] report i  endpoint=%d\r\n",g_devices[i].endpoint);
 						 //printf("[receiveDeviceMsg] report i  shortaddr=%d\r\n",g_devices[i].shortaddr);
+
 						if(shortaddr == g_devices[i].shortaddr && endpoint == g_devices[i].endpoint)
 						{
 							printf("[receiveDeviceMsg]report find device\r\n");
