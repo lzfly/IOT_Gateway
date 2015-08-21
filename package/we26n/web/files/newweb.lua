@@ -78,19 +78,19 @@ function index()
 	
     -- entry({"admin", "network", "iface_reconnect"}, call("iface_reconnect"), nil)
 	--ZigbeeÉè±¸
-    entry({"admin", "newweb", "ernn_internet"}, template("newweb/ernn_internet"), _("ernn_internet"), 11)
+    entry({"admin", "newweb", "zigbee"}, template("newweb/zigbee"), _("zigbee"), 11)
 	entry({"admin", "newweb", "windows"}, template("newweb/windows"), _("windows"), 12)
 	entry({"admin", "newweb", "elewater"}, template("newweb/elewater"), _("elewater"), 13)
-	entry({"admin", "newweb", "ern_internet"}, template("newweb/ern_internet"), _("ern_internet"), 14)
-	entry({"admin", "newweb", "switch"}, template("newweb/switch"), _("switch"), 15)
-	entry({"admin", "newweb", "sensor"}, template("newweb/sensor"), _("sensor"), 16)
-	entry({"admin", "newweb", "alertor"}, template("newweb/alertor"), _("alertor"), 17)
-	entry({"admin", "newweb", "bluetooth"}, template("newweb/bluetooth"), _("bluetooth"), 18)
-	entry({"admin", "newweb", "safe"}, template("newweb/safe"), _("safe"), 19)
+	entry({"admin", "newweb", "switch"}, template("newweb/switch"), _("switch"), 14)
+	entry({"admin", "newweb", "sensor"}, template("newweb/sensor"), _("sensor"), 15)
+	entry({"admin", "newweb", "alertor"}, template("newweb/alertor"), _("alertor"), 16)
+	entry({"admin", "newweb", "bluetooth"}, template("newweb/bluetooth"), _("bluetooth"), 17)
+	entry({"admin", "newweb", "safe"}, template("newweb/safe"), _("safe"), 18)
         entry({"admin","newweb","light_control"},call("light_control"),nil)
         entry({"admin","newweb","entrynet_control"},call("entrynet_control"),nil)
 		entry({"admin","newweb","gas_meter_set"},call("gas_meter_set"),nil)
 		entry({"admin","newweb","blegas_meter_set"},call("blegas_meter_set"),nil)
+		entry({"admin","newweb","password_set"},call("password_set"),nil)
 end
 
 
@@ -101,12 +101,12 @@ end
 function light_control()
 
 
-  luci.http.redirect(luci.dispatcher.build_url("admin/newweb/ernn_internet"))
+  luci.http.redirect(luci.dispatcher.build_url("admin/newweb/zigbee"))
 end
 function entrynet_control()
 
 	local result = conn:call("we26n_zigbee_febee", "ctrlcmd", { gatewayid =macAddr , deviceid = "zigbee_fbee_entrynet_ffffffffffffffff_99", attr = "9999", data = "0" });
-        luci.http.redirect(luci.dispatcher.build_url("admin/newweb/ernn_internet"))
+        luci.http.redirect(luci.dispatcher.build_url("admin/newweb/zigbee"))
 end
 
 function gas_meter_set()
@@ -117,7 +117,7 @@ function gas_meter_set()
 
 	x:commit("jyconfig")
 		
-	luci.http.redirect(luci.dispatcher.build_url("admin/newweb/ern_internet"))
+	luci.http.redirect(luci.dispatcher.build_url("admin/newweb/elewater"))
 end
 
 function blegas_meter_set()
@@ -129,6 +129,27 @@ function blegas_meter_set()
 	x:commit("jyconfig")
 		
 	luci.http.redirect(luci.dispatcher.build_url("admin/newweb/bluetooth"))
+end
+
+function password_set()
+
+	local v1=luci.http.formvalue("text2")
+	local v2=luci.http.formvalue("text3")
+	
+	if v1 and v2 and #v1 > 0 and #v2 > 0 then
+                if v1 == v2 then
+                        if luci.sys.user.setpasswd(luci.dispatcher.context.authuser, v1) == 0 then
+                                
+                        else
+                               
+                        end
+                else
+                        
+                end
+        end
+
+		
+	luci.http.redirect(luci.dispatcher.build_url("admin/newweb/safe"))
 end
 
 function wireless_update()

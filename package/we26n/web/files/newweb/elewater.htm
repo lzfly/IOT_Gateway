@@ -3,8 +3,10 @@ require("uci")
 
 local io = require "io"
 
-function getdevices()
-	local file = io.open("/tmp/devices_0008.ini","r");
+function getdevices( type )
+    
+	filename = "/tmp/devices_" .. tostring(type) .. ".ini";
+    local file = io.open(filename,"r");
 	
 	if(file==nil) then
 		return;
@@ -19,7 +21,8 @@ function getdevices()
 	return datad;
 end
 
-local result=getdevices();
+local result6=getdevices(6);
+local result7=getdevices(7);
 %>
 
 
@@ -29,10 +32,10 @@ local result=getdevices();
 <html>
 <head>
 <style> 
-body{ margin:auto;}
+body{ margin:auto; background-color:#1c69bb;}
 img{display:block};
 a{ display:block; text-decoration:none; font-family:"微软雅黑";}
-.big_box{ background-color:#115baa; height:1560px;}
+.big_box{height:auto;}
 .big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
 .big_top img,.big_top a{ float:left; padding-left:5px; padding-bottom:15px;}
 .big_top a{font-size:26px; text-decoration:none;  color:white;padding-left:15px; padding-top:8px; }
@@ -41,10 +44,11 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .big_top p{ padding-top:20px; padding-left:5px; color:#FFF; font-size:12px;}
 
 .big_bottom{width:1198px;background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
+.bottom{width:1198px; height:auto background-color:#226fc0; margin:auto;overflow:hidden; padding-bottom:50px;}
 
 .nav{ width:100%; height:50px; background-color:#8eb3db;}
 .lights{ overflow:hidden;}
-.lights a{ float:left; padding-left:600px; padding-top:10px;text-decoration:none; font-size:30px;}
+.lights a{ float:left; padding-left:600px; padding-top:10px;text-decoration:none; font-size:30px;color:#ffffff;}
 
 table{
 	width:100%;
@@ -57,7 +61,7 @@ table, th, td {
 }
 
 th,td{
-	text-align: left; padding-left:40px; color:#CCC;
+	text-align: left; padding-left:40px; color:#CCC; 
 }
 td.img{
    float;
@@ -81,68 +85,24 @@ td.img{
 		<script type="text/javascript">
 
 		var resPath = "<%=resource%>" + "/images/";
-		var lightState = 1;
-		var windowState = 0;
-
-		function initState()
-		{
-			document.getElementById("currLightState").value = lightState;
-			document.getElementById("currWindowState").value = windowState;
-
-			if (lightState == 0)
-			{
-				document.getElementById("lightShow").src = resPath + "light_01.png";
-				document.getElementById("lightBtn").src = resPath + "button_01.png";
-			}
-			else
-			{
-				document.getElementById("lightShow").src = resPath + "light.png";
-				document.getElementById("lightBtn").src = resPath + "button_02.png";
-			}
-		}
-		
-		function switchLightState(item)
-		{
-			//alert("aaa");
-			if (lightState == 0)
-			{
-				document.getElementById("currLightState").value = "1";
-			}
-			else
-			{
-				document.getElementById("currLightState").value = "0";
-			}
-
-			 $("#lightSet").ajaxSubmit(function(message) {
-				 lightState = document.getElementById("currLightState").value;
-				 //for(var item=0;item<k;item++){
-				 if (lightState == 0) {
-					document.getElementById("lightShow").src = resPath + "light_01.png";
-					document.getElementById("lightBtn").src = resPath + "button_01.png";
-				 } else {
-					document.getElementById("lightShow").src = resPath + "light.png";
-					document.getElementById("lightBtn").src = resPath + "button_02.png";
-				 }
-				//}
-			 });
-		}
-	</script>
+</script>
 	
 	
 <script type="text/javascript">
 
-	var lightdata='<%=result%>';
+	var gasdata='<%=result6%>';
+	var pwhdata='<%=result7%>';
 
 </script>
 </head>
 
 <body>
 
-<div class="big_box">
+<div class="big_box" style="width:100%; height:100%; position:absolute; left:0px; top:0px;">
 
 	<div class="big_top">
-    	<img src="web/files/newweb/img/picture_01.png">
-        <a href="">470</a>
+    	<a href="newweb_index"><img src="<%=resource%>/images/back.png"></a>
+        <a href="newweb_index">470</a>
         <a class="button" href=""><img src="<%=resource%>/images/pair.png"></a>
         <p>配对</p>
     </div>
@@ -150,51 +110,83 @@ td.img{
 <div class="big_bottom">
 	<div class="nav">
     	<div class="lights">
-        	<a href="web/files/newweb/elewater">水电表</a>
+        	<a>水电表</a>
         </div>
     </div>
     <script type="text/javascript">
-    
-    var winArr = eval(lightdata);
-    
-	var i=0;
-	var item=0;
-	for(i=0;i<winArr.length;i++){  
-		
-		var winData = winArr[i];
-		var devId = winData["deviceid"];
-		var type=winData["devicetype"];		
-		var data=winData["data"];
+    var gasArr = eval(gasdata);
+	var pwhArr = eval(pwhdata); 
+	var i=0;         
+	var j=0;
+	//气表
+	for(i=0;i<gasArr.length;i++){  
+		var gasData = gasArr[i];
+		var devId = gasData["deviceid"];
+		var type=gasData["devicetype"];		
+		var data=gasData["data"];
 		
 		document.write("<table>");
 		document.write("<tr>") ;
-		if(type=="0008")
-			document.write("<td>水表"+"</td>");
-		else 
+		document.write("<td>气表"+"</td>");
+		/*if(type=="ENN_DEVICE_TYPE_GAS_METER")
+			document.write("<td>气表"+"</td>");
+		else if(type=="ENN_DEVICE_TYPE_POWERMETER")
 			document.write("<td>电表"+"</td>");
-			
-		document.write("<td>"+devId+"</td>"); 
+		else if(type=="ENN_DEVICE_TYPE_WATERMETER")
+			document.write("<td>水表"+"</td>");
+		else
+		    document.write("<td>气表"+"</td>");*/	
+		document.write("<td style='width:500px'>"+devId+"</td>"); 
 		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
 		document.write('<input type="hidden" value="0" id="currLightState"/>');
 		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
 		document.write("</form>");
-		document.write("<td>"+data+"</td>");
-		
-		//document.write("<td>色温</td>"); 
-		//document.write("<td>亮度</td>"); 
-		
-
+		document.write("<td style='width:200px'>"+data+"</td>"); 
 		document.write("</tr>") ;
-
 	    document.write("</table>");
 	    
 	}
 	
+	//电水热
+	for(j=0;j<pwhArr.length;j++){  
+		var pwhData = pwhArr[j];
+		var devId = pwhData["deviceid"];
+		var type=pwhData["devicetype"];		
+		var data=pwhData["data"];
+		
+		document.write("<table>");
+		document.write("<tr>") ;
+		if(type=="ENN_DEVICE_TYPE_POWERMETER")
+			document.write("<td>电表"+"</td>");
+		else if(type=="ENN_DEVICE_TYPE_WATERMETER")
+			document.write("<td>水表"+"</td>");
+		else
+		    document.write("<td>热表"+"</td>");	
+		document.write("<td style='width:500px'>"+devId+"</td>"); 
+		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
+		document.write('<input type="hidden" value="0" id="currLightState"/>');
+		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
+		document.write("</form>");
+		document.write("<td style='width:200px'>"+data+"</td>"); 
+		document.write("</tr>") ;
+	    document.write("</table>");
+	}
 	</script>
-    
-
-     </table>
-
+</div>    <!--big_bottom结束-->
+<div class="bottom">
+   <form action="<%= luci.dispatcher.build_url("admin/newweb/gas_meter_set") %>" method="post">
+       <p>气表:<input type="text"  name="id"/></p>
+       <input type="submit"  value="保存" onClick="add()"/>
+	   <p id="deom"></p>
+   </form>
+</div>
+<script>
+    function add()
+	{
+	//document.write("保存成功");
+	document.getElementById("deom").innerHTML="保存成功";
+	}
+</script>
 </div>
 
 </body>

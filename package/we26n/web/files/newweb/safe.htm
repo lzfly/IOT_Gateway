@@ -43,28 +43,32 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 }
 
 .password_box{
+	margin-top:80px;
 	background-image:url(bg_02.png);
-	width:600px;
 	height:400px;
 	margin-left:200px;
 }
 .password{
-	padding-top:50px;
+	padding-top:80px;
 	padding-left:90px;
 	overflow:hidden;
 }
-.password input,.password a{ 
+.password input,.cbi-value-title{ 
 	float:left;
 }
-.password a{
+.cbi-value-title{
 	font-size:20px;
 	color:#FFF;
 	padding-top:10px;
 }
+.password img{
+	padding-top:10px;
+	padding-left:5px;
+}
 input{
 	width:300px;
 	height:40px;
-	margin-left:10px;
+	margin-left:12px;
 	font-size:12px;
 	color:#323232;
 	display:block;
@@ -74,9 +78,28 @@ input{
 	border-bottom-right-radius:6px;
 	border-bottom-left-radius:6px;
 }
-.button a{
+.button input{
 	background-color:#649aeb;
 	width:100px;
+	height:40px;
+	margin-left:260px;
+	margin-top:50px;
+	margin-bottom:50px;
+	padding:5px 0;
+	float:left;
+	text-align:center;
+	cursor: pointer;
+	font-size:20px;
+	color:#0152a6;
+	border-top-left-radius:6px;
+	border-top-right-radius:6px;
+	border-bottom-right-radius:6px;
+	border-bottom-left-radius:6px;
+	color:#FFF;
+	text-decoration:none;
+}
+.button p{
+   width:100px;
 	height:30px;
 	margin-left:260px;
 	margin-top:30px;
@@ -114,26 +137,52 @@ input{
     </div>
     
 <div class="big_bottom">
-<!--	<div class="amend">
-    	<a>修改密码</a>
-    </div>
--->
+
+<form name="userform" method="post" action="<%= luci.dispatcher.build_url("admin/newweb/password_set") %>">
 <div class="password_box">
-	<div class="password">
-    	<a>原&nbsp;密&nbsp;码 :</a>
-		<input type="password">
+	
+    <div class="password">
+	    <label class="cbi-value-title" for="text2">新&nbsp;密&nbsp;码 :</label>
+    	
+		<input type="password" name="text2" id="text2">
+		<img src="<%=resource%>/images/password.png" style="vertical-align:middle" onclick="var e = document.getElementById('text2'); e.type = (e.type=='password') ? 'text' : 'password';"/>
     </div>
     <div class="password">
-    	<a>新&nbsp;密&nbsp;码 :</a>
-		<input type="password">
-    </div>
-    <div class="password">
-    	<a>确认密码 :</a>
-		<input type="password">
+	    <label class="cbi-value-title" for="text3">确认密码 :</label>
+    	
+		<input type="password" name="text3" id="text3">
+		<img src="<%=resource%>/images/password.png" style="vertical-align:middle" onclick="var e = document.getElementById('text3'); e.type = (e.type=='password') ? 'text' : 'password';"/>
     </div>
     <div class="button">
-    	<a href="">保存</a>
+    	<input type="submit" value="确定" onClick="check()"/>
+        <p id="deom"></p>
     </div>
+</div>
+</form>
+
+<script>
+	function check(){
+		//var text1 = userform.text1.value;
+		var text2 = userform.text2.value;
+		var text3 = userform.text3.value;
+		//if(text1==""){
+			//alert("密码不能为空")
+			//}
+		if(text2==""){
+			alert("密码不能为空")
+			}
+		if(text3==""){
+			alert("密码不能为空")
+			}
+		if(text2!=text3){
+			alert("密码不一致");
+			return false;
+			}
+			document.getElementById("deom").innerHTML="保存成功";
+			return true;
+		}
+</script>
+
 </div>
 
 </div>

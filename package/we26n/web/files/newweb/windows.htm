@@ -33,7 +33,7 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .big_top img,.big_top a{ float:left; padding-left:5px; padding-bottom:15px;text-decoration:none;}
 .zig{font-size:26px; color:white;padding-left:15px; padding-top:8px; }
 .button{margin-left:860px;color:white;padding-top:10px;}
-.big_top p{ padding-top:20px; padding-left:5px; color:#FFF; font-size:12px;}
+.big_top p{ padding-top:20px;color:#FFF; font-size:12px;}
 
 .big_bottom{width:1198px;<script type="text/javascript">
 
@@ -43,8 +43,8 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 
 .nav{ width:100%; height:40px; background-color:#8eb3db;}
 .lights{ overflow:hidden;}
-.wind{background:url(<%=resource%>/images/bg_nav.png);}
-.lights a{ float:left; padding:0 91px; padding-top:5px;text-decoration:none; font-size:26px; color:#FFF;}
+.wind{background:url(<%=resource%>/images/bg_nav.png);line-height:40px;}
+.lights a{ float:left; padding:0 91px;text-decoration:none; font-size:26px; color:#FFF;}
 .lights a:hover{color:#009;text-decoration:none}
 
 table{
@@ -86,7 +86,7 @@ td.img{
 <div class="big_bottom">
 	<div class="nav">
     	<div class="lights">
-        	<a href="ernn_internet">灯</a>
+        	<a href="zigbee">灯</a>
         	<a class="wind" href="windows">窗帘</a>
             <a href="switch">开关</a>
             <a href="sensor">传感器</a>
@@ -109,11 +109,11 @@ td.img{
 		
 		document.write("<table>");
 		document.write("<tr>") ;
-		document.write("<td>窗帘" + (i+1) + "</td>"); 
-		document.write("<td>" + devId + "</td>"); 
+		document.write("<td style='width:200px'>窗帘" + (i+1) + "</td>"); 
+		document.write("<td style='width:500px'>" + devId + "</td>"); 
 		document.write('<form method="post" id="windowSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
 		document.write('<input type="hidden" value="0" id="currLightState"/>');
-		document.write('<td><img  id="windowsShow" src="<%=resource%>/images/windows_01.png"</td>') ;
+		document.write('<td><center><img  id="windowsShow" src="<%=resource%>/images/windows_01.png"</td>') ;
 		//document.write('<td><img  id="windowsBtn"+(i+1) src="<%=resource%>/images/button_02.png" onclick="switchLightState(item);"></td>') ;	
 		document.write("</form>");
 		if(status=="1")

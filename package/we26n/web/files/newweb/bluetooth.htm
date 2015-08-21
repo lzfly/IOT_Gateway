@@ -5,7 +5,7 @@ local io = require "io"
 
 function getdevices( type )
     
-	filename = "/tmp/device_" .. tostring(type) .. ".ini";
+	filename = "/tmp/devices_" .. tostring(type) .. ".ini";
     local file = io.open(filename,"r");
 	
 	if(file==nil) then
@@ -141,7 +141,7 @@ td.img{
 		document.write('<input type="hidden" value="0" id="currLightState"/>');
 		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
 		document.write("</form>");
-		document.write("<td>"+data+"</td>"); 
+		document.write("<td style='width:200px'>"+data+"</td>"); 
 		document.write("</tr>") ;
 	    document.write("</table>");
 	    
@@ -167,7 +167,7 @@ td.img{
 		document.write('<input type="hidden" value="0" id="currLightState"/>');
 		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
 		document.write("</form>");
-		document.write("<td>"+data+"</td>"); 
+		document.write("<td style='width:200px'>"+data+"</td>"); 
 		document.write("</tr>") ;
 	    document.write("</table>");
 	}
