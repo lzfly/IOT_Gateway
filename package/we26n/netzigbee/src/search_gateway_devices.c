@@ -303,11 +303,6 @@ int startSearchDevice()
 		index++;
 		for(i = 0; i < g_devices_count; i++)
 		{
-			if(strstr(ZigbeeId,g_devices[i].ieeestr) == NULL)
-			{
-				printf("sleep time:%d\n",g_ReportTime.hum_time);
-				continue;
-			}
 		    //printf("getDeviceState");
 			printf("[startSearchDevice] endpoint=%d\r\n", g_devices[i].endpoint);
 			printf("device SN = %s\n", g_devices[i].SN);
