@@ -43,7 +43,9 @@ static struct uci_package * uci_ennconfig;
 
 int get_sleep_time()
 {
- if (!uci_ctx_s)
+    int rtn = -1;
+
+    if (!uci_ctx_s)
     {
         uci_ctx_s = uci_alloc_context();
     }
@@ -82,6 +84,7 @@ int get_sleep_time()
                             printf("%s(), power meter sleep: %s\n", __FUNCTION__, time_p);
                             timep=strtoul(time_p,NULL,10);
                             printf("%d\n",timep);
+                            rtn = 0;
                      }
                      else{
                             printf("%s(), sleep time not found\n", __FUNCTION__);
@@ -94,6 +97,7 @@ int get_sleep_time()
                             printf("%s(), water sleep time: %s\n", __FUNCTION__, time_w);
                             timew=strtoul(time_w,NULL,10);
                             printf("%d\n",timew);
+                            rtn = 0;
                      }
                      else{
                             printf("%s(), water meter sleep time not found\n", __FUNCTION__);
@@ -105,6 +109,7 @@ int get_sleep_time()
                             printf("%s(), heat sleep time: %s\n", __FUNCTION__, time_h);
                             timeh=strtoul(time_h,NULL,10);
                             printf("%d\n",timeh);
+                            rtn = 0;
                      }
                      else{
                             printf("%s(), heat meter sleep time not found\n", __FUNCTION__);
@@ -116,6 +121,83 @@ int get_sleep_time()
              
    }
 
+   return rtn;
+}
+
+int get_device_id()
+{
+    int rtn = -1;
+
+    if (!uci_ctx)
+    {
+        uci_ctx = uci_alloc_context();
+    }
+    else
+    {
+        uci_jianyoucfg = uci_lookup_package(uci_ctx, "jyconfig");
+        if (uci_jianyoucfg)
+            uci_unload(uci_ctx, uci_jianyoucfg);
+    }
+
+    if (uci_load(uci_ctx, "jyconfig", &uci_jianyoucfg))
+    {
+        printf("uci load jianyou config fail\n");
+    }else
+	{
+	    char *value_p = NULL;
+	    char *value_w = NULL;
+	    char *value_h = NULL;
+            struct uci_element *e   = NULL;
+            printf("uci load jianyou config success\n");
+
+
+            /* scan jianyou config ! */
+            uci_foreach_element(&uci_jianyoucfg->sections, e)
+            {
+                struct uci_section *s = uci_to_section(e);
+                if(0 == strcmp(s->type, "deviceid"))
+                {
+                    printf("%s(), type: %s\n", __FUNCTION__, s->type);
+
+                    value_p = uci_lookup_option_string(uci_ctx, s, "powermeter");
+                   
+                    if(value_p)
+                    {
+                            strcpy(powerid, value_p);
+                            printf("%s(), powerid: %s\n", __FUNCTION__, powerid);
+                            rtn = 0;
+                     }
+                     else{
+                            printf("%s(), gas_meter_id not found\n", __FUNCTION__);
+                     }
+                      value_w = uci_lookup_option_string(uci_ctx, s, "watermeter"); 
+                   
+                      if(value_w)
+                    {
+                            strcpy(waterid, value_w);
+                            printf("%s(), waterid: %s\n", __FUNCTION__, waterid);
+                            rtn = 0;
+                     }
+                     else{
+                            printf("%s(), water_meter_id not found\n", __FUNCTION__);
+                     }
+                      value_h = uci_lookup_option_string(uci_ctx, s, "heatmeter"); 
+                       if(value_h)
+                    {
+                            strcpy(heatid, value_h);
+                            printf("%s(), heatid: %s\n", __FUNCTION__, heatid);
+                            rtn = 0;
+                     }
+                     else{
+                            printf("%s(), heat_meter_id not found\n", __FUNCTION__);
+                  }
+                     break;
+            }
+
+          }
+             
+   }
+   return rtn;
 }
 
 int32_t  modbus_conv_longm( uint8_t * puc )
@@ -184,64 +266,61 @@ struct sockaddr_in g_localAddr;
 	
 int getLocalIPandMAC ()
 {
-   register int fd, intrface, retn = 0;
-   struct ifreq buf[MAXINTERFACES];
-   struct arpreq arp;
-   struct ifconf ifc;
+    register int fd, intrface, retn = 0;
+    struct ifreq buf[MAXINTERFACES];
+    struct arpreq arp;
+    struct ifconf ifc;
 
+    printf ("getLocalIPandMAC\n");
 
-printf ("getLocalIPandMAC\n");
-
-
-if ((fd = socket (AF_INET, SOCK_DGRAM, 0)) >= 0)
-{
-  ifc.ifc_len = sizeof buf;
-  ifc.ifc_buf = (caddr_t) buf;
-  if (!ioctl (fd, SIOCGIFCONF, (char *) &ifc))
-  {
-   //获取接口信息
-   intrface = ifc.ifc_len / sizeof (struct ifreq);
-    printf("interface num is intrface=%d\n\n\n",intrface);
-   //根据借口信息循环获取设备IP和MAC地址
-   while (intrface-- > 0)
-   {
-    //获取设备名称
-    printf ("net device %s\n", buf[intrface].ifr_name);
+    if ((fd = socket (AF_INET, SOCK_DGRAM, 0)) >= 0)
+    {
+        ifc.ifc_len = sizeof buf;
+        ifc.ifc_buf = (caddr_t) buf;
+        if (!ioctl (fd, SIOCGIFCONF, (char *) &ifc))
+        {
+            //获取接口信息
+            intrface = ifc.ifc_len / sizeof (struct ifreq);
+            printf("interface num is intrface=%d\n\n\n",intrface);
+            //根据借口信息循环获取设备IP和MAC地址
+            while (intrface-- > 0)
+            {
+                //获取设备名称
+                printf ("net device %s\n", buf[intrface].ifr_name);
 	
-	if(0 != strncmp(buf[intrface].ifr_name, "br-lan", strlen("br-lan")))
-	    continue;
+	        if(0 != strncmp(buf[intrface].ifr_name, "br-lan", strlen("br-lan")))
+	            continue;
+ 
+                //判断网卡状态
+                if (buf[intrface].ifr_flags & IFF_UP)
+                {
+                    printf("the interface status is UP" );
+                }
+                else
+                {
+                    printf("the interface status is DOWN" );
+                }
+                //获取当前网卡的IP地址
+                if (!(ioctl (fd, SIOCGIFADDR, (char *) &buf[intrface])))
+                {
+                     printf ("IP address is:" );
+                     printf("%08x", ((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr);
+                     g_localAddr.sin_addr = ((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr;				 
+                     printf("" );
+                     //puts (buf[intrface].ifr_addr.sa_data);
+                }
+                else
+                {
+                    char str[256];
+                    sprintf (str, "cpm: ioctl device %s", buf[intrface].ifr_name);
+                    perror (str);
+                }
+                /* this section can't get Hardware Address,I don't know whether the reason is module driver*/
 
-
-   //判断网卡状态
-            if (buf[intrface].ifr_flags & IFF_UP)
-   {
-                printf("the interface status is UP" );
-            }
-            else
-   {
-                printf("the interface status is DOWN" );
-            }
-   //获取当前网卡的IP地址
-            if (!(ioctl (fd, SIOCGIFADDR, (char *) &buf[intrface])))
-            {
-                 printf ("IP address is:" );
-                 printf("%08x", ((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr);
-                 g_localAddr.sin_addr = ((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr;				 
-                 printf("" );
-                   //puts (buf[intrface].ifr_addr.sa_data);
-            }
-            else
-           {
-               char str[256];
-               sprintf (str, "cpm: ioctl device %s", buf[intrface].ifr_name);
-               perror (str);
-           }
-/* this section can't get Hardware Address,I don't know whether the reason is module driver*/
-
-            if (!(ioctl (fd, SIOCGIFHWADDR, (char *) &buf[intrface])))
-            {
-                 printf ("HW address is:" );
-                 printf("%02x:%02x:%02x:%02x:%02x:%02x\n",
+                if (!(ioctl (fd, SIOCGIFHWADDR, (char *) &buf[intrface])))
+                {
+                    printf ("HW address is:" );
+                    printf("%02x:%02x:%02x:%02x:%02x:%02x\n",
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[0],
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[1],
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[2],
@@ -255,21 +334,21 @@ if ((fd = socket (AF_INET, SOCK_DGRAM, 0)) >= 0)
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[3],
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[4],
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[5]);
-                 printf("g_localMAC=%s\n", g_localMAC);
-                 printf("" );
-             }
-
-            else
-            {
-               char str[256];
-               sprintf (str, "cpm: ioctl device %s", buf[intrface].ifr_name);
-               printf (str);
-           }
-        } //while
-      } else
+                    printf("g_localMAC=%s\n", g_localMAC);
+                    printf("" );
+                }
+                else
+                {
+                    char str[256];
+                    sprintf (str, "cpm: ioctl device %s", buf[intrface].ifr_name);
+                    printf (str);
+                }
+             } //while
+         } else
          printf ("cpm: ioctl" );
-   } else
+     } else
       printf ("cpm: socket" );
+    
     close (fd);
     return retn;
 } 
@@ -449,79 +528,6 @@ void* enn_meter_thread( void *arg )
 	double d,aaa_h;
 	int connectfd;
 	
-	get_sleep_time();
-	
-   if (!uci_ctx)
-    {
-        uci_ctx = uci_alloc_context();
-    }
-    else
-    {
-        uci_jianyoucfg = uci_lookup_package(uci_ctx, "jyconfig");
-        if (uci_jianyoucfg)
-            uci_unload(uci_ctx, uci_jianyoucfg);
-    }
-
-    if (uci_load(uci_ctx, "jyconfig", &uci_jianyoucfg))
-    {
-        printf("uci load jianyou config fail\n");
-    }else
-	{
-	    char *value_p = NULL;
-	    char *value_w = NULL;
-	    char *value_h = NULL;
-            struct uci_element *e   = NULL;
-            printf("uci load jianyou config success\n");
-
-
-            /* scan jianyou config ! */
-            uci_foreach_element(&uci_jianyoucfg->sections, e)
-            {
-                struct uci_section *s = uci_to_section(e);
-                if(0 == strcmp(s->type, "deviceid"))
-                {
-                    printf("%s(), type: %s\n", __FUNCTION__, s->type);
-
-                    value_p = uci_lookup_option_string(uci_ctx, s, "powermeter");
-                   
-                    if(value_p)
-                    {
-                            strcpy(powerid, value_p);
-                            printf("%s(), powerid: %s\n", __FUNCTION__, powerid);
-                     }
-                     else{
-                            printf("%s(), gas_meter_id not found\n", __FUNCTION__);
-                     }
-                      value_w = uci_lookup_option_string(uci_ctx, s, "watermeter"); 
-                   
-                      if(value_w)
-                    {
-                            strcpy(waterid, value_w);
-                            printf("%s(), waterid: %s\n", __FUNCTION__, waterid);
-                     }
-                     else{
-                            printf("%s(), water_meter_id not found\n", __FUNCTION__);
-                     }
-                      value_h = uci_lookup_option_string(uci_ctx, s, "heatmeter"); 
-                       if(value_h)
-                    {
-                            strcpy(heatid, value_h);
-                            printf("%s(), heatid: %s\n", __FUNCTION__, heatid);
-                     }
-                     else{
-                            printf("%s(), heat_meter_id not found\n", __FUNCTION__);
-                  }
-                     break;
-            }
-
-          }
-             
-   }
-
-	
-	
-	
-	
 	
     	char buf_power[N],buf_water[N],buf_heat[N];
      	char buff_power[N] = {0x01,0X03,0X00,0X14,0X00,0X02,0X84,0X0F};
@@ -530,7 +536,7 @@ void* enn_meter_thread( void *arg )
 	char buff_water[N]={0x02,0X03,0X00,0X1E,0X00,0X04,0X24,0X3C};
 	char buff_heat[N]={0x03,0X03,0X00,0X1C,0X00,0X04,0X84,0X2D};
 	
-    printf( "enn_meter_thread 89789789 init\n");  
+        printf( "enn_meter_thread 89789789 init\n");  
  	
 	connectfd = arg;
 	
@@ -699,14 +705,17 @@ int main(int argc,char *argv[])
 {
 
     int sockfd,connectfd;
-	pthread_t th;  
-	int ret;  
-	int *thread_ret = NULL;  
+    pthread_t th;  
+    int ret;  
+    int *thread_ret = NULL;  
 		
     struct sockaddr_in server_addr,client_addr;
 
-   getLocalIPandMAC ();
-   if( (sockfd = socket(AF_INET,SOCK_STREAM,0)) < 0)
+    get_sleep_time();
+    get_device_id();
+
+    getLocalIPandMAC ();
+    if( (sockfd = socket(AF_INET,SOCK_STREAM,0)) < 0)
     {
         perror("socket");
     }
