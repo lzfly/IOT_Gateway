@@ -40,7 +40,7 @@ static struct uci_context * uci_ctx_s;
 static struct uci_package * uci_ennconfig;
 
 static char time_s[8];
- int times = 0;
+int times = 0;
 
 uint8_t sub(char *buff_sub,int len_sub)
 {
@@ -58,64 +58,61 @@ uint8_t sub(char *buff_sub,int len_sub)
 	
 int getLocalIPandMAC ()
 {
-   register int fd, intrface, retn = 0;
-   struct ifreq buf[MAXINTERFACES];
-   struct arpreq arp;
-   struct ifconf ifc;
+    register int fd, intrface, retn = 0;
+    struct ifreq buf[MAXINTERFACES];
+    struct arpreq arp;
+    struct ifconf ifc;
 
+    printf ("getLocalIPandMAC\n");
 
-printf ("getLocalIPandMAC\n");
-
-
-if ((fd = socket (AF_INET, SOCK_DGRAM, 0)) >= 0)
-{
-  ifc.ifc_len = sizeof buf;
-  ifc.ifc_buf = (caddr_t) buf;
-  if (!ioctl (fd, SIOCGIFCONF, (char *) &ifc))
-  {
-   //获取接口信息
-   intrface = ifc.ifc_len / sizeof (struct ifreq);
-    printf("interface num is intrface=%d\n\n\n",intrface);
-   //根据借口信息循环获取设备IP和MAC地址
-   while (intrface-- > 0)
-   {
-    //获取设备名称
-    printf ("net device %s\n", buf[intrface].ifr_name);
+    if ((fd = socket (AF_INET, SOCK_DGRAM, 0)) >= 0)
+    {
+        ifc.ifc_len = sizeof buf;
+        ifc.ifc_buf = (caddr_t) buf;
+        if (!ioctl (fd, SIOCGIFCONF, (char *) &ifc))
+        {
+            //获取接口信息
+            intrface = ifc.ifc_len / sizeof (struct ifreq);
+            printf("interface num is intrface=%d\n\n\n",intrface);
+            //根据借口信息循环获取设备IP和MAC地址
+            while (intrface-- > 0)
+            {
+                //获取设备名称
+                printf ("net device %s\n", buf[intrface].ifr_name);
 	
-	if(0 != strncmp(buf[intrface].ifr_name, "br-lan", strlen("br-lan")))
-	    continue;
+	        if(0 != strncmp(buf[intrface].ifr_name, "br-lan", strlen("br-lan")))
+	            continue;
+ 
+                //判断网卡状态
+                if (buf[intrface].ifr_flags & IFF_UP)
+                {
+                    printf("the interface status is UP" );
+                }
+                else
+                {
+                    printf("the interface status is DOWN" );
+                }
+                //获取当前网卡的IP地址
+                if (!(ioctl (fd, SIOCGIFADDR, (char *) &buf[intrface])))
+                {
+                     printf ("IP address is:" );
+                     printf("%08x", ((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr);
+                     g_localAddr.sin_addr = ((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr;				 
+                     printf("" );
+                     //puts (buf[intrface].ifr_addr.sa_data);
+                }
+                else
+                {
+                    char str[256];
+                    sprintf (str, "cpm: ioctl device %s", buf[intrface].ifr_name);
+                    perror (str);
+                }
+                /* this section can't get Hardware Address,I don't know whether the reason is module driver*/
 
-
-   //判断网卡状态
-            if (buf[intrface].ifr_flags & IFF_UP)
-   {
-                printf("the interface status is UP" );
-            }
-            else
-   {
-                printf("the interface status is DOWN" );
-            }
-   //获取当前网卡的IP地址
-            if (!(ioctl (fd, SIOCGIFADDR, (char *) &buf[intrface])))
-            {
-                 printf ("IP address is:" );
-                 printf("%08x", ((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr);
-                 g_localAddr.sin_addr = ((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr;				 
-                 printf("" );
-                   //puts (buf[intrface].ifr_addr.sa_data);
-            }
-            else
-           {
-               char str[256];
-               sprintf (str, "cpm: ioctl device %s", buf[intrface].ifr_name);
-               perror (str);
-           }
-/* this section can't get Hardware Address,I don't know whether the reason is module driver*/
-
-            if (!(ioctl (fd, SIOCGIFHWADDR, (char *) &buf[intrface])))
-            {
-                 printf ("HW address is:" );
-                 printf("%02x:%02x:%02x:%02x:%02x:%02x\n",
+                if (!(ioctl (fd, SIOCGIFHWADDR, (char *) &buf[intrface])))
+                {
+                    printf ("HW address is:" );
+                    printf("%02x:%02x:%02x:%02x:%02x:%02x\n",
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[0],
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[1],
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[2],
@@ -129,21 +126,21 @@ if ((fd = socket (AF_INET, SOCK_DGRAM, 0)) >= 0)
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[3],
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[4],
                                 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[5]);
-                 printf("g_localMAC=%s\n", g_localMAC);
-                 printf("" );
-             }
-
-            else
-            {
-               char str[256];
-               sprintf (str, "cpm: ioctl device %s", buf[intrface].ifr_name);
-               printf (str);
-           }
-        } //while
-      } else
+                    printf("g_localMAC=%s\n", g_localMAC);
+                    printf("" );
+                }
+                else
+                {
+                    char str[256];
+                    sprintf (str, "cpm: ioctl device %s", buf[intrface].ifr_name);
+                    printf (str);
+                }
+             } //while
+         } else
          printf ("cpm: ioctl" );
-   } else
+     } else
       printf ("cpm: socket" );
+    
     close (fd);
     return retn;
 } 
@@ -177,7 +174,7 @@ void  dump_hex( const unsigned char * ptr, size_t  len )
     int  i;
     int  nn;
     int  len2 = len;
-printf( "len = %d\n", len);
+    printf( "len = %d\n", len);
     nn = 0;
     while ( (len2 - nn) >= 16 )
     {
@@ -229,11 +226,9 @@ int  sendMsgToWeb(char *meterid,unsigned short int attr,long double data)
     int  iret;
     uint32_t  id;
     struct ubus_context *ctx;
-	static struct blob_buf b;
-
+    static struct blob_buf b;
  
     printf("[sendMsgToWeb] start\r\n");
-
 
     /**/
 	ctx = ubus_connect( NULL );
@@ -307,70 +302,16 @@ void* gas_meter_thread( void *arg )
 
     char buf[N],buf_f[N],buf_ff[N];
     
-    
-    
-  	//读取配置文件数据上报时间	
-	if (!uci_ctx_s)
+    char *id;
+    char str[32];
+
+    printf("ddd=%s\n",&gas_meter_id[3]);
+    uint64_t d_ata;
+    if((d_ata = strtoull(&gas_meter_id[3], NULL, 10))<0)
     {
-        uci_ctx_s = uci_alloc_context();
+        printf("errno=%d\n",errno);
     }
-    else
-    {
-        uci_ennconfig = uci_lookup_package(uci_ctx_s, "ennconfig");
-        if (uci_ennconfig)
-            uci_unload(uci_ctx_s, uci_ennconfig);
-    }
-
-    if (uci_load(uci_ctx_s, "ennconfig", &uci_ennconfig))
-    {
-        printf("uci load ENN config fail\n");
-    }else
-	{
-	    char *value_s = NULL;
-            struct uci_element *e_s   = NULL;
-            printf("uci load ENN config success\n");
-
-
-            /* scan enn config ! */
-            uci_foreach_element(&uci_ennconfig->sections, e_s)
-            {
-                struct uci_section *s_s = uci_to_section(e_s);
-                if(0 == strcmp(s_s->type, "wifi"))
-                {
-                    printf("%s(), type: %s\n", __FUNCTION__, s_s->type);
-
-                    value_s = uci_lookup_option_string(uci_ctx_s, s_s, "gas_interval");
-                    if(value_s){
-                            strcpy(time_s, value_s);
-                            printf("%s(), sleep time: %s\n", __FUNCTION__, time_s);
-                             times=strtoul(time_s,NULL,10);
-                             printf("%d\n",times);
-                        }else{
-                            printf("%s(), sleep time_id not found\n", __FUNCTION__);
-                     }
-                     break;
-                 }
-
-             }
-            
-             
-    }
-
-    
-    
-    
-    	char *id;
-     	char str[32];
-        //id = gas_meter_id;
-        //printf("ga_sid = %s\n",id);
-        //id = id +3;
-        printf("ddd=%s\n",&gas_meter_id[3]);
-        uint64_t d_ata;
-        if((d_ata = strtoull(&gas_meter_id[3], NULL, 10))<0)
-        {
-        	printf("errno=%d\n",errno);
-        }
-	printf("d_ata = %llu \n",d_ata);
+    printf("d_ata = %llu \n",d_ata);
 	//printf("%hhx-%hhx-%hhx-%hhx\r\n", (uint8_t)(d_ata & 0xff), (uint8_t)((d_ata >> 8) & 0xff), (uint8_t)((d_ata >> 16) & 0xff), (uint8_t)((d_ata >> 24) & 0xff) );
 	 
     
@@ -503,20 +444,62 @@ void* gas_meter_thread( void *arg )
 	
 } 
 
-
-int main(int argc,char *argv[])
+int get_gas_report_time()
 {
+    int rtn = -1;
+    //读取配置文件数据上报时间	
+    if (!uci_ctx_s)
+    {
+        uci_ctx_s = uci_alloc_context();
+    }
+    else
+    {
+        uci_ennconfig = uci_lookup_package(uci_ctx_s, "ennconfig");
+        if (uci_ennconfig)
+            uci_unload(uci_ctx_s, uci_ennconfig);
+    }
 
-    int sockfd,connectfd;
-	pthread_t th;  
-	int ret;  
-	int *thread_ret = NULL;  
-		
-    struct sockaddr_in server_addr,client_addr;
+    if (uci_load(uci_ctx_s, "ennconfig", &uci_ennconfig))
+    {
+        printf("uci load ENN config fail\n");
+    }else
+	{
+	    char *value_s = NULL;
+            struct uci_element *e_s   = NULL;
+            printf("uci load ENN config success\n");
 
 
-    strcpy(gas_meter_id, "A01511504001758");
-	
+            /* scan enn config ! */
+            uci_foreach_element(&uci_ennconfig->sections, e_s)
+            {
+                struct uci_section *s_s = uci_to_section(e_s);
+                if(0 == strcmp(s_s->type, "wifi"))
+                {
+                    printf("%s(), type: %s\n", __FUNCTION__, s_s->type);
+
+                    value_s = uci_lookup_option_string(uci_ctx_s, s_s, "gas_interval");
+                    if(value_s){
+                            strcpy(time_s, value_s);
+                            printf("%s(), sleep time: %s\n", __FUNCTION__, time_s);
+                             times=strtoul(time_s,NULL,10);
+                             printf("%d\n",times);
+                             rtn = 0;
+                        }else{
+                            printf("%s(), sleep time_id not found\n", __FUNCTION__);
+                     }
+                     break;
+                 }
+
+             }
+            
+             
+    }
+    return rtn;
+}
+
+int get_gas_meter_id()
+{
+    int rtn = -1;
     if (!uci_ctx)
     {
         uci_ctx = uci_alloc_context();
@@ -550,6 +533,7 @@ int main(int argc,char *argv[])
                     if(value){
                             strcpy(gas_meter_id, value);
                             printf("%s(), gas_meter_id: %s\n", __FUNCTION__, gas_meter_id);
+                            rtn = 0;
                         }else{
                             printf("%s(), gas_meter_id not found\n", __FUNCTION__);
                      }
@@ -559,12 +543,28 @@ int main(int argc,char *argv[])
              }
              
     }
+    return rtn;
+}
+
+int main(int argc,char *argv[])
+{
+
+    int sockfd,connectfd;
+    pthread_t th;  
+    int ret;  
+    int *thread_ret = NULL;  
+		
+    struct sockaddr_in server_addr,client_addr;
 
 
+    strcpy(gas_meter_id, "A01511504001758");
 	
-	
-   getLocalIPandMAC ();
-   if( (sockfd = socket(AF_INET,SOCK_STREAM,0)) < 0)
+
+    get_gas_meter_id();
+    get_gas_report_time();
+
+    getLocalIPandMAC ();
+    if( (sockfd = socket(AF_INET,SOCK_STREAM,0)) < 0)
     {
         perror("socket");
     }
