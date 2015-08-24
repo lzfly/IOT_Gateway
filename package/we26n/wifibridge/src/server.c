@@ -345,49 +345,80 @@ void* gas_meter_thread( void *arg )
 	while(1)
 	{      
 			sleep(2);
+
+                        q=recv(connectfd,buf,18,0);
+                        printf("\n******gas_meter read  sleep = %d\n", q);
+
 			printf("\n******gas_meter awake ********\n");
 			
 			j=send(connectfd,buf_wake,22,0);
 			if(j<0)
-			continue;
+                        {
+                            printf("\nthread exit---0\n");
+			    break;
+                        }
 			syslog(LOG_CRIT,"[gas_meter]gas meter awake send ok");
-		 	i=recv(connectfd,buf,18,0);
-			if(i<=0)
-			continue;
-			syslog(LOG_CRIT,"[gas_meter]gas meter awake recv ok");
-			dump_hex( buf, i );
-			sleep(6);
-    			
-			printf("\n******gas_meter send cmd********\n");
-			p=send(connectfd,buf_read,16,0);
-			if(p<0)
-			continue;
-			syslog(LOG_CRIT,"[gas_meter]gas meter read meter send ok");
-			dump_hex( buf_read, 16 );
-			//sleep(2);
+                        
 			int len_g=0,count_g=0;
-			//char buff2[41];
-			printf("\n******gas_meter read  data before********\n");
-	    		while(count_g < 5 && len_g < 41)
+			char buff2[41];
+			printf("\n******gas_meter read  wake before********\n");
+	    		while(count_g < 15 && len_g < 18)
 	    		{
-				q=recv(connectfd,buf_f,41,0);
+				q=recv(connectfd,buff2,18,0);
 				printf("q=%d\n", q);
 				count_g++;
 				if(q<0)
 				    continue;
-				//memcpy(buf_f+len_g, buff2, q);
+				memcpy(buf+len_g, buff2, q);
 				len_g = len_g + q;
 				
-				//sleep(1);
+				sleep(1);
+			
+			}
+			if(len_g != 18){
+			    printf("read not 18\n");
+			    break;
+			    }
+			syslog(LOG_CRIT,"[gas_meter]gas meter awake recv ok");
+			dump_hex( buf, len_g );
+			sleep(5);
+    			
+			printf("\n******gas_meter send cmd********\n");
+			p=send(connectfd,buf_read,16,0);
+			if(p<0)
+                        {
+                            printf("\nthread exit---2\n");
+
+			    break;
+                        }
+                        printf("\ncmd ok\n");
+			syslog(LOG_CRIT,"[gas_meter]gas meter read meter send ok");
+			dump_hex( buf_read, 16 );
+			sleep(1);
+			len_g=0;
+                        count_g=0;
+
+			printf("\n******gas_meter read  data before********\n");
+	    		while(count_g < 5 && len_g < 41)
+	    		{
+				q=recv(connectfd,buff2,41,0);
+				printf("q=%d\n", q);
+				count_g++;
+				if(q<0)
+				    continue;
+				memcpy(buf_f+len_g, buff2, q);
+				len_g = len_g + q;
+				
+				sleep(1);
 			
 			}
 			syslog(LOG_CRIT,"[gas_meter]gas meter read meter recv ok");
 			printf("count_g=%d, len_g=%d\n", count_g,len_g);
 			dump_hex( buf_f, len_g );
 			printf("\n******gas_meter read  data after********\n");
-			if(len_g != 41 && len_g != 59){
-			    printf("read not 41 and 59\n");
-			    continue;
+			if(len_g != 41){
+			    printf("read not 41\n");
+			    break;
 			    }
 			
 			
@@ -432,15 +463,21 @@ void* gas_meter_thread( void *arg )
 			
 			j=send(connectfd,buf_sleep,21,0);
 			if(j<0)
-			continue;
+                        {
+                            printf("\nthread exit---3\n");
+			    break;
+                        }
+
 			syslog(LOG_CRIT,"[gas_meter]gas meter sleep send ok");
 			printf("\n******gas_meter sleep ********\n");
      			sleep(times*60);
+
      			printf("\nsleep=%d\n",times);
         		t++;
         		f++;
 	}
 	close(connectfd);
+        printf("\nexit thread\n");
 	
 } 
 
