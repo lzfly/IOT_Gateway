@@ -579,9 +579,12 @@ void* enn_meter_thread( void *arg )
 		dump_hex(buf_power,len_p);
 		puc_power = (uint8_t *)buf_power;
 		aaa = modbus_conv_long(&(puc_power[3]));
-		ddd = aaa*250*60;
-		ddd = ddd/18000000;
-		printf("The power meter reading is :%f\n",ddd);
+		//ddd = aaa*250*60;
+		//ddd = ddd/18000000;
+                ddd = aaa/(18000000/(250*60));
+
+
+		printf("The power meter reading is :%lf\n",ddd);
 		sendMsgToWeb(powerid,POWER,ddd);
 		sleep(timep);
 		printf("power sleep time:%d\n",timep);
