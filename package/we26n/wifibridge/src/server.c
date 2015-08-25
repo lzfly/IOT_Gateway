@@ -298,7 +298,7 @@ void* gas_meter_thread( void *arg )
     int m=0,n=0,t=0,f=0;
     long double d;
     int connectfd;
-    uint8_t crc,crc_o;	
+    uint8_t crc,crc_o, crc_r;	
 
     char buf[N],buf_f[N],buf_ff[N];
     
@@ -346,7 +346,10 @@ void* gas_meter_thread( void *arg )
 	{      
 			sleep(2);
 
-                        q=recv(connectfd,buf,18,0);
+                do{
+                    q = recv(connectfd,buf,18,0);
+                }while(q > 0);
+				
                         printf("\n******gas_meter read  sleep = %d\n", q);
 
 			printf("\n******gas_meter awake ********\n");
@@ -421,6 +424,12 @@ void* gas_meter_thread( void *arg )
 			    break;
 			    }
 			
+			crc_r = sub(buf_f,len_g - 1);
+			if(crc_r != buf_f[len_g - 1])
+			{
+			    printf("crc_r error\n");
+				continue;
+			}
 			
 			/*k = buf_f[18];
 			k = (k * 256) + buf_f[17];
@@ -458,6 +467,8 @@ void* gas_meter_thread( void *arg )
 				fclose(fp);
 				f=0;
 			}
+			syslog(LOG_CRIT,"[gas_meter]gas meter value=%f", d);
+			
 			sendMsgToWeb(gas_meter_id,ENN_DEVICE_ATTR_GASMETER_VALUE,d);
 			//dump_hex( buf_f, q );
 			
