@@ -345,7 +345,7 @@ void* gas_meter_thread( void *arg )
 	while(1)
 	{      
 			sleep(2);
-
+            syslog(LOG_CRIT,"[gas_meter] while sart");
                 do{
                     q = recv(connectfd,buf,18,0);
                 }while(q > 0);
@@ -428,6 +428,7 @@ void* gas_meter_thread( void *arg )
 			if(crc_r != buf_f[len_g - 1])
 			{
 			    printf("crc_r error\n");
+				syslog(LOG_CRIT,"[gas_meter] crc_r error",);
 				continue;
 			}
 			
@@ -460,7 +461,7 @@ void* gas_meter_thread( void *arg )
 				if((fp=fopen(path,"w+")) == NULL)
 				{
 					printf("fail to open\n");
-					return -1;
+					break;
 				}
 			
 				fwrite(devicesstr,1,strlen(devicesstr),fp);

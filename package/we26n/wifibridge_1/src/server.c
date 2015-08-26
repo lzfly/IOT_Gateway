@@ -598,10 +598,10 @@ void* enn_meter_thread( void *arg )
 	int i,j,p,q,k;
 	int m=0,n=0,t=0;
 	float bbb,bbb_h;
-	int32_t aaa,aaa_w;
+	int32_t aaa_w;
 	double ddd,ccc,ccc_h;
 	uint8_t * puc_power,* puc_water,*puc_heat;
-	double d,aaa_h;
+	double aaa,d,aaa_h;
 	int connectfd;
 	uint16_t crcvalue, crcvalue1;
 	
@@ -677,9 +677,12 @@ void* enn_meter_thread( void *arg )
                     ddd = aaa/(18000000/(250*60));
 
 		    printf("The power meter reading is :%lf\n",ddd);
-                    syslog(LOG_CRIT,"[water_meter]power meter send value=%f", ddd);
+                    syslog(LOG_CRIT,"[power_meter]power meter send value=%f", ddd);
 		    sendMsgToWeb(powerid,POWER,ddd);
                 }
+				else{
+				    syslog(LOG_CRIT,"[power_meter] crc error");
+				}
                     
                 
 
@@ -733,6 +736,10 @@ void* enn_meter_thread( void *arg )
                     syslog(LOG_CRIT,"[water_meter]water meter send value=%f", ccc);
 		    sendMsgToWeb(waterid,WATER,ccc);
                 }
+				else
+				{
+				    syslog(LOG_CRIT,"[water_meter] crc error");
+				}
 
 
 		sleep(timew*20);
@@ -784,9 +791,13 @@ void* enn_meter_thread( void *arg )
 		    ccc_h = bbb_h;
 		    ccc_h = ccc_h + aaa_h;
 		    printf("The heat meter reading is :%f\n",ccc_h);
-                    syslog(LOG_CRIT,"[water_meter]heat meter send value=%f", ccc_h);
+                    syslog(LOG_CRIT,"[heat_meter]heat meter send value=%f", ccc_h);
 		    sendMsgToWeb(heatid,HEAT,ccc_h);
                 }
+				else
+				{
+				    syslog(LOG_CRIT,"[heat_meter] crc error");
+				}
 
 
 
@@ -817,7 +828,7 @@ void* enn_meter_thread( void *arg )
 				if((fp=fopen(path,"w+")) == NULL)
 				{
 					printf("fail to open\n");
-					return -1;
+					break;
 				}
 			
 				fwrite(devicesstr,1,strlen(devicesstr),fp);
