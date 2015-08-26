@@ -151,7 +151,7 @@ a:active {
 
  font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
 
- font-weight:400;
+ font-weight:16px;
 
  margin:0px;
 
@@ -1170,7 +1170,7 @@ function error(){
 
 <div id="top">
 
- <div class="content">
+ <!--<div class="content">-->
 
    <!--<span class="logo"><font>简生活&nbsp;&nbsp;轻自在</font></span>-->
 
@@ -1192,7 +1192,7 @@ function error(){
 
 	</div-->
 
-  </div>
+  <!--</div>-->
 
 </div>
 
@@ -1207,13 +1207,13 @@ function error(){
   <div class="content_items">
 
    <div class="t1">
-
+     <!--<a href="javascript:goto(0);" class="link"><div id="network_set" class="big" data-page="network_set"><span class="index" style="background-position: -0px -0px; width: 90px; height: 90px; margin-top:90px;"></span>-->
      <a href="javascript:goto(0);" class="link"><div id="network_set" class="big" data-page="network_set"><span class="index" style="background-position: -0px -0px; width: 90px; height: 90px; margin-top:90px;"></span><p>宽带上网设置</p>
 
-       <!--span class="info"></span-->
-
-     </div></a>
-
+       <!--span class="info"></span> -->
+      </div>
+     </a>
+  
    <div class="energy_store">
 
 	     <a href="javascript:goto(0);" class="link"><div id="wireless_set" class="big" data-page="wireless_set"><span class="index" style="background-position: -0px -100px; width: 90px; height: 90px;margin-top:20px;"></span><p>无线设置</p></div></a>
@@ -1228,7 +1228,7 @@ function error(){
        
        <a href="javascript:goto(0);" class="link"><div id="safe" class="big" data-page="safe"><img src="<%=resource%>/images/safe.png" style=" margin-top:30px;"><p>安全中心</p></div></a>
        <a href="javascript:goto(0);" class="link"><div id="elewater" class="big" data-page="elewater"><img src="<%=resource%>/images/wi.png" style=" margin-top:30px;"><p>470设备</p></div></a>
-       <a href="javascript:goto(0);" class="link"><div id="zigbee" class="big" data-page="zigbee"><img src="<%=resource%>/images/z.png" style="margin-top:10px;"><span class="index" style="hiden: -0px -400px;  margin-top:20px;"></span><p>ZIGBEE设备</p></div></a>
+       <a href="javascript:goto(0);" class="link"><div id="zigbee" class="big" data-page="zigbee"><img src="<%=resource%>/images/z.png" style="margin-top:10px;"><p>ZIGBEE设备</p></div></a>
        <a href="javascript:goto(0);" class="link"><div id="bluetooth" class="big" data-page="bluetooth"><img src="<%=resource%>/images/lan.png" style="margin-top:10px;"><span class="index" style="background-position: -0px -400px;  margin-top:30px;"></span><p>蓝牙设备</p></div></a>
        
        
@@ -1247,23 +1247,10 @@ function error(){
 
        <a href="javascript:goto(0);" class="link"><div id="band_manage" class="big" data-page="band_manage"><span class="index" style="background-position: -0px -600px; width: 90px; height: 90px;margin-top:20px;"></span><p>上网带宽管理</p></div></a>
 
-	</div>
-
-
-
-
-
-
-
-
-
-
- </div>
-
-
-
-</div>
-
+	</div>      <!--t1结束-->
+ </div>         <!--content_items结束-->
+</div>          <!--content结束-->
+</div>          <!--middle结束-->
 <div id="footer">
 
   <ul>
@@ -1276,10 +1263,6 @@ function error(){
 
   </ul>
 
-</div>
-
-</div>
-
 <div id="tip">
 
    <span class="loading"><img src="<%=resource%>/images/loading.gif"/></span>
@@ -1287,9 +1270,8 @@ function error(){
    <span class="tip_info"></span>
 
 </div>
-
-
-
+</div>
+</div>
  <script>
 
   var state="== firmware_update_states(); ==";
@@ -1311,8 +1293,8 @@ if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .s
 { 
 
  $(".link").each(function(){
-
-                   $(this).attr('href',$(this.firstChild).attr('data-page')+'.htm')
+                   <!--+'.htm'-->
+                   $(this).attr('href',$(this.firstChild).attr('data-page'))
 
               });
 
@@ -1323,8 +1305,8 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 { 
 
  $(".link").each(function(){
-
-                   $(this).attr('href',$(this.firstChild).attr('data-page')+'.htm')
+                   <!--+'.htm'-->
+                   $(this).attr('href',$(this.firstChild).attr('data-page'))
 
               });
 
@@ -1335,8 +1317,8 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 { 
 
   $(".link").each(function(){
-
-                   $(this).attr('href',$(this.firstChild).attr('data-page')+'.htm')
+                   <!--+'.htm'-->
+                   $(this).attr('href',$(this.firstChild).attr('data-page'))
 
               });
 
