@@ -7,14 +7,14 @@ local pwd = ""
 local winame = ""
 
 x:foreach("wireless", "wifi-iface",
-	function(s)
-		if s.device == "mt7620" and s.mode == "ap" then
-			winame = s['.name']
-			ssid = s.ssid
-			pwd = s.key
-			return false
-		end
-	end)
+function(s)
+    if s.device == "mt7620" and s.mode == "ap" then
+        winame = s['.name']
+        ssid = s.ssid
+        pwd = s.key
+        return false
+    end
+end)
 
 local lanip = x:get("network", "lan", "ipaddr")
 local dhcpstart = x:get("dhcp", "lan", "start")
@@ -77,7 +77,7 @@ html,body {
 
 
 
-	height:100%;
+height:100%;
 
 
 
@@ -85,7 +85,7 @@ html,body {
 
 
 
-	margin:0px;
+margin:0px;
 
 
 
@@ -109,7 +109,7 @@ body {
 
 
 
-	background:#0A53A0;
+background:#0A53A0;
 
 
 
@@ -117,7 +117,7 @@ body {
 
 
 
-	filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);
+filter:alpha(opacity=100 finishopacity=5 style=2 startx=0,starty=0,finishx=0,finishy=200) progid:DXImageTransform.Microsoft.gradient(startcolorstr=#2F80D7,endcolorstr=#0A53A0,gradientType=1);
 
 
 
@@ -133,7 +133,7 @@ body {
 
 
 
-	background:-webkit-radial-gradient(center center,#2F80D7,#0A53A0);
+background:-webkit-radial-gradient(center center,#2F80D7,#0A53A0);
 
 
 
@@ -141,7 +141,7 @@ body {
 
 
 
-	background:-o-radial-gradient(center center,#2F80D7,#0A53A0);
+background:-o-radial-gradient(center center,#2F80D7,#0A53A0);
 
 
 
@@ -149,7 +149,7 @@ body {
 
 
 
-	background:-ms-radial-gradient(center center,#2F80D7,#0A53A0);
+background:-ms-radial-gradient(center center,#2F80D7,#0A53A0);
 
 
 
@@ -157,7 +157,7 @@ body {
 
 
 
-	background:-moz-radial-gradient(center center,#2F80D7,#0A53A0);
+background:-moz-radial-gradient(center center,#2F80D7,#0A53A0);
 
 
 
@@ -165,7 +165,7 @@ body {
 
 
 
-	background:adial-gradient(center center,#2F80D7,#0A53A0);
+background:adial-gradient(center center,#2F80D7,#0A53A0);
 
 
 
@@ -173,7 +173,7 @@ body {
 
 
 
-	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
 
 
 
@@ -251,7 +251,7 @@ text-align:center;
 
 
 
-	width:80%;
+width:80%;
 
 
 
@@ -259,7 +259,7 @@ text-align:center;
 
 
 
-	max-width:1200px;
+max-width:1200px;
 
 
 
@@ -267,7 +267,7 @@ text-align:center;
 
 
 
-	min-width:980px;
+min-width:980px;
 
 
 
@@ -275,7 +275,7 @@ text-align:center;
 
 
 
-	height:560px;
+height:560px;
 
 
 
@@ -283,7 +283,7 @@ text-align:center;
 
 
 
-	margin:auto;
+margin:auto;
 
 
 
@@ -291,7 +291,7 @@ text-align:center;
 
 
 
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
 
 
 
@@ -307,7 +307,7 @@ text-align:center;
 
 
 
-	background:rgba(255,255,255,0.02);
+background:rgba(255,255,255,0.02);
 
 
 
@@ -315,7 +315,7 @@ text-align:center;
 
 
 
-	border-top:1px solid #407CB8;
+border-top:1px solid #407CB8;
 
 
 
@@ -355,7 +355,7 @@ text-align:center;
 
 
 
-	width:80%;
+width:80%;
 
 
 
@@ -363,7 +363,7 @@ text-align:center;
 
 
 
-	max-width:1200px;
+max-width:1200px;
 
 
 
@@ -371,7 +371,7 @@ text-align:center;
 
 
 
-	min-width:980px;
+min-width:980px;
 
 
 
@@ -379,7 +379,7 @@ text-align:center;
 
 
 
-	height:520px;
+height:520px;
 
 
 
@@ -387,7 +387,7 @@ text-align:center;
 
 
 
-	margin:auto;
+margin:auto;
 
 
 
@@ -395,7 +395,7 @@ text-align:center;
 
 
 
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#05FFFFFF',endColorstr='#05FFFFFF'); /* IE6,IE7 */
 
 
 
@@ -411,7 +411,7 @@ text-align:center;
 
 
 
-	background:rgba(255,255,255,0.02);
+background:rgba(255,255,255,0.02);
 
 
 
@@ -419,7 +419,7 @@ text-align:center;
 
 
 
-	border-top:1px solid #407CB8;
+border-top:1px solid #407CB8;
 
 
 
@@ -445,7 +445,7 @@ a:link {
 
 
 
-	text-decoration:none;
+text-decoration:none;
 
 
 
@@ -469,7 +469,7 @@ a:visited {
 
 
 
-	text-decoration:none;
+text-decoration:none;
 
 
 
@@ -493,7 +493,7 @@ a:hover {
 
 
 
-	text-decoration:none;
+text-decoration:none;
 
 
 
@@ -517,7 +517,7 @@ a:active {
 
 
 
-	text-decoration:none;
+text-decoration:none;
 
 
 
@@ -541,7 +541,7 @@ a:active {
 
 
 
-	float:left;
+float:left;
 
 
 
@@ -565,7 +565,7 @@ a:active {
 
 
 
-	float:right;
+float:right;
 
 
 
@@ -589,7 +589,7 @@ img {
 
 
 
-	border:none;
+border:none;
 
 
 
@@ -613,7 +613,7 @@ span {
 
 
 
-	display:block;
+display:block;
 
 
 
@@ -637,7 +637,7 @@ span {
 
 
 
-	display:none;
+display:none;
 
 
 
@@ -661,7 +661,7 @@ span {
 
 
 
-	width:42px;
+width:42px;
 
 
 
@@ -669,7 +669,7 @@ span {
 
 
 
-	height:75px;
+height:75px;
 
 
 
@@ -677,7 +677,7 @@ span {
 
 
 
-	background:url(<%=resource%>/images/back.png) no-repeat center center;
+background:url(<%=resource%>/images/back.png) no-repeat center center;
 
 
 
@@ -701,7 +701,7 @@ span {
 
 
 
-	height:75px;
+height:75px;
 
 
 
@@ -709,7 +709,7 @@ span {
 
 
 
-	line-height:75px;
+line-height:75px;
 
 
 
@@ -717,7 +717,7 @@ span {
 
 
 
-	width:200px;
+width:200px;
 
 
 
@@ -725,7 +725,7 @@ span {
 
 
 
-	color:#FFFFFF;
+color:#FFFFFF;
 
 
 
@@ -733,7 +733,7 @@ span {
 
 
 
-	font-size:26px;
+font-size:26px;
 
 
 
@@ -741,7 +741,7 @@ span {
 
 
 
-	font-family:Microsoft YaHei,small;
+font-family:Microsoft YaHei,small;
 
 
 
@@ -749,7 +749,7 @@ span {
 
 
 
-	font-weight:normal;
+font-weight:normal;
 
 
 
@@ -757,7 +757,7 @@ span {
 
 
 
-	text-align:left;
+text-align:left;
 
 
 
@@ -781,7 +781,7 @@ span {
 
 
 
-	width:300px;
+width:300px;
 
 
 
@@ -789,7 +789,7 @@ span {
 
 
 
-	height:30px;
+height:30px;
 
 
 
@@ -797,7 +797,7 @@ span {
 
 
 
-	line-height:30px;
+line-height:30px;
 
 
 
@@ -805,7 +805,7 @@ span {
 
 
 
-	border:1px solid #00AAA9;
+border:1px solid #00AAA9;
 
 
 
@@ -829,7 +829,7 @@ span {
 
 
 
-	color:#FFFFFF;
+color:#FFFFFF;
 
 
 
@@ -837,7 +837,7 @@ span {
 
 
 
-	font-size:16px;
+font-size:16px;
 
 
 
@@ -861,7 +861,7 @@ span {
 
 
 
-	width:160px;
+width:160px;
 
 
 
@@ -869,7 +869,7 @@ span {
 
 
 
-	overflow:hidden;
+overflow:hidden;
 
 
 
@@ -877,7 +877,7 @@ span {
 
 
 
-	text-align:center;
+text-align:center;
 
 
 
@@ -885,7 +885,7 @@ span {
 
 
 
-	border:solid 2px #669999;
+border:solid 2px #669999;
 
 
 
@@ -893,13 +893,13 @@ span {
 
 
 
-	background:#6699CC;
+background:#6699CC;
 
 
 
-    display:none;
+display:none;
 
- 
+
 
 
 
@@ -923,7 +923,7 @@ span {
 
 
 
-	width:126px;
+width:126px;
 
 
 
@@ -931,7 +931,7 @@ span {
 
 
 
-	height:22px;
+height:22px;
 
 
 
@@ -939,7 +939,7 @@ span {
 
 
 
-	margin:auto;
+margin:auto;
 
 
 
@@ -947,7 +947,7 @@ span {
 
 
 
-	margin-top:5px;
+margin-top:5px;
 
 
 
@@ -971,7 +971,7 @@ span {
 
 
 
-	width:126px;
+width:126px;
 
 
 
@@ -979,7 +979,7 @@ span {
 
 
 
-	text-align:center;
+text-align:center;
 
 
 
@@ -987,7 +987,7 @@ span {
 
 
 
-	margin:auto;
+margin:auto;
 
 
 
@@ -995,7 +995,7 @@ span {
 
 
 
-	margin-top:5px;
+margin-top:5px;
 
 
 
@@ -1019,7 +1019,7 @@ span {
 
 
 
-	width:80%;
+width:80%;
 
 
 
@@ -1027,7 +1027,7 @@ span {
 
 
 
-	max-width:1200px;
+max-width:1200px;
 
 
 
@@ -1035,7 +1035,7 @@ span {
 
 
 
-	min-width:980px;
+min-width:980px;
 
 
 
@@ -1043,7 +1043,7 @@ span {
 
 
 
-	height:75px;
+height:75px;
 
 
 
@@ -1051,7 +1051,7 @@ span {
 
 
 
-	margin:auto;
+margin:auto;
 
 
 
@@ -1081,7 +1081,7 @@ span {
 
 
 
-	margin-top:50px;
+margin-top:50px;
 
 
 
@@ -1105,7 +1105,7 @@ span {
 
 
 
-	width:49%;
+width:49%;
 
 
 
@@ -1113,7 +1113,7 @@ span {
 
 
 
-	text-align:center;
+text-align:center;
 
 
 
@@ -1137,7 +1137,7 @@ span {
 
 
 
-	margin:auto;
+margin:auto;
 
 
 
@@ -1145,7 +1145,7 @@ span {
 
 
 
-	width:210px;
+width:210px;
 
 
 
@@ -1153,7 +1153,7 @@ span {
 
 
 
-	height:210px;
+height:210px;
 
 
 
@@ -1161,7 +1161,7 @@ span {
 
 
 
-	background:url(<%=resource%>/images/wireless_icon.png) no-repeat center center;
+background:url(<%=resource%>/images/wireless_icon.png) no-repeat center center;
 
 
 
@@ -1185,7 +1185,7 @@ span {
 
 
 
-	margin:auto;
+margin:auto;
 
 
 
@@ -1193,7 +1193,7 @@ span {
 
 
 
-	width:100%;
+width:100%;
 
 
 
@@ -1201,7 +1201,7 @@ span {
 
 
 
-	color:#E6A606;
+color:#E6A606;
 
 
 
@@ -1209,7 +1209,7 @@ span {
 
 
 
-	font-size:22px;
+font-size:22px;
 
 
 
@@ -1233,7 +1233,7 @@ span {
 
 
 
-	width:50%;
+width:50%;
 
 
 
@@ -1241,7 +1241,7 @@ span {
 
 
 
-	text-align:center;
+text-align:center;
 
 
 
@@ -1249,7 +1249,7 @@ span {
 
 
 
-	border-left:1px solid #4886C9;
+border-left:1px solid #4886C9;
 
 
 
@@ -1273,7 +1273,7 @@ span {
 
 
 
-	color:#FFFFFF;
+color:#FFFFFF;
 
 
 
@@ -1281,7 +1281,7 @@ span {
 
 
 
-	width:302px;
+width:302px;
 
 
 
@@ -1289,7 +1289,7 @@ span {
 
 
 
-	height:32px;
+height:32px;
 
 
 
@@ -1297,7 +1297,7 @@ span {
 
 
 
-	border:none;
+border:none;
 
 
 
@@ -1305,7 +1305,7 @@ span {
 
 
 
-	font-size:18px;
+font-size:18px;
 
 
 
@@ -1313,7 +1313,7 @@ span {
 
 
 
-	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
 
 
 
@@ -1321,7 +1321,7 @@ span {
 
 
 
-	background:#E6AB07;
+background:#E6AB07;
 
 
 
@@ -1329,7 +1329,7 @@ span {
 
 
 
-	cursor:pointer;
+cursor:pointer;
 
 
 
@@ -1353,7 +1353,7 @@ span {
 
 
 
-	color:#FFFFFF;
+color:#FFFFFF;
 
 
 
@@ -1361,7 +1361,7 @@ span {
 
 
 
-	font-size:12px;
+font-size:12px;
 
 
 
@@ -1421,47 +1421,47 @@ filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/ima
 
 input:focus {
 
-		-webkit-box-shadow: 0px 0px 10px #00AAA9;
+    -webkit-box-shadow: 0px 0px 10px #00AAA9;
 
-		-moz-box-shadow: 0px 0px 10px #00AAA9;
+    -moz-box-shadow: 0px 0px 10px #00AAA9;
 
-		box-shadow: 0px 0px 10px #00AAA9;
+    box-shadow: 0px 0px 10px #00AAA9;
 
-	}
+}
 
 .mainlevel {
 
-	POSITION:absolute; 
+POSITION:absolute; 
 
-	PADDING-LEFT: 20px;
+PADDING-LEFT: 20px;
 
-	display:none;
+display:none;
 
-	left:10px;
+left:10px;
 
-	background:#FFFFFF;	
+background:#FFFFFF;	
 
-	text-align:left;
+text-align:left;
 
-	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
 
-	font-size:12px;
+font-size:12px;
 
-	border:solid 1px #E6E9ED;
+border:solid 1px #E6E9ED;
 
-	-moz-border-radius: 8px;
+-moz-border-radius: 8px;
 
-	-khtml-border-radius: 8px;
+-khtml-border-radius: 8px;
 
-	-webkit-border-radius: 8px;
+-webkit-border-radius: 8px;
 
-	border-radius: 8px;  
+border-radius: 8px;  
 
-	box-shadow: 5px 5px 5px #888888;
+box-shadow: 5px 5px 5px #888888;
 
-	z-index:1;
+z-index:1;
 
-    behavior: url(ie-css3.htc);
+behavior: url(ie-css3.htc);
 
 }
 
@@ -1469,25 +1469,25 @@ input:focus {
 
 .cornerT{ 
 
-    border-style: solid;
+border-style: solid;
 
-    border-width: 15px;
+border-width: 15px;
 
-    font-size: 0;
+font-size: 0;
 
-    height: 0;
+height: 0;
 
-    overflow: hidden;
+overflow: hidden;
 
-    position:inherit;
+position:inherit;
 
-    width: 0;
+width: 0;
 
-	border-color: transparent transparent #FFFFFF ;
+border-color: transparent transparent #FFFFFF ;
 
-    top: -29px;
+top: -29px;
 
-    left: 28px;
+left: 28px;
 
 }
 
@@ -1593,7 +1593,7 @@ function init(){
 
 
 
-  loadCss("<%=resource%>/js/tip-yellowsimple/tip-yellowsimple.css");
+loadCss("<%=resource%>/js/tip-yellowsimple/tip-yellowsimple.css");
 
 
 
@@ -1615,7 +1615,7 @@ function load_data(){
 
 
 
- box1 = new LightBox("tip");
+box1 = new LightBox("tip");
 
 
 
@@ -1623,7 +1623,7 @@ function load_data(){
 
 
 
-	if(a==1){
+if(a==1){
 
 
 
@@ -1631,7 +1631,7 @@ function load_data(){
 
 
 
-	 box1.Close(); 
+ box1.Close(); 
 
 
 
@@ -1639,7 +1639,7 @@ function load_data(){
 
 
 
-	}
+}
 
 
 
@@ -1699,7 +1699,7 @@ if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .s
 
 
 
- $(".link").each(function(){
+$(".link").each(function(){
 
 
 
@@ -1707,7 +1707,7 @@ if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .s
 
 
 
-                   $(this).attr('href','index.asp')
+               $(this).attr('href','newweb_index')
 
 
 
@@ -1715,7 +1715,7 @@ if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion .s
 
 
 
-              });
+          });
 
 
 
@@ -1747,7 +1747,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-  $(".link").each(function(){
+$(".link").each(function(){
 
 
 
@@ -1755,7 +1755,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-                   $(this).attr('href','index.asp')
+               $(this).attr('href','newweb_index')
 
 
 
@@ -1763,7 +1763,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-              });
+          });
 
 
 
@@ -1795,7 +1795,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
- $(".link").each(function(){
+$(".link").each(function(){
 
 
 
@@ -1803,7 +1803,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-                   $(this).attr('href','index.asp')
+               $(this).attr('href','newweb_index')
 
 
 
@@ -1811,7 +1811,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-              });
+          });
 
 
 
@@ -1827,7 +1827,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
- $('#top .back,#top .title').click(function(){
+$('#top .back,#top .title').click(function(){
 
 
 
@@ -1835,7 +1835,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-     window.parent.closeFun("wireless_set");
+ window.parent.closeFun("wireless_set");
 
 
 
@@ -1843,7 +1843,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-  });
+});
 
 
 
@@ -1867,7 +1867,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-  $('#top .back,#top .title').click(function(){
+$('#top .back,#top .title').click(function(){
 
 
 
@@ -1875,7 +1875,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-     window.parent.closeFun("wireless_set");
+ window.parent.closeFun("wireless_set");
 
 
 
@@ -1883,7 +1883,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-  });
+});
 
 
 
@@ -1899,7 +1899,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-	$("#wl_ssid").blur(function(){
+$("#wl_ssid").blur(function(){
 
 
 
@@ -1907,7 +1907,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-    var value=$(this).attr("value");
+var value=$(this).attr("value");
 
 
 
@@ -1915,7 +1915,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-	$(this).poshytip('hide');
+$(this).poshytip('hide');
 
 
 
@@ -1923,7 +1923,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-    if(value==""||value==null){
+if(value==""||value==null){
 
 
 
@@ -1931,7 +1931,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-	  $(this).poshytip({
+  $(this).poshytip({
 
 
 
@@ -1939,7 +1939,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-			    content: '不能为空！',
+            content: '不能为空！',
 
 
 
@@ -1947,7 +1947,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				className: 'tip-yellowsimple',
+            className: 'tip-yellowsimple',
 
 
 
@@ -1955,7 +1955,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				showOn: 'none',
+            showOn: 'none',
 
 
 
@@ -1963,7 +1963,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				alignTo: 'target',
+            alignTo: 'target',
 
 
 
@@ -1971,7 +1971,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				alignX: 'right',
+            alignX: 'right',
 
 
 
@@ -1979,7 +1979,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				alignY: 'center',
+            alignY: 'center',
 
 
 
@@ -1987,7 +1987,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				offsetX: 5
+            offsetX: 5
 
 
 
@@ -1995,7 +1995,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-			});
+        });
 
 
 
@@ -2003,7 +2003,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-	  $(this).poshytip('show');
+  $(this).poshytip('show');
 
 
 
@@ -2011,7 +2011,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-	}
+}
 
 
 
@@ -2019,7 +2019,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-  });
+});
 
 
 
@@ -2027,7 +2027,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-   $("#wan_wireless_passwd").blur(function(){
+$("#wan_wireless_passwd").blur(function(){
 
 
 
@@ -2035,7 +2035,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-    var value=$(this).attr("value");
+var value=$(this).attr("value");
 
 
 
@@ -2043,7 +2043,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-	$(this).poshytip('hide');
+$(this).poshytip('hide');
 
 
 
@@ -2051,7 +2051,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-    if(value==""||value==null){
+if(value==""||value==null){
 
 
 
@@ -2059,7 +2059,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-	  $(this).poshytip({
+  $(this).poshytip({
 
 
 
@@ -2067,7 +2067,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-			    content: '不能为空！',
+            content: '不能为空！',
 
 
 
@@ -2075,7 +2075,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				className: 'tip-yellowsimple',
+            className: 'tip-yellowsimple',
 
 
 
@@ -2083,7 +2083,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				showOn: 'none',
+            showOn: 'none',
 
 
 
@@ -2091,7 +2091,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				alignTo: 'target',
+            alignTo: 'target',
 
 
 
@@ -2099,7 +2099,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				alignX: 'right',
+            alignX: 'right',
 
 
 
@@ -2107,7 +2107,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				alignY: 'center',
+            alignY: 'center',
 
 
 
@@ -2115,7 +2115,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				offsetX: 5
+            offsetX: 5
 
 
 
@@ -2123,7 +2123,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-			});
+        });
 
 
 
@@ -2131,7 +2131,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-	  $(this).poshytip('show');
+  $(this).poshytip('show');
 
 
 
@@ -2139,7 +2139,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-	}else{
+}else{
 
 
 
@@ -2147,7 +2147,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-	 if(value.length<8||value.length>63){
+ if(value.length<8||value.length>63){
 
 
 
@@ -2155,7 +2155,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-	   $(this).poshytip({
+   $(this).poshytip({
 
 
 
@@ -2163,7 +2163,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-			    content: '密码不合法！',
+            content: '密码不合法！',
 
 
 
@@ -2171,7 +2171,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				className: 'tip-yellowsimple',
+            className: 'tip-yellowsimple',
 
 
 
@@ -2179,7 +2179,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				showOn: 'none',
+            showOn: 'none',
 
 
 
@@ -2187,7 +2187,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				alignTo: 'target',
+            alignTo: 'target',
 
 
 
@@ -2195,7 +2195,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				alignX: 'right',
+            alignX: 'right',
 
 
 
@@ -2203,7 +2203,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				alignY: 'center',
+            alignY: 'center',
 
 
 
@@ -2211,7 +2211,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-				offsetX: 5
+            offsetX: 5
 
 
 
@@ -2219,7 +2219,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-			});
+        });
 
 
 
@@ -2227,7 +2227,1087 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-	   $(this).poshytip('show');
+   $(this).poshytip('show');
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+$("#lan_ipaddr").blur(function(){
+
+
+
+
+
+
+
+var value=$(this).attr("value");
+
+
+
+
+
+
+
+$(this).poshytip('hide');
+
+
+
+
+
+
+
+if(value==""||value==null){
+
+
+
+
+
+
+
+$(this).poshytip({
+
+
+
+
+
+
+
+            content: '不能为空！',
+
+
+
+
+
+
+
+            className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+            showOn: 'none',
+
+
+
+
+
+
+
+            alignTo: 'target',
+
+
+
+
+
+
+
+            alignX: 'right',
+
+
+
+
+
+
+
+            alignY: 'center',
+
+
+
+
+
+
+
+            offsetX: 5
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+  $(this).poshytip('show');
+
+
+
+
+
+
+
+}else{
+
+
+
+
+
+
+
+ if(!value.match(regIp)){
+
+
+
+
+
+
+
+   $(this).poshytip({
+
+
+
+
+
+
+
+            content: 'Ip地址不合法！',
+
+
+
+
+
+
+
+            className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+            showOn: 'none',
+
+
+
+
+
+
+
+            alignTo: 'target',
+
+
+
+
+
+
+
+            alignX: 'right',
+
+
+
+
+
+
+
+            alignY: 'center',
+
+
+
+
+
+
+
+            offsetX: 5
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+   $(this).poshytip('show');
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+$("#dhcp_start").blur(function(){
+
+
+
+
+
+
+
+var value=$(this).attr("value");
+
+
+
+
+
+
+
+var ip=$("#lan_ipaddr").attr("value");
+
+
+
+
+
+
+
+var ip_arr=ip.split(".");
+
+
+
+
+
+
+
+var v_arr=value.split(".");
+
+
+
+
+
+
+
+ip=ip_arr[2];
+
+
+
+
+
+
+
+var v=v_arr[2];
+
+
+
+
+
+
+
+$(this).poshytip('hide');
+
+
+
+
+
+
+
+if(value==""||value==null){
+
+
+
+
+
+
+
+$(this).poshytip({
+
+
+
+
+
+
+
+            content: '不能为空！',
+
+
+
+
+
+
+
+            className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+            showOn: 'none',
+
+
+
+
+
+
+
+            alignTo: 'target',
+
+
+
+
+
+
+
+            alignX: 'right',
+
+
+
+
+
+
+
+            alignY: 'center',
+
+
+
+
+
+
+
+            offsetX: 5
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+  $(this).poshytip('show');
+
+
+
+
+
+
+
+}else{
+
+
+
+
+
+
+
+ if(!value.match(regIp)){
+
+
+
+
+
+
+
+   $(this).poshytip({
+
+
+
+
+
+
+
+            content: 'Ip地址不合法！',
+
+
+
+
+
+
+
+            className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+            showOn: 'none',
+
+
+
+
+
+
+
+            alignTo: 'target',
+
+
+
+
+
+
+
+            alignX: 'right',
+
+
+
+
+
+
+
+            alignY: 'center',
+
+
+
+
+
+
+
+            offsetX: 5
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+   $(this).poshytip('show');
+
+
+
+
+
+
+
+  }else if(ip!=v){
+
+
+
+
+
+
+
+   $(this).poshytip({
+
+
+
+
+
+
+
+            content: '和Ip地址不在同一网段！',
+
+
+
+
+
+
+
+            className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+            showOn: 'none',
+
+
+
+
+
+
+
+            alignTo: 'target',
+
+
+
+
+
+
+
+            alignX: 'right',
+
+
+
+
+
+
+
+            alignY: 'center',
+
+
+
+
+
+
+
+            offsetX: 5
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+    $(this).poshytip('show');
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+$("#dhcp_end").blur(function(){
+
+
+
+
+
+
+
+var value=$(this).attr("value");
+
+
+
+
+
+
+
+var ip=$("#lan_ipaddr").attr("value");
+
+
+
+
+
+
+
+var sip=$("#dhcp_start").attr("value");
+
+
+
+
+
+
+
+var ip_arr=ip.split(".");
+
+
+
+
+
+
+
+var s_arr=sip.split(".");
+
+
+
+
+
+
+
+var e_arr=value.split(".");
+
+
+
+
+
+
+
+ip=ip_arr[2];
+
+
+
+
+
+
+
+var v=e_arr[2];
+
+
+
+
+
+
+
+$(this).poshytip('hide');
+
+
+
+
+
+
+
+if(value==""||value==null){
+
+
+
+
+
+
+
+$(this).poshytip({
+
+
+
+
+
+
+
+            content: '不能为空！',
+
+
+
+
+
+
+
+            className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+            showOn: 'none',
+
+
+
+
+
+
+
+            alignTo: 'target',
+
+
+
+
+
+
+
+            alignX: 'right',
+
+
+
+
+
+
+
+            alignY: 'center',
+
+
+
+
+
+
+
+            offsetX: 5
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+  $(this).poshytip('show');
+
+
+
+
+
+
+
+}else{
+
+
+
+
+
+
+
+ if(!value.match(regIp)){
+
+
+
+
+
+
+
+   $(this).poshytip({
+
+
+
+
+
+
+
+            content: 'Ip地址不合法！',
+
+
+
+
+
+
+
+            className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+            showOn: 'none',
+
+
+
+
+
+
+
+            alignTo: 'target',
+
+
+
+
+
+
+
+            alignX: 'right',
+
+
+
+
+
+
+
+            alignY: 'center',
+
+
+
+
+
+
+
+            offsetX: 5
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+   $(this).poshytip('show');
+
+
+
+
+
+
+
+  }else if(ip!=v){
+
+
+
+
+
+
+
+   $(this).poshytip({
+
+
+
+
+
+
+
+            content: '和Ip地址不在同一网段！',
+
+
+
+
+
+
+
+            className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+            showOn: 'none',
+
+
+
+
+
+
+
+            alignTo: 'target',
+
+
+
+
+
+
+
+            alignX: 'right',
+
+
+
+
+
+
+
+            alignY: 'center',
+
+
+
+
+
+
+
+            offsetX: 5
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+    $(this).poshytip('show');
+
+
+
+
+
+
+
+  }else{
+
+
+
+
+
+
+
+    for (var i = 0; i < 4; i++) {
+
+
+
+
+
+
+
+      if (parseInt(e_arr[i])<parseInt(s_arr[i])){
+
+
+
+
+
+
+
+        $(this).poshytip({
+
+
+
+
+
+
+
+            content: '不能小于开始IP！',
+
+
+
+
+
+
+
+            className: 'tip-yellowsimple',
+
+
+
+
+
+
+
+            showOn: 'none',
+
+
+
+
+
+
+
+            alignTo: 'target',
+
+
+
+
+
+
+
+            alignX: 'right',
+
+
+
+
+
+
+
+            alignY: 'center',
+
+
+
+
+
+
+
+            offsetX: 5
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+      $(this).poshytip('show');
+
+
+
+
+
+
+
+       break;
 
 
 
@@ -2243,7 +3323,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-	}
+   }  
 
 
 
@@ -2251,7 +3331,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-  });
+  }
 
 
 
@@ -2259,7 +3339,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-  $("#lan_ipaddr").blur(function(){
+}
 
 
 
@@ -2267,1087 +3347,7 @@ else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersi
 
 
 
-    var value=$(this).attr("value");
-
-
-
-
-
-
-
-	$(this).poshytip('hide');
-
-
-
-
-
-
-
-    if(value==""||value==null){
-
-
-
-
-
-
-
-	$(this).poshytip({
-
-
-
-
-
-
-
-			    content: '不能为空！',
-
-
-
-
-
-
-
-				className: 'tip-yellowsimple',
-
-
-
-
-
-
-
-				showOn: 'none',
-
-
-
-
-
-
-
-				alignTo: 'target',
-
-
-
-
-
-
-
-				alignX: 'right',
-
-
-
-
-
-
-
-				alignY: 'center',
-
-
-
-
-
-
-
-				offsetX: 5
-
-
-
-
-
-
-
-			});
-
-
-
-
-
-
-
-	  $(this).poshytip('show');
-
-
-
-
-
-
-
-	}else{
-
-
-
-
-
-
-
-	 if(!value.match(regIp)){
-
-
-
-
-
-
-
-	   $(this).poshytip({
-
-
-
-
-
-
-
-			    content: 'Ip地址不合法！',
-
-
-
-
-
-
-
-				className: 'tip-yellowsimple',
-
-
-
-
-
-
-
-				showOn: 'none',
-
-
-
-
-
-
-
-				alignTo: 'target',
-
-
-
-
-
-
-
-				alignX: 'right',
-
-
-
-
-
-
-
-				alignY: 'center',
-
-
-
-
-
-
-
-				offsetX: 5
-
-
-
-
-
-
-
-			});
-
-
-
-
-
-
-
-	   $(this).poshytip('show');
-
-
-
-
-
-
-
-      }
-
-
-
-
-
-
-
-	}
-
-
-
-
-
-
-
-  });
-
-
-
-
-
-
-
-  $("#dhcp_start").blur(function(){
-
-
-
-
-
-
-
-    var value=$(this).attr("value");
-
-
-
-
-
-
-
-	var ip=$("#lan_ipaddr").attr("value");
-
-
-
-
-
-
-
-	var ip_arr=ip.split(".");
-
-
-
-
-
-
-
-	var v_arr=value.split(".");
-
-
-
-
-
-
-
-	ip=ip_arr[2];
-
-
-
-
-
-
-
-	var v=v_arr[2];
-
-
-
-
-
-
-
-	$(this).poshytip('hide');
-
-
-
-
-
-
-
-    if(value==""||value==null){
-
-
-
-
-
-
-
-	$(this).poshytip({
-
-
-
-
-
-
-
-			    content: '不能为空！',
-
-
-
-
-
-
-
-				className: 'tip-yellowsimple',
-
-
-
-
-
-
-
-				showOn: 'none',
-
-
-
-
-
-
-
-				alignTo: 'target',
-
-
-
-
-
-
-
-				alignX: 'right',
-
-
-
-
-
-
-
-				alignY: 'center',
-
-
-
-
-
-
-
-				offsetX: 5
-
-
-
-
-
-
-
-			});
-
-
-
-
-
-
-
-	  $(this).poshytip('show');
-
-
-
-
-
-
-
-	}else{
-
-
-
-
-
-
-
-	 if(!value.match(regIp)){
-
-
-
-
-
-
-
-	   $(this).poshytip({
-
-
-
-
-
-
-
-			    content: 'Ip地址不合法！',
-
-
-
-
-
-
-
-				className: 'tip-yellowsimple',
-
-
-
-
-
-
-
-				showOn: 'none',
-
-
-
-
-
-
-
-				alignTo: 'target',
-
-
-
-
-
-
-
-				alignX: 'right',
-
-
-
-
-
-
-
-				alignY: 'center',
-
-
-
-
-
-
-
-				offsetX: 5
-
-
-
-
-
-
-
-			});
-
-
-
-
-
-
-
-	   $(this).poshytip('show');
-
-
-
-
-
-
-
-      }else if(ip!=v){
-
-
-
-
-
-
-
-	   $(this).poshytip({
-
-
-
-
-
-
-
-			    content: '和Ip地址不在同一网段！',
-
-
-
-
-
-
-
-				className: 'tip-yellowsimple',
-
-
-
-
-
-
-
-				showOn: 'none',
-
-
-
-
-
-
-
-				alignTo: 'target',
-
-
-
-
-
-
-
-				alignX: 'right',
-
-
-
-
-
-
-
-				alignY: 'center',
-
-
-
-
-
-
-
-				offsetX: 5
-
-
-
-
-
-
-
-			});
-
-
-
-
-
-
-
-	    $(this).poshytip('show');
-
-
-
-
-
-
-
-	  }
-
-
-
-
-
-
-
-	}
-
-
-
-
-
-
-
-  });
-
-
-
-
-
-
-
-   $("#dhcp_end").blur(function(){
-
-
-
-
-
-
-
-    var value=$(this).attr("value");
-
-
-
-
-
-
-
-	var ip=$("#lan_ipaddr").attr("value");
-
-
-
-
-
-
-
-	var sip=$("#dhcp_start").attr("value");
-
-
-
-
-
-
-
-	var ip_arr=ip.split(".");
-
-
-
-
-
-
-
-	var s_arr=sip.split(".");
-
-
-
-
-
-
-
-	var e_arr=value.split(".");
-
-
-
-
-
-
-
-	ip=ip_arr[2];
-
-
-
-
-
-
-
-	var v=e_arr[2];
-
-
-
-
-
-
-
-	$(this).poshytip('hide');
-
-
-
-
-
-
-
-    if(value==""||value==null){
-
-
-
-
-
-
-
-	$(this).poshytip({
-
-
-
-
-
-
-
-			    content: '不能为空！',
-
-
-
-
-
-
-
-				className: 'tip-yellowsimple',
-
-
-
-
-
-
-
-				showOn: 'none',
-
-
-
-
-
-
-
-				alignTo: 'target',
-
-
-
-
-
-
-
-				alignX: 'right',
-
-
-
-
-
-
-
-				alignY: 'center',
-
-
-
-
-
-
-
-				offsetX: 5
-
-
-
-
-
-
-
-			});
-
-
-
-
-
-
-
-	  $(this).poshytip('show');
-
-
-
-
-
-
-
-	}else{
-
-
-
-
-
-
-
-	 if(!value.match(regIp)){
-
-
-
-
-
-
-
-	   $(this).poshytip({
-
-
-
-
-
-
-
-			    content: 'Ip地址不合法！',
-
-
-
-
-
-
-
-				className: 'tip-yellowsimple',
-
-
-
-
-
-
-
-				showOn: 'none',
-
-
-
-
-
-
-
-				alignTo: 'target',
-
-
-
-
-
-
-
-				alignX: 'right',
-
-
-
-
-
-
-
-				alignY: 'center',
-
-
-
-
-
-
-
-				offsetX: 5
-
-
-
-
-
-
-
-			});
-
-
-
-
-
-
-
-	   $(this).poshytip('show');
-
-
-
-
-
-
-
-      }else if(ip!=v){
-
-
-
-
-
-
-
-	   $(this).poshytip({
-
-
-
-
-
-
-
-			    content: '和Ip地址不在同一网段！',
-
-
-
-
-
-
-
-				className: 'tip-yellowsimple',
-
-
-
-
-
-
-
-				showOn: 'none',
-
-
-
-
-
-
-
-				alignTo: 'target',
-
-
-
-
-
-
-
-				alignX: 'right',
-
-
-
-
-
-
-
-				alignY: 'center',
-
-
-
-
-
-
-
-				offsetX: 5
-
-
-
-
-
-
-
-			});
-
-
-
-
-
-
-
-	    $(this).poshytip('show');
-
-
-
-
-
-
-
-	  }else{
-
-
-
-
-
-
-
-	    for (var i = 0; i < 4; i++) {
-
-
-
-
-
-
-
-	      if (parseInt(e_arr[i])<parseInt(s_arr[i])){
-
-
-
-
-
-
-
-		    $(this).poshytip({
-
-
-
-
-
-
-
-			    content: '不能小于开始IP！',
-
-
-
-
-
-
-
-				className: 'tip-yellowsimple',
-
-
-
-
-
-
-
-				showOn: 'none',
-
-
-
-
-
-
-
-				alignTo: 'target',
-
-
-
-
-
-
-
-				alignX: 'right',
-
-
-
-
-
-
-
-				alignY: 'center',
-
-
-
-
-
-
-
-				offsetX: 5
-
-
-
-
-
-
-
-			});
-
-
-
-
-
-
-
-	      $(this).poshytip('show');
-
-
-
-
-
-
-
-		   break;
-
-
-
-
-
-
-
-	      }
-
-
-
-
-
-
-
-	   }  
-
-
-
-
-
-
-
-	  }
-
-
-
-
-
-
-
-	}
-
-
-
-
-
-
-
-  });
+});
 
 
 
@@ -3371,7 +3371,7 @@ function setPos(){
 
 
 
-        var o=document.getElementById("wl_ssid"); 
+    var o=document.getElementById("wl_ssid"); 
 
 
 
@@ -3379,7 +3379,7 @@ function setPos(){
 
 
 
-		if(o.setSelectionRange){//W3C
+    if(o.setSelectionRange){//W3C
 
 
 
@@ -3387,7 +3387,7 @@ function setPos(){
 
 
 
-			setTimeout(function(){
+        setTimeout(function(){
 
 
 
@@ -3395,7 +3395,7 @@ function setPos(){
 
 
 
-				o.setSelectionRange(o.value.length,o.value.length);
+            o.setSelectionRange(o.value.length,o.value.length);
 
 
 
@@ -3403,7 +3403,7 @@ function setPos(){
 
 
 
-				o.focus();
+            o.focus();
 
 
 
@@ -3411,7 +3411,7 @@ function setPos(){
 
 
 
-			},0);
+        },0);
 
 
 
@@ -3419,7 +3419,7 @@ function setPos(){
 
 
 
-		}else if(o.createTextRange){//IE
+    }else if(o.createTextRange){//IE
 
 
 
@@ -3427,7 +3427,7 @@ function setPos(){
 
 
 
-			var textRange=o.createTextRange();
+        var textRange=o.createTextRange();
 
 
 
@@ -3435,7 +3435,7 @@ function setPos(){
 
 
 
-			textRange.moveStart("character",o.value.length);
+        textRange.moveStart("character",o.value.length);
 
 
 
@@ -3443,7 +3443,7 @@ function setPos(){
 
 
 
-			textRange.moveEnd("character",0);
+        textRange.moveEnd("character",0);
 
 
 
@@ -3451,7 +3451,7 @@ function setPos(){
 
 
 
-			textRange.select();
+        textRange.select();
 
 
 
@@ -3459,7 +3459,7 @@ function setPos(){
 
 
 
-		}
+    }
 
 
 
@@ -3467,7 +3467,7 @@ function setPos(){
 
 
 
-	}
+}
 
 
 
@@ -3483,7 +3483,7 @@ function change_src(obj){
 
 
 
-	var src=$(obj).css("backgroundImage");
+var src=$(obj).css("backgroundImage");
 
 
 
@@ -3491,7 +3491,7 @@ function change_src(obj){
 
 
 
-	src=src.substring(src.lastIndexOf("/")+1,src.indexOf("png")-1);
+src=src.substring(src.lastIndexOf("/")+1,src.indexOf("png")-1);
 
 
 
@@ -3499,7 +3499,7 @@ function change_src(obj){
 
 
 
-	if(src=="view_pwd"){
+if(src=="view_pwd"){
 
 
 
@@ -3507,7 +3507,7 @@ function change_src(obj){
 
 
 
-		 $(obj).css("background","url(<%=resource%>/images/view_pwd1.png) no-repeat center center");
+     $(obj).css("background","url(<%=resource%>/images/view_pwd1.png) no-repeat center center");
 
 
 
@@ -3515,7 +3515,7 @@ function change_src(obj){
 
 
 
-		 $(obj).css("filter","progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/view_pwd1.png')");
+     $(obj).css("filter","progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/view_pwd1.png')");
 
 
 
@@ -3523,7 +3523,7 @@ function change_src(obj){
 
 
 
-		 document.getElementById("wireless_passwd").innerHTML="<input type='password' name='wl_wpa_psk' class='t_text' value='"+document.getElementById("wan_wireless_passwd").value+"' id='wan_wireless_passwd'/>";
+     document.getElementById("wireless_passwd").innerHTML="<input type='password' name='wl_wpa_psk' class='t_text' value='"+document.getElementById("wan_wireless_passwd").value+"' id='wan_wireless_passwd'/>";
 
 
 
@@ -3531,7 +3531,7 @@ function change_src(obj){
 
 
 
-	}else{
+}else{
 
 
 
@@ -3539,7 +3539,7 @@ function change_src(obj){
 
 
 
-		  $(obj).css("background","url(<%=resource%>/images/view_pwd.png) no-repeat center center");
+      $(obj).css("background","url(<%=resource%>/images/view_pwd.png) no-repeat center center");
 
 
 
@@ -3547,7 +3547,7 @@ function change_src(obj){
 
 
 
-          $(obj).css("filter","progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/view_pwd.png')");
+      $(obj).css("filter","progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<%=resource%>/images/view_pwd.png')");
 
 
 
@@ -3555,7 +3555,7 @@ function change_src(obj){
 
 
 
-		 document.getElementById("wireless_passwd").innerHTML="<input type='text'   name='wl_wpa_psk' class='t_text' value='"+document.getElementById("wan_wireless_passwd").value+"' id='wan_wireless_passwd'/>";
+     document.getElementById("wireless_passwd").innerHTML="<input type='text'   name='wl_wpa_psk' class='t_text' value='"+document.getElementById("wan_wireless_passwd").value+"' id='wan_wireless_passwd'/>";
 
 
 
@@ -3563,7 +3563,7 @@ function change_src(obj){
 
 
 
-	}
+}
 
 
 
@@ -3585,142 +3585,56 @@ function saveReport() {
 
 
 
-  var p_ssid="<%=ssid%>";
+var p_ssid="<%=ssid%>";
 
-  var ssid=$("#wl_ssid").attr("value");
+var ssid=$("#wl_ssid").attr("value");
 
+var pwd=$("#wan_wireless_passwd").attr("value");
 
+var ip=$("#lan_ipaddr").attr("value");
 
+var sip=$("#dhcp_start").attr("value");
 
+var eip=$("#dhcp_end").attr("value");
 
+var ip_arr=ip.split(".");
 
+var sip_arr=sip.split(".");
 
-  var pwd=$("#wan_wireless_passwd").attr("value");
+var eip_arr=eip.split(".");
 
+var j=0;
 
+for (var i = 0; i < 4; i++) {
 
+      if(parseInt(eip_arr[i])<parseInt(sip_arr[i])){
 
+        j=1;
+        break;
+		}
 
+}  
 
 
-  var ip=$("#lan_ipaddr").attr("value");
 
 
 
 
 
+//if(ssid!=""&&ssid!=null&&pwd.length>=8&&pwd.length<=63&&ip.match(regIp)&&sip.match(regIp)&&eip.match(regIp)&&ip_arr[2]==sip_arr[2]&&ip_arr[2]==eip_arr[2]&&j==0){
+if(ssid!=""&&ssid!=null&&pwd.length>=8&&pwd.length<=63&&ip.match(regIp)){//&&sip.match(regIp)&&eip.match(regIp)&&ip_arr[2]==sip_arr[2]&&ip_arr[2]==eip_arr[2]&&j==0){
 
 
-  var sip=$("#dhcp_start").attr("value");
 
+if(p_ssid!=ssid){
 
+setCookie("p_ssid",p_ssid);
 
+}
 
 
 
-
-  var eip=$("#dhcp_end").attr("value");
-
-
-
-
-
-
-
-  var ip_arr=ip.split(".");
-
-
-
-
-
-
-
-  var sip_arr=sip.split(".");
-
-
-
-
-
-
-
-  var eip_arr=eip.split(".");
-
-
-
-
-
-
-
-  var j=0;
-
-
-
-
-
-
-
-  for (var i = 0; i < 4; i++) {
-
-
-
-
-
-
-
-	      if(parseInt(eip_arr[i])<parseInt(sip_arr[i])){
-
-
-
-
-
-
-
-		    j=1;
-
-
-
-
-
-
-
-		    break;
-
-
-
-
-
-
-
-		  }
-
-
-
-
-
-
-
-	   }  
-
-
-
-
-
-
-
-  //if(ssid!=""&&ssid!=null&&pwd.length>=8&&pwd.length<=63&&ip.match(regIp)&&sip.match(regIp)&&eip.match(regIp)&&ip_arr[2]==sip_arr[2]&&ip_arr[2]==eip_arr[2]&&j==0){
-  if(ssid!=""&&ssid!=null&&pwd.length>=8&&pwd.length<=63&&ip.match(regIp)){//&&sip.match(regIp)&&eip.match(regIp)&&ip_arr[2]==sip_arr[2]&&ip_arr[2]==eip_arr[2]&&j==0){
-
-
-
-  if(p_ssid!=ssid){
-
-   setCookie("p_ssid",p_ssid);
-
-  }
-
-
-
-  box_show();
+box_show();
 
 
 
@@ -3728,7 +3642,7 @@ function saveReport() {
 
 
 //document.getElementById("myform").submit();
-  $("#myform").ajaxSubmit(function(message) {
+$("#myform").ajaxSubmit(function(message) {
 
 
 
@@ -3736,7 +3650,7 @@ function saveReport() {
 
 
 
-     setTimeout("box_delay()",3000);	 
+ setTimeout("box_delay()",3000);	 
 
 
 
@@ -3744,7 +3658,7 @@ function saveReport() {
 
 
 
-  });
+});
 
 
 
@@ -3752,7 +3666,7 @@ function saveReport() {
 
 
 
-  }else{
+}else{
 
 
 
@@ -3760,7 +3674,7 @@ function saveReport() {
 
 
 
-  $("#wl_ssid,#wan_wireless_passwd,#lan_ipaddr,#dhcp_start,#dhcp_end").blur();
+$("#wl_ssid,#wan_wireless_passwd,#lan_ipaddr,#dhcp_start,#dhcp_end").blur();
 
 
 
@@ -3768,7 +3682,7 @@ function saveReport() {
 
 
 
-  }
+}
 
 
 
@@ -3792,7 +3706,7 @@ function box_show(){
 
 
 
-	  box1.Show(); 
+  box1.Show(); 
 
 
 
@@ -3804,15 +3718,15 @@ function box_show(){
 
 function box_delay(){
 
-   $(".tip").css("width","172px");
+$(".tip").css("width","172px");
 
-   $(".tip_info").css("width","170px");
+$(".tip_info").css("width","170px");
 
-   $(".tip_info").html("保存成功,请重新连接.");
+$(".tip_info").html("保存成功,请重新连接.");
 
-   setTimeout("box_close()",600);
+setTimeout("box_close()",600);
 
- }
+}
 
 function box_close(){
 
@@ -3822,7 +3736,7 @@ function box_close(){
 
 
 
-	  a=1;
+  a=1;
 
 
 
@@ -3830,39 +3744,39 @@ function box_close(){
 
 
 
-	  $(".tip_info").html("加载中...");
+  $(".tip_info").html("加载中...");
 
 
 
-      
+  
 
 
 
-	  var l_ip="== nvram_get(\"lan_ipaddr\"); ==";
+  var l_ip="== nvram_get(\"lan_ipaddr\"); ==";
 
 
 
-	  var n_ip=$("#lan_ipaddr").attr("value");
+  var n_ip=$("#lan_ipaddr").attr("value");
 
 
 
-	  if(l_ip==n_ip){
+  if(l_ip==n_ip){
 
 
 
-	    location.reload();
+    location.reload();
 
 
 
-	  }else{
+  }else{
 
 
 
-	    window.location.href = "http://"+n_ip;
+    window.location.href = "http://"+n_ip;
 
 
 
-	  }
+  }
 
 
 
@@ -3886,7 +3800,7 @@ function loadCss(src){
 
 
 
-  var _doc = document.getElementsByTagName('head')[0];  
+var _doc = document.getElementsByTagName('head')[0];  
 
 
 
@@ -3894,7 +3808,7 @@ function loadCss(src){
 
 
 
-       var css = document.createElement('link');     
+   var css = document.createElement('link');     
 
 
 
@@ -3902,7 +3816,7 @@ function loadCss(src){
 
 
 
-       css.setAttribute('rel', 'stylesheet');       
+   css.setAttribute('rel', 'stylesheet');       
 
 
 
@@ -3910,7 +3824,7 @@ function loadCss(src){
 
 
 
-       css.setAttribute('type', 'text/css');    
+   css.setAttribute('type', 'text/css');    
 
 
 
@@ -3918,7 +3832,7 @@ function loadCss(src){
 
 
 
-	   css.setAttribute('href', src);   
+   css.setAttribute('href', src);   
 
 
 
@@ -3926,7 +3840,7 @@ function loadCss(src){
 
 
 
-	   _doc.appendChild(css); 
+   _doc.appendChild(css); 
 
 
 
@@ -3934,7 +3848,7 @@ function loadCss(src){
 
 
 
-	   if (css.readyState) { //IE
+   if (css.readyState) { //IE
 
 
 
@@ -3942,7 +3856,7 @@ function loadCss(src){
 
 
 
-	     css.onreadystatechange = function () {
+     css.onreadystatechange = function () {
 
 
 
@@ -3950,7 +3864,7 @@ function loadCss(src){
 
 
 
-            if (css.readyState == "loaded" ||css.readyState == "complete") {
+        if (css.readyState == "loaded" ||css.readyState == "complete") {
 
 
 
@@ -3958,7 +3872,7 @@ function loadCss(src){
 
 
 
-                css.onreadystatechange = null;
+            css.onreadystatechange = null;
 
 
 
@@ -3966,7 +3880,7 @@ function loadCss(src){
 
 
 
-                loadmultijs(urls,function(){ load_data(); });
+            loadmultijs(urls,function(){ load_data(); });
 
 
 
@@ -3974,7 +3888,7 @@ function loadCss(src){
 
 
 
-            }
+        }
 
 
 
@@ -3982,7 +3896,7 @@ function loadCss(src){
 
 
 
-        };
+    };
 
 
 
@@ -3990,7 +3904,7 @@ function loadCss(src){
 
 
 
-     } else{ //标准的DOM浏览器
+ } else{ //标准的DOM浏览器
 
 
 
@@ -3998,7 +3912,7 @@ function loadCss(src){
 
 
 
-        css.onload = function () {
+    css.onload = function () {
 
 
 
@@ -4006,7 +3920,7 @@ function loadCss(src){
 
 
 
-              loadmultijs(urls,function(){ load_data(); });
+          loadmultijs(urls,function(){ load_data(); });
 
 
 
@@ -4014,7 +3928,7 @@ function loadCss(src){
 
 
 
-        };
+    };
 
 
 
@@ -4022,7 +3936,7 @@ function loadCss(src){
 
 
 
-    }
+}
 
 
 
@@ -4048,29 +3962,29 @@ $("#"+t+"").css("display","none");
 
 function getCookie(name){
 
-    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
 
-    if(arr=document.cookie.match(reg))
+if(arr=document.cookie.match(reg))
 
-        return unescape(arr[2]);
+    return unescape(arr[2]);
 
-    else
+else
 
-        return null;
+    return null;
 
-     } 
+ } 
 
 function setCookie(name,value){
 
-	var Days = 30;
+var Days = 30;
 
-    var exp = new Date();
+var exp = new Date();
 
-    exp.setTime(exp.getTime() + Days*24*60*60*1000);
+exp.setTime(exp.getTime() + Days*24*60*60*1000);
 
-    document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString(); 
+document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString(); 
 
-	}
+}
 
 function out_div(){
 
@@ -4118,9 +4032,9 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-     <a href="javascript:;" class="link"><div class="back left"></div></a> <a href="javascript:;" class="link"><div class="title left">&nbsp;&nbsp;无线设置</div></a>
+ <a href="javascript:;" class="link"><div class="back left"></div></a> <a href="javascript:;" class="link"><div class="title left">&nbsp;&nbsp;无线设置</div></a>
 
-     <div class="ssid_tip left">您已经修改您的无线网络名称,请重新选择连接新的无线网络.</div>
+ <div class="ssid_tip left">您已经修改您的无线网络名称,请重新选择连接新的无线网络.</div>
 
 
 
@@ -4142,7 +4056,7 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-  <div class="content">
+<div class="content">
 
 
 
@@ -4150,7 +4064,7 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-      <div class="content_left left">
+  <div class="content_left left">
 
 
 
@@ -4158,7 +4072,7 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-        <span class="icon"></span>
+    <span class="icon"></span>
 
 
 
@@ -4166,7 +4080,7 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-		<span class="caption" style="margin-top:10px;">无线WIFI设置</span>
+    <span class="caption" style="margin-top:10px;">无线WIFI设置</span>
 
 
 
@@ -4174,7 +4088,7 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-	  </div>
+  </div>
 
 
 
@@ -4182,7 +4096,7 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-	  <div class="content_right right">
+  <div class="content_right right">
 
 
 
@@ -4190,7 +4104,7 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-	   <form method="post" action="<%=luci.dispatcher.build_url("admin/newweb/wireless_update")%>" id="myform">
+<form method="post" action="<%=luci.dispatcher.build_url("admin/newweb/wireless_update")%>" id="myform">
 
 
 
@@ -4198,7 +4112,7 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-         <input type="hidden" name="wl_unit" value="0">
+ <input type="hidden" name="wl_unit" value="0">
 
 
 
@@ -4206,7 +4120,7 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-		 <input type="hidden" name="lan_netmask" value="== nvram_get(\"lan_netmask\"); =="/>
+ <input type="hidden" name="lan_netmask" value="== nvram_get(\"lan_netmask\"); =="/>
 
 
 <input type="hidden" name="winame" value="<%=winame%>"/>
@@ -4214,7 +4128,7 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-         <input type="hidden" name="action" value="Apply">
+ <input type="hidden" name="action" value="Apply">
 
 
 
@@ -4222,273 +4136,131 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-	    <table width="487" border="0" align="center" cellpadding="0" cellspacing="0">
+    <table width="487" border="0" align="center" cellpadding="0" cellspacing="0">
 
+       <tr>
 
+        <td width="135" height="55" align="right"  onmouseover="showTip('name_tip');" onmouseout="hideTip('name_tip');"><label class="t_lable">无线网络名称:</label></td>
 
+         <td style="position:relative;">
 
+         <input type="text" name="wl_ssid" value="<%=ssid%>" class="t_text" id="wl_ssid"/>
 
+         <div class="mainlevel" style="width:250px;height:36px; padding-top:5px; padding-left:5px;bottom:-44px; " id="name_tip">
 
+          <span class="cornerT"></span>     
 
-		   <tr>
+          即SSID,是您手机/电脑/平板等设备搜索WIFI网络时找到的由间路由组建的WIFI网络名
 
+         </div>
 
+         </td>
+         <td width="36"></td>
+       </tr>
 
 
 
+       <tr>
 
 
-		    <td width="135" height="55" align="right"  onmouseover="showTip('name_tip');" onmouseout="hideTip('name_tip');"><label class="t_lable">无线网络名称:</label></td>
+        <td height="55" align="right" onmouseover="showTip('pwd_tip');" onmouseout="hideTip('pwd_tip');"><label class="t_lable">无线网络密码:</label></td>
 
-			 <td style="position:relative;">
+         <td style="position:relative;"><span id="wireless_passwd"><input type="password" class="t_text"  id="wan_wireless_passwd" name="wl_wpa_psk" value="<%=pwd%>"/></span>
 
-			 <input type="text" name="wl_ssid" value="<%=ssid%>" class="t_text" id="wl_ssid"/>
+         <div class="mainlevel" style="width:250px;height:36px; padding-top:5px; padding-left:5px;bottom:-44px;" id="pwd_tip">
 
-			 <div class="mainlevel" style="width:250px;height:36px; padding-top:5px; padding-left:5px;bottom:-44px; " id="name_tip">
+          <span class="cornerT"></span>     
 
-			  <span class="cornerT"></span>     
+          密码为8-63个字符,默认密码为产品序列号,密码为空时则表示不设置密码
 
-			  即SSID,是您手机/电脑/平板等设备搜索WIFI网络时找到的由间路由组建的WIFI网络名
+         </div>
 
-			 </div>
+         </td>
 
-			 </td>
+         <td><a href="javascript:goto(0);" onclick="return false"><span class="view_pwd"  onclick="change_src(this);"></span></a></td>
 
+       </tr>
 
+       <tr>
+         <td height="55" align="right"><label class="t_lable">路由器IP地址:</label></td>
 
+         <td><input type="text" class="t_text" name="lan_ipaddr"  value="<%=lanip%>" id="lan_ipaddr"/></td>
 
+         <td></td>
 
+       </tr>
 
+       <tr>
 
-			 <td width="36"></td>
+         <td height="55" align="right"><label class="t_lable">内网IP开始地址:</label></td>
+         <td><input type="text" class="t_text" name="dhcp_start"  value="<%=dhcpstart%>" id="dhcp_start"/></td>
+         <td></td>
+       </tr>
 
+       <tr>
+         <td height="55" align="right"><label class="t_lable">内网IP地址数量:</label></td>
 
+         <td><input type="text" class="t_text" name="dhcp_end"   value="<%=dhcpend%>" id="dhcp_end"/></td>
 
+         <td></td>
 
+       </tr>
 
 
 
-		   </tr>
 
 
 
-		   <tr>
 
+       <tr>
 
 
 
 
 
 
-		    <td height="55" align="right" onmouseover="showTip('pwd_tip');" onmouseout="hideTip('pwd_tip');"><label class="t_lable">无线网络密码:</label></td>
 
-			 <td style="position:relative;"><span id="wireless_passwd"><input type="password" class="t_text"  id="wan_wireless_passwd" name="wl_wpa_psk" value="<%=pwd%>"/></span>
+         <td height="100"></td>
 
-			 <div class="mainlevel" style="width:250px;height:36px; padding-top:5px; padding-left:5px;bottom:-44px;" id="pwd_tip">
 
-			  <span class="cornerT"></span>     
 
-			  密码为8-63个字符,默认密码为产品序列号,密码为空时则表示不设置密码
 
-			 </div>
 
-			 </td>
 
 
+         <td><input type="button" value="保存"  class="t_btn" onclick="saveReport();"/></td>
 
 
 
 
 
-			 <td><a href="javascript:goto(0);" onclick="return false"><span class="view_pwd"  onclick="change_src(this);"></span></a></td>
 
 
+         <td></td>
 
 
 
 
 
-		   </tr>
 
 
+       </tr>
 
-		   <tr>
 
 
 
 
 
 
+    </table>
 
-		     <td height="55" align="right"><label class="t_lable">路由器IP地址:</label></td>
 
 
 
 
 
 
-
-			 <td><input type="text" class="t_text" name="lan_ipaddr"  value="<%=lanip%>" id="lan_ipaddr"/></td>
-
-
-
-
-
-
-
-			 <td></td>
-
-
-
-
-
-
-
-		   </tr>
-
-
-
-
-
-
-
-		   <tr>
-
-
-
-
-
-
-
-		     <td height="55" align="right"><label class="t_lable">内网IP开始地址:</label></td>
-
-
-
-
-
-
-
-			 <td><input type="text" class="t_text" name="dhcp_start"  value="<%=dhcpstart%>" id="dhcp_start"/></td>
-
-
-
-
-
-
-
-			 <td></td>
-
-
-
-
-
-
-
-		   </tr>
-
-
-
-
-
-
-
-		   <tr>
-
-
-
-
-
-
-
-		     <td height="55" align="right"><label class="t_lable">内网IP地址数量:</label></td>
-
-
-
-
-
-
-
-			 <td><input type="text" class="t_text" name="dhcp_end"   value="<%=dhcpend%>" id="dhcp_end"/></td>
-
-
-
-
-
-
-
-			 <td></td>
-
-
-
-
-
-
-
-		   </tr>
-
-
-
-
-
-
-
-		   <tr>
-
-
-
-
-
-
-
-		     <td height="100"></td>
-
-
-
-
-
-
-
-		     <td><input type="button" value="保存"  class="t_btn" onclick="saveReport();"/></td>
-
-
-
-
-
-
-
-			 <td></td>
-
-
-
-
-
-
-
-		   </tr>
-
-
-
-
-
-
-
-		</table>
-
-
-
-
-
-
-
-		</form>
-
-
-
-
-
-
-
-	  </div>
+    </form>
 
 
 
@@ -4512,6 +4284,14 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
+</div>
+
+
+
+
+
+
+
 <div id="tip">
 
 
@@ -4520,7 +4300,7 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-   <span class="loading"><img src="<%=resource%>/images/loading.gif"/></span>
+<span class="loading"><img src="<%=resource%>/images/loading.gif"/></span>
 
 
 
@@ -4528,7 +4308,7 @@ $(".ssid_tip").fadeOut("slow");
 
 
 
-   <span class="tip_info">保存中...</span>
+<span class="tip_info">保存中...</span>
 
 
 

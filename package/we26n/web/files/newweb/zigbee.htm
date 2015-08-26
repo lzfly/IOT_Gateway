@@ -4,7 +4,9 @@ require("uci")
 local io = require "io"
 
 function getdevices( type )
-	local file = io.open("/tmp/devices_1.ini","r");
+
+    filename = "/tmp/devices_" .. tostring(type) .. ".ini";
+    local file = io.open(filename,"r");
 	
 	if(file==nil) then
 		return;
@@ -20,6 +22,10 @@ function getdevices( type )
 end
 
 local result1=getdevices("1");
+local result2=getdevices("2");
+local result3=getdevices("3");
+local result4=getdevices("7");
+local result5=getdevices("6");
 %>
 
 
@@ -27,23 +33,24 @@ local result1=getdevices("1");
 <html>
 <head>
 <style> 
-body{ margin:0;background-color:#1c69bb;}
+body{ margin:auto;background-color:#1c69bb;}
 img{display:block};
 a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .big_box{ height:auto;}
+.big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
 .big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
 .big_top img,.big_top a{ float:left; padding-left:5px; padding-bottom:15px;text-decoration:none;}
 .zig{font-size:26px; color:white;padding-left:15px; padding-top:8px; }
 .button{margin-left:860px;color:white;padding-top:10px;}
 .big_top p{ padding-top:20px; padding-left:5px; color:#FFF; font-size:12px;}
 
-.big_bottom{width:1198px; background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
+.big_bottom{width:1198px;background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
 
 .nav{ width:100%; height:40px; background-color:#8eb3db;}
 .lights{ overflow:hidden;}
-.light{background:url(<%=resource%>/images/bg_nav.png);line-height:40px;}
-.lights a{ float:left; padding:0 91px; text-decoration:none; font-size:26px; color:#FFF;}
-.lights a:hover{color:#009;text-decoration:none}
+.light{background:url(<%=resource%>/images/bg_nav.png);}
+.lights p{ float:left; padding:0 91px; margin-top:5px; text-decoration:none; font-size:26px; color:#FFF;cursor:pointer;}
+.lights p:hover{color:#009;text-decoration:none;}
 
 table{
 	width:100%;
@@ -82,8 +89,10 @@ td.img{
 		var resPath = "<%=resource%>" + "/images/";
 		var lightState = 1;
 		var windowState = 0;
+		
+		var i=0;
 
-		function initState()
+		/*function initState()
 		{
 			document.getElementById("currLightState").value = lightState;
 			document.getElementById("currWindowState").value = windowState;
@@ -124,13 +133,16 @@ td.img{
 				 }
 				//}
 			 });
-		}
+		}*/
 	</script>
-	
-	
+		
 <script type="text/javascript">
 
 	var lightdata='<%=result1%>';
+	var windowsdata='<%=result2%>';
+	var switchdata='<%=result3%>';
+	var sensordata='<%=result4%>';
+	var alertordata='<%=result5%>';
 
 </script>
 </head>
@@ -149,20 +161,22 @@ td.img{
 <div class="big_bottom">
 	<div class="nav">
     	<div class="lights">
-        	<a class="light" href="zigbee">灯</a>
-        	<a href="windows">窗帘</a>
-            <a href="switch">开关</a>
-            <a href="sensor">传感器</a>
-            <a href="alertor">报警器</a>
-     	</div>
+        	<p onClick="displaydiv('1')">灯</p>
+        	<p onClick="displaydiv('2')">窗帘</p>
+            <p onClick="displaydiv('3')">开关</p>
+        	<p onClick="displaydiv('4')">传感器</p>
+            <p onClick="displaydiv('5')">报警器</p>
+        </div>
     </div>
+    
+    <!--light -->
+    <div class="zigbee" id="div1" style=" display:none">
     <script type="text/javascript">
-    
-    var lightArr = eval(lightdata);
-    
-	var i=0;
+	
 	//var item=0;
 	//var k=0;
+	var lightArr = eval(lightdata);
+	
 	for(i=0;i<lightArr.length;i++){   
 		
 		var lightData = lightArr[i];
@@ -175,7 +189,7 @@ td.img{
 		document.write("<td style='width:500px'>"+devId+"</td>"); 
 		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
 		document.write('<input type="hidden" value="0" id="currLightState"/>');
-		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/light_01.png"</td>') ;
+		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/light_01.png"></td>') ;
 		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
 		document.write("</form>");
 		if(status=="1")
@@ -188,21 +202,168 @@ td.img{
 		}
 		//document.write("<td>色温</td>"); 
 		//document.write("<td>亮度</td>"); 
-		
-
 		document.write("</tr>") ;
-
-	    document.write("</table>");
-	    
-	   
+	    document.write("</table>");	   
 	}
+	</script></div>
 	
-	</script>
-    
-
-     </table>
-
+	
+	<!--windows -->
+    <div class="zigbee" id="div2" style=" display:none">
+    <script type="text/javascript">
+	var windowsArr = eval(windowsdata);
+	
+	for(i=0;i<windowsArr.length;i++){   
+		
+		var windowsdata = windowsArr[i];
+		var devId = windowsdata["deviceid"];
+		var status=windowsdata["status"];
+		
+		document.write("<table>");
+		document.write("<tr>") ;
+		document.write("<td style='width:200px'>窗"+(i+1)+"</td>"); 
+		document.write("<td style='width:500px'>"+devId+"</td>"); 
+		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
+		document.write('<input type="hidden" value="0" id="currLightState"/>');
+		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/windows_01.png"></td>') ;
+		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
+		document.write("</form>");
+		if(status=="1")
+		{
+			document.write("<td>"+"开"+"</td>");
+		}
+		else
+		{		
+			document.write("<td>"+"关"+"</td>");
+		}
+		//document.write("<td>色温</td>"); 
+		//document.write("<td>亮度</td>"); 
+		document.write("</tr>") ;
+	    document.write("</table>");	   
+	}
+	</script></div>
+	
+	<!--switch -->
+    <div class="zigbee" id="div3" style=" display:none">
+    <script type="text/javascript">
+	var switchArr = eval(switchdata);
+	
+	for(i=0;i<switchArr.length;i++){   
+		
+		var switchdata = switchArr[i];
+		var devId = switchdata["deviceid"];
+		var status=switchdata["status"];
+		
+		document.write("<table>");
+		document.write("<tr>") ;
+		document.write("<td style='width:200px'>开关"+(i+1)+"</td>"); 
+		document.write("<td style='width:500px'>"+devId+"</td>"); 
+		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
+		document.write('<input type="hidden" value="0" id="currLightState"/>');
+		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/light_01.png"></td>') ;
+		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
+		document.write("</form>");
+		if(status=="1")
+		{
+			document.write("<td>"+"开"+"</td>");
+		}
+		else
+		{		
+			document.write("<td>"+"关"+"</td>");
+		}
+		//document.write("<td>色温</td>"); 
+		//document.write("<td>亮度</td>"); 
+		document.write("</tr>") ;
+	    document.write("</table>");	   
+	}
+	</script></div>
+	
+	<!--sensor-->
+	<div class="zigbee" id="div4" style=" display:none">
+    <script type="text/javascript">
+	var sensorArr = eval(sensordata);
+	
+	for(i=0;i<sensorArr.length;i++){   
+		
+		var sensordata = sensorArr[i];
+		var devId = sensordata["deviceid"];
+		var status=sensordata["status"];
+		
+		document.write("<table>");
+		document.write("<tr>") ;
+		document.write("<td style='width:200px'>传感器"+(i+1)+"</td>"); 
+		document.write("<td style='width:500px'>"+devId+"</td>"); 
+		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
+		document.write('<input type="hidden" value="0" id="currLightState"/>');
+		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/light_01.png"></td>') ;
+		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
+		document.write("</form>");
+		if(status=="1")
+		{
+			document.write("<td>"+"开"+"</td>");
+		}
+		else
+		{		
+			document.write("<td>"+"关"+"</td>");
+		}
+		//document.write("<td>色温</td>"); 
+		//document.write("<td>亮度</td>"); 
+		document.write("</tr>") ;
+	    document.write("</table>");	   
+	}
+	</script></div>
+	
+	<!--alertor-->
+	<div class="zigbee" id="div5" style=" display:none">
+    <script type="text/javascript">
+	var alertorArr = eval(alertordata);
+	
+	for(i=0;i<alertorArr.length;i++){   
+		
+		var alertordata = alertorArr[i];
+		var devId = alertordata["deviceid"];
+		var status=alertordata["status"];
+		
+		document.write("<table>");
+		document.write("<tr>") ;
+		document.write("<td style='width:200px'>报警器"+(i+1)+"</td>");
+		document.write("<td style='width:500px'>"+devId+"</td>"); 
+		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
+		document.write('<input type="hidden" value="0" id="currLightState"/>');
+		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/asd_01.png"></td>') ;
+		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
+		document.write("</form>");
+		if(status=="1")
+		{
+			document.write("<td>"+"开"+"</td>");
+		}
+		else
+		{		
+			document.write("<td>"+"关"+"</td>");
+		}
+		//document.write("<td>色温</td>"); 
+		//document.write("<td>亮度</td>"); 
+		document.write("</tr>") ;
+	    document.write("</table>");	   
+	}
+	</script></div>
 </div>
+
+<script type="text/javascript">
+var j;
+var a;
+function displaydiv(a){
+	//divs=document.getElementById("item");
+	var zigbees=document.getElementsByClassName("zigbee");
+	for(j=1;j<zigbees.length+1;j++){
+		document.getElementById("div"+j).style.display="none";
+		}
+	document.getElementById("div"+a).style.display="block";
+	}
+</script>
 </div>
+</body>
+</html>
+>
 </body>
 </html>
