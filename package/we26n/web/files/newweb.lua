@@ -113,7 +113,8 @@ function gas_meter_set()
 
 	local c_gas_id=luci.http.formvalue("id")
 	
-	x:set("jyconfig","deviceid","gasmeter", c_gas_id)
+	
+	luci.sys.exec("uci set jyconfig.@deviceid[0].gasmeter="..c_gas_id)
 
 	x:commit("jyconfig")
 		
@@ -124,7 +125,7 @@ function blegas_meter_set()
 
 	local c_blegas_id=luci.http.formvalue("id")
 	
-	x:set("jyconfig","deviceid","blegasmeter", c_blegas_id)
+	luci.sys.exec("uci set jyconfig.@deviceid[0].blegasmeter="..c_blegas_id)
 
 	x:commit("jyconfig")
 		
