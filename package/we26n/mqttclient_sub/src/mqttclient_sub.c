@@ -34,7 +34,28 @@ Contributors:
 #include <libubox/uloop.h>
 #include <libubus.h>
 
+#include <sys/types.h>          /* See NOTES */
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <net/if.h>
+#include <net/if_arp.h> 
+#include <sys/ioctl.h> 
 
+#include <uci.h>
+
+#define MAXINTERFACES   16
+char g_localMAC[16];
+struct sockaddr_in g_localAddr;
+
+static struct uci_context * uci_ctx;
+static struct uci_package * uci_jianyoucfg;
+
+#define MAXTOPIC 128
+char mqtt_server[MAXTOPIC];
+char mqtt_port[MAXTOPIC];
+char mqtt_topic[MAXTOPIC];
 
 void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
 {
@@ -148,6 +169,175 @@ int  send_get_msg_to_zigbee(char *deviceid, char *attr)
 	ubus_free(ctx);
 	return 0;
 	
+}
+
+int getLocalIPandMAC ()
+{
+    register int fd, intrface, retn = 0;
+    struct ifreq buf[MAXINTERFACES];
+    struct arpreq arp;
+    struct ifconf ifc;
+
+    printf ("getLocalIPandMAC\n");
+
+    if ((fd = socket (AF_INET, SOCK_DGRAM, 0)) >= 0)
+    {
+        ifc.ifc_len = sizeof buf;
+        ifc.ifc_buf = (caddr_t) buf;
+        if (!ioctl (fd, SIOCGIFCONF, (char *) &ifc))
+        {
+            //获取接口信息
+            intrface = ifc.ifc_len / sizeof (struct ifreq);
+            printf("interface num is intrface=%d\n\n\n",intrface);
+            //根据借口信息循环获取设备IP和MAC地址
+            while (intrface-- > 0)
+            {
+                //获取设备名称
+                printf ("net device %s\n", buf[intrface].ifr_name);
+	
+	        if(0 != strncmp(buf[intrface].ifr_name, "br-lan", strlen("br-lan")))
+	            continue;
+ 
+                //判断网卡状态
+                if (buf[intrface].ifr_flags & IFF_UP)
+                {
+                    printf("the interface status is UP" );
+                }
+                else
+                {
+                    printf("the interface status is DOWN" );
+                }
+                //获取当前网卡的IP地址
+                if (!(ioctl (fd, SIOCGIFADDR, (char *) &buf[intrface])))
+                {
+                     printf ("IP address is:" );
+                     printf("%08x", ((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr);
+                     g_localAddr.sin_addr = ((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr;				 
+                     printf("" );
+                     //puts (buf[intrface].ifr_addr.sa_data);
+                }
+                else
+                {
+                    char str[256];
+                    sprintf (str, "cpm: ioctl device %s", buf[intrface].ifr_name);
+                    perror (str);
+                }
+                /* this section can't get Hardware Address,I don't know whether the reason is module driver*/
+
+                if (!(ioctl (fd, SIOCGIFHWADDR, (char *) &buf[intrface])))
+                {
+                    printf ("HW address is:" );
+                    printf("%02x:%02x:%02x:%02x:%02x:%02x\n",
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[0],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[1],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[2],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[3],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[4],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[5]);
+				 sprintf(g_localMAC, "%02X%02X%02X%02X%02X%02X",
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[0],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[1],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[2],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[3],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[4],
+                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[5]);
+                    printf("g_localMAC=%s\n", g_localMAC);
+                    printf("" );
+                }
+                else
+                {
+                    char str[256];
+                    sprintf (str, "cpm: ioctl device %s", buf[intrface].ifr_name);
+                    printf (str);
+                }
+             } //while
+         } else
+         printf ("cpm: ioctl" );
+     } else
+      printf ("cpm: socket" );
+    
+    close (fd);
+    return retn;
+} 
+
+int get_mqttclient_config()
+{
+    int rtn = 0;
+    if (!uci_ctx)
+    {
+        uci_ctx = uci_alloc_context();
+    }
+    else
+    {
+        uci_jianyoucfg = uci_lookup_package(uci_ctx, "jyconfig");
+        if (uci_jianyoucfg)
+            uci_unload(uci_ctx, uci_jianyoucfg);
+    }
+
+    if (uci_load(uci_ctx, "jyconfig", &uci_jianyoucfg))
+    {
+        printf("uci load jianyou config fail\n");
+		return -1;
+    }
+	else
+	{
+	        char *value = NULL;
+            struct uci_element *e   = NULL;
+			int rtn;
+            printf("uci load jianyou config success\n");
+
+
+            /* scan jianyou config ! */
+            uci_foreach_element(&uci_jianyoucfg->sections, e)
+            {
+                struct uci_section *s = uci_to_section(e);
+
+                if(0 == strcmp(s->type, "mqttclient"))
+                {
+                    printf("%s(), type: %s\n", __FUNCTION__, s->type);
+
+                    value = uci_lookup_option_string(uci_ctx, s, "server");
+                    if(value){
+                            sprintf(mqtt_server, "%s", value);
+                            printf("%s(), mqtt_server: %s\n", __FUNCTION__, mqtt_server);
+                            rtn = 0;
+                        }else{
+                            printf("%s(), mqtt_server not found\n", __FUNCTION__);
+							rtn = -1;
+							goto exit;
+                     }
+					 
+					value = uci_lookup_option_string(uci_ctx, s, "port");
+                    if(value){
+                            sprintf(mqtt_port, "%s", value);
+                             printf("%s(), mqtt_port: %s\n", __FUNCTION__, mqtt_port);
+                        }else{
+                            printf("%s(), mqtt_port not found\n", __FUNCTION__);
+							rtn = -1;
+							goto exit;
+                     }
+					 
+					//value = uci_lookup_option_string(uci_ctx, s, "topic");
+                    if(getLocalIPandMAC() == 0){
+
+							sprintf(mqtt_topic, "we26n_%s", g_localMAC);
+                            printf("%s(), mqtt_topic: %s\n", __FUNCTION__, mqtt_topic);
+
+                        }else{
+                            printf("%s(), mqtt_topic not found\n", __FUNCTION__);
+							rtn = -1;
+							goto exit;
+                     }
+					 
+                     break;
+                 }
+
+             }
+             
+    }
+exit:
+    uci_unload(uci_ctx, uci_jianyoucfg);
+    return rtn;
 }
 
 
@@ -545,7 +735,7 @@ void my_connect_callback(struct mosquitto *mosq, void *obj, int result)
 
 	assert(obj);
 	cfg = (struct mosq_config *)obj;
-
+    printf("mosquitto_sub  connect result=%d\n", result);
 	if(!result){
 		for(i=0; i<cfg->topic_count; i++){
 			mosquitto_subscribe(mosq, NULL, cfg->topics[i], cfg->qos);
@@ -561,7 +751,7 @@ void my_subscribe_callback(struct mosquitto *mosq, void *obj, int mid, int qos_c
 {
 	int i;
 	struct mosq_config *cfg;
-
+    printf("mosquitto_sub  my_subscribe_callback\n");
 	assert(obj);
 	cfg = (struct mosq_config *)obj;
 
@@ -671,13 +861,24 @@ int main(int argc, char *argv[])
 	struct mosquitto *mosq = NULL;
 	int rc;
 	
-/*char *out = create();
-printf("%s\n\n\n",out);
-parse(out);*/
-
+    rc = get_mqttclient_config();
+	if(rc){
+		printf("mqttclient_sub read config fail\n");
+		return 1;
+	}
 	
+	int argc1 = 7;
+	char *argv1[7];
+	argv1[0] = "mqttclient_sub";
+	argv1[1] = "-h";
+	argv1[2] = mqtt_server;
+	argv1[3] = "-p";
+	argv1[4] = mqtt_port;
+	argv1[5] = "-t";
+	argv1[6] = mqtt_topic;
 	
-	rc = client_config_load(&cfg, CLIENT_SUB, argc, argv);
+	//rc = client_config_load(&cfg, CLIENT_SUB, argc, argv);
+	rc = client_config_load(&cfg, CLIENT_SUB, argc1, argv1);
 	if(rc){
 		client_config_cleanup(&cfg);
 		if(rc == 2){
@@ -688,43 +889,62 @@ parse(out);*/
 		}
 		return 1;
 	}
-
+	
+	rc = get_mqttclient_config(&cfg);
+	if(rc){
+		client_config_cleanup(&cfg);
+		return 1;
+	}
+	
 	mosquitto_lib_init();
 
-	if(client_id_generate(&cfg, "mosqsub")){
-		return 1;
-	}
-
-	mosq = mosquitto_new(cfg.id, cfg.clean_session, &cfg);
-	if(!mosq){
-		switch(errno){
-			case ENOMEM:
-				if(!cfg.quiet) fprintf(stderr, "Error: Out of memory.\n");
-				break;
-			case EINVAL:
-				if(!cfg.quiet) fprintf(stderr, "Error: Invalid id and/or clean_session.\n");
-				break;
+	while(1){
+	    printf("mosquitto_sub  while again\n");
+		
+		if(client_id_generate(&cfg, "mosqsub")){
+			return 1;
 		}
-		mosquitto_lib_cleanup();
-		return 1;
+
+		mosq = mosquitto_new(cfg.id, cfg.clean_session, &cfg);
+		if(!mosq){
+			switch(errno){
+				case ENOMEM:
+					if(!cfg.quiet) fprintf(stderr, "Error: Out of memory.\n");
+					break;
+				case EINVAL:
+					if(!cfg.quiet) fprintf(stderr, "Error: Invalid id and/or clean_session.\n");
+					break;
+			}
+			mosquitto_lib_cleanup();
+			return 1;
+		}
+		if(client_opts_set(mosq, &cfg)){
+			return 1;
+		}
+		if(cfg.debug){
+			mosquitto_log_callback_set(mosq, my_log_callback);
+			mosquitto_subscribe_callback_set(mosq, my_subscribe_callback);
+		}
+		mosquitto_connect_callback_set(mosq, my_connect_callback);
+		mosquitto_message_callback_set(mosq, my_message_callback);
+
+		while(1){
+		    printf("mosquitto_sub  connect again\n");
+			rc = client_connect(mosq, &cfg);
+			if(rc == 0) 
+			     break;
+			sleep(10);
+		}
+		printf("mosquitto_sub  connect success\n");
+
+		rc = mosquitto_loop_forever(mosq, -1, 1);
+
+		printf("mosquitto_sub  exit loop\n");
+		
+		mosquitto_destroy(mosq);
+	
 	}
-	if(client_opts_set(mosq, &cfg)){
-		return 1;
-	}
-	if(cfg.debug){
-		mosquitto_log_callback_set(mosq, my_log_callback);
-		mosquitto_subscribe_callback_set(mosq, my_subscribe_callback);
-	}
-	mosquitto_connect_callback_set(mosq, my_connect_callback);
-	mosquitto_message_callback_set(mosq, my_message_callback);
-
-	rc = client_connect(mosq, &cfg);
-	if(rc) return rc;
-
-
-	rc = mosquitto_loop_forever(mosq, -1, 1);
-
-	mosquitto_destroy(mosq);
+	
 	mosquitto_lib_cleanup();
 
 	if(cfg.msg_count>0 && rc == MOSQ_ERR_NO_CONN){
