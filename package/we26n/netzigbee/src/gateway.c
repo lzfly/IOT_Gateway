@@ -8,7 +8,7 @@
 #include <netinet/in.h>
 
 struct ZigbeeReportTime g_ReportTime;
-
+char ZigbeeId[128]={0};
 struct GatewayBean g_Gate;
 struct deviceBean g_devices[MAX_DEVICES];
 int g_devices_count = 0;
