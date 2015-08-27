@@ -425,7 +425,7 @@ void* gas_meter_thread( void *arg )
 			    }
 			
 			crc_r = sub(buf_f,len_g - 1);
-			if(crc_r != buf_f[len_g - 1])
+			if(crc_r != ((buf_f[len_g - 1]) & 0xFF))
 			{
 			    printf("crc_r error\n");
 				syslog(LOG_CRIT,"[gas_meter] crc_r error",);
