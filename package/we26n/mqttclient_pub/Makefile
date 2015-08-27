@@ -21,7 +21,7 @@ define Package/mqttclient_pub
   CATEGORY:=WE26N
   TITLE:=mqttclient pub to mqtt server
   MAINTAINER:=wangmingdong <wang_leaf@sina.com>
-  DEPENDS:=+libpthread +libubus +libubox +libmosquitto
+  DEPENDS:=+libpthread +libubus +libubox +libmosquitto +libuci
 endef
 
 define Package/mqttclient_pub/description
@@ -39,7 +39,7 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 	CC="$(TARGET_CC)" \
 	CFLAGS="$(TARGET_CFLAGS) -Wall" \
-	LDFLAGS="$(TARGET_LDFLAGS) -lubox -lubus -lpthread -lmosquitto" \
+	LDFLAGS="$(TARGET_LDFLAGS) -lubox -lubus -lpthread -lmosquitto -luci" \
 	-f test.mk
 endef
 

@@ -7,6 +7,7 @@ config  deviceid
 config  mqttclient
         option server     10.4.44.210
         option port       8020
+	option userid     abcd
 
 config  mqttserver
         option port       1883
