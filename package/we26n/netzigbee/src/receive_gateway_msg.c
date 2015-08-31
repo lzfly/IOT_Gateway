@@ -67,7 +67,12 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
     uint32_t  id;
     struct ubus_context *ctx;
 	static struct blob_buf b;
-
+    if((strstr(ZigbeeId,ieeestr) == NULL) && ZIGBEE_ENABLE)
+	{
+		printf("\n*************************\n");
+		printf("sleep time:%d\n",g_ReportTime.hum_time);
+		return;
+	}
  
     printf("[sendMsgToWeb] start\r\n");
 

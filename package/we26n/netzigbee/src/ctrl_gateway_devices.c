@@ -191,8 +191,13 @@ static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
         int i;
 		for(i = 0; i < g_devices_count; i++)
 		{
-
-                        
+                        if((strstr(ZigbeeId,g_devices[i].ieeestr) == NULL) && ZIGBEE_ENABLE)
+                        {
+                        	printf("deviceid  not in deviceid config file can not be controlled\n");
+                        	printf("deviceid = %s\n",g_devices[i].ieeestr);
+                        	printf("ZigbeeId = %s\n",ZigbeeId);
+                        	continue;
+                        }       
 			printf("[ctrlcmd] ieeestr=%s ieeelen=%d endpoint=%d\r\n", g_devices[i].ieeestr,strlen(g_devices[i].ieeestr), g_devices[i].endpoint);
 			if(g_devices[i].endpoint == endpoint && (strcmp(g_devices[i].ieeestr,  ieeestr) == 0))
 			{
