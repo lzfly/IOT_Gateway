@@ -377,7 +377,7 @@ int  nuart_init( struct event_base * pevbase, int tno, intptr_t * pret )
     nuart_context_t * pctx;
 
     /**/
-    sprintf( tstr, "/dev/ttyUSB%d", tno );
+    sprintf( tstr, "/dev/ttyS%d", tno );
     printf( "%s\n", tstr );
     
     /**/
