@@ -35,10 +35,26 @@ local result7=getdevices(7);
 body{ margin:auto; background-color:#1c69bb;}
 img{display:block};
 a{ display:block; text-decoration:none; font-family:"微软雅黑";}
+
+#body_center{
+
+width:100%;
+
+height:650px;
+
+position:absolute;
+
+top:50%;
+
+margin-top:-325px;
+
+
+
+}
 .big_box{height:auto;}
 .big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
-.big_top img,.big_top a{ float:left; padding-left:5px; padding-bottom:15px;}
-.big_top a{font-size:26px; text-decoration:none;  color:white;padding-left:15px; padding-top:8px; }
+.big_top img,.big_top a{ float:left;padding-bottom:15px;text-decoration:none;}
+.big_top a{font-size:26px; text-decoration:none;  color:white; padding-top:8px; }
 
 .button{margin-left:920px;color:white;padding-top:10px;}
 .big_top p{ padding-top:20px;color:#FFF; font-size:12px;}
@@ -97,6 +113,8 @@ td.img{
 </head>
 
 <body>
+
+<div id="body_center">
 
 <div class="big_box" style="width:100%; height:100%; position:absolute; left:0px; top:0px;">
 
@@ -188,6 +206,8 @@ td.img{
 	document.getElementById("deom").innerHTML="保存成功";
 	}
 </script>
+</div>
+
 </div>
 
 </body>
