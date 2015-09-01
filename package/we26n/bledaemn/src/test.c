@@ -647,7 +647,7 @@ int  test_init( struct event_base * pevbase )
 
     
     /**/
-    iret = nuart_init( pevbase, 1, &uctx );
+    iret = nuart_init( pevbase, 12, &uctx );
     if ( 0 != iret )
     {
         printf( "uart init ret = %d\n", iret );
