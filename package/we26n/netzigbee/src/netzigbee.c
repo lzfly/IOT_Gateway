@@ -28,25 +28,27 @@ static struct uci_package * uci_zigbeeid;
 char ReportTime_tem[8];
 char ReportTime_hum[8];
 
-
- int ReadZigbeeId()
-   {
+int getzigbeeid_config(char *zigbeeid)
+{
     int i = 0;
     int j = 0;
     if (!uci_ctx_i)
     {
         uci_ctx_i = uci_alloc_context();
+        if(!uci_ctx_i)
+        return -1;
     }
     else
     {
-        uci_zigbeeid = uci_lookup_package(uci_ctx_i, "zigbeeid");
+        uci_zigbeeid = uci_lookup_package(uci_ctx_i, zigbeeid);
         if (uci_zigbeeid)
             uci_unload(uci_ctx_i, uci_zigbeeid);
     }
 
-    if (uci_load(uci_ctx_i, "zigbeeid", &uci_zigbeeid))
+    if (uci_load(uci_ctx_i, zigbeeid, &uci_zigbeeid))
     {
         printf("uci load zigbeeid config fail\n");
+        return -2;
     }else
 	{
 	    char *value_i = NULL;
@@ -76,12 +78,36 @@ char ReportTime_hum[8];
                			printf("len = %d\n",strlen(ZigbeeId));
                			
                	}
+               	
 
-             }
+            }
              
     }
+    return 0;
+}
 
-	return 0;
+
+ int ReadZigbeeId()
+{
+    int  iret;
+    
+    iret = getzigbeeid_config("zigbeeid");
+    if ( iret == 0 )
+    {
+        return 0;
+    }
+
+    printf("read config zigbeeid, ret = %d\n ", iret );
+    printf("require config file zigbeeid fail now require zigbeeid_tmp\n");
+    
+    iret = getzigbeeid_config("zigbeeid_tmp");
+    if ( iret == 0 )
+    {
+        return 0;
+    }  
+
+    printf("read config zigbeeid_temp, ret = %d\n ", iret );    
+	return -100;
 }
 
 
