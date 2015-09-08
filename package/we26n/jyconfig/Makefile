@@ -37,6 +37,7 @@ endef
 define Package/jyconfig/install
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_BIN) ./files/jyconfig  $(1)/etc/config/
+	$(INSTALL_BIN) ./files/devicesid_list  $(1)/etc/config/
 endef
 
 $(eval $(call BuildPackage,jyconfig))
