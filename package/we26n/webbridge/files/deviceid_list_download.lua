@@ -11,8 +11,8 @@ macAddr = string.gsub(macAddr, ":", "");
 macAddr = "we26n_" .. macAddr;
 
 http = require "socket.http";
---url = "http://10.4.44.210:8001/enngateway/getdeviceslist?gatewayid=" .. macAddr;
-url = "http://10.4.44.210:8001/enngateway/getdeviceslist?gatewayid=we26n_78A35106F1A8";
+url = "http://10.4.44.210:8001/enngateway/getdeviceslist?gatewayid=" .. macAddr;
+--url = "http://10.4.44.210:8001/enngateway/getdeviceslist?gatewayid=we26n_78A35106F1A8";
 conn = ubus.connect();
 if not conn then
 	error("Failed to connect to ubusd");
