@@ -27,6 +27,7 @@
 
 #include <uci.h>
 #include <stdint.h>
+#include <math.h>
 
 #define N 128
 
@@ -40,6 +41,16 @@ static struct uci_package * uci_jianyoucfg;
 
 static struct uci_context * uci_ctx_s;
 static struct uci_package * uci_ennconfig;
+
+/*
+double pow(double num,int n)
+{
+    double powint = 1;
+    int i;
+    for(i = 1;i <= n;i++)
+    powint*=num;
+    return powint;
+}*/
 
 int get_sleep_time()
 {
@@ -505,6 +516,68 @@ printf( "len = %d\n", len);
     
 }
 
+
+int get_By_multiplication_factor(int connectfd,char *buff_heat_take[N])
+{
+        char buf_by[N],buff_by[N];
+        uint8_t *puc_by;
+        int m = 0,m_b=0;
+        uint16_t crcvalue_b,crcvalue_b1;
+        int by_multiplication_factor;
+        m=send(connectfd,buff_heat_take,8,0);
+		if(m<0)
+		{
+	        return -2;
+	     }
+	        syslog(LOG_CRIT,"[heat_meter]heat meter by multiplication factor send ok");
+	        printf("heat meter by multiplication factor send ok\n");
+		int len_b=0,count_b=0;
+	    	while(count_b < 5 && len_b < 7)
+	    	{
+			m_b=recv(connectfd,buf_by,7,0);
+			count_b++;
+			if(m_b<=0)
+			    continue;
+            memcpy(buff_by+len_b, buf_by, m_b);
+			len_b = len_b + m_b;
+			//printf("\nlen_h = %d,count_h = %d\n")
+                        sleep(1);
+			
+		}
+		if(len_b != 7)
+		{
+			syslog(LOG_CRIT,"[heat_meter]heat meter by multiplication factor read not 7");
+			printf("heat meter by multiplication factor read not 7\n");
+			return -3;
+		}
+		printf("heat meter by multiplication factor recv ok\n");
+		syslog(LOG_CRIT,"[heat_meter]heat meter by multiplication factor recv ok");
+		printf("\n*****heat meter*******\n");
+		dump_hex(buff_by,len_b);
+
+
+                crcvalue_b = modbus_crc16( buff_by, len_b - 2 );
+                printf("crcvalue_b = %x\n", crcvalue_b);
+                crcvalue_b1 = ((buff_by[len_b - 2]&0xff) << 8) | (buff_by[len_b - 1] & 0xff);
+                printf("crcvalue_b1 = %x\n", crcvalue_b1);
+                if(crcvalue_b == crcvalue_b1)
+                {
+		            puc_by = (uint8_t *)buff_by;
+		            by_multiplication_factor=(puc_by[3] << 8) | (puc_by[4]);
+		            printf("by multiplication factor = %d\n",by_multiplication_factor);
+		            return by_multiplication_factor;	            
+                }
+				else
+				{
+				    syslog(LOG_CRIT,"[heat_meter] crc by multiplication factor error");
+				    return -1;
+				}
+
+    
+}
+
+
+
 int  sendMsgToWeb(char *ieeestr,unsigned short int type,double data)
 {
     int  iret;
@@ -611,6 +684,7 @@ void* enn_meter_thread( void *arg )
 	 //char buff_heat[N]={0x03,0X03,0X00,0X78,0X00,0X02,0X45,0XF0};
 	char buff_water[N]={0x02,0X03,0X00,0X1E,0X00,0X04,0X24,0X3C};
 	char buff_heat[N]={0x03,0X03,0X00,0X1C,0X00,0X04,0X84,0X2D};
+	char buff_heat_take[N]={0x03,0x03,0x05,0x9F,0x00,0x01,0xB5,0x0A};
 	
         printf( "enn_meter_thread 89789789 init\n");  
  	
@@ -727,14 +801,14 @@ void* enn_meter_thread( void *arg )
                 printf("crcvalue1 = %x\n", crcvalue1);
                 if(crcvalue == crcvalue1)
                 {
-		    puc_water = (uint8_t *)buf_water;
-		    aaa_w = modbus_conv_longm(&(puc_water[3]));
-		    bbb = modbus_conv_real4(&(puc_water[7]));
-		    ccc = bbb;
-		    ccc = ccc + aaa_w; 
-		    printf("The water meter reading is :%f\n",ccc);
-                    syslog(LOG_CRIT,"[water_meter]water meter send value=%f", ccc);
-		    sendMsgToWeb(waterid,WATER,ccc);
+		            puc_water = (uint8_t *)buf_water;
+		            aaa_w = modbus_conv_longm(&(puc_water[3]));
+		            bbb = modbus_conv_real4(&(puc_water[7]));
+		            ccc = bbb;
+		            ccc = ccc + aaa_w; 
+		            printf("The water meter reading is :%f\n",ccc);
+                            syslog(LOG_CRIT,"[water_meter]water meter send value=%f", ccc);
+		            sendMsgToWeb(waterid,WATER,ccc);
                 }
 				else
 				{
@@ -782,17 +856,28 @@ void* enn_meter_thread( void *arg )
                 printf("crcvalue1 = %x\n", crcvalue1);
                 if(crcvalue == crcvalue1)
                 {
-		    puc_heat = (uint8_t *)buf_heat;
-		    aaa_h = modbus_conv_long(&(puc_heat[3]));
-		    bbb_h = modbus_conv_real4(&(puc_heat[7]));
-		    printf("\n************\n");
-		    printf("aaa_h = %ld\n",aaa_h);
-		    printf("\n************\n");
-		    ccc_h = bbb_h;
-		    ccc_h = ccc_h + aaa_h;
-		    printf("The heat meter reading is :%f\n",ccc_h);
-                    syslog(LOG_CRIT,"[heat_meter]heat meter send value=%f", ccc_h);
-		    sendMsgToWeb(heatid,HEAT,ccc_h);
+		            puc_heat = (uint8_t *)buf_heat;
+		            aaa_h = modbus_conv_longm(&(puc_heat[3]));
+		            bbb_h = modbus_conv_real4(&(puc_heat[7]));
+		            printf("\n************\n");
+		            printf("aaa_h = %ld\n",aaa_h);
+		            printf("\n************\n");
+		            
+		            
+		            int by_take = 0;
+		            by_take = get_By_multiplication_factor(connectfd,buff_heat_take); 
+		            printf("\n********in heat meter recv*********\n");
+		            printf("By multiplication factor is:%d\n",by_take);
+		            
+		            
+		            ccc_h = bbb_h;
+		            ccc_h = ccc_h + aaa_h;
+		             printf("The heat meter before count reading is :%f\n",ccc_h);
+		            ccc_h = (pow(10,by_take-4))*ccc_h;
+		            printf("The heat meter after count reading is :%f\n",ccc_h);
+		          // printf("The heat meter reading is :%f\n",pow(10,by_take));
+                            syslog(LOG_CRIT,"[heat_meter]heat meter send value=%f", ccc_h);
+		            sendMsgToWeb(heatid,HEAT,ccc_h);
                 }
 				else
 				{

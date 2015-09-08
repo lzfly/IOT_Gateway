@@ -41,7 +41,7 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 	CC="$(TARGET_CC)" \
 	CFLAGS="$(TARGET_CFLAGS) -Wall -I ./enn" \
-	LDFLAGS="$(TARGET_LDFLAGS) -lpthread -lubox -lubus -luci" \
+	LDFLAGS="$(TARGET_LDFLAGS) -lpthread -lubox -lubus -luci -lm" \
 	-f test.mk
 endef
 
