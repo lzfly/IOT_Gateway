@@ -1,0 +1,11 @@
+--- a/lua/ubus.c	2015-06-16 09:43:49.000000000 +0800
++++ b/lua/ubus.c	2015-08-26 11:04:52.000000000 +0800
+@@ -104,7 +104,7 @@
+ 		break;
+ 
+ 	case BLOBMSG_TYPE_STRING:
+-		lua_pushstring(L, data);
++		lua_pushlstring( L, data, len-1 );
+ 		break;
+ 
+ 	case BLOBMSG_TYPE_ARRAY:

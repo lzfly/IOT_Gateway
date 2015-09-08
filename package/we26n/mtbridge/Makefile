@@ -7,7 +7,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=rfmodbus
+PKG_NAME:=mtbridge
 PKG_VERSION:=0.1.1
 PKG_RELEASE:=1
 
@@ -16,16 +16,16 @@ PKG_USE_MIPS16:=0
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/rfmodbus
+define Package/mtbridge
   SECTION:=we26n
   CATEGORY:=WE26N
-  TITLE:=test program for rfmodbus
+  TITLE:=mqttclient sub to mqtt server
   MAINTAINER:=wangmingdong <wang_leaf@sina.com>
-  DEPENDS:=+libpthread +libubus +libubox +libevent2-core 
+  DEPENDS:=+libpthread +libubus +libubox +libmosquitto +libuci
 endef
 
-define Package/rfmodbus/description
-  test program for rfmodbus 
+define Package/mtbridge/description
+  mqttclient to mqtt server, forward to ubus.
 endef
 
 define Build/Prepare
@@ -39,13 +39,13 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 	CC="$(TARGET_CC)" \
 	CFLAGS="$(TARGET_CFLAGS) -Wall" \
-	LDFLAGS="$(TARGET_LDFLAGS) -lpthread -lubox -lubus -levent_core" \
+	LDFLAGS="$(TARGET_LDFLAGS) -lubox -lubus -lpthread -lmosquitto -luci" \
 	-f test.mk
 endef
 
-define Package/rfmodbus/install
+define Package/mtbridge/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/rfmodbus $(1)/usr/bin/rfmodbus
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/mtbridge $(1)/usr/bin/mtbridge
 endef
 
-$(eval $(call BuildPackage,rfmodbus))
+$(eval $(call BuildPackage,mtbridge))

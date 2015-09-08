@@ -19,6 +19,7 @@
 #include "myqueue.h"
 #include "newuart.h"
 
+void  dump_hex( const unsigned char * ptr, size_t  len );
 
 typedef struct _tag_code_context
 {
@@ -28,11 +29,15 @@ typedef struct _tag_code_context
     uint8_t  dec_pad[128];
 
     /**/
-    uint8_t  enc_pad[128];
+    uint8_t  enc_sno;
+    uint8_t  enc_pad[256];
 
     /**/
     nuart_cbk_func  func;
     intptr_t  arg;
+    
+    nuart_data_cbk_func  datafunc;
+    intptr_t  dataarg;
 
 } code_context_t;
 
@@ -51,6 +56,7 @@ int  code_init( intptr_t * pret )
     /**/
     pctx->dec_flag = 0;
     pctx->dec_offs = 0;
+    pctx->enc_sno = 0;
     pctx->func = NULL;
     pctx->arg = 0;    
     *pret = (intptr_t)pctx;
@@ -59,7 +65,7 @@ int  code_init( intptr_t * pret )
 
 
 
-int  code_encode( intptr_t ctx, int tlen, uint8_t * pdat, uint8_t ** ppad, int * pret )
+int  code_encode( intptr_t ctx, uint16_t cmd, int tlen, uint8_t * pdat, uint8_t ** ppad, int * pret )
 {
     int  i;
     uint8_t  txor;
@@ -74,29 +80,36 @@ int  code_encode( intptr_t ctx, int tlen, uint8_t * pdat, uint8_t ** ppad, int *
     xpad[0] = 0x55;
     xpad[1] = 0xAA;
     
-    xpad[2] = (uint8_t)(tlen + 7);
+    xpad[2] = (uint8_t)(tlen + 9);
     xpad[3] = 0;
     xpad[4] = 0;
     xpad[5] = 0;
-    xpad[6] = 0;
+    xpad[6] = pctx->enc_sno ++;        /* sn */
     xpad[7] = 0x08;
 
     /**/
-    memcpy( &(xpad[8]), pdat, tlen );
-
+    xpad[8] = (uint8_t)(cmd >> 8);
+    xpad[9] = (uint8_t)(cmd);
+    
+    /**/
+    if ( tlen > 0 )
+    {
+        memcpy( &(xpad[10]), pdat, tlen );
+    }
+    
     /**/
     txor = 0;
-    for ( i=2; i<(8+tlen); i++ )
+    for ( i=2; i<(10+tlen); i++ )
     {
         txor = txor ^ xpad[i];
     }
 
     /**/
-    xpad[8+tlen] = txor;
+    xpad[10+tlen] = txor;
 
     /**/
     *ppad = xpad;
-    *pret = 9+tlen;
+    *pret = 11+tlen;
     return 0;
     
 }
@@ -106,6 +119,7 @@ int  code_dec_step( code_context_t * pctx, uint8_t tdat )
 {
     int  i;
     int  temp;
+    uint16_t  cmd;
     uint8_t  txor;
     
     switch ( pctx->dec_flag )
@@ -126,10 +140,19 @@ int  code_dec_step( code_context_t * pctx, uint8_t tdat )
             pctx->dec_offs = 2;
             pctx->dec_pad[1] = 0xAA;
         }
+        else if ( tdat == 0x55 )
+        {
+        	/* nothing, dec_flag = 1 */
+        }
+        else
+        {
+            pctx->dec_flag = 0;
+            pctx->dec_offs = 0;
+        }
         break;
 
     case 2:
-        if ( (tdat > 80) || (tdat < 9) )
+        if ( (tdat > 0x50) || (tdat < 9) )
         {
             pctx->dec_flag = 0;
             pctx->dec_offs = 0;
@@ -166,15 +189,35 @@ int  code_dec_step( code_context_t * pctx, uint8_t tdat )
             break;
         }
 
-        /**/
-        if ( NULL != pctx->func )
-        {
-            pctx->func( pctx->arg, (temp - 7), &(pctx->dec_pad[8]) );
-        }
+        // dump_hex( pctx->dec_pad, pctx->dec_offs );
 
+        /**/
+        cmd = pctx->dec_pad[8];
+        cmd = (cmd << 8) | pctx->dec_pad[9];
+
+        if ( cmd == 0x800B )
+        {
+            if ( NULL != pctx->datafunc )
+            {
+                pctx->datafunc( pctx->dataarg, (temp - 11), &(pctx->dec_pad[10]) );
+            }
+        }
+        else
+        {
+            if ( NULL != pctx->func )
+            {
+                pctx->func( pctx->arg, cmd, (temp - 11), &(pctx->dec_pad[10]) );
+            }
+            else
+            {
+                printf( "dec: func is NULL. \n" );
+            }
+        }
+        
         pctx->dec_flag = 0;
-        pctx->dec_offs = 0;        
+        pctx->dec_offs = 0;
         break;
+        
     }
 
     return 0;
@@ -190,6 +233,7 @@ int  code_decode( intptr_t ctx, int tlen, uint8_t * pdat )
     /**/
     pctx = (code_context_t *)ctx;
 
+   
     /**/
     for ( i=0; i<tlen; i++ )
     {
@@ -208,9 +252,41 @@ int  code_set_callbk( intptr_t ctx, nuart_cbk_func func, intptr_t arg )
     pctx = (code_context_t *)ctx;
 
     /**/
+    if ( func == NULL )
+    {
+        if ( arg != pctx->arg )
+        {
+            return 0;
+        }
+    }
+
     pctx->func = func;
     pctx->arg = arg;
     return 0;
+    
+}
+
+
+int  code_set_data_callbk( intptr_t ctx, nuart_data_cbk_func func, intptr_t arg )
+{
+    code_context_t * pctx;
+
+    /**/
+    pctx = (code_context_t *)ctx;
+
+    /**/
+    if ( func == NULL )
+    {
+        if ( arg != pctx->dataarg )
+        {
+            return 0;
+        }
+    }
+
+    pctx->datafunc = func;
+    pctx->dataarg = arg;
+    return 0;
+
 }
 
 
@@ -244,7 +320,7 @@ void  nuart_read_cbk( evutil_socket_t ufd, short event, void * parg )
     /**/
     pctx = (nuart_context_t *)parg;
 
-    printf( "nuart read event %d\n", event  );
+    //printf( "nuart read event %d\n", event  );
 
     /**/
     while(1)
@@ -398,6 +474,8 @@ int  nuart_init( struct event_base * pevbase, int tno, intptr_t * pret )
         return 2;
     }
 
+    tcflush( fd, TCIFLUSH );
+
     /**/
     pctx = (nuart_context_t *)malloc( sizeof(nuart_context_t ) );
     if ( NULL == pctx )
@@ -456,10 +534,9 @@ int  nuart_init( struct event_base * pevbase, int tno, intptr_t * pret )
 }
 
 
-void  dump_hex( const unsigned char * ptr, size_t  len );
 
 
-int  nuart_send( intptr_t ctx, int tlen, void * pdat )
+int  nuart_send( intptr_t ctx, uint16_t cmd, int tlen, void * pdat )
 {
     int  iret;
     int  elen;
@@ -470,19 +547,19 @@ int  nuart_send( intptr_t ctx, int tlen, void * pdat )
     pctx = (nuart_context_t *)ctx;
 
     /**/
-    if ( tlen < 2 )
+    if ( tlen < 0 )
     {
         return 2;
     }
 
-    if ( tlen > 80 )
+    if ( tlen > 0x50 )
     {
         printf( "nuart_send, too large\n" );
         return 3;
     }
 
     /**/
-    code_encode( pctx->cctx, tlen, (uint8_t *)pdat, &petr, &elen );
+    code_encode( pctx->cctx, cmd, tlen, (uint8_t *)pdat, &petr, &elen );
     dump_hex( petr, elen );
 
     /**/
@@ -528,5 +605,16 @@ int  nuart_set_callbk( intptr_t ctx, nuart_cbk_func func, intptr_t arg )
 }
 
 
+int  nuart_set_data_callbk( intptr_t ctx, nuart_data_cbk_func func, intptr_t arg )
+{
+    nuart_context_t * pctx;
+
+    /**/
+    pctx = (nuart_context_t *)ctx;
+
+    /**/
+    return code_set_data_callbk( pctx->cctx, func, arg );
+
+}
 
 

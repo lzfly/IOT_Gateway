@@ -53,8 +53,15 @@ static int stm32_reset( struct ubus_context *ctx, struct ubus_object *obj,
     {
         ptr = blobmsg_data( tb[RESET_TARGET] );
         printf( "target = %s\n", ptr );
-
-        if ( 0 == strcmp(ptr, "zigbee" ) )
+		
+		if ( 0 == strcmp(ptr, "stm32" ) )
+		{
+            tary[0] = 0xAA;
+            tary[1] = 0x0;
+            
+            myuart_send( g_uartctx, 2, tary );
+		}
+        else if ( 0 == strcmp(ptr, "zigbee" ) )
         {
             tary[0] = 0xAA;
             tary[1] = 0x3;
