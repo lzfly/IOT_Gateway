@@ -50,6 +50,7 @@ define Package/web/install
 	$(CP) ./files/newweb/  $(1)/usr/lib/lua/luci/view/
 	$(CP) ./files/bootstrap/header.htm $(1)/usr/lib/lua/luci/view/themes/bootstrap/header.htm
 	$(CP) ./files/bootstrap/footer.htm $(1)/usr/lib/lua/luci/view/themes/bootstrap/footer.htm
+	$(CP) ./files/sysauth.htm $(1)/usr/lib/lua/luci/view/sysauth.htm
 
 endef
 
