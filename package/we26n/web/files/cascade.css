@@ -195,8 +195,8 @@ a {
 }
 
 a:hover {
-	color: #00438a;
-	text-decoration: underline;
+	color: #000000;
+
 }
 
 .pull-right {
@@ -213,10 +213,12 @@ a:hover {
 p,
 .cbi-map-descr,
 .cbi-section-descr {
-	font-size: 13px;
+	font-size: 14px;
 	font-weight: normal;
 	line-height: 18px;
 	margin-bottom: 9px;
+	color:#ffffff;
+	padding-top:9px;
 }
 
 p small {
@@ -459,12 +461,12 @@ form .cbi-value-field {
 
 form .cbi-value label.cbi-value-title {
 	padding-top: 6px;
-	font-size: 13px;
+	font-size: 14px;
 	line-height: 18px;
 	float: left;
 	width: 100px;
 	text-align: right;
-	color: #404040;
+	color: #FFFFFF;
 }
 
 input[type=checkbox], input[type=radio] {

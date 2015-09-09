@@ -13,7 +13,6 @@ start-stop-daemon -b -S -x webdevice.lua
 start-stop-daemon -b -S -x wifibridge
 start-stop-daemon -b -S -x wifibridge_1
 
-start-stop-daemon -b -S -x mqttclient_sub
-start-stop-daemon -b -S -x mqttclient_pub
+start-stop-daemon -b -S -x mtbridge
 
 exit 0

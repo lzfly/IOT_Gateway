@@ -157,6 +157,14 @@ a:active {
  padding:2px 0px 0px;
 
  }
+ 
+ p:hover {
+
+	text-decoration: none;
+
+	color:blue;
+
+}
 
  img{
 
@@ -422,9 +430,9 @@ margin:auto;
 
  #network_set{
 
- width:230px;
+ width:210px;
 
- height:310px;
+ height:150px;
 
  float:left;
 
@@ -433,6 +441,7 @@ margin:auto;
  text-align:center;
 
  background-color:#00A6A6;
+
 
  }
 
@@ -458,33 +467,34 @@ margin:auto;
 
 
 
+ #safe{
 
+ width:210px;
 
+ height:150px;
 
-
-
-
-
-
-
-
- #middle .energy_store{
-
- width:150px;
+ clear:left;
 
  float:left;
 
- margin-left:10px;
+ top:10px;
+
+ position:relative;
+
+ background-color:#bf5af0;
 
  }
 
+
  #wireless_set{
 
- width:150px;
+ width:210px;
 
  height:150px;
 
  float:left;
+ 
+ margin-left:10px;
 
  background-color:#00D8CB;
 
@@ -492,13 +502,15 @@ margin:auto;
 
  #equ_manage{
 
- width:150px;
+ width:210px;
 
  height:150px;
 
  float:left;
 
  margin-top:10px;
+ 
+  margin-left:10px;
 
  background-color:#009BBA;
 
@@ -540,7 +552,7 @@ margin:auto;
  
   #er_internet{
 
- width:180px;
+ width:210px;
 
  height:130px;
 
@@ -557,9 +569,9 @@ margin:auto;
  
 
  
-    #safe{
+    #wifi{
 
- width:220px;
+ width:210px;
    
  height:150px;
 
@@ -570,7 +582,7 @@ margin:auto;
 
  position:relative;
 
- background-color:#bf5af0;
+ background-color:#f96;
 
  }
 
@@ -579,7 +591,7 @@ margin:auto;
  
    #elewater{
 
- width:240px;
+ width:210px;
    
  height:150px;
 
@@ -597,7 +609,7 @@ margin:auto;
  
    #zigbee{
 
- width:250px;
+ width:210px;
 
  height:150px;
 
@@ -635,7 +647,7 @@ margin-top:10px;
 
  #green_internet{
 
- width:230px;
+ width:210px;
 
  height:150px;
 
@@ -673,7 +685,7 @@ margin-top:10px;
 
  #store_center{
 
- width:230px;
+ width:210px;
 
  height:150px;
 
@@ -689,7 +701,7 @@ margin-top:10px;
 
  #energy_save{
 
- width:150px;
+ width:210px;
 
  height:150px;
 
@@ -705,7 +717,7 @@ margin-top:10px;
 
  #band_manage{
 
- width:227px;
+ width:207px;
 
  height:150px;
 
@@ -1206,45 +1218,31 @@ function error(){
   <div class="content_items">
 
    <div class="t1">
-     <!--<a href="javascript:goto(0);" class="link"><div id="network_set" class="big" data-page="network_set"><span class="index" style="background-position: -0px -0px; width: 90px; height: 90px; margin-top:90px;"></span>-->
-     <a href="javascript:goto(0);" class="link"><div id="network_set" class="big" data-page="network_set"><span class="index" style="background-position: -0px -0px; width: 90px; height: 90px; margin-top:90px;"></span><p>宽带上网设置</p>
-
-       <!--span class="info"></span> -->
-      </div>
-     </a>
+   
+   
+     <a href="javascript:goto(0);" class="link"><div id="network_set" class="big" data-page="network_set"><span class="index" style="background-position: -0px -0px; width: 90px; height:90px; margin-top:20px;"></span><p>宽带上网设置</p></div></a>
+     
+       <a href="javascript:goto(0);" class="link"><div id="wireless_set" class="big" data-page="wireless_set"><span class="index" style="background-position: -0px -100px; width: 90px; height: 90px;margin-top:20px;"></span><p>无线设置</p></div></a>
+       
+       <a href="javascript:goto(0);" class="link"><div id="wifi" class="big" data-page="wfi"><span class="index" style="background-position: -0px -200px; width: 90px; height: 90px;margin-top:20px;"></span><p>wifi设备</p></div></a>
+       
+       <a href="javascript:goto(0);" class="link"><div id="elewater" class="big" data-page="elewater"><span class="index" style="background-position: -0px -300px; width: 90px; height: 90px;margin-top:20px;"></span><p>470设备</p></div></a>
+       
+  	   <a href="javascript:goto(0);" class="link"><div id="safe" class="big" data-page="safe"><span class="index" style="background-position: -0px -400px; width: 90px; height: 90px;margin-top:20px;"></span><p>安全中心</p></div></a>
   
-   <div class="energy_store">
+      <a href="javascript:goto(0);" class="link"><div id="equ_manage" class="big" data-page="equ_manage"><span class="index" style="background-position: -0px -500px; width: 90px; height: 90px;margin-top:20px;"></span><p>设备管理</p></div></a>
+	    
+	  <a href="javascript:goto(0);" class="link"><div id="zigbee" class="big" data-page="zigbee"><span class="index" style="background-position: -0px -600px; width: 90px; height: 90px;margin-top:20px;"></span><p>ZIGBEE设备</p></div></a>
+	
+	  <a href="javascript:goto(0);" class="link"><div id="bluetooth" class="big" data-page="bluetooth"><span class="index" style="background-position: -0px -700px; width: 90px; height: 90px;margin-top:20px;"></span><p>蓝牙设备</p></div></a>
+       
+	   <a href="javascript:goto(0);" class="link"><div id="green_internet" class="big" data-page="green_internet"><span class="index" style="background-position: -0px -800px; width: 90px; height: 90px; margin-top:20px;"></span><p>绿色上网通道</p></div></a>
 
-	     <a href="javascript:goto(0);" class="link"><div id="wireless_set" class="big" data-page="wireless_set"><span class="index" style="background-position: -0px -100px; width: 90px; height: 90px;margin-top:20px;"></span><p>无线设置</p></div></a>
+	   <a href="javascript:goto(0);" class="link"><div id="store_center" class="big" data-page="store_center"><span class="index" style="background-position: -0px -900px; width: 90px; height: 90px;margin-top:20px;"></span><p>存储中心</p></div></a>
 
-	     <a href="javascript:goto(0);" class="link"><div id="equ_manage" class="big" data-page="equ_manage"><span class="index" style="background-position: -0px -200px; width: 90px; height: 90px;margin-top:20px;"></span><p>设备管理</p></div></a>
+	<a href="javascript:goto(0);" class="link"><div id="energy_save" class="big" data-page="energy_save"><span class="index" style="background-position: -0px -1000px; width: 90px; height: 90px;margin-top:20px;"></span><p>绿色节能</p></div></a>
 
-   </div>
-
-       
-       
-       
-       
-       <a href="javascript:goto(0);" class="link"><div id="safe" class="big" data-page="safe"><img src="<%=resource%>/images/safe.png" style=" margin-top:30px;"><p>安全中心</p></div></a>
-       <a href="javascript:goto(0);" class="link"><div id="elewater" class="big" data-page="elewater"><img src="<%=resource%>/images/wi.png" style=" margin-top:30px;"><p>470设备</p></div></a>
-       <a href="javascript:goto(0);" class="link"><div id="zigbee" class="big" data-page="zigbee"><img src="<%=resource%>/images/z.png" style="margin-top:10px;"><p>ZIGBEE设备</p></div></a>
-       <a href="javascript:goto(0);" class="link"><div id="bluetooth" class="big" data-page="bluetooth"><img src="<%=resource%>/images/lan.png" style="margin-top:20px;"><span class="index" style="background-position: -0px -400px;"></span><p>蓝牙设备</p></div></a>
-       
-       
-       
-       
-       
-       
-       
-       
-
-	   <a href="javascript:goto(0);" class="link"><div id="green_internet" class="big" data-page="green_internet"><span class="index" style="background-position: -0px -300px; width: 90px; height: 90px; margin-top:20px;"></span><p>绿色上网通道</p></div></a>
-
-	   <a href="javascript:goto(0);" class="link"><div id="store_center" class="big" data-page="store_center"><span class="index" style="background-position: -0px -400px; width: 90px; height: 90px;margin-top:20px;"></span><p>存储中心</p></div></a>
-
-	   <a href="javascript:goto(0);" class="link"><div id="energy_save" class="big" data-page="energy_save"><span class="index" style="background-position: -0px -500px; width: 90px; height: 90px;margin-top:20px;"></span><p>绿色节能</p></div></a>
-
-       <a href="javascript:goto(0);" class="link"><div id="band_manage" class="big" data-page="band_manage"><span class="index" style="background-position: -0px -600px; width: 90px; height: 90px;margin-top:20px;"></span><p>上网带宽管理</p></div></a>
+       <a href="javascript:goto(0);" class="link"><div id="band_manage" class="big" data-page="band_manage"><span class="index" style="background-position: -0px -1100px; width: 90px; height: 90px;margin-top:20px;"></span><p>上网带宽管理</p></div></a>
 
 	</div>      <!--t1结束-->
  </div>         <!--content_items结束-->

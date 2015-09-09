@@ -32,10 +32,12 @@ typedef struct _tag_mmqt_msg
 /**/
 int  mmqt_init( intptr_t qctx, char * ipdr, int port, intptr_t * pret );
 
+int  mmqt_set_user( intptr_t ctx, char * user );
 int  mmqt_get_fd( intptr_t ctx, int * pfd );
 int  mmqt_start_run( intptr_t ctx );
 
 int  mmqt_publish( intptr_t ctx, char * topic, char * msg );
+int  mmqt_notice( intptr_t ctx, char * mod, char * msg );
 
 
 #endif

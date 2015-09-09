@@ -17,6 +17,9 @@ typedef struct _tag_mmqt_context
     struct mosquitto * mosq;
     intptr_t qctx;
     char  topic[20];
+
+    /**/
+    char  user[40];
     
 } mmqt_context_t;
 
@@ -211,6 +214,19 @@ int  mmqt_start_run( intptr_t ctx )
 }
 
 
+int  mmqt_set_user( intptr_t ctx, char * user )
+{
+    mmqt_context_t * pctx;
+    
+    /**/
+    pctx = (mmqt_context_t *)ctx;
+
+    /**/
+    strcpy( pctx->user, user );
+    return 0;
+}
+
+
 int  mmqt_get_fd( intptr_t ctx, int * pfd )
 {
     mmqt_context_t * pctx;
@@ -244,6 +260,39 @@ int  mmqt_publish( intptr_t ctx, char * topic, char * msg )
     return 0;
 }
 
+
+/* publish to user */
+int  mmqt_notice( intptr_t ctx, char * mod, char * msg )
+{
+    int  iret;
+    int  tlen;    
+    mmqt_context_t * pctx;
+    char * ptr;
+    
+    /**/
+    pctx = (mmqt_context_t *)ctx;
+
+    /**/
+    tlen = strlen(mod) + strlen(msg) + 10;
+    ptr = (char *)alloca( tlen );
+    if ( NULL == ptr )
+    {
+        return 1;
+    }
+
+    /**/
+    tlen = sprintf( ptr, "C:N|M:%s|%s", mod, msg );
+    
+    /* qos = 0, retain = 0. */
+    iret = mosquitto_publish( pctx->mosq, NULL, pctx->user, tlen, ptr, 0, 0 );
+    if ( 0 != iret )
+    {
+        return 2;
+    }
+
+    return 0;
+    
+}
 
 
 static int  mmqt_get_macaddr( char * pmac )
