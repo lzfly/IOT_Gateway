@@ -20,6 +20,7 @@
 
 static intptr_t qctx;
 static intptr_t mtctx;
+struct ubus_context * ubus;
 
 
 enum {
@@ -34,7 +35,49 @@ static const struct blobmsg_policy  public_policy[] = {
 };
 
 
-static int mtbridge_public( struct ubus_context *ctx, struct ubus_object *obj,
+enum {
+    NTC_MESG,
+    __NTC_MAX 
+};
+
+static const struct blobmsg_policy  notice_policy[] = {
+    [NTC_MESG] = { .name = "message", .type = BLOBMSG_TYPE_STRING },
+};
+
+
+static int mtbridge_notice( struct ubus_context *ctx, struct ubus_object *obj,
+                struct ubus_request_data *req, const char *method,
+                struct blob_attr *msg )
+{
+    struct blob_attr * tb[__NTC_MAX];
+    char * mssge = NULL;
+    
+    /**/
+    blobmsg_parse( notice_policy, ARRAY_SIZE(notice_policy), tb, blob_data(msg), blob_len(msg));
+    
+    if ( tb[NTC_MESG] )
+    {
+        mssge = blobmsg_data( tb[NTC_MESG] );
+    }
+
+    /**/
+    if ( mssge == NULL )
+    {
+        return UBUS_STATUS_OK;
+    }
+    
+    /**/
+    printf( "ubus notice, %s\n", mssge );
+    
+    /**/
+    mmqt_notice( mtctx, mssge );
+    return UBUS_STATUS_OK;
+
+}
+
+
+
+static int mtbridge_publish( struct ubus_context *ctx, struct ubus_object *obj,
                 struct ubus_request_data *req, const char *method,
                 struct blob_attr *msg )
 {
@@ -55,8 +98,13 @@ static int mtbridge_public( struct ubus_context *ctx, struct ubus_object *obj,
         mssge = blobmsg_data( tb[PUB_MESG] );
     }
 
+    if ( (topic == NULL) || (mssge == NULL) )
+    {
+        return UBUS_STATUS_OK;
+    }
+    
     /**/
-    printf( "ubus, %s, %s\n", topic, mssge );
+    printf( "ubus publish, %s, %s\n", topic, mssge );
     
     /**/
     mmqt_publish( mtctx, topic, mssge );
@@ -65,8 +113,10 @@ static int mtbridge_public( struct ubus_context *ctx, struct ubus_object *obj,
 }
 
 
+
 static const struct ubus_method mtbridge_methods[] = {
-    UBUS_METHOD( "publish", mtbridge_public, public_policy ),    
+    UBUS_METHOD( "publish", mtbridge_publish, public_policy ),    
+    UBUS_METHOD( "notice", mtbridge_notice,  notice_policy ),
 };
 
 
@@ -86,20 +136,19 @@ static struct ubus_object mtbridge_object = {
 int  ubussrv_server_add( void )
 {
     int ret;
-    struct ubus_context * ctx;
 
     /**/
-    ctx = ubus_connect( NULL );
-    if ( NULL == ctx) 
+    ubus = ubus_connect( NULL );
+    if ( NULL == ubus ) 
     {
         return 1;
     }
 
     /**/
-    ubus_add_uloop( ctx );
+    ubus_add_uloop( ubus );
 
     /**/
-    ret = ubus_add_object( ctx, &mtbridge_object );
+    ret = ubus_add_object( ubus, &mtbridge_object );
     if (ret)
     {
         fprintf(stderr, "Failed to add object: %s\n", ubus_strerror(ret));
@@ -107,6 +156,194 @@ int  ubussrv_server_add( void )
     }
     
     return 0;
+    
+}
+
+
+void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
+{
+	//static const struct blobmsg_policy policy[2] = { { "args", BLOBMSG_TYPE_INT32 }, { "argv", BLOBMSG_TYPE_INT32 } };
+	//struct blob_attr * cur[2];
+	//uint32_t  a,b;
+	
+	/**/
+	if ( type == UBUS_MSG_DATA )
+	{
+		/* req.priv */
+		printf( "data cback, %d\n", type );
+//		blobmsg_parse( &policy, 2, &cur, blob_data(msg), blob_len(msg) );
+		
+		/**/
+//		a = blobmsg_get_u32( cur[0] );
+//		b = blobmsg_get_u32( cur[1] );
+		
+//		printf( "a = %d, b = %d\n", a, b );
+		
+	}
+
+	return;
+}
+
+
+int  send_set_msg_to_zigbee(char *deviceid, char *attr, char *data)
+{
+    uint32_t  id;
+	static struct blob_buf b;
+
+    printf("[send_set_msg_to_zigbee] start\r\n");
+
+    /**/
+	if ( ubus_lookup_id( ubus, "we26n_zigbee_febee", &id) ) {
+		fprintf(stderr, "Failed to look up we26n_zigbee_febee object\n");
+		return 2;
+	}
+	
+	blob_buf_init( &b, 0 );
+
+	blobmsg_add_string( &b, "gatewayid", "xxxx" ); // not need
+	blobmsg_add_string( &b, "deviceid", deviceid );
+	blobmsg_add_string( &b, "devicetype", "xxxx" );// not need
+	blobmsg_add_string( &b, "attr", attr );
+	blobmsg_add_string( &b, "data", data );
+
+	printf("[send_set_msg_to_zigbee]ubus_invoke, %s,%s, data = %s\r\n", deviceid, attr, data );
+	
+	/**/
+	ubus_invoke( ubus, id, "ctrlcmd", b.head, test_data_cback, 0, 3000 );
+	return 0;
+	
+}
+
+
+int  send_get_msg_to_zigbee(char *deviceid, char *attr)
+{
+    uint32_t  id;
+	static struct blob_buf b;
+
+    printf("[send_get_msg_to_zigbee] start. \r\n" );
+
+    /**/
+	if ( ubus_lookup_id( ubus, "we26n_zigbee_febee", &id ) ) {
+		fprintf(stderr, "Failed to look up we26n_zigbee_febee object\n");
+		return 2;
+	}
+	
+	blob_buf_init( &b, 0 );
+	blobmsg_add_string( &b, "gatewayid", "xxxx" ); // not need
+	blobmsg_add_string( &b, "deviceid", deviceid);
+	blobmsg_add_string( &b, "devicetype", "xxxx");// not need
+	blobmsg_add_string( &b, "attr", attr );
+
+	printf("[send_get_msg_to_zigbee]ubus_invoke, %s, attr = %s\r\n", deviceid, attr);
+	/**/
+	ubus_invoke( ubus, id, "getstatecmd", b.head, test_data_cback, 0, 3000);
+
+	return 0;
+	
+}
+
+
+void  test_get_zigbee( char * msg )
+{
+    int  iret;
+    char * ptr;
+    char * devid;
+    char * attr;
+    
+    /* device id */
+    devid = msg;
+    ptr = devid;
+    ptr = strchr( ptr, '|' );
+    if ( NULL == ptr )
+    {
+        return;
+    }
+
+    /* device type */
+    *ptr = '\0';
+    ptr = ptr + 1;
+    ptr = strchr( ptr, '|' );
+    if ( NULL == ptr )
+    {
+        return;
+    }
+    
+    /* attribure */
+    *ptr = '\0';
+    attr = ptr + 1;
+    
+    /**/
+    if ( (strlen(devid) <= 0) || (strlen(attr) <= 0) )
+    {
+        return;
+    }
+
+    /**/
+    iret = send_get_msg_to_zigbee( devid, attr );
+    if ( 0 != iret )
+    {
+        printf( "set zigbee, ret = %d", iret );
+    }
+    
+    return;
+    
+}
+
+
+
+void  test_set_zigbee( char * msg )
+{
+    int  iret;
+    char * ptr;
+    char * devid;
+    char * attr;
+    char * data;
+
+    /* device id */
+    devid = msg;
+    ptr = devid;
+    ptr = strchr( ptr, '|' );
+    if ( NULL == ptr )
+    {
+        return;
+    }
+
+    /* device type */
+    *ptr = '\0';
+    ptr = ptr + 1;
+    ptr = strchr( ptr, '|' );
+    if ( NULL == ptr )
+    {
+        return;
+    }
+    
+    /* attribure */
+    *ptr = '\0';
+    attr = ptr + 1;
+    ptr = attr;
+    ptr = strchr( ptr, '|' );
+    if ( NULL == ptr )
+    {
+        return;
+    }
+
+    /* data */
+    *ptr = '\0';
+    data = ptr + 1;
+
+    if ( (strlen(devid) <= 0) || (strlen(attr) <= 0) || (strlen(data) <= 0) )
+    {
+        return;
+    }
+
+    /**/
+    iret = send_set_msg_to_zigbee( devid, attr, data );
+    if ( 0 != iret )
+    {
+        printf( "set zigbee, ret = %d", iret );
+    }
+    
+    return;
     
 }
 
@@ -178,9 +415,33 @@ void  test_uloopfd_cbk(struct uloop_fd * pufd, unsigned int events)
         printf( "msq : %d,%d : %s\n", pmsg->action, pmsg->object, pmsg->msg );
 
         /**/
-        if ( (pmsg->action == MT_ACT_SET) && (pmsg->object == MT_OBJ_GATE) )
+        if ( pmsg->action == MT_ACT_SET )
         {
-            test_set_gateway( pmsg->msg );
+            switch( pmsg->object )
+            {
+            case MT_OBJ_GATE:
+                test_set_gateway( pmsg->msg );
+                break;
+
+            case MT_OBJ_ZIG:
+                test_set_zigbee( pmsg->msg );
+                break;
+
+            default:
+                break;
+            }
+        }
+        else if ( pmsg->action == MT_ACT_GET )
+        {
+            switch( pmsg->object )
+            {
+            case MT_OBJ_ZIG:
+                test_get_zigbee( pmsg->msg );
+                break;
+
+            default:
+                break;
+            }
         }
         
     }
@@ -234,7 +495,7 @@ cfg->protocol_version = MQTT_PROTOCOL_V31;
 */
 
 
-int  test_run( char * ipdr, int port )
+int  test_run( char * ipdr, int port, char * user )
 {
     int  iret;
     int  tfd;
@@ -254,6 +515,7 @@ int  test_run( char * ipdr, int port )
     }
 
     /**/
+    mmqt_set_user( mtctx, user );
     mmqt_get_fd( mtctx, &tfd );
     
     /**/
@@ -294,7 +556,7 @@ int  test_run( char * ipdr, int port )
 }
 
 
-int test_get_config( char * ipdr, int * port )
+int test_get_config( char * ipdr, int * port, char * user )
 {
     struct uci_context * uci;
     struct uci_package * upkg;
@@ -332,28 +594,44 @@ int test_get_config( char * ipdr, int * port )
 
         if ( strlen(ptr) > 16 )
         {
-            iret = 4;
+            iret = 3;
             break;
         }
 
         /**/
         strcpy( ipdr, ptr );
+
+
+        /**/
+        ptr = uci_lookup_option_string( uci, usec, "userid" );
+        if ( NULL == ptr )
+        {
+            iret = 4;
+            break;
+        }
+
+        if ( strlen(ptr) > 32 )
+        {
+            iret = 5;
+            break;
+        }
+        
+        strcpy( user, ptr );
         
         /**/
 	    ptr = uci_lookup_option_string( uci, usec, "port" );
         if ( NULL == ptr )
         {
-            iret = 3;
+            iret = 6;
             break;
         }
-
+        
         /**/
         *port = strtoul( ptr, NULL, 10 );
         iret = 0;
         break;
     }
 
-exit:
     uci_free_context( uci );
     return iret;
     
@@ -364,10 +642,11 @@ int  main( void )
 {
     int  iret;
     char  ipdr[20];
+    char  user[40];    
     int  port;
 
     /**/
-    iret = test_get_config( ipdr, &port );
+    iret = test_get_config( ipdr, &port, user );
     if ( 0 != iret )
     {
         printf( "get cfg ret %d\n", iret );
@@ -375,9 +654,7 @@ int  main( void )
     }
 
     /**/
-    
-    /**/
-    iret = test_run( ipdr, port );
+    iret = test_run( ipdr, port, user );
     printf( "test ret %d\n", iret );
     return 0;
     
