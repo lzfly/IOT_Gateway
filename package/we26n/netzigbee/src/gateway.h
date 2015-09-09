@@ -6,7 +6,7 @@
 
 #define MAX_DEVICES 64
 
-#define ZIGBEE_ENABLE 1
+#define ZIGBEE_ENABLE 0
 struct GatewayBean {
 
 	char IP[16];

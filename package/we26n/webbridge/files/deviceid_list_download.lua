@@ -49,6 +49,11 @@ function getCommand()
 	return nil;
 end
 
+function  write_id_to_config(meterstr)
+    local meterid = string.gsub(meterstr,"wifi_gas_","")
+    luci.sys.exec("uci set jyconfig.@deviceid[0].gasmeter="..meterid)
+    x:commit("jyconfig")
+end
 
 function StringManipulation(data)
 	
@@ -68,6 +73,10 @@ function StringManipulation(data)
     for j = 1 ,size,1 do
     print(config[j]);
     luci.sys.exec("uci add_list devicesid_list.@devicesid[0].id=" ..config[j])
+    local gas_meter_seach = string.match(config[j],"wifi_gas_")
+        if gas_meter_seach then
+            write_id_to_config(config[j])
+        end
     end 
     x:commit("devicesid_list")
     return 1;
