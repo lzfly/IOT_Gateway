@@ -37,7 +37,7 @@ int  mmqt_get_fd( intptr_t ctx, int * pfd );
 int  mmqt_start_run( intptr_t ctx );
 
 int  mmqt_publish( intptr_t ctx, char * topic, char * msg );
-int  mmqt_notice( intptr_t ctx, char * msg );
+int  mmqt_notice( intptr_t ctx, char * mod, char * msg );
 
 
 #endif

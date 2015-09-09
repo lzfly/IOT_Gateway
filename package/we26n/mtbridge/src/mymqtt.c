@@ -262,22 +262,36 @@ int  mmqt_publish( intptr_t ctx, char * topic, char * msg )
 
 
 /* publish to user */
-int  mmqt_notice( intptr_t ctx, char * msg )
+int  mmqt_notice( intptr_t ctx, char * mod, char * msg )
 {
     int  iret;
+    int  tlen;    
     mmqt_context_t * pctx;
-
+    char * ptr;
+    
     /**/
     pctx = (mmqt_context_t *)ctx;
 
-    /* qos = 0, retain = 0. */
-    iret = mosquitto_publish( pctx->mosq, NULL, pctx->user, strlen(msg), msg, 0, 0 );
-    if ( 0 != iret )
+    /**/
+    tlen = strlen(mod) + strlen(msg) + 10;
+    ptr = (char *)alloca( tlen );
+    if ( NULL == ptr )
     {
         return 1;
     }
 
+    /**/
+    tlen = sprintf( ptr, "C:N|M:%s|%s", mod, msg );
+    
+    /* qos = 0, retain = 0. */
+    iret = mosquitto_publish( pctx->mosq, NULL, pctx->user, tlen, ptr, 0, 0 );
+    if ( 0 != iret )
+    {
+        return 2;
+    }
+
     return 0;
+    
 }
 
 

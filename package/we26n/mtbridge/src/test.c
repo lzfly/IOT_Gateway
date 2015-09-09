@@ -36,11 +36,13 @@ static const struct blobmsg_policy  public_policy[] = {
 
 
 enum {
+    NTC_MODULE,
     NTC_MESG,
     __NTC_MAX 
 };
 
 static const struct blobmsg_policy  notice_policy[] = {
+    [NTC_MODULE] = { .name = "module", .type = BLOBMSG_TYPE_STRING },
     [NTC_MESG] = { .name = "message", .type = BLOBMSG_TYPE_STRING },
 };
 
@@ -50,10 +52,16 @@ static int mtbridge_notice( struct ubus_context *ctx, struct ubus_object *obj,
                 struct blob_attr *msg )
 {
     struct blob_attr * tb[__NTC_MAX];
+    char * module = NULL;
     char * mssge = NULL;
     
     /**/
     blobmsg_parse( notice_policy, ARRAY_SIZE(notice_policy), tb, blob_data(msg), blob_len(msg));
+
+    if ( tb[NTC_MODULE] )
+    {
+        module = blobmsg_data( tb[NTC_MODULE] );
+    }
     
     if ( tb[NTC_MESG] )
     {
@@ -61,16 +69,17 @@ static int mtbridge_notice( struct ubus_context *ctx, struct ubus_object *obj,
     }
 
     /**/
-    if ( mssge == NULL )
+    if ( (module == NULL) || (mssge == NULL) )
     {
+        printf( "ubus notice, args error \n" );
         return UBUS_STATUS_OK;
     }
     
     /**/
-    printf( "ubus notice, %s\n", mssge );
+    printf( "ubus notice, %s, %s\n", module, mssge );
     
     /**/
-    mmqt_notice( mtctx, mssge );
+    mmqt_notice( mtctx, module, mssge );
     return UBUS_STATUS_OK;
 
 }
