@@ -28,6 +28,86 @@ static struct uci_package * uci_zigbeeid;
 char ReportTime_tem[8];
 char ReportTime_hum[8];
 
+int getReportTime_config(char *ennconfig)
+{
+    if (!uci_ctx)
+    {
+        uci_ctx = uci_alloc_context();
+        if(!uci_ctx)
+        return -1;
+    }
+    else
+    {
+        uci_ennconfig = uci_lookup_package(uci_ctx, ennconfig);
+        if (uci_ennconfig)
+            uci_unload(uci_ctx, uci_ennconfig);
+    }
+
+    if (uci_load(uci_ctx, ennconfig, &uci_ennconfig))
+    {
+        printf("uci load ENN config fail\n");
+        return -2;
+    }else
+	{
+	    char *value_tem = NULL;
+	    char *value_hum = NULL;
+            struct uci_element *e   = NULL;
+            printf("uci load ennconfig success\n");
+
+
+            /* scan ENN config ! */
+            uci_foreach_element(&uci_ennconfig->sections, e)
+            {
+                struct uci_section *s = uci_to_section(e);
+                if(0 == strcmp(s->type, "zigbee"))
+                {
+                    printf("%s(), type: %s\n", __FUNCTION__, s->type);
+
+                    value_tem = uci_lookup_option_string(uci_ctx, s, "temp_interval");
+                   
+                    if(value_tem)
+                    {
+                            strcpy(ReportTime_tem, value_tem);
+                            printf("%s(), tem report time: %s\n", __FUNCTION__, ReportTime_tem);
+                            g_ReportTime.tem_time=strtoul(ReportTime_tem,NULL,10);
+                            printf("report time:%d\n",g_ReportTime.tem_time);
+                     }
+                     else{
+                            printf("%s(), tem report time not found\n", __FUNCTION__);
+                     }
+                      value_hum = uci_lookup_option_string(uci_ctx, s, "hum_interval"); 
+                   
+                      if(value_hum)
+                    {
+                            strcpy(ReportTime_hum, value_hum);
+                            printf("%s(), hum report time: %s\n", __FUNCTION__, ReportTime_hum);
+                            g_ReportTime.hum_time=strtoul(ReportTime_hum,NULL,10);
+                            printf("hum report time:%d\n",g_ReportTime.hum_time);
+                     }
+                     else{
+                            printf("%s(), hum report time not found\n", __FUNCTION__);
+                     }
+                   /*   value_h = uci_lookup_option_string(uci_ctx, s, "heatmeter"); 
+                       if(value_h)
+                    {
+                            strcpy(heatid, value_h);
+                            printf("%s(), heatid: %s\n", __FUNCTION__, heatid);
+                     }
+                     else{
+                            printf("%s(), heat_meter_id not found\n", __FUNCTION__);
+                  }*/
+                     break;
+            }
+
+          }
+             
+   }
+	return 0;
+
+
+}
+
+
 int getzigbeeid_config(char *zigbeeid)
 {
     int i = 0;
@@ -91,22 +171,22 @@ int getzigbeeid_config(char *zigbeeid)
 {
     int  iret;
     
-    iret = getzigbeeid_config("zigbeeid");
+    iret = getzigbeeid_config("devicesid_list");
     if ( iret == 0 )
     {
         return 0;
     }
 
-    printf("read config zigbeeid, ret = %d\n ", iret );
-    printf("require config file zigbeeid fail now require zigbeeid_tmp\n");
+    printf("read config deviceid_list, ret = %d\n ", iret );
+    printf("require config file devicesid_list fail now require deviceid_list_ever\n");
     
-    iret = getzigbeeid_config("zigbeeid_tmp");
+    iret = getzigbeeid_config("devicesid_list_ever");
     if ( iret == 0 )
     {
         return 0;
     }  
 
-    printf("read config zigbeeid_temp, ret = %d\n ", iret );    
+    printf("read config devicesid_list_ever, ret = %d\n ", iret );    
 	return -100;
 }
 
@@ -116,79 +196,23 @@ int getzigbeeid_config(char *zigbeeid)
 
 int GetReportTime()
 {
-
- if (!uci_ctx)
+    int get_report;
+    get_report =  getReportTime_config("ennconfig");
+    if(get_report == 0)
     {
-        uci_ctx = uci_alloc_context();
-    }
-    else
+        return 0;
+    } 
+     printf("read config ennconfig, get_report = %d\n ", get_report );
+    printf("require config file ennconfig fail now require ennconfig_ever\n");
+    
+    get_report =  getReportTime_config("ennconfig_ever");
+    if(get_report == 0)
     {
-        uci_ennconfig = uci_lookup_package(uci_ctx, "ennconfig");
-        if (uci_ennconfig)
-            uci_unload(uci_ctx, uci_ennconfig);
-    }
+        return 0;
+    } 
 
-    if (uci_load(uci_ctx, "ennconfig", &uci_ennconfig))
-    {
-        printf("uci load ENN config fail\n");
-    }else
-	{
-	    char *value_tem = NULL;
-	    char *value_hum = NULL;
-            struct uci_element *e   = NULL;
-            printf("uci load ennconfig success\n");
-
-
-            /* scan ENN config ! */
-            uci_foreach_element(&uci_ennconfig->sections, e)
-            {
-                struct uci_section *s = uci_to_section(e);
-                if(0 == strcmp(s->type, "zigbee"))
-                {
-                    printf("%s(), type: %s\n", __FUNCTION__, s->type);
-
-                    value_tem = uci_lookup_option_string(uci_ctx, s, "temp_interval");
-                   
-                    if(value_tem)
-                    {
-                            strcpy(ReportTime_tem, value_tem);
-                            printf("%s(), tem report time: %s\n", __FUNCTION__, ReportTime_tem);
-                            g_ReportTime.tem_time=strtoul(ReportTime_tem,NULL,10);
-                            printf("report time:%d\n",g_ReportTime.tem_time);
-                     }
-                     else{
-                            printf("%s(), tem report time not found\n", __FUNCTION__);
-                     }
-                      value_hum = uci_lookup_option_string(uci_ctx, s, "hum_interval"); 
-                   
-                      if(value_hum)
-                    {
-                            strcpy(ReportTime_hum, value_hum);
-                            printf("%s(), hum report time: %s\n", __FUNCTION__, ReportTime_hum);
-                            g_ReportTime.hum_time=strtoul(ReportTime_hum,NULL,10);
-                            printf("hum report time:%d\n",g_ReportTime.hum_time);
-                     }
-                     else{
-                            printf("%s(), hum report time not found\n", __FUNCTION__);
-                     }
-                   /*   value_h = uci_lookup_option_string(uci_ctx, s, "heatmeter"); 
-                       if(value_h)
-                    {
-                            strcpy(heatid, value_h);
-                            printf("%s(), heatid: %s\n", __FUNCTION__, heatid);
-                     }
-                     else{
-                            printf("%s(), heat_meter_id not found\n", __FUNCTION__);
-                  }*/
-                     break;
-            }
-
-          }
-             
-   }
-	return 0;
-
-
+    printf("read config ennconfig_ever, get_report = %d\n ", get_report );    
+	return -100;
 }
 
 /*static struct blob_buf b;
