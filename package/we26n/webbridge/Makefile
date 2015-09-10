@@ -41,6 +41,10 @@ define Package/webbridge/install
 	$(INSTALL_BIN) ./files/syncdevstate.lua  $(1)/usr/bin/syncdevstate.lua
 	$(INSTALL_BIN) ./files/webdevice.lua  $(1)/usr/bin/webdevice.lua
 	$(INSTALL_BIN) ./files/deviceid_list_download.lua  $(1)/usr/bin/deviceid_list_download.lua
+        $(INSTALL_BIN) ./files/ennconfig_download.lua  $(1)/usr/bin/ennconfig_download.lua
+        $(INSTALL_BIN) ./files/userid_download.lua  $(1)/usr/bin/userid_download.lua
+
+
 endef
 
 $(eval $(call BuildPackage,webbridge))

@@ -362,7 +362,7 @@ int  mmqt_init( intptr_t qctx, char * ipdr, int port, intptr_t * pret )
     }
 
     /**/
-    sprintf( pctx->topic, "we36n_" );
+    sprintf( pctx->topic, "we26n_" );
     iret = mmqt_get_macaddr( &(pctx->topic[6]) );
     if ( 0 != iret )
     {
