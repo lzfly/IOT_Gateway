@@ -56,7 +56,7 @@ local customMethod = {
 					queryParam = queryParam .. deviceId;
 				end
 				--local deviceid_str = x:get("devicesid_list_ever", "@devicesid[0]", "id")
-				local deviceid_str = luci.sys.exec("uci get devicesid_list_ever.@devicesid[0].id")
+				local deviceid_str = luci.sys.exec("uci get devicesid_list.@devicesid[0].id")
 			    print(deviceid_str)	
 			    --for key, value in pairs(deviceid_str) do 
 			    local match=string.match(deviceid_str,deviceId)
