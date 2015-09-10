@@ -37,6 +37,8 @@ endef
 define Package/ennconfig/install
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_BIN) ./files/ennconfig_ever  $(1)/etc/config/
+        $(INSTALL_BIN) ./files/devicesid_list  $(1)/etc/config/
+
 endef
 
 $(eval $(call BuildPackage,ennconfig))
