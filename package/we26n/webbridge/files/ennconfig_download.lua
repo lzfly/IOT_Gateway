@@ -45,7 +45,7 @@ while true do
     local curlcmd = "curl -o /etc/config/ennconfig " .. url;
     luci.sys.exec(curlcmd)
     
-    local keeplive = luci.sys.exec("uci get ennconfig.@gatewaye[0].keeplive")
+    local keeplive = luci.sys.exec("uci get ennconfig.@gateway[0].keeplive")
     local keeplivelen = string.len(keeplive)
     if keeplivelen ~= 0 then
         luci.sys.exec("rm -rf /etc/config/ennconfig_back")
