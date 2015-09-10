@@ -194,10 +194,10 @@ a {
 	font-weight: inherit;
 }
 
-a:hover {
+/*a:hover {
 	color: #000000;
 
-}
+}*/
 
 .pull-right {
 	float: right;
