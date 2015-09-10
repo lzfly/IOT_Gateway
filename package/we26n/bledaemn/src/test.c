@@ -24,37 +24,7 @@
 #include "bletask.h"
 
 
-/************************************************************************************************/
 
-#define  CYBLE_STATE_STOPPED            0               /* BLE is turned off */
-#define  CYBLE_STATE_INITIALIZING       1               /* Initializing state */
-#define  CYBLE_STATE_CONNECTED          2               /* Peer device is connected */
-#define  CYBLE_STATE_SCANNING           3               /* Scanning process */
-#define  CYBLE_STATE_CONNECTING         4               /* Connecting */
-#define  CYBLE_STATE_DISCONNECTED       5               /* Essentially idle state */
-
-
-/* 双向命令, 命令和响应共用 CMD, 如下. */
-
-#define  CMD_GET_STATE      0xE1                    /* CYBLE_STATE_T */
-
-#define  CMD_STRT_SCAN      0xA5                    /* 响应, 1 byte, 0 成功, 其他表示失败. */
-#define  CMD_STOP_SCAN      0x5A                    /* 响应, 1 byte, 0 成功, 其他表示失败. */
-
-#define  CMD_CONNECT        0x3C                    /* 响应, 1 byte, 0 成功, 其他表示失败. */
-#define  CMD_DISCONNT       0xC3                    /* 响应, 1 byte, 0 成功, 其他表示失败. */
-
-#define  CMD_ENA_NOTY       0xD2                    /* 命令, 2 byte, attr desc handle; 响应, 1byte , 0 成功, 其他表示失败. */
-#define  CMD_WRT_NRSP       0x2D                    /* 命令, 2 + var byte, attr handle + var byte; 响应, 1byte , 0 成功, 其他表示失败. */
-
-
-/* 单向 event 上报. */
-#define  CMD_EVT_PEER       0x87                    /* SCANING 状态下, 上报扫描到的 peer 地址. */
-#define  CMD_EVT_NOTY       0x78                    /* CONNECT 状态下, 上报的 notify 数据信息. */
-#define  CMD_EVT_DISC       0x69                    /* CONNECT 状态下, 上报 peer 主动断开连接. */
-
-
-/************************************************************************************************/
 
 
 void  dump_hex( const unsigned char * ptr, size_t  len )
@@ -323,7 +293,7 @@ int  meter_decode_data( int tlen, uint8_t * pdat, double * pdbb )
 }
 
 
-int  test_task_disconnect_finish( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
+int  test_task_disconnect_finish( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat )
 {
     printf( "cmd = %X : ", cmd );
     dump_hex( pdat, tlen );
@@ -331,7 +301,7 @@ int  test_task_disconnect_finish( intptr_t tctx, uint8_t cmd, int tlen, void * p
 }
 
 
-int  test_task_write_noresp_data( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
+int  test_task_write_noresp_data( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat )
 {
     int  iret;
     uint8_t * ptr;
@@ -372,7 +342,7 @@ int  test_task_write_noresp_data( intptr_t tctx, uint8_t cmd, int tlen, void * p
 }
 
 
-int  test_task_write_noresp_addr( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
+int  test_task_write_noresp_addr( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat )
 {
     int  iret;
     intptr_t nctx;
@@ -417,7 +387,7 @@ int  test_task_write_noresp_addr( intptr_t tctx, uint8_t cmd, int tlen, void * p
 
 
 
-int  test_task_enable_notify( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
+int  test_task_enable_notify( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat )
 {
     intptr_t nctx;
     uint8_t * ptr;
@@ -449,7 +419,7 @@ int  test_task_enable_notify( intptr_t tctx, uint8_t cmd, int tlen, void * pdat 
 }
 
 
-int  test_task_connect( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
+int  test_task_connect( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat )
 {
     intptr_t nctx;
     uint8_t * ptr;
@@ -479,7 +449,7 @@ int  test_task_connect( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
 }
 
 
-int  test_task_stop_scan_to_connect( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
+int  test_task_stop_scan_to_connect( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat )
 {
     intptr_t nctx;
     uint8_t * ptr;
@@ -509,7 +479,7 @@ int  test_task_stop_scan_to_connect( intptr_t tctx, uint8_t cmd, int tlen, void 
 }
 
 
-int  test_task_start_scan( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
+int  test_task_start_scan( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat )
 {
     intptr_t nctx;
     uint8_t * ptr;
@@ -542,9 +512,9 @@ int  test_task_start_scan( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
 
 
 
-int  test_task_checkstate( intptr_t tctx, uint8_t cmd, int tlen, void * pdat );
+int  test_task_checkstate( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat );
 
-int  test_task_stop_connect( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
+int  test_task_stop_connect( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat )
 {
     intptr_t nctx;
     uint8_t * ptr;
@@ -570,7 +540,7 @@ int  test_task_stop_connect( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
 }
 
 
-int  test_task_stop_scan( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
+int  test_task_stop_scan( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat )
 {
     intptr_t nctx;
     uint8_t * ptr;
@@ -596,7 +566,7 @@ int  test_task_stop_scan( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
 }
 
 
-int  test_task_checkstate( intptr_t tctx, uint8_t cmd, int tlen, void * pdat )
+int  test_task_checkstate( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat )
 {
     intptr_t nctx;
     uint8_t * ptr;
@@ -697,7 +667,7 @@ int  test( void )
 }
 
 
-
+#if 0
 int  main( void )
 {
     int  iret;
@@ -707,5 +677,48 @@ int  main( void )
     printf( "test return iret = %d\n", iret );
     return 0;
 }
+
+#else
+
+#include "mainthrd.h"
+#include "ubussrv.h"
+
+
+int  main( int argc, char * argv[] )
+{
+    int  iret;
+    int  sfd;
+    intptr_t  mnctx;
+
+    /**/
+    iret = mthrd_init( &mnctx );
+    if ( 0 != iret )
+    {
+        printf( "mthrd_init ret = %d\n", iret );
+        return 1;
+    }
+
+    /**/
+    mthrd_get_sfd( mnctx, &sfd );
+    iret = ubussrv_start( sfd );
+    if ( 0 != iret )
+    {
+        printf( "ubussrv_start iret = %d\n", iret );
+        return 2;
+    }
+    
+    /**/
+    iret = mthrd_run( mnctx );
+    if ( 0 != iret )
+    {
+        printf( "mthrd_run iret = %d\n", iret );
+        return 3;
+    }
+    
+    return 0;
+    
+}
+
+#endif
 
 

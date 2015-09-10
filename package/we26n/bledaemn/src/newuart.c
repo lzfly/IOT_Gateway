@@ -34,6 +34,9 @@ typedef struct _tag_code_context
     /**/
     nuart_cbk_func  func;
     intptr_t  arg;
+    
+    nuart_data_cbk_func  datafunc;
+    intptr_t  dataarg;
 
 } code_context_t;
 
@@ -131,6 +134,7 @@ int  code_dec_step( code_context_t * pctx, uint8_t tdat )
             }
 
             pctx->dec_flag = 0;
+            pctx->dec_offs = 0;
         }
         else if ( tdat < 64 )
         {
@@ -169,8 +173,9 @@ int  code_dec_step( code_context_t * pctx, uint8_t tdat )
             pctx->func( pctx->arg, pctx->dec_pad[1], (temp -3), &(pctx->dec_pad[3]) );
         }
 
+        /**/
         pctx->dec_flag = 0;
-        pctx->dec_offs = 0;        
+        pctx->dec_offs = 0;
         break;
         
     }
@@ -218,6 +223,29 @@ int  code_set_callbk( intptr_t ctx, nuart_cbk_func func, intptr_t arg )
     pctx->arg = arg;
     return 0;
     
+}
+
+
+int  code_set_data_callbk( intptr_t ctx, nuart_data_cbk_func func, intptr_t arg )
+{
+    code_context_t * pctx;
+
+    /**/
+    pctx = (code_context_t *)ctx;
+
+    /**/
+    if ( func == NULL )
+    {
+        if ( arg != pctx->dataarg )
+        {
+            return 0;
+        }
+    }
+
+    pctx->datafunc = func;
+    pctx->dataarg = arg;
+    return 0;
+
 }
 
 
@@ -533,6 +561,20 @@ int  nuart_set_callbk( intptr_t ctx, nuart_cbk_func func, intptr_t arg )
     return code_set_callbk( pctx->cctx, func, arg );
 }
 
+
+
+
+int  nuart_set_data_callbk( intptr_t ctx, nuart_data_cbk_func func, intptr_t arg )
+{
+    nuart_context_t * pctx;
+
+    /**/
+    pctx = (nuart_context_t *)ctx;
+
+    /**/
+    return code_set_data_callbk( pctx->cctx, func, arg );
+
+}
 
 
 
