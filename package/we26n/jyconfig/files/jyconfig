@@ -4,6 +4,7 @@ config deviceid
 	option powermeter '1507080600179'
 	option watermeter 'TS0004482'
 	option heatmeter '50001482'
+        option blegasmeter 'AF3B8EEA1700' 
 
 config mqttclient
 	option server '10.4.44.210'
