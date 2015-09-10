@@ -39,11 +39,15 @@ function  write_userid_to_config(userid)
 end
 
 function StringManipulation(data)
-	
+    local find = string.match(data, "userid=")
+    if find == nil then
+        print(data) 
+        return 1
+    end	
+
     data = string.gsub(data,"%[{\"userid\":","")     
     data = string.gsub(data,"}%]","")  
-    print(data)    
-    
+    print(data)
     write_userid_to_config(data)
 
     return 1;
@@ -69,8 +73,30 @@ function require_socket()
 
 end
 
+function getWebServerURL()
+    local ip = luci.sys.exec("uci get jyconfig.@webserver[0].ip")
+    local iplen = string.len(ip)
+    local port = luci.sys.exec("uci get jyconfig.@webserver[0].port")
+    local portlen = string.len(port)
+    ip = string.gsub(ip,"%\r","")
+    ip = string.gsub(ip,"%\n","")
+    port = string.gsub(port,"%\r","")
+    port = string.gsub(port,"%\n","")
+
+    print(ip)
+    print(port)
+    if iplen ~= 0 and portlen ~= 0 then
+        url = "http://" .. ip .. ":" .. port .. "/enngateway/getuserid?gatewayid=" .. macAddr;
+    end
+    print(url)
+
+end
+
 
 local count = 1
+
+getWebServerURL()
+
 
 while true do
     print(count)

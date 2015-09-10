@@ -12,6 +12,33 @@ end
 
 http = require "socket.http";
 
+
+url = "http://10.4.44.210:8001/enngateway/info?"
+
+function getWebServerURL()
+    local ip = luci.sys.exec("uci get jyconfig.@webserver[0].ip")
+    local iplen = string.len(ip)
+    local port = luci.sys.exec("uci get jyconfig.@webserver[0].port")
+    local portlen = string.len(port)
+    ip = string.gsub(ip,"%\r","")
+    ip = string.gsub(ip,"%\n","")
+    port = string.gsub(port,"%\r","")
+    port = string.gsub(port,"%\n","")
+
+    print(ip)
+    print(port)
+    if iplen ~= 0 and portlen ~= 0 then
+        url = "http://" .. ip .. ":" .. port .. "/enngateway/info?";
+    end
+    print(url)
+
+end
+
+getWebServerURL()
+
+
+
+
 local customMethod = {
 	jianyou = {
 		report = {
@@ -58,7 +85,7 @@ local customMethod = {
 				end
 
 				if queryParam ~= nil then
-					local targetUrl = "http://10.4.44.210:8001/enngateway/info?" .. queryParam;
+					local targetUrl = url .. queryParam;
 
 					print(targetUrl);
 

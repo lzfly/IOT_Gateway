@@ -56,6 +56,13 @@ function  write_id_to_config(meterstr)
 end
 
 function StringManipulation(data)
+
+    local find = string.match(data, "\"deviceslist\":")
+    if find == nil then
+        print(data)
+        return 1
+    end
+
 	
 	data = string.gsub(data,"{\"deviceslist\":","")     
     data = string.gsub(data,"%[","")                     
@@ -103,6 +110,30 @@ function require_socket()
         sleep(10);
 
 end
+
+
+function getWebServerURL()
+    local ip = luci.sys.exec("uci get jyconfig.@webserver[0].ip")
+    local iplen = string.len(ip)
+    local port = luci.sys.exec("uci get jyconfig.@webserver[0].port")
+    local portlen = string.len(port)
+    ip = string.gsub(ip,"%\r","")
+    ip = string.gsub(ip,"%\n","")
+    port = string.gsub(port,"%\r","")
+    port = string.gsub(port,"%\n","")
+
+    print(ip)
+    print(port)
+    if iplen ~= 0 and portlen ~= 0 then
+        url = "http://" .. ip .. ":" .. port .. "/enngateway/getdeviceslist?gatewayid=" .. macAddr;
+    end
+    print(url)
+
+end
+
+getWebServerURL()
+
+
 
 
 local count = 1

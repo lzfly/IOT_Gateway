@@ -1,13 +1,18 @@
-config  deviceid
-	option gasmeter	     A01511504001758   
-	option powermeter    1507080600179	
-        option watermeter    TS0004482
-        option heatmeter     50001482
 
-config  mqttclient
-        option server     10.4.44.210
-        option port       8020
-	option userid     abcd
+config deviceid
+	option gasmeter 'A01511504001758'
+	option powermeter '1507080600179'
+	option watermeter 'TS0004482'
+	option heatmeter '50001482'
 
-config  mqttserver
-        option port       1883
+config mqttclient
+	option server '10.4.44.210'
+	option port '8020'
+	option userid '1234'
+
+config mqttserver
+	option port '1883'
+
+config webserver
+        option ip '10.4.44.210'
+        option port '8001'
