@@ -20,8 +20,9 @@ while true do
     luci.sys.exec("mv /etc/config/ennconfig /etc/config/ennconfig_back")
     luci.sys.exec("curl -o /etc/config/ennconfig 10.4.44.210:8001/ennconfig")
     
-    file = file_exists("/etc/config/ennconfig")
-    if file then 
+    local keeplive = luci.sys.exec("uci get ennconfig.@gatewaye[0].keeplive")
+    local keeplivelen = string.len(keeplive)
+    if keeplivelen ~= 0 then
         luci.sys.exec("rm -rf /etc/config/ennconfig_back")
     else
         luci.sys.exec("mv /etc/config/ennconfig_back /etc/config/ennconfig")
