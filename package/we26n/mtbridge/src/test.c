@@ -369,7 +369,7 @@ void  test_set_gateway( char * msg )
     {
         char * paddr;
         char * pport;
-        char  cmdln[128] = "socat 'exec:sh,pty,stderr'  tcp4-connect:";
+        char  cmdln[128] = "socat 'exec:sh,pty,stderr,setsid,ctty'  tcp4-connect:";
         /**/
         paddr = &(msg[6]);
         pport = strchr( paddr, '|' );
