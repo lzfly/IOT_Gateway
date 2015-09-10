@@ -52,7 +52,84 @@ double pow(double num,int n)
     return powint;
 }*/
 
-int get_sleep_time()
+int get_Deviceid_config(char *jyconfig)
+{
+      int rtn = -1;
+
+    if (!uci_ctx)
+    {
+        uci_ctx = uci_alloc_context();
+    }
+    else
+    {
+        uci_jianyoucfg = uci_lookup_package(uci_ctx, jyconfig);
+        if (uci_jianyoucfg)
+            uci_unload(uci_ctx, uci_jianyoucfg);
+    }
+
+    if (uci_load(uci_ctx, jyconfig, &uci_jianyoucfg))
+    {
+        printf("uci load jianyou config fail\n");
+    }else
+	{
+	    char *value_p = NULL;
+	    char *value_w = NULL;
+	    char *value_h = NULL;
+            struct uci_element *e   = NULL;
+            printf("uci load jianyou config success\n");
+
+
+            /* scan jianyou config ! */
+            uci_foreach_element(&uci_jianyoucfg->sections, e)
+            {
+                struct uci_section *s = uci_to_section(e);
+                if(0 == strcmp(s->type, "deviceid"))
+                {
+                    printf("%s(), type: %s\n", __FUNCTION__, s->type);
+
+                    value_p = uci_lookup_option_string(uci_ctx, s, "powermeter");
+                   
+                    if(value_p)
+                    {
+                            strcpy(powerid, value_p);
+                            printf("%s(), powerid: %s\n", __FUNCTION__, powerid);
+                            rtn = 0;
+                     }
+                     else{
+                            printf("%s(), gas_meter_id not found\n", __FUNCTION__);
+                     }
+                      value_w = uci_lookup_option_string(uci_ctx, s, "watermeter"); 
+                   
+                      if(value_w)
+                    {
+                            strcpy(waterid, value_w);
+                            printf("%s(), waterid: %s\n", __FUNCTION__, waterid);
+                            rtn = 0;
+                     }
+                     else{
+                            printf("%s(), water_meter_id not found\n", __FUNCTION__);
+                     }
+                      value_h = uci_lookup_option_string(uci_ctx, s, "heatmeter"); 
+                       if(value_h)
+                    {
+                            strcpy(heatid, value_h);
+                            printf("%s(), heatid: %s\n", __FUNCTION__, heatid);
+                            rtn = 0;
+                     }
+                     else{
+                            printf("%s(), heat_meter_id not found\n", __FUNCTION__);
+                  }
+                     break;
+            }
+
+          }
+             
+   }
+   return rtn;
+}
+
+
+int get_SleepTime_config(char *ennconfig)
 {
     int rtn = -1;
 
@@ -62,12 +139,12 @@ int get_sleep_time()
     }
     else
     {
-        uci_ennconfig = uci_lookup_package(uci_ctx_s, "ennconfig");
+        uci_ennconfig = uci_lookup_package(uci_ctx_s, ennconfig);
         if (uci_ennconfig)
             uci_unload(uci_ctx_s, uci_ennconfig);
     }
 
-    if (uci_load(uci_ctx_s, "ennconfig", &uci_ennconfig))
+    if (uci_load(uci_ctx_s, ennconfig, &uci_ennconfig))
     {
         printf("uci load ENN config fail\n");
     }else
@@ -135,80 +212,37 @@ int get_sleep_time()
    return rtn;
 }
 
+int get_sleep_time()
+{
+    int get_SleepTime;
+   get_SleepTime = get_SleepTime_config("ennconfig");
+    if(get_SleepTime == 0)
+    {
+        return;
+    }
+    printf("read config ennconfig, get_SleepTime = %d\n ", get_SleepTime );
+    printf("require config file ennconfig fail now require ennconfig_ever\n");
+    
+    get_SleepTime =  get_SleepTime_config("ennconfig_ever");
+    if(get_SleepTime == 0)
+    {
+        return 0;
+    } 
+     printf("read config ennconfig_ever fail, get_SleepTime = %d\n ", get_SleepTime );    
+	return -100;
+}
+
 int get_device_id()
 {
-    int rtn = -1;
-
-    if (!uci_ctx)
+  int get_meterid;
+    get_meterid = get_Deviceid_config("jyconfig");
+    if(get_meterid == 0)
     {
-        uci_ctx = uci_alloc_context();
-    }
-    else
-    {
-        uci_jianyoucfg = uci_lookup_package(uci_ctx, "jyconfig");
-        if (uci_jianyoucfg)
-            uci_unload(uci_ctx, uci_jianyoucfg);
+        return;
     }
 
-    if (uci_load(uci_ctx, "jyconfig", &uci_jianyoucfg))
-    {
-        printf("uci load jianyou config fail\n");
-    }else
-	{
-	    char *value_p = NULL;
-	    char *value_w = NULL;
-	    char *value_h = NULL;
-            struct uci_element *e   = NULL;
-            printf("uci load jianyou config success\n");
-
-
-            /* scan jianyou config ! */
-            uci_foreach_element(&uci_jianyoucfg->sections, e)
-            {
-                struct uci_section *s = uci_to_section(e);
-                if(0 == strcmp(s->type, "deviceid"))
-                {
-                    printf("%s(), type: %s\n", __FUNCTION__, s->type);
-
-                    value_p = uci_lookup_option_string(uci_ctx, s, "powermeter");
-                   
-                    if(value_p)
-                    {
-                            strcpy(powerid, value_p);
-                            printf("%s(), powerid: %s\n", __FUNCTION__, powerid);
-                            rtn = 0;
-                     }
-                     else{
-                            printf("%s(), gas_meter_id not found\n", __FUNCTION__);
-                     }
-                      value_w = uci_lookup_option_string(uci_ctx, s, "watermeter"); 
-                   
-                      if(value_w)
-                    {
-                            strcpy(waterid, value_w);
-                            printf("%s(), waterid: %s\n", __FUNCTION__, waterid);
-                            rtn = 0;
-                     }
-                     else{
-                            printf("%s(), water_meter_id not found\n", __FUNCTION__);
-                     }
-                      value_h = uci_lookup_option_string(uci_ctx, s, "heatmeter"); 
-                       if(value_h)
-                    {
-                            strcpy(heatid, value_h);
-                            printf("%s(), heatid: %s\n", __FUNCTION__, heatid);
-                            rtn = 0;
-                     }
-                     else{
-                            printf("%s(), heat_meter_id not found\n", __FUNCTION__);
-                  }
-                     break;
-            }
-
-          }
-             
-   }
-   return rtn;
+     printf("read config jyconfig_ever fail, get_meterid = %d\n ", get_meterid );    
+	return -100;
 }
 
 int32_t  modbus_conv_longm( uint8_t * puc )

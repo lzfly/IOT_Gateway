@@ -211,7 +211,7 @@ int GetReportTime()
         return 0;
     } 
 
-    printf("read config ennconfig_ever, get_report = %d\n ", get_report );    
+    printf("read config ennconfig_ever fail, get_report = %d\n ", get_report );    
 	return -100;
 }
 

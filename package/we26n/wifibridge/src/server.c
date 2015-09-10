@@ -42,6 +42,111 @@ static struct uci_package * uci_ennconfig;
 static char time_s[8];
 int times = 0;
 
+int get_gasmeterid_config(char *jyconfig)
+{
+    int rtn = -1;
+    if (!uci_ctx)
+    {
+        uci_ctx = uci_alloc_context();
+        if(!uci_ctx)
+        return -1;
+    }
+    else
+    {
+        uci_jianyoucfg = uci_lookup_package(uci_ctx, jyconfig);
+        if (uci_jianyoucfg)
+            uci_unload(uci_ctx, uci_jianyoucfg);
+    }
+
+    if (uci_load(uci_ctx, jyconfig, &uci_jianyoucfg))
+    {
+        printf("uci load jianyou config fail\n");
+        return -2;
+    }else
+	{
+	    char *value = NULL;
+            struct uci_element *e   = NULL;
+            printf("uci load jianyou config success\n");
+
+
+            /* scan jianyou config ! */
+            uci_foreach_element(&uci_jianyoucfg->sections, e)
+            {
+                struct uci_section *s = uci_to_section(e);
+                if(0 == strcmp(s->type, "deviceid"))
+                {
+                    printf("%s(), type: %s\n", __FUNCTION__, s->type);
+
+                    value = uci_lookup_option_string(uci_ctx, s, "gasmeter");
+                    if(value){
+                            strcpy(gas_meter_id, value);
+                            printf("%s(), gas_meter_id: %s\n", __FUNCTION__, gas_meter_id);
+                            rtn = 0;
+                        }else{
+                            printf("%s(), gas_meter_id not found\n", __FUNCTION__);
+                     }
+                     break;
+                 }
+
+             }
+             
+    }
+    return rtn;
+}
+
+int get_gas_report_time_config(char *ennconfig)
+{
+    int rtn = -1;
+    //读取配置文件数据上报时间	
+    if (!uci_ctx_s)
+    {
+        uci_ctx_s = uci_alloc_context();
+    }
+    else
+    {
+        uci_ennconfig = uci_lookup_package(uci_ctx_s, ennconfig);
+        if (uci_ennconfig)
+            uci_unload(uci_ctx_s, uci_ennconfig);
+    }
+
+    if (uci_load(uci_ctx_s, ennconfig, &uci_ennconfig))
+    {
+        printf("uci load ENN config fail\n");
+    }else
+	{
+	    char *value_s = NULL;
+            struct uci_element *e_s   = NULL;
+            printf("uci load ENN config success\n");
+
+
+            /* scan enn config ! */
+            uci_foreach_element(&uci_ennconfig->sections, e_s)
+            {
+                struct uci_section *s_s = uci_to_section(e_s);
+                if(0 == strcmp(s_s->type, "wifi"))
+                {
+                    printf("%s(), type: %s\n", __FUNCTION__, s_s->type);
+
+                    value_s = uci_lookup_option_string(uci_ctx_s, s_s, "gas_interval");
+                    if(value_s){
+                            strcpy(time_s, value_s);
+                            printf("%s(), sleep time: %s\n", __FUNCTION__, time_s);
+                             times=strtoul(time_s,NULL,10);
+                             printf("%d\n",times);
+                             rtn = 0;
+                        }else{
+                            printf("%s(), sleep time_id not found\n", __FUNCTION__);
+                     }
+                     break;
+                 }
+
+             }
+            
+             
+    }
+    return rtn;
+}
+
 uint8_t sub(char *buff_sub,int len_sub)
 {
 	int i_sub = 1;
@@ -495,104 +600,36 @@ void* gas_meter_thread( void *arg )
 
 int get_gas_report_time()
 {
-    int rtn = -1;
-    //读取配置文件数据上报时间	
-    if (!uci_ctx_s)
+    int get_report_time;
+    get_report_time = get_gas_report_time_config("ennconfig");
+    if(get_report_time == 0)
     {
-        uci_ctx_s = uci_alloc_context();
+        return;
     }
-    else
+    printf("read config ennconfig, get_report_time = %d\n ", get_report_time );
+    printf("require config file ennconfig fail now require ennconfig_ever\n");
+    
+    get_report_time =  get_gas_report_time_config("ennconfig_ever");
+    if(get_report_time == 0)
     {
-        uci_ennconfig = uci_lookup_package(uci_ctx_s, "ennconfig");
-        if (uci_ennconfig)
-            uci_unload(uci_ctx_s, uci_ennconfig);
-    }
+        return 0;
+    } 
+     printf("read config ennconfig_ever fail, get_report_time = %d\n ", get_report_time );    
+	return -100;
 
-    if (uci_load(uci_ctx_s, "ennconfig", &uci_ennconfig))
-    {
-        printf("uci load ENN config fail\n");
-    }else
-	{
-	    char *value_s = NULL;
-            struct uci_element *e_s   = NULL;
-            printf("uci load ENN config success\n");
-
-
-            /* scan enn config ! */
-            uci_foreach_element(&uci_ennconfig->sections, e_s)
-            {
-                struct uci_section *s_s = uci_to_section(e_s);
-                if(0 == strcmp(s_s->type, "wifi"))
-                {
-                    printf("%s(), type: %s\n", __FUNCTION__, s_s->type);
-
-                    value_s = uci_lookup_option_string(uci_ctx_s, s_s, "gas_interval");
-                    if(value_s){
-                            strcpy(time_s, value_s);
-                            printf("%s(), sleep time: %s\n", __FUNCTION__, time_s);
-                             times=strtoul(time_s,NULL,10);
-                             printf("%d\n",times);
-                             rtn = 0;
-                        }else{
-                            printf("%s(), sleep time_id not found\n", __FUNCTION__);
-                     }
-                     break;
-                 }
-
-             }
-            
-             
-    }
-    return rtn;
 }
 
 int get_gas_meter_id()
 {
-    int rtn = -1;
-    if (!uci_ctx)
+    int get_meterid;
+    get_meterid = get_gasmeterid_config("jyconfig");
+    if(get_meterid == 0)
     {
-        uci_ctx = uci_alloc_context();
+        return;
     }
-    else
-    {
-        uci_jianyoucfg = uci_lookup_package(uci_ctx, "jyconfig");
-        if (uci_jianyoucfg)
-            uci_unload(uci_ctx, uci_jianyoucfg);
-    }
-
-    if (uci_load(uci_ctx, "jyconfig", &uci_jianyoucfg))
-    {
-        printf("uci load jianyou config fail\n");
-    }else
-	{
-	    char *value = NULL;
-            struct uci_element *e   = NULL;
-            printf("uci load jianyou config success\n");
-
-
-            /* scan jianyou config ! */
-            uci_foreach_element(&uci_jianyoucfg->sections, e)
-            {
-                struct uci_section *s = uci_to_section(e);
-                if(0 == strcmp(s->type, "deviceid"))
-                {
-                    printf("%s(), type: %s\n", __FUNCTION__, s->type);
-
-                    value = uci_lookup_option_string(uci_ctx, s, "gasmeter");
-                    if(value){
-                            strcpy(gas_meter_id, value);
-                            printf("%s(), gas_meter_id: %s\n", __FUNCTION__, gas_meter_id);
-                            rtn = 0;
-                        }else{
-                            printf("%s(), gas_meter_id not found\n", __FUNCTION__);
-                     }
-                     break;
-                 }
-
-             }
-             
-    }
-    return rtn;
+   
+     printf("read config jyconfig_ever fail, get_meterid = %d\n ", get_meterid );    
+	return -100;
 }
 
 int main(int argc,char *argv[])
