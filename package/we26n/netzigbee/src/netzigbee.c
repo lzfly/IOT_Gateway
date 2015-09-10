@@ -177,14 +177,7 @@ int getzigbeeid_config(char *zigbeeid)
         return 0;
     }
 
-    printf("read config deviceid_list, ret = %d\n ", iret );
-    printf("require config file devicesid_list fail now require deviceid_list_ever\n");
-    
-    iret = getzigbeeid_config("devicesid_list_ever");
-    if ( iret == 0 )
-    {
-        return 0;
-    }  
+   
 
     printf("read config devicesid_list_ever, ret = %d\n ", iret );    
 	return -100;
