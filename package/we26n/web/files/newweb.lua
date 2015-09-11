@@ -86,11 +86,20 @@ function index()
 	entry({"admin", "newweb", "alertor"}, template("newweb/alertor"), _("alertor"), 16)
 	entry({"admin", "newweb", "bluetooth"}, template("newweb/bluetooth"), _("bluetooth"), 17)
 	entry({"admin", "newweb", "safe"}, template("newweb/safe"), _("safe"), 18)
+	entry({"admin", "newweb", "wifi"}, template("newweb/wifi"), _("wifi"), 19)
         entry({"admin","newweb","light_control"},call("light_control"),nil)
         entry({"admin","newweb","entrynet_control"},call("entrynet_control"),nil)
 		entry({"admin","newweb","gas_meter_set"},call("gas_meter_set"),nil)
 		entry({"admin","newweb","blegas_meter_set"},call("blegas_meter_set"),nil)
 		entry({"admin","newweb","password_set"},call("password_set"),nil)
+		entry({"admin","newweb","elewater_item"},call("elewater_item"),nil)
+		entry({"admin","newweb","bluetooth_item"},call("bluetooth_item"),nil)
+		entry({"admin","newweb","wifi_item"},call("wifi_item"),nil)
+		entry({"admin","newweb","zigbee_item"},call("zigbee_item"),nil)
+		entry({"admin","newweb","windows_item"},call("windows_item"),nil)
+		entry({"admin","newweb","switch_item"},call("switch_item"),nil)
+		entry({"admin","newweb","sensor_item"},call("sensor_item"),nil)
+		entry({"admin","newweb","alertor_item"},call("alertor_item"),nil)
 end
 
 
@@ -98,9 +107,129 @@ function gotoindex()
     luci.http.redirect(luci.dispatcher.build_url("admin/newweb/newweb_index"))
 end
 
+function elewater_item()
+  local deviceid=luci.http.formvalue("devId")
+  local devicetype=luci.http.formvalue("devicetype")
+  local status=luci.http.formvalue("status")
+  --local device ="&devieid="..deviceid.."&devicetype="..devicetype
+  if status == "-1" then
+  local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
+  else
+  local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+  end
+  luci.http.redirect(luci.dispatcher.build_url("admin/newweb/elewater"))
+
+
+   end
+   
+function bluetooth_item()
+  local deviceid=luci.http.formvalue("devId")
+  local devicetype=luci.http.formvalue("devicetype")
+  local status=luci.http.formvalue("status")
+  --local device ="&devieid="..deviceid.."&devicetype="..devicetype
+  if status == "-1" then
+  local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
+  else
+  local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+  end
+  luci.http.redirect(luci.dispatcher.build_url("admin/newweb/bluetooth"))
+
+
+   end
+   
+function wifi_item()
+  local deviceid=luci.http.formvalue("devId")
+  local devicetype=luci.http.formvalue("devicetype")
+  local status=luci.http.formvalue("status")
+  --local device ="&devieid="..deviceid.."&devicetype="..devicetype
+  if status == "-1" then
+  local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
+  else
+  local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+  end
+  luci.http.redirect(luci.dispatcher.build_url("admin/newweb/wifi"))
+
+
+   end
+   
+function zigbee_item()
+  local deviceid=luci.http.formvalue("devId")
+  local devicetype=luci.http.formvalue("devicetype")
+  local status=luci.http.formvalue("status")
+  --local device ="&devieid="..deviceid.."&devicetype="..devicetype
+  if status == "-1" then
+  local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
+  else
+  local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+  end
+  luci.http.redirect(luci.dispatcher.build_url("admin/newweb/zigbee"))
+
+
+   end
+   
+function windows_item()
+  local deviceid=luci.http.formvalue("devId")
+  local devicetype=luci.http.formvalue("devicetype")
+  local status=luci.http.formvalue("status")
+  --local device ="&devieid="..deviceid.."&devicetype="..devicetype
+  if status == "-1" then
+  local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
+  else
+  local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+  end
+  luci.http.redirect(luci.dispatcher.build_url("admin/newweb/windows"))
+
+
+   end
+   
+function switch_item()
+  local deviceid=luci.http.formvalue("devId")
+  local devicetype=luci.http.formvalue("devicetype")
+  local status=luci.http.formvalue("status")
+  --local device ="&devieid="..deviceid.."&devicetype="..devicetype
+  if status == "-1" then
+  local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
+  else
+  local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+  end
+  luci.http.redirect(luci.dispatcher.build_url("admin/newweb/switch"))
+
+
+   end
+
+    
+function sensor_item()
+  local deviceid=luci.http.formvalue("devId")
+  local devicetype=luci.http.formvalue("devicetype")
+  local status=luci.http.formvalue("status")
+  --local device ="&devieid="..deviceid.."&devicetype="..devicetype
+  if status == "-1" then
+  local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
+  else
+  local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+  end
+  luci.http.redirect(luci.dispatcher.build_url("admin/newweb/sensor"))
+
+
+   end  
+   
+function alertor_item()
+  local deviceid=luci.http.formvalue("devId")
+  local devicetype=luci.http.formvalue("devicetype")
+  local status=luci.http.formvalue("status")
+  --local device ="&devieid="..deviceid.."&devicetype="..devicetype
+  if status == "-1" then
+  local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
+  else
+  local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+  end
+  luci.http.redirect(luci.dispatcher.build_url("admin/newweb/alertor"))
+
+   end
+
+   
 function light_control()
-
-
+  
   luci.http.redirect(luci.dispatcher.build_url("admin/newweb/zigbee"))
 end
 function entrynet_control()
