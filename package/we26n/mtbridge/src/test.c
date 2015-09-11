@@ -524,7 +524,7 @@ int  test_run( char * ipdr, int port, char * user )
     }
 
     /**/
-    mmqt_set_user( mtctx, user );
+    // mmqt_set_user( mtctx, user );
     mmqt_get_fd( mtctx, &tfd );
     
     /**/
@@ -610,7 +610,7 @@ int test_get_config( char * ipdr, int * port, char * user )
         /**/
         strcpy( ipdr, ptr );
 
-
+#if 0
         /**/
         ptr = uci_lookup_option_string( uci, usec, "userid" );
         if ( NULL == ptr )
@@ -626,7 +626,8 @@ int test_get_config( char * ipdr, int * port, char * user )
         }
         
         strcpy( user, ptr );
-        
+#endif
+
         /**/
 	    ptr = uci_lookup_option_string( uci, usec, "port" );
         if ( NULL == ptr )

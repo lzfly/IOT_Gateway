@@ -368,7 +368,11 @@ int  mmqt_init( intptr_t qctx, char * ipdr, int port, intptr_t * pret )
     {
         return 3;
     }
-    printf( "inner mmqt, %s\n", pctx->topic );
+
+    sprintf( pctx->user, "%s_user", pctx->topic );
+
+    printf( "inner mmqt, topic, %s\n", pctx->topic );
+    printf( "inner mmqt, user, %s\n", pctx->user );
     
     /**/
     mosquitto_lib_init();
