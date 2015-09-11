@@ -76,6 +76,7 @@ local customMethod = {
 					for i=1,3 do
 						resp, code = http.request(targetUrl);
 						if code == 200 then
+							local result = conn:call("we26n_mtbridge","notice",{module = "G",message = "ADDDEV|"..deviceId});
 							conn:reply(req, {code="S00000", message="" .. resp});
 							return;
 						end
@@ -108,6 +109,7 @@ local customMethod = {
 					for i=1,3 do
 						resp, code = http.request(targetUrl);
 						if code == 200 then
+							local result = conn:call("we26n_mtbridge","notice",{module = "G",message = "DELDEV|"..deviceId});
 							conn:reply(req, {code="S00000", message="" .. resp});
 							return;
 						end
