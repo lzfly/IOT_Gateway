@@ -558,7 +558,7 @@ void* gas_meter_thread( void *arg )
 				sprintf(&devicesstr[strlen(devicesstr)], "{");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"gas_meter_%s\",",gas_meter_id);
 				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"ENN_DEVICE_TYPE_GAS_METER\",");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0020\",");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",d);	
 				sprintf(&devicesstr[strlen(devicesstr)], "},");
 				sprintf(&devicesstr[strlen(devicesstr)-1], "]");
