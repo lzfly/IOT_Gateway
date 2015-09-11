@@ -16,7 +16,7 @@ start-stop-daemon -b -S -x wifibridge_1
 start-stop-daemon -b -S -x userid_download.lua
 start-stop-daemon -b -S -x deviceid_list_download.lua
 start-stop-daemon -b -S -x ennconfig_download.lua
-
+start-stop-daemon -b -S -x add_del_deviceid.lua
 
 start-stop-daemon -b -S -x mtbridge
 
