@@ -4,9 +4,7 @@ require("uci")
 local io = require "io"
 
 function getdevices( type )
-
-    filename = "/tmp/devices_" .. tostring(type) .. ".ini";
-    local file = io.open(filename,"r");
+	local file = io.open("/tmp/devices_1.ini","r");
 	
 	if(file==nil) then
 		return;
@@ -21,11 +19,26 @@ function getdevices( type )
 	return datad;
 end
 
+function getdevices_list()                                    
+                                                               
+        filename = "/etc/config/devicesid_list";                 
+    	local file = io.open(filename,"r");                        
+                                                                                
+        if(file==nil) then                                     
+                return;                                                         
+        end                                                                     
+        local datad = file:read("*a");                                          
+                                                                                
+        datad = string.gsub(datad, "\r", "");                                   
+        datad = string.gsub(datad, "\n", "");  
+		 datad = string.gsub(datad, "list id", ""); 
+        file:close();                                                           
+                                                                                
+        return datad;                                                           
+end
+
 local result1=getdevices("1");
-local result2=getdevices("2");
-local result3=getdevices("3");
-local result4=getdevices("7");
-local result5=getdevices("6");
+local devicesid_str = getdevices_list();
 %>
 
 
@@ -53,21 +66,26 @@ margin-top:-325px;
 
 
 }
+body{ margin:0;background-color:#1c69bb;}
+img{display:block;border:none;}
+a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .big_box{ height:auto;}
 .big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
-.big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
-.big_top img,.big_top a{ float:left; padding-bottom:15px;text-decoration:none;}
-.zig{font-size:26px; color:white;padding-left:15px; padding-top:8px; }
+.big_top img,.big_top a{ float:left;padding-bottom:15px;text-decoration:none;}
+.zig{font-size:26px; color:white; padding-top:4px;}
 .button{margin-left:860px;color:white;padding-top:10px;}
-.big_top p{ padding-top:20px;color:#FFF; font-size:12px;}
+.big_top p{ padding-top:20px;color:#FFF; padding-left:5px;font-size:12px;}
 
-.big_bottom{width:1198px;background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
-
+.big_bottom{width:1198px; background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
+.bottom{width:1198px; height:auto background-color:#226fc0; margin:auto;overflow:hidden; padding-bottom:50px;}
+.bottom p{font-size:16px; color:#ffffff;font-family:"微软雅黑";}
 .nav{ width:100%; height:50px; background-color:#8eb3db;}
 .lights{ overflow:hidden;}
-.light{background:url(<%=resource%>/images/bg_nav.png);}
-.lights p{ float:left; padding:0 91px; margin-top:5px; text-decoration:none; font-size:26px; color:#FFF; cursor:pointer;}
-.lights p:hover{color:#009;text-decoration:none;}
+
+.lights a{ float:left; padding:0 91px; padding-top:5px;text-decoration:none; font-size:26px; color:#FFF;}
+.lights a:hover{color:#009;text-decoration:none}
+
+.deom {size :0.5px ;}
 
 table{
 	width:100%;
@@ -87,7 +105,7 @@ td.img{
 }
 </style>
 <meta charset="utf-8">
-<title>zigbee设备</title>
+<title>zigbee设备设备</title>
 
 <script type="text/javascript" src="<%=resource%>/js/jquery-1.8.1.min.js"></script>
 
@@ -100,18 +118,14 @@ td.img{
 		<script type="text/javascript" src="<%=resource%>/js/jquery.form.js"></script>
 
 		<script type="text/javascript" src="<%=resource%>/js/tip.js"></script>
-        
-        <script type="text/javascript" src="<%=resource%>/js/html5.js"></script>
 
 		<script type="text/javascript">
 
 		var resPath = "<%=resource%>" + "/images/";
 		var lightState = 1;
 		var windowState = 0;
-		
-		var i=0;
 
-		/*function initState()
+		function initState()
 		{
 			document.getElementById("currLightState").value = lightState;
 			document.getElementById("currWindowState").value = windowState;
@@ -152,29 +166,24 @@ td.img{
 				 }
 				//}
 			 });
-		}*/
+		}
 	</script>
-		
+	
+	
 <script type="text/javascript">
 
 	var lightdata='<%=result1%>';
-	var windowsdata='<%=result2%>';
-	var switchdata='<%=result3%>';
-	var sensordata='<%=result4%>';
-	var alertordata='<%=result5%>';
 
 </script>
 </head>
 
 <body>
-
 <div id="body_center">
-
 <div class="big_box">
 
 	<div class="big_top">
     	<a href="newweb_index"> <img src="<%=resource%>/images/back.png"></a>
-        <a class="zig" href="newweb_index">&nbsp;ZIGBEE设备</a>
+        <a class="zig">&nbsp;&nbsp;ZIGBEE设备</a>
 	<a class="button" href="<%=luci.dispatcher.build_url("admin/newweb/entrynet_control")%>"><img src="<%=resource%>/images/network_01.png"></a>
         <p>允许入网</p>
     </div>
@@ -182,38 +191,40 @@ td.img{
 <div class="big_bottom">
 	<div class="nav">
     	<div class="lights">
-        	<p onClick="displaydiv('1')">灯</p>
-        	<p onClick="displaydiv('2')">窗帘</p>
-            <p onClick="displaydiv('3')">开关</p>
-        	<p onClick="displaydiv('4')">传感器</p>
-            <p onClick="displaydiv('5')">报警器</p>
+        	<a class="light" href="zigbee">灯</a>
+        	<a href="windows">窗帘</a>
+            <a href="switch">开关</a>
+            <a href="sensor">传感器</a>
+            <a href="alertor">报警器</a>
         </div>
     </div>
-    
-    <!--light -->
-    <div class="zigbee" id="div1" style=" display:none">
     <script type="text/javascript">
-	
+    
+    var lightArr = eval(lightdata);
+	var str = "<%=devicesid_str%>"
+    
+	var i=0;
 	//var item=0;
 	//var k=0;
-	var lightArr = eval(lightdata);
-	
+	document.write("<table>");
 	for(i=0;i<lightArr.length;i++){   
 		
 		var lightData = lightArr[i];
 		var devId = lightData["deviceid"];
 		var status=lightData["status"];
+		var devicetype=lightData["devicetype"];
+		var status=str.indexOf(devId);//status
 		
-		document.write("<table>");
-		document.write("<tr>") ;
+		document.write('<tbody id="mainbody">');
+		document.write('<tr id="delCell">') ;
 		document.write("<td style='width:200px'>灯"+(i+1)+"</td>"); 
 		document.write("<td style='width:500px'>"+devId+"</td>"); 
-		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
-		document.write('<input type="hidden" value="0" id="currLightState"/>');
+		//document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
+		//document.write('<input type="hidden" value="0" id="currLightState"/>');
 		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/light_01.png"></td>') ;
 		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
-		document.write("</form>");
-		if(status=="1")
+		
+		if(status=="-1")
 		{
 			document.write("<td>"+"开"+"</td>");
 		}
@@ -221,168 +232,53 @@ td.img{
 		{		
 			document.write("<td>"+"关"+"</td>");
 		}
-		//document.write("<td>色温</td>"); 
-		//document.write("<td>亮度</td>"); 
-		document.write("</tr>") ;
-	    document.write("</table>");	   
-	}
-	</script></div>
-	
-	
-	<!--windows -->
-    <div class="zigbee" id="div2" style=" display:none">
-    <script type="text/javascript">
-	var windowsArr = eval(windowsdata);
-	
-	for(i=0;i<windowsArr.length;i++){   
-		
-		var windowsdata = windowsArr[i];
-		var devId = windowsdata["deviceid"];
-		var status=windowsdata["status"];
-		
-		document.write("<table>");
-		document.write("<tr>") ;
-		document.write("<td style='width:200px'>窗"+(i+1)+"</td>"); 
-		document.write("<td style='width:500px'>"+devId+"</td>"); 
-		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
-		document.write('<input type="hidden" value="0" id="currLightState"/>');
-		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/windows.png"></td>') ;
-		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
-		document.write("</form>");
-		if(status=="1")
+		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/zigbee_item") %>"  >');
+		if(status=="-1")
 		{
-			document.write("<td>"+"开"+"</td>");
+			document.write('<td><button onclick="add()">添加</button></td>');
+			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
+			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
+			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
+			
+			//document.write('<p class="deom" id="deom1"></p>');
 		}
 		else
-		{		
-			document.write("<td>"+"关"+"</td>");
-		}
-		//document.write("<td>色温</td>"); 
-		//document.write("<td>亮度</td>"); 
-		document.write("</tr>") ;
-	    document.write("</table>");	   
-	}
-	</script></div>
-	
-	<!--switch -->
-    <div class="zigbee" id="div3" style=" display:none">
-    <script type="text/javascript">
-	var switchArr = eval(switchdata);
-	
-	for(i=0;i<switchArr.length;i++){   
-		
-		var switchdata = switchArr[i];
-		var devId = switchdata["deviceid"];
-		var status=switchdata["status"];
-		
-		document.write("<table>");
-		document.write("<tr>") ;
-		document.write("<td style='width:200px'>开关"+(i+1)+"</td>"); 
-		document.write("<td style='width:500px'>"+devId+"</td>"); 
-		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
-		document.write('<input type="hidden" value="0" id="currLightState"/>');
-		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/switch_01.png"></td>') ;
-		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
-		document.write("</form>");
-		if(status=="1")
 		{
-			document.write("<td>"+"开"+"</td>");
+			document.write('<td><button onclick="del()">删除</button></td>');
+			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
+			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
+			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
+			//document.write('<p class="deom" id="deom2"></p></td>');
 		}
-		else
-		{		
-			document.write("<td>"+"关"+"</td>");
-		}
-		//document.write("<td>色温</td>"); 
-		//document.write("<td>亮度</td>"); 
-		document.write("</tr>") ;
-	    document.write("</table>");	   
-	}
-	</script></div>
-	
-	<!--sensor-->
-	<div class="zigbee" id="div4" style=" display:none">
-    <script type="text/javascript">
-	var sensorArr = eval(sensordata);
-	
-	for(i=0;i<sensorArr.length;i++){   
-		
-		var sensordata = sensorArr[i];
-		var devId = sensordata["deviceid"];
-		var status=sensordata["status"];
-		
-		document.write("<table>");
-		document.write("<tr>") ;
-		document.write("<td style='width:200px'>传感器"+(i+1)+"</td>"); 
-		document.write("<td style='width:500px'>"+devId+"</td>"); 
-		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
-		document.write('<input type="hidden" value="0" id="currLightState"/>');
-		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/sensor.png"></td>') ;
-		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
 		document.write("</form>");
-		if(status=="1")
-		{
-			document.write("<td>"+"开"+"</td>");
-		}
-		else
-		{		
-			document.write("<td>"+"关"+"</td>");
-		}
+		
 		//document.write("<td>色温</td>"); 
 		//document.write("<td>亮度</td>"); 
 		document.write("</tr>") ;
-	    document.write("</table>");	   
-	}
-	</script></div>
-	
-	<!--alertor-->
-	<div class="zigbee" id="div5" style=" display:none">
-    <script type="text/javascript">
-	var alertorArr = eval(alertordata);
-	
-	for(i=0;i<alertorArr.length;i++){   
 		
-		var alertordata = alertorArr[i];
-		var devId = alertordata["deviceid"];
-		var status=alertordata["status"];
-		
-		document.write("<table>");
-		document.write("<tr>") ;
-		document.write("<td style='width:200px'>报警器"+(i+1)+"</td>");
-		document.write("<td style='width:500px'>"+devId+"</td>"); 
-		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
-		document.write('<input type="hidden" value="0" id="currLightState"/>');
-		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/alertor.png"></td>') ;
-		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
-		document.write("</form>");
-		if(status=="1")
-		{
-			document.write("<td>"+"开"+"</td>");
-		}
-		else
-		{		
-			document.write("<td>"+"关"+"</td>");
-		}
-		//document.write("<td>色温</td>"); 
-		//document.write("<td>亮度</td>"); 
-		document.write("</tr>") ;
-	    document.write("</table>");	   
+function add()
+	{
+	//document.write("保存成功");
+	document.getElementById("deom").innerHTML="添加成功";
 	}
-	</script></div>
+	function del()
+	{
+	document.getElementById("deom").innerHTML="删除成功";
+	}
+   
+	}
+
+	document.write("</tbody>");
+	document.write("</table>");
+	</script>
+    
+
+</div>  <!--big_bottom结束-->
+<div class="bottom">
+    <p class="deom" id="deom"></p>
+</div>
+</div>
 </div>
 
-<script type="text/javascript">
-var j;
-var a;
-function displaydiv(a){
-	//divs=document.getElementById("item");
-	var zigbees=document.getElementsByClassName("zigbee");
-	for(j=1;j<zigbees.length+1;j++){
-		document.getElementById("div"+j).style.display="none";
-		}
-	document.getElementById("div"+a).style.display="block";
-	}
-</script>
-</div>
-</div>
 </body>
 </html>

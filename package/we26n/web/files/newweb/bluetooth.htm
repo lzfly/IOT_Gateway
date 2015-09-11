@@ -21,8 +21,26 @@ function getdevices( type )
 	return datad;
 end
 
+function getdevices_list()                                    
+                                                               
+        filename = "/etc/config/devicesid_list";                 
+    	local file = io.open(filename,"r");                        
+                                                                                
+        if(file==nil) then                                     
+                return;                                                         
+        end                                                                     
+        local datad = file:read("*a");                                          
+                                                                                
+        datad = string.gsub(datad, "\r", "");                                   
+        datad = string.gsub(datad, "\n", "");  
+		 datad = string.gsub(datad, "list id", ""); 
+        file:close();                                                           
+                                                                                
+        return datad;                                                           
+end
+
 local result6=getdevices(6);
-local result7=getdevices(7);
+local devicesid_str = getdevices_list();
 %>
 
 
@@ -35,7 +53,6 @@ local result7=getdevices(7);
 body{ margin:auto; background-color:#1c69bb;}
 img{display:block};
 a{ display:block; text-decoration:none; font-family:"微软雅黑";}
-
 #body_center{
 
 width:100%;
@@ -53,18 +70,18 @@ margin-top:-325px;
 }
 .big_box{height:auto;}
 .big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
-.big_top img,.big_top a{ float:left;padding-bottom:15px;text-decoration:none;}
-.big_top a{font-size:26px; text-decoration:none;  color:white; padding-top:8px; }
+.big_top img,.big_top a{ float:left;padding-bottom:15px;text-decoration:none;border:none;}
+.big_top a{font-size:26px; text-decoration:none;  color:white; font-family:"微软雅黑";}
 
 .button{margin-left:920px;color:white;padding-top:10px;}
-.big_top p{ padding-top:20px;color:#FFF; font-size:12px;}
+.big_top p{ padding-top:20px;color:#FFF; font-size:12px;font-family:"微软雅黑";}
 
 .big_bottom{width:1198px;background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
-.bottom{width:1198px; height:auto background-color:#226fc0; margin:auto;overflow:hidden; padding-bottom:50px;}
+
 
 .nav{ width:100%; height:50px; background-color:#8eb3db;}
 .lights{ overflow:hidden;}
-.lights a{ float:left; padding-left:600px; padding-top:10px;text-decoration:none; font-size:30px;color:#ffffff;}
+.lights a{ float:left; padding-left:600px; padding-top:5px;text-decoration:none; font-size:26px;color:#ffffff;font-family:"微软雅黑";}
 
 table{
 	width:100%;
@@ -82,6 +99,9 @@ th,td{
 td.img{
    float;
 }
+
+.bottom{width:1198px;margin:auto;padding-top:50px;}
+.bottom p{font-size:16px; color:#ffffff;font-family:"微软雅黑";}
 </style>
 <meta charset="utf-8">
 <title>蓝牙</title>
@@ -107,7 +127,6 @@ td.img{
 <script type="text/javascript">
 
 	var gasdata='<%=result6%>';
-	var pwhdata='<%=result7%>';
 
 </script>
 </head>
@@ -120,7 +139,7 @@ td.img{
 
 	<div class="big_top">
     	<a href="newweb_index"><img src="<%=resource%>/images/back.png"></a>
-        <a href="newweb_index">&nbsp;bluetooth</a>
+        <a href="newweb_index">&nbsp;&nbsp;bluetooth</a>
         <a class="button" href=""><img src="<%=resource%>/images/pair.png"></a>
         <p>配对</p>
     </div>
@@ -133,7 +152,7 @@ td.img{
     </div>
     <script type="text/javascript">
     var gasArr = eval(gasdata);
-	var pwhArr = eval(pwhdata); 
+	var str = "<%=devicesid_str%>"
 	var i=0;         
 	var j=0;
 	//气表
@@ -142,6 +161,8 @@ td.img{
 		var devId = gasData["deviceid"];
 		var type=gasData["devicetype"];		
 		var data=gasData["data"];
+		var devicetype=gasData["devicetype"];
+		var status=str.indexOf(devId);//status
 		
 		document.write("<table>");
 		document.write("<tr>") ;
@@ -155,55 +176,62 @@ td.img{
 		else
 		    document.write("<td>气表"+"</td>");*/	
 		document.write("<td style='width:500px'>"+devId+"</td>"); 
-		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
-		document.write('<input type="hidden" value="0" id="currLightState"/>');
+		//document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
+		//document.write('<input type="hidden" value="0" id="currLightState"/>');
 		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
-		document.write("</form>");
+		//document.write("</form>");
 		document.write("<td style='width:200px'>"+data+"</td>"); 
+		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/bluetooth_item") %>"  >');
+		if(status=="-1")
+		{
+			document.write('<td><button onclick="add()">添加</button></td>');
+			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
+			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
+			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
+			
+			//document.write('<p class="deom" id="deom1"></p>');
+		}
+		else
+		{
+			document.write('<td><button onclick="del()">删除</button></td>');
+			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
+			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
+			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
+			//document.write('<p class="deom" id="deom2"></p></td>');
+		}
+		document.write("</form>");
 		document.write("</tr>") ;
 	    document.write("</table>");
 	    
 	}
 	
-	//电水热
-	for(j=0;j<pwhArr.length;j++){  
-		var pwhData = pwhArr[j];
-		var devId = pwhData["deviceid"];
-		var type=pwhData["devicetype"];		
-		var data=pwhData["data"];
-		
-		document.write("<table>");
-		document.write("<tr>") ;
-		if(type=="ENN_DEVICE_TYPE_POWERMETER")
-			document.write("<td>电表"+"</td>");
-		else if(type=="ENN_DEVICE_TYPE_WATERMETER")
-			document.write("<td>水表"+"</td>");
-		else
-		    document.write("<td>热表"+"</td>");	
-		document.write("<td style='width:500px'>"+devId+"</td>"); 
-		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
-		document.write('<input type="hidden" value="0" id="currLightState"/>');
-		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
-		document.write("</form>");
-		document.write("<td style='width:200px'>"+data+"</td>"); 
-		document.write("</tr>") ;
-	    document.write("</table>");
-	}
 	</script>
-</div>    <!--big_bottom结束-->
+	</div>
+    <!--big_bottom结束-->
 
 <div class="bottom">
    <form action="<%= luci.dispatcher.build_url("admin/newweb/blegas_meter_set") %>" method="post">
-       <p>蓝牙气表:<input type="text"  name="id"/></p>
-       <input type="submit"  value="保存" onClick="add()"/>
+		<p>请设置蓝牙MAC地址：</p>
+        <input type="text"  name="id"/>
+       <input type="submit"  value="保存" font-size:14px;font-family:"微软雅黑";" onClick="add1()"/>
 	   <p id="deom"></p>
    </form>
 </div>
 <script>
-    function add()
+    function add1()
 	{
 	//document.write("保存成功");
 	document.getElementById("deom").innerHTML="保存成功";
+	}
+		function add()
+	{
+	//document.write("保存成功");
+	document.getElementById("deom").innerHTML="添加成功";
+	}
+	function del()
+	{		 
+	//document.write("保存成功");
+	document.getElementById("deom").innerHTML="删除成功";
 	}
 </script>
 </div>

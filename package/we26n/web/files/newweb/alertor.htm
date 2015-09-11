@@ -4,7 +4,7 @@ require("uci")
 local io = require "io"
 
 function getdevices( type )
-	local file = io.open("/tmp/devices_3.ini","r");
+	local file = io.open("/tmp/devices_4.ini","r");
 	
 	if(file==nil) then
 		return;
@@ -19,7 +19,26 @@ function getdevices( type )
 	return datad;
 end
 
-local result3=getdevices("3");
+function getdevices_list()                                    
+                                                               
+        filename = "/etc/config/devicesid_list";                 
+    	local file = io.open(filename,"r");                        
+                                                                                
+        if(file==nil) then                                     
+                return;                                                         
+        end                                                                     
+        local datad = file:read("*a");                                          
+                                                                                
+        datad = string.gsub(datad, "\r", "");                                   
+        datad = string.gsub(datad, "\n", "");  
+		 datad = string.gsub(datad, "list id", ""); 
+        file:close();                                                           
+                                                                                
+        return datad;                                                           
+end
+
+local result4=getdevices("4");
+local devicesid_str = getdevices_list();
 %>
 
 
@@ -27,22 +46,43 @@ local result3=getdevices("3");
 <html>
 <head>
 <style> 
+
+article,aside,dialog,footer,header,section,footer,nav,figure,menu{display:block} 
 body{ margin:auto;background-color:#1c69bb;}
 img{display:block};
 a{ display:block; text-decoration:none; font-family:"微软雅黑";}
+#body_center{
+
+width:100%;
+
+height:650px;
+
+position:absolute;
+
+top:50%;
+
+margin-top:-325px;
+
+
+
+}
+body{ margin:0;background-color:#1c69bb;}
+img{display:block;border:none;}
+a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .big_box{ height:auto;}
 .big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
-.big_top img,.big_top a{ float:left; padding-bottom:15px;text-decoration:none;}
-.zig{font-size:26px; color:white;padding-left:15px; padding-top:8px; }
+.big_top img,.big_top a{ float:left;padding-bottom:15px;text-decoration:none;}
+.zig{font-size:26px; color:white; padding-top:4px;font-family:"微软雅黑";}
 .button{margin-left:860px;color:white;padding-top:10px;}
-.big_top p{ padding-top:20px;color:#FFF; font-size:12px;}
+.big_top p{ padding-top:20px; padding-left:5px; color:#FFF; font-size:12px;font-family:"微软雅黑";}
 
 .big_bottom{width:1198px; background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
-
+.bottom{width:1198px; height:auto background-color:#226fc0; margin:auto;overflow:hidden; padding-bottom:50px;}
+.bottom p{font-size:16px; color:#ffffff;font-family:"微软雅黑";}
 .nav{ width:100%; height:50px; background-color:#8eb3db;}
 .lights{ overflow:hidden;}
-.alert{background:url(<%=resource%>/images/bg_nav.png);line-height:40px;}
-.lights a{ float:left; padding:0 91px;text-decoration:none; font-size:26px; color:#FFF;}
+.light{background:url(<%=resource%>/images/bg_nav.png);}
+.lights a{ float:left; padding:0 91px; padding-top:5px;text-decoration:none; font-size:26px; color:#FFF;font-family:"微软雅黑";}
 .lights a:hover{color:#009;text-decoration:none}
 
 table{
@@ -63,7 +103,7 @@ td.img{
 }
 </style>
 <meta charset="utf-8">
-<title>zigbee设备设备</title>
+<title>zigbee设备</title>
 
 <script type="text/javascript" src="<%=resource%>/js/jquery-1.8.1.min.js"></script>
 
@@ -100,7 +140,7 @@ td.img{
 			}
 		}
 		
-		function switchLightState()
+		function alertorLightState()
 		{
 			//alert("aaa");
 			if (lightState == 0)
@@ -130,19 +170,19 @@ td.img{
 	
 <script type="text/javascript">
 
-	var alertordata='<%=result3%>';
+	var alertordata='<%=result4%>';
 
 </script>
 </head>
 
 <body>
-
+<div id="body_center">
 <div class="big_box">
 
 	<div class="big_top">
     	<a href="newweb_index"> <img src="<%=resource%>/images/back.png"></a>
-        <a class="zig">&nbsp;ZIGBEE设备</a>
-<a class="button" href="<%=luci.dispatcher.build_url("admin/newweb/entrynet_control")%>"><img src="<%=resource%>/images/network_01.png"></a>
+        <a class="zig">&nbsp;&nbsp;ZIGBEE设备</a>
+        <a class="button" href="<%=luci.dispatcher.build_url("admin/newweb/entrynet_control")%>"><img src="<%=resource%>/images/network_01.png"></a>
         <p>允许入网</p>
     </div>
     
@@ -153,12 +193,14 @@ td.img{
         	<a href="windows">窗帘</a>
             <a href="switch">开关</a>
             <a href="sensor">传感器</a>
-            <a class="alert" href="alertor">报警器</a>
+            <a href="alertor">报警器</a>
         </div>
     </div>
     <script type="text/javascript">
     
     var alertorArr = eval(alertordata);
+	var str = "<%=devicesid_str%>"
+	var status=str.indexOf(devId);//status
     
 	var i=0;
 	//var item=0;
@@ -168,17 +210,19 @@ td.img{
 		var alertorData = alertorArr[i];
 		var devId = alertorData["deviceid"];
 		var status=alertorData["status"];
+		var devicetype=alertorData["devicetype"];
+		var status=str.indexOf(devId);//status
 		
 		document.write("<table>");
 		document.write("<tr>") ;
 		document.write("<td style='width:200px'>报警器"+(i+1)+"</td>"); 
 		document.write("<td style='width:500px'>"+devId+"</td>"); 
-		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
-		document.write('<input type="hidden" value="0" id="currLightState"/>');
-		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/light_01.png"</td>') ;
-		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
-		document.write("</form>");
-		if(status=="1")
+		//document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
+		//document.write('<input type="hidden" value="0" id="currLightState"/>');
+		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/alertor.png"</td>') ;
+		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="alertorLightState(item);"></td>') ;	
+		//document.write("</form>");
+		if(status=="-1")
 		{
 			document.write("<td>"+"开"+"</td>");
 		}
@@ -186,6 +230,25 @@ td.img{
 		{		
 			document.write("<td>"+"关"+"</td>");
 		}
+		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/alertor_item") %>"  >');
+		if(status=="-1")
+		{
+			document.write('<td><button onclick="add()">添加</button></td>');
+			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
+			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
+			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
+			
+			//document.write('<p class="deom" id="deom1"></p>');
+		}
+		else
+		{
+			document.write('<td><button onclick="del()">删除</button></td>');
+			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
+			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
+			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
+			//document.write('<p class="deom" id="deom2"></p></td>');
+		}
+		document.write("</form>");
 		//document.write("<td>色温</td>"); 
 		//document.write("<td>亮度</td>"); 
 		
@@ -193,16 +256,25 @@ td.img{
 		document.write("</tr>") ;
 
 	    document.write("</table>");
-	    
+	function add()
+	{
+	//document.write("保存成功");
+	document.getElementById("deom").innerHTML="添加成功";
+	}
+	function del()
+	{		 
+	//document.write("保存成功");
+	document.getElementById("deom").innerHTML="删除成功";
+	}    
 	   
 	}
 	
 	</script>
-    
-
-     </table>
-
 </div>
-
+<div class="bottom">
+    <p class="deom" id="deom"></p>
+</div>
+</div>
+</div>
 </body>
 </html>
