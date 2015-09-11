@@ -149,6 +149,11 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_ON_OFF_THREE_STATE);
 		  sprintf(devicedatastr, "%d", data);
 	     break;
+	 case FB_DEVICE_TYPE_POWER_OUTLET:
+	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_POWER_OUTLET);
+		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_POWER_OUTLET);
+		  sprintf(devicedatastr, "%d", data);
+	     break;
 	 case FB_DEVICE_TYPE_WINDOWS:
 	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_WINDOWS);
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_WINDOWS_VALUE);

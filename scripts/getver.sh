@@ -18,8 +18,7 @@ try_svn() {
 
 try_git() {
 	[ -d .git ] || return 1
-	REV="$(git log | grep -m 1 git-svn-id | awk '{ gsub(/.*@/, "", $0); print $1 }')"
-	REV="${REV:+r$REV}"
+	REV="$(git log --date=iso | grep -m 1 Date | awk '{ split( $2, aa, "-"); split($3,bb,":"); print(aa[1]aa[2]aa[3]bb[1]bb[2]bb[3]) }' )"
 	[ -n "$REV" ]
 }
 

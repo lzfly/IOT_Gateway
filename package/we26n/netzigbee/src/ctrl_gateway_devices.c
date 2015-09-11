@@ -531,7 +531,44 @@ static int zigbee_getdevicescmd( struct ubus_context *ctx, struct ubus_object *o
 			if(add){
 			    sprintf(&devicesstr[strlen(devicesstr)], "{");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"zigbee_fbee_%s_%d\",", g_devices[i].ieeestr, g_devices[i].endpoint);
-				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"%d\"", g_openStatus[i]);
+				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"%d\",", g_openStatus[i]);
+
+			switch(g_devices[i].deviceId)
+			{
+			 case FB_DEVICE_TYPE_GAS:
+				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_GAS);
+				 break;
+			 case FB_DEVICE_TYPE_MAGNETIC_DOOR:
+				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_MAGNETIC_DOOR);
+				 break;
+			 case FB_DEVICE_TYPE_BODY_INFRARED:
+				  sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_BODY_INFRARED);
+				 break;
+			 case FB_DEVICE_TYPE_TEMP_HUM:
+			 case FB_DEVICE_TYPE_TEMP_HUM_2:
+				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_TEMP_HUM);
+				 break;
+				 
+			 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
+				  sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_ON_OFF_THREE);
+				 break;
+			 case FB_DEVICE_TYPE_POWER_OUTLET:
+				  sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_POWER_OUTLET);
+				 break;
+			 case FB_DEVICE_TYPE_WINDOWS:
+				  sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_WINDOWS);
+				 break;
+			 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
+			 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
+				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_COLOR_TEMP_LAMP);
+				 break;
+				 
+			 default:
+				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", "xxxx");
+				 break;
+			}
+                               
+                                
 				
 				sprintf(&devicesstr[strlen(devicesstr)], "},");
 				printf("[zigbee_getdevicescmd]i=%d,total_count=%d,deviceid=zigbee_fbee_%s_%d\r\n",i,g_devices_count,g_devices[i].ieeestr,g_devices[i].endpoint);

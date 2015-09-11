@@ -51,6 +51,7 @@ define Package/web/install
 	$(CP) ./files/bootstrap/header.htm $(1)/usr/lib/lua/luci/view/themes/bootstrap/header.htm
 	$(CP) ./files/bootstrap/footer.htm $(1)/usr/lib/lua/luci/view/themes/bootstrap/footer.htm
 	$(CP) ./files/sysauth.htm $(1)/usr/lib/lua/luci/view/sysauth.htm
+	$(CP) ./files/newweb/index.htm $(1)/usr/lib/lua/luci/view/newweb/index.htm
 
 endef
 
