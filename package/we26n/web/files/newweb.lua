@@ -100,6 +100,7 @@ function index()
 		entry({"admin","newweb","switch_item"},call("switch_item"),nil)
 		entry({"admin","newweb","sensor_item"},call("sensor_item"),nil)
 		entry({"admin","newweb","alertor_item"},call("alertor_item"),nil)
+		entry({"admin","newweb","pair470_control"},call("pair470_control"),nil)
 end
 
 
@@ -238,6 +239,12 @@ function entrynet_control()
         luci.http.redirect(luci.dispatcher.build_url("admin/newweb/zigbee"))
 end
 
+function pair470_control()
+
+	local result = conn:call("we26n_rfmodbus", "startpair", {});
+        luci.http.redirect(luci.dispatcher.build_url("admin/newweb/elewater"))
+end
+
 function gas_meter_set()
 
 	local c_gas_id=luci.http.formvalue("id")
@@ -247,7 +254,7 @@ function gas_meter_set()
 
 	x:commit("jyconfig")
 		
-	luci.http.redirect(luci.dispatcher.build_url("admin/newweb/elewater"))
+	luci.http.redirect(luci.dispatcher.build_url("admin/newweb/wifi"))
 end
 
 function blegas_meter_set()
