@@ -17,6 +17,8 @@
 #include "mymqtt.h"
 
 
+int  ugth_start( char * bname );
+
 
 static intptr_t qctx;
 static intptr_t mtctx;
@@ -385,6 +387,12 @@ void  test_set_gateway( char * msg )
         system( cmdln );
         return;
     }
+
+    if ( 0 == strncmp( msg, "UG|", 3) )
+    {
+        ugth_start( &(msg[3]) );
+        return;
+    }
     
     return;
     
@@ -516,10 +524,14 @@ int  test_run( char * ipdr, int port, char * user )
         return 1;
     }
 
+sleep(20);
+syslog( LOG_CRIT, "testrun, sleep, end" );
+
     /**/
     iret = mmqt_init( qctx, ipdr, port, &mtctx );
     if ( 0 != iret )
     {
+        syslog( LOG_CRIT, "testrun, mmqt_init, ret %d", iret );    
         return 2;
     }
 
@@ -648,24 +660,28 @@ int test_get_config( char * ipdr, int * port, char * user )
 }
 
 
-int  main( void )
+int  main( int argc, char * argv[] )
 {
     int  iret;
     char  ipdr[20];
     char  user[40];    
     int  port;
 
+    openlog( "mtbridge", 0, 0 );
+
     /**/
     iret = test_get_config( ipdr, &port, user );
     if ( 0 != iret )
     {
         printf( "get cfg ret %d\n", iret );
+        syslog( LOG_CRIT, "get cfg ret %d", iret );
         return 1;
     }
 
     /**/
     iret = test_run( ipdr, port, user );
     printf( "test ret %d\n", iret );
+    syslog( LOG_CRIT, "test_run, ret %d", iret );
     return 0;
     
 }
