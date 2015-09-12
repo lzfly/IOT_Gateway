@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <alloca.h>
 #include <unistd.h>
+#include <syslog.h>
 
 
 #include <mosquitto.h>
@@ -358,6 +359,7 @@ int  mmqt_init( intptr_t qctx, char * ipdr, int port, intptr_t * pret )
     pctx = (mmqt_context_t *)malloc( sizeof(mmqt_context_t) );
     if ( NULL == pctx )
     {
+        syslog( LOG_CRIT, "init, malloc, fail" );
         return 1;
     }
 
@@ -366,7 +368,8 @@ int  mmqt_init( intptr_t qctx, char * ipdr, int port, intptr_t * pret )
     iret = mmqt_get_macaddr( &(pctx->topic[6]) );
     if ( 0 != iret )
     {
-        return 3;
+        syslog( LOG_CRIT, "init, getmac, ret %d", iret );
+        return 2;
     }
 
     sprintf( pctx->user, "%s_user", pctx->topic );
@@ -392,9 +395,10 @@ int  mmqt_init( intptr_t qctx, char * ipdr, int port, intptr_t * pret )
     iret = mosquitto_connect_bind_async(mosq, ipdr, port, 60, NULL );
     if ( 0 != iret )
     {
+        syslog( LOG_CRIT, "init, bind_async, ret %d", iret );
         mosquitto_destroy( mosq );
         mosquitto_lib_cleanup();
-        return 2;
+        return 3;
     }
 
 
