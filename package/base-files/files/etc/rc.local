@@ -19,5 +19,6 @@ start-stop-daemon -b -S -x ennconfig_download.lua
 start-stop-daemon -b -S -x add_del_deviceid.lua
 
 start-stop-daemon -b -S -x mtbridge
+start-stop-daemon -b -S -x bledaemn
 
 exit 0
