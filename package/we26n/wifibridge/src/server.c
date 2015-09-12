@@ -399,9 +399,9 @@ void* gas_meter_thread( void *arg )
     char *path="/tmp/devices_6.ini";
     FILE *fp;
     char buff_path[N];
-    int i,j,p,q,k,l;
-    int m=0,n=0,t=0,f=0;
-    long double d;
+    int len,k;
+    int inicount=0;
+    long double data;
     int connectfd;
     uint8_t crc,crc_o, crc_r;	
 
@@ -449,18 +449,18 @@ void* gas_meter_thread( void *arg )
 	
 	while(1)
 	{      
-			sleep(2);
-            syslog(LOG_CRIT,"[gas_meter] while sart");
+	        sleep(2);
+                syslog(LOG_CRIT,"[gas_meter] while sart");
                 do{
-                    q = recv(connectfd,buf,18,0);
-                }while(q > 0);
+                    len = recv(connectfd,buf,18,0);
+                }while(len > 0);
 				
-                        printf("\n******gas_meter read  sleep = %d\n", q);
+                        printf("\n******gas_meter read  sleep = %d\n", len);
 
 			printf("\n******gas_meter awake ********\n");
 			
-			j=send(connectfd,buf_wake,22,0);
-			if(j<0)
+			len=send(connectfd,buf_wake,22,0);
+			if(len<0)
                         {
                             printf("\nthread exit---0\n");
 			    break;
@@ -472,13 +472,13 @@ void* gas_meter_thread( void *arg )
 			printf("\n******gas_meter read  wake before********\n");
 	    		while(count_g < 15 && len_g < 18)
 	    		{
-				q=recv(connectfd,buff2,18,0);
-				printf("q=%d\n", q);
+				len=recv(connectfd,buff2,18,0);
+				printf("len=%d\n", len);
 				count_g++;
-				if(q<0)
+				if(len<0)
 				    continue;
-				memcpy(buf+len_g, buff2, q);
-				len_g = len_g + q;
+				memcpy(buf+len_g, buff2, len);
+				len_g = len_g + len;
 				
 				sleep(1);
 			
@@ -492,8 +492,8 @@ void* gas_meter_thread( void *arg )
 			sleep(5);
     			
 			printf("\n******gas_meter send cmd********\n");
-			p=send(connectfd,buf_read,16,0);
-			if(p<0)
+			len=send(connectfd,buf_read,16,0);
+			if(len<0)
                         {
                             printf("\nthread exit---2\n");
 
@@ -509,13 +509,13 @@ void* gas_meter_thread( void *arg )
 			printf("\n******gas_meter read  data before********\n");
 	    		while(count_g < 5 && len_g < 41)
 	    		{
-				q=recv(connectfd,buff2,41,0);
-				printf("q=%d\n", q);
+				len=recv(connectfd,buff2,41,0);
+				printf("len=%d\n", len);
 				count_g++;
-				if(q<0)
+				if(len<0)
 				    continue;
-				memcpy(buf_f+len_g, buff2, q);
-				len_g = len_g + q;
+				memcpy(buf_f+len_g, buff2, len);
+				len_g = len_g + len;
 				
 				sleep(1);
 			
@@ -551,15 +551,15 @@ void* gas_meter_thread( void *arg )
 			/*
 			k = *(int *)&(buf_f[15]);
 			printf("kx=%2x\nkd=%d\n",k,k);*/
-			d=(float)k/10;
-			if(30 == f)
+			data=(float)k/10;
+			if(inicount%30 == 0)
 			{
 				sprintf(&devicesstr[0], "[");
 				sprintf(&devicesstr[strlen(devicesstr)], "{");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"gas_meter_%s\",",gas_meter_id);
 				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0020\",");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",d);	
+				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",data);	
 				sprintf(&devicesstr[strlen(devicesstr)], "},");
 				sprintf(&devicesstr[strlen(devicesstr)-1], "]");
 				printf("devicesstr= %s\n",devicesstr);
@@ -571,15 +571,15 @@ void* gas_meter_thread( void *arg )
 			
 				fwrite(devicesstr,1,strlen(devicesstr),fp);
 				fclose(fp);
-				f=0;
+				
 			}
-			syslog(LOG_CRIT,"[gas_meter]gas meter value=%f", d);
+			syslog(LOG_CRIT,"[gas_meter]gas meter value=%f", data);
 			
-			sendMsgToWeb(gas_meter_id,ENN_DEVICE_ATTR_GASMETER_VALUE,d);
+			sendMsgToWeb(gas_meter_id,ENN_DEVICE_ATTR_GASMETER_VALUE,data);
 			//dump_hex( buf_f, q );
 			
-			j=send(connectfd,buf_sleep,21,0);
-			if(j<0)
+			len=send(connectfd,buf_sleep,21,0);
+			if(len<0)
                         {
                             printf("\nthread exit---3\n");
 			    break;
@@ -590,8 +590,7 @@ void* gas_meter_thread( void *arg )
      			sleep(times*60);
 
      			printf("\nsleep=%d\n",times);
-        		t++;
-        		f++;
+        		inicount++;
 	}
 	close(connectfd);
         printf("\nexit thread\n");
