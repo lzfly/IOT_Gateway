@@ -679,9 +679,14 @@ int  main( int argc, char * argv[] )
     }
 
     /**/
-    iret = test_run( ipdr, port, user );
-    printf( "test ret %d\n", iret );
-    syslog( LOG_CRIT, "test_run, ret %d", iret );
+	while(1){
+		syslog( LOG_CRIT, "test_run start");
+        iret = test_run( ipdr, port, user );
+        printf( "test ret %d\n", iret );
+        syslog( LOG_CRIT, "test_run, ret %d", iret );
+	    sleep(10);
+	    syslog( LOG_CRIT, "test_run end");
+	}
     return 0;
     
 }
