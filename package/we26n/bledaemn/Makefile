@@ -46,6 +46,7 @@ endef
 define Package/bledaemn/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bledaemn $(1)/usr/bin/bledaemn
+	$(INSTALL_BIN) ./files/jyconfig  $(1)/usr/bin
 endef
 
 $(eval $(call BuildPackage,bledaemn))
