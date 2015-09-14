@@ -51,37 +51,21 @@ local devicesid_str = getdevices_list();
 <html>
 <head>
 <style> 
-body{ margin:auto; background-color:#1c69bb;}
+body{ margin:auto;background-color:#1c69bb;}
 img{display:block};
 a{ display:block; text-decoration:none; font-family:"微软雅黑";}
-#body_center{
-
-width:100%;
-
-height:650px;
-
-position:absolute;
-
-top:50%;
-
-margin-top:-325px;
-
-
-
-}
-.big_box{height:auto;}
-.big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
-.big_top img,.big_top a{ float:left;padding-bottom:15px;text-decoration:none;border:none;}
+.big_box{width:100%;height:auto;position:absolute;top:50%;margin-top:-325px;}
+.big_top{ width:1196px;margin:auto;overflow:hidden; padding-top:5px;}
+.big_top img,.big_top a{ float:left;padding-bottom:15px;text-decoration:none;}
 .big_top a{font-size:26px; text-decoration:none;  color:white;font-family:"微软雅黑"; }
 
-.button{margin-left:980px;color:white;padding-top:10px;}
+.button{margin-left:960px;color:white;padding-top:10px;}
 .big_top p{ padding-top:20px;color:#FFF; font-size:12px;font-family:"微软雅黑";}
 
 .big_bottom{width:1198px;background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
 
-.nav{ width:100%; height:50px; background-color:#8eb3db;}
-.lights{ overflow:hidden;}
-.lights a{ float:left; padding-left:600px; padding-top:5px;text-decoration:none; font-size:26px;color:#ffffff;font-family:"微软雅黑";}
+.nav{ width:100%; height:50px; background-color:#8eb3db;overflow:hidden;}
+.nav a{ float:left; padding-left:600px; padding-top:5px;text-decoration:none; font-size:26px;color:#ffffff;font-family:"微软雅黑";}
 
 table{
 	width:100%;
@@ -133,10 +117,7 @@ td.img{
 
 <body>
 
-<div id="body_center">
-
-<div class="big_box" style="width:100%; height:100%; position:absolute; left:0px; top:0px;">
-
+<div class="big_box">
 	<div class="big_top">
     	<a href="newweb_index"><img src="<%=resource%>/images/back.png"></a>
         <a href="newweb_index">&nbsp;&nbsp;wifi设备</a>
@@ -144,12 +125,10 @@ td.img{
         <p>配对</p>
     </div>
     
-<div class="big_bottom">
-	<div class="nav">
-    	<div class="lights">
+	<div class="big_bottom">
+		<div class="nav">
         	<a>wifi设备</a>
         </div>
-    </div>
     <script type="text/javascript">
     var gasArr = eval(gasdata); 
 	var str = "<%=devicesid_str%>"
@@ -162,35 +141,48 @@ td.img{
 		var data=gasData["data"];
 		var devicetype=gasData["devicetype"];
 		var status=str.indexOf(devId);//status
-		
-		document.write("<table>");
-		document.write("<tr>") ;
-		document.write("<td>气表"+"</td>");
-				
-		document.write("</form>");
-		document.write("<td style='width:200px'>"+data+"</td>"); 
-		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/wifi_item") %>"  >');
 		if(status=="-1")
 		{
+			document.write("<table>");
+			document.write("<tr>") ;
+			document.write("<td>气表"+"</td>");
+			document.write("</form>");
+			document.write("<td style='width:200px'>"+data+"</td>"); 
+			document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/wifi_item") %>"  >');
+		
 			document.write('<td><button onclick="add()">添加</button></td>');
 			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
 			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
 			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
-			
 			//document.write('<p class="deom" id="deom1"></p>');
+			document.write("</form>");
+			document.write("</tr>") ;
+			document.write("</table>");
 		}
-		else
+	}
+	for(i=0;i<gasArr.length;i++){  
+		var gasData = gasArr[i];
+		var devId = gasData["deviceid"];	
+		var data=gasData["data"];
+		var devicetype=gasData["devicetype"];
+		var status=str.indexOf(devId);//status
+		if(status!="-1")
 		{
+			document.write("<table>");
+			document.write("<tr>") ;
+			document.write("<td>气表"+"</td>");
+			document.write("</form>");
+			document.write("<td style='width:200px'>"+data+"</td>"); 
+			document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/wifi_item") %>"  >');
 			document.write('<td><button onclick="del()">删除</button></td>');
 			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
 			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
 			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
 			//document.write('<p class="deom" id="deom2"></p></td>');
+			document.write("</form>");
+			document.write("</tr>") ;
+			document.write("</table>");
 		}
-		document.write("</form>");
-		document.write("</tr>") ;
-	    document.write("</table>");
-	    
 	}
 	
 	
@@ -221,7 +213,6 @@ td.img{
 	document.getElementById("deom").innerHTML="删除成功";
 	}
 </script>
-</div>
 </div>
 </body>
 </html>
