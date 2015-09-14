@@ -208,7 +208,7 @@ function  ble_gasmeter_report( tmac, data )
 	local  conn = ubus.connect();
 	
 	rpt.gatewayid = "we26n_78A35106F196";
-	rpt.deviceid = "we26n_78A35106F196";
+	rpt.deviceid = ble_gasmeter_cvtname(tmac);
 	rpt.devicetype = "0020";
 	rpt.attr = "1004";
 	rpt.data = string.format ( "%f", data );

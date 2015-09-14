@@ -14,6 +14,7 @@ http = require "socket.http";
 
 
 url = "http://10.4.44.210:8001/enngateway/info?"
+gatewayId = "we26n_78A351097F2E"
 
 function getWebServerURL()
     local ip = luci.sys.exec("uci get jyconfig.@webserver[0].ip")
@@ -34,8 +35,23 @@ function getWebServerURL()
 
 end
 
-getWebServerURL()
 
+function getGateWayId()
+	local mfp, mac;
+	
+    mfp = io.popen( "eth_mac r lan" );	
+	mac = mfp:read( "*l" );
+	mfp:close();
+	mac = string.gsub( mac, ":", "" );
+	gatewayId = "we26n_" .. mac;
+	print( gatewayId );
+	
+end
+
+
+-- global init
+getWebServerURL()
+getGateWayId();
 
 
 
@@ -43,28 +59,24 @@ local customMethod = {
 	jianyou = {
 		report = {
 			function(req, msg)
-				local queryParam = "gatewayid=";
-				
-				local gatewayId = msg["gatewayid"];
-				if gatewayId ~= nil then
-					queryParam = queryParam .. gatewayId;
+				local deviceId = msg["deviceid"];
+
+				if deviceId == nil then
+					print( "device id is NIL" );
+					return;
 				end
 
-				queryParam = queryParam .. "&deviceid=";
-				local deviceId = msg["deviceid"];
-				if deviceId ~= nil then
-					queryParam = queryParam .. deviceId;
-				end
 				--local deviceid_str = x:get("devicesid_list_ever", "@devicesid[0]", "id")
 				local deviceid_str = luci.sys.exec("uci get devicesid_list.@devicesid[0].id")
-			    print(deviceid_str)	
-			    --for key, value in pairs(deviceid_str) do 
-			    local match=string.match(deviceid_str,deviceId)
-	                if  match == nil then
-		                print(value)
-		                return;
-		            end
-               
+			    -- print(deviceid_str)	
+			    -- for key, value in pairs(deviceid_str) do 
+			    local match = string.match(deviceid_str,deviceId)
+	            if  match == nil then
+		            print( deviceId .. "not in devicelist" );
+		            return;
+		        end
+                
+				local queryParam = "gatewayid=" .. gatewayId .. "&deviceid=" .. deviceId;               
 				
 				queryParam = queryParam .. "&devicetype=";
 				local deviceType = msg["devicetype"];
@@ -84,23 +96,21 @@ local customMethod = {
 					queryParam = queryParam .. data;
 				end
 
-				if queryParam ~= nil then
-					local targetUrl = url .. queryParam;
+				
+				local targetUrl = url .. queryParam;
 
-					print(targetUrl);
+				print(targetUrl);
 
-					for i=1,3 do
-						resp, code = http.request(targetUrl);
-						if code == 200 then
-							conn:reply(req, {code="S00000", message="" .. resp});
-							return;
-						end
+				for i=1,3 do
+					resp, code = http.request(targetUrl);
+					if code == 200 then
+						conn:reply(req, {code="S00000", message="" .. resp});
+						return;
 					end
-
-					conn:reply(req, {code="E00002", message="" .. code});
-				else
-					conn:reply(req, {code="E00001", message="Parameters 'gatewayid、deviceid、devicetype、attr、data' can not be empty."});
 				end
+
+				conn:reply(req, {code="E00002", message="" .. code});
+			
 			end, {gatewayid = ubus.STRING, deviceid = ubus.STRING, devicetype = ubus.STRING, attr = ubus.STRING, data = ubus.STRING}
 		}
 	}
