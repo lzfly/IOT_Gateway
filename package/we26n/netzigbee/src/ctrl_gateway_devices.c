@@ -498,6 +498,7 @@ static int zigbee_getdevicescmd( struct ubus_context *ctx, struct ubus_object *o
 					}
 					break;
 				case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
+				case FB_DEVICE_TYPE_POWER_OUTLET:
                     if(devicetype == 4)
 					{
 					    add = 1;
