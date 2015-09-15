@@ -49,33 +49,13 @@ local devicesid_str = getdevices_list();
 <html>
 <head>
 <style> 
-
-article,aside,dialog,footer,header,section,footer,nav,figure,menu{display:block} 
 body{ margin:auto;background-color:#1c69bb;}
 img{display:block};
 a{ display:block; text-decoration:none; font-family:"微软雅黑";}
-#body_center{
-
-width:100%;
-
-height:650px;
-
-position:absolute;
-
-top:50%;
-
-margin-top:-325px;
-
-
-
-}
-body{ margin:auto; background-color:#1c69bb;}
-img{display:block;border:none;}
-a{ display:block; text-decoration:none; font-family:"微软雅黑";}
-.big_box{height:auto;}
-.big_top{ width:1198px;margin:auto;overflow:hidden; padding-top:5px;}
-.big_top img,.big_top a{ float:left;padding-bottom:15px;}
-.big_top a{font-size:26px; text-decoration:none;  color:white;padding-top:8px;font-family:"微软雅黑"; }
+.big_box{width:100%;height:auto;position:absolute;top:50%;margin-top:-325px;}
+.big_top{ width:1196px;margin:auto;overflow:hidden; padding-top:5px;}
+.big_top img,.big_top a{ float:left;padding-bottom:15px;text-decoration:none;}
+.big_top a{font-size:26px; text-decoration:none;  color:white; font-family:"微软雅黑";}
 
 .button{margin-left:1000px;color:white;padding-top:10px;}
 .big_top p{ padding-top:20px;color:#FFF; padding-left:15px; font-size:12px;font-family:"微软雅黑";}
@@ -84,9 +64,8 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .bottom{width:1198px; height:auto background-color:#226fc0; margin:auto;overflow:hidden; padding-bottom:50px;}
 .bottom p{font-size:16px; color:#ffffff;font-family:"微软雅黑";}
 
-.nav{ width:100%; height:50px; background-color:#8eb3db;}
-.lights{ overflow:hidden;}
-.lights a{ float:left; padding-left:600px; padding-top:5px;text-decoration:none; font-size:26px;color:#ffffff;font-family:"微软雅黑";}
+.nav{ width:100%; height:50px; background-color:#8eb3db;overflow:hidden;}
+.nav a{ float:left; padding-left:600px; padding-top:5px;text-decoration:none; font-size:26px;color:#ffffff;font-family:"微软雅黑";}
 
 table{
 	width:100%;
@@ -134,9 +113,7 @@ td.img{
 </head>
 
 <body>
-<div id="body_center">
-<div class="big_box" style="width:100%; height:100%; position:absolute; left:0px; top:0px;">
-
+<div class="big_box">
 	<div class="big_top">
     	<a href="newweb_index"><img src="<%=resource%>/images/back.png"></a>
         <a href="newweb_index">&nbsp;&nbsp;470</a>
@@ -144,12 +121,10 @@ td.img{
         <p>配对</p>
     </div>
     
-<div class="big_bottom">
-	<div class="nav">
-    	<div class="lights">
-        	<a>水电表</a>
-        </div>
-    </div>
+	<div class="big_bottom">
+		<div class="nav">
+			<a>水电表</a>
+		</div>
     <script type="text/javascript">
 	
 	
@@ -164,9 +139,9 @@ td.img{
 		var devId = pwhData["deviceid"];
 		var devicetype=pwhData["devicetype"];		
 		var data=pwhData["data"];
-		
 		var status=str.indexOf(devId);//status
-		
+		if(status=="-1")
+		{
 		document.write("<table>");
 		document.write("<tr>") ;
 		if(devicetype=="ENN_DEVICE_TYPE_POWERMETER")
@@ -175,40 +150,61 @@ td.img{
 			document.write("<td>水表</td>");
 		else
 		    document.write("<td>热表</td>");	
-		document.write("<td style='width:500px'>"+devId+"</td>"); 
-		//document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
-		//document.write('<input type="hidden" value="0" id="currLightState"/>');
-		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
-		//document.write("</form>");
-		document.write("<td style='width:200px'>"+data+"</td>"); 
-		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/elewater_item") %>"  >');
-		if(status=="-1")
-		{
+			document.write("<td style='width:500px'>"+devId+"</td>"); 
+			//document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
+			//document.write('<input type="hidden" value="0" id="currLightState"/>');
+			//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
+			//document.write("</form>");
+			document.write("<td style='width:200px'>"+data+"</td>"); 
+			document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/elewater_item") %>"  >');
 			document.write('<td><button onclick="add()">添加</button></td>');
 			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
 			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
 			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
-			
 			//document.write('<p class="deom" id="deom1"></p>');
+			document.write("</form>");
+			document.write("</tr>") ;
+			document.write("</table>");
 		}
-		else
+	}
+	for(j=0;j<pwhArr.length;j++){  
+		var pwhData = pwhArr[j];
+		var devId = pwhData["deviceid"];
+		var devicetype=pwhData["devicetype"];		
+		var data=pwhData["data"];
+		var status=str.indexOf(devId);//status
+		if(status!="-1")
 		{
+		document.write("<table>");
+		document.write("<tr>") ;
+		if(devicetype=="ENN_DEVICE_TYPE_POWERMETER")
+			document.write("<td>电表</td>");
+		else if(devicetype=="ENN_DEVICE_TYPE_WATERMETER")
+			document.write("<td>水表</td>");
+		else
+		    document.write("<td>热表</td>");	
+			document.write("<td style='width:500px'>"+devId+"</td>"); 
+			//document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
+			//document.write('<input type="hidden" value="0" id="currLightState"/>');
+			//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
+			//document.write("</form>");
+			document.write("<td style='width:200px'>"+data+"</td>"); 
+			document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/elewater_item") %>"  >');
 			document.write('<td><button onclick="del()">删除</button></td>');
 			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
 			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
 			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
 			//document.write('<p class="deom" id="deom2"></p></td>');
+			document.write("</form>");
+			document.write("</tr>") ;
+			document.write("</table>");
 		}
-		document.write("</form>");
-		
-	}
-	document.write("</tr>") ;
-	document.write("</table>");
+	}	
 	</script>
-</div>    <!--big_bottom结束-->
-<div class="bottom">
+	</div>    <!--big_bottom结束-->
+	<div class="bottom">
 	   <p id="deom"></p>
-</div>
+	</div>
 
 <script>
     function add1()
@@ -227,7 +223,6 @@ td.img{
 	document.getElementById("deom").innerHTML="删除成功";
 	}
 </script>
-</div>
 </div>
 </body>
 </html>
