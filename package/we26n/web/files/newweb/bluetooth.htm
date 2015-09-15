@@ -39,7 +39,7 @@ function getdevices_list()
         return datad;                                                           
 end
 
-local result6=getdevices(6);
+local result6=getdevices(8);
 local devicesid_str = getdevices_list();
 %>
 
@@ -58,8 +58,6 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .big_top img,.big_top a{ float:left;padding-bottom:15px;text-decoration:none;}
 .big_top a{font-size:26px; text-decoration:none;  color:white; font-family:"微软雅黑";}
 
-.button{margin-left:920px;color:white;padding-top:10px;}
-.big_top p{ padding-top:20px;color:#FFF; font-size:12px;font-family:"微软雅黑";}
 
 .big_bottom{width:1198px;background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
 
@@ -121,8 +119,6 @@ td.img{
 	<div class="big_top">
     	<a href="newweb_index"><img src="<%=resource%>/images/back.png"></a>
         <a href="newweb_index">&nbsp;&nbsp;bluetooth</a>
-        <a class="button" href=""><img src="<%=resource%>/images/pair.png"></a>
-        <p>配对</p>
     </div>
     
 	<div class="big_bottom">

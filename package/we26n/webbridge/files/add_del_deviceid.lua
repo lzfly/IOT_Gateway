@@ -15,6 +15,10 @@ local macAddr = macReader:read("*all");
 macAddr = string.gsub(macAddr, ":", "");
 macAddr = "we26n_" .. macAddr;
 
+macAddr = string.gsub(macAddr,"%\r","")
+macAddr = string.gsub(macAddr,"%\n","")
+
+
 http = require "socket.http";
 
 function getWebServerURL()
