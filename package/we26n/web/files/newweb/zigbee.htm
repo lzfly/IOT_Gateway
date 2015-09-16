@@ -60,7 +60,7 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .nav a{ float:left; padding:0 91px; padding-top:5px;text-decoration:none; font-size:26px; color:#FFF;font-family:"微软雅黑";}
 .nav a:hover{color:#009;text-decoration:none;}
 .zigbe{background:url(<%=resource%>/images/bg_nav.png);padding-top:5px;}
-.title{ float:left; padding-left:600px; padding-top:10px;padding-bottom:10px;text-decoration:none; font-size:20px;color:#ffffff;font-family:"微软雅黑";}
+.title{ float:left; padding-left:580px; padding-top:10px;padding-bottom:10px;text-decoration:none; font-size:20px;color:#ffffff;font-family:"微软雅黑";}
 table{
 	width:100%;
 }
@@ -72,7 +72,7 @@ table, th, td {
 }
 
 th,td{
-	text-align: left; padding-left:40px; color:#CCC;
+	text-align: left; color:#CCC;
 }
 td.img{
    float;
@@ -194,22 +194,22 @@ td.img{
 			j++;
 		    document.write('<table id="table1">') ;
 		    document.write('<tr id="delCell">') ;
-			document.write("<td style='width:200px'>灯"+(i+1)+"</td>"); 
-			document.write("<td style='width:500px'>"+devId+"</td>"); 
+			document.write("<td style='width:200px'><center>灯"+(i+1)+"</td>"); 
+			document.write("<td style='width:500px'><center>"+devId+"</td>"); 
 			//document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
 			//document.write('<input type="hidden" value="0" id="currLightState"/>');
 			document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/light_01.png"></td>') ;
 			//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
 			if(status=="-1")
 			{
-				document.write("<td>"+"开"+"</td>");
+				document.write("<td><center>"+"开"+"</td>");
 			}
 			else
 			{		
-				document.write("<td>"+"关"+"</td>");
+				document.write("<td><center>"+"关"+"</td>");
 			}
 			document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/zigbee_item") %>"  >');
-			document.write('<td><button onclick="del()">删除</button></td>');
+			document.write('<td><center><button onclick="del()">删除</button></td>');
 			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
 			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
 			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
@@ -232,23 +232,23 @@ td.img{
 		k++;
 	    document.write('<table id="table2">');
 		document.write('<tr id="delCell">') ;
-		document.write("<td style='width:200px'>灯"+(i+1)+"</td>"); 
-		document.write("<td style='width:500px'>"+devId+"</td>"); 
+		document.write("<td style='width:200px'><center>灯"+(i+1)+"</td>"); 
+		document.write("<td style='width:500px'><center>"+devId+"</td>"); 
 		//document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
 		//document.write('<input type="hidden" value="0" id="currLightState"/>');
 		document.write('<td><center><img  id="lightShow" src="<%=resource%>/images/light_01.png"></td>') ;
 		//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
 		if(status=="-1")
 		{
-			document.write("<td>"+"开"+"</td>");
+			document.write("<td><center>"+"开"+"</td>");
 		}
 		else
 		{		
-			document.write("<td>"+"关"+"</td>");
+			document.write("<td><center>"+"关"+"</td>");
 		}
 		document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/zigbee_item") %>"  >');
 		//if(status=="-1")
-			document.write('<td><button onclick="add()">添加</button></td>');
+			document.write('<td><center><button onclick="add()">添加</button></td>');
 			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
 			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
 			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
