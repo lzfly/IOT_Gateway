@@ -242,8 +242,23 @@ end
 function pair470_control()
 
 	local result = conn:call("we26n_rfmodbus", "startpair", {});
+	
         luci.http.redirect(luci.dispatcher.build_url("admin/newweb/elewater"))
 end
+
+function get_470_state()
+
+local ret = conn:call( "we26n_rfmodbus", "getstate", {} );
+	if ret.result == "0" and ret.state == "4" then
+	    luci.http.prepare_content("text/plain")
+	    luci.http.write("pairing ok")
+	else
+	    luci.http.prepare_content("text/plain")
+	    luci.http.write("pair fail")
+	end
+
+end
+
 
 function gas_meter_set()
 
@@ -264,7 +279,8 @@ function blegas_meter_set()
 	luci.sys.exec("uci set jyconfig.@deviceid[0].blegasmeter="..c_blegas_id)
 
 	x:commit("jyconfig")
-		
+	
+	local result = conn:call("we26n_change_MAC", "change_ble_MAC", {});
 	luci.http.redirect(luci.dispatcher.build_url("admin/newweb/bluetooth"))
 end
 
