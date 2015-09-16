@@ -3,18 +3,132 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <alloca.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+#include <uci.h>
+
+
+void  triptailspace( char * str )
+{
+    int  ofs;
+
+    /**/
+    ofs = strlen( str );
+    ofs -= 1;
+
+    /**/
+    while( ofs >= 0 )
+    {
+        if ( (str[ofs] == '\n') || (str[ofs] == '\r') )
+        {
+            str[ofs] = '\0';
+        }
+        else if ( (str[ofs] == 0x20) || (str[ofs] == 0x09) )
+        {
+            str[ofs] = '\0';
+        }
+        else
+        {
+            break;
+        }
+
+        /**/
+        ofs -= 1;
+    }
+
+    return;
+    
+}
+
+
+int  ugth_uci_getaddr( char * addr )
+{
+    struct uci_context * uci;
+    struct uci_package * upkg;
+    struct uci_element * uele;
+    struct uci_section * usec;
+    const char * ptr;
+    int iret;
+    
+
+    /**/
+    uci = uci_alloc_context();
+    iret = uci_load( uci, "jyconfig", &upkg );
+    if ( 0 != iret )
+    {
+        uci_free_context( uci );
+		return 1;
+    }
+    
+    /**/
+    iret = 9;
+    uci_foreach_element( &upkg->sections, uele )
+    {
+        usec = uci_to_section( uele );
+        if( 0 != strcmp( usec->type, "webserver") )
+        {
+            continue;
+        }
+
+        /**/
+        ptr = uci_lookup_option_string( uci, usec, "ip" );
+        if ( NULL == ptr )
+        {
+            iret = 2;
+            break;
+        }
+
+        if ( strlen(ptr) > 16 )
+        {
+            iret = 3;
+            break;
+        }
+
+        /**/
+        strcpy( addr, ptr );
+
+        /**/
+	    ptr = uci_lookup_option_string( uci, usec, "port" );
+        if ( NULL == ptr )
+        {
+            iret = 6;
+            break;
+        }
+        
+        /**/
+        strcat( addr, ":" );
+        strcat( addr, ptr );
+        printf( "url: %s\n", addr );
+        iret = 0;
+        break;
+    }
+
+    uci_free_context( uci );
+    return iret;
+    
+}
 
 
 
 int  ugth_download( char * fname, char * mname )
 {
+    int  iret;
+    char  addr[100];
     char * cmdn;
 
+    /**/
+    iret = ugth_uci_getaddr( addr );
+    if ( 0 != iret )
+    {
+        return 1;
+    }
+    
     /**/
     cmdn = (char *)alloca( 200 + strlen(fname) );
     if ( NULL == cmdn )
     {
-        return 1;
+        return 2;
     }
 
     /**/
@@ -28,9 +142,9 @@ int  ugth_download( char * fname, char * mname )
     system( cmdn );
 
     /**/
-    sprintf( cmdn, "wget -q http://10.4.44.210:8001/%s", fname );
+    sprintf( cmdn, "wget -q http://%s/%s", addr, fname );
     system( cmdn );
-    sprintf( cmdn, "wget -q http://10.4.44.210:8001/%s", mname );
+    sprintf( cmdn, "wget -q http://%s/%s", addr, mname );
     system( cmdn );
     return 0;
     
@@ -88,8 +202,24 @@ int  ugth_checksum( char * fname, char * mname )
 
 int  ugth_upgrade( char * fname )
 {
+    char * cmdn;
+
+    /**/
+    cmdn = (char *)alloca( 200 + strlen(fname) );
+    if ( NULL == cmdn )
+    {
+        return 1;
+    }
+    
+    chdir( "/tmp" );
     printf( "begin upgrade\n" );
+
+    /**/
+    sprintf( cmdn, "sysupgrade ./%s", fname );
+    system( cmdn );
+    
     return 0;
+    
 }
 
 
@@ -110,19 +240,21 @@ void * ugth_thread( void * arg )
         iret = ugth_download( fname, mname );
         if ( 0 != iret )
         {
+            printf( "ugth_download, ret, %d\n", iret );
             break;
         }
 
         iret = ugth_checksum( fname, mname );
         if ( 0 != iret )
         {
-            printf( "ugth_check, ret, %d\n", iret );
+            printf( "ugth_checksum, ret, %d\n", iret );
             break;
         }
         
         iret = ugth_upgrade( fname );
         if ( 0 != iret )
         {
+            printf( "ugth_upgrade, ret, %d\n", iret );
             break;
         }
         
@@ -141,15 +273,30 @@ int  ugth_namechk( char * bname )
 {
     int  count;
     int  tlen;
-
+    char * patern = "abcdefghijklmnopqrstuvwxyz" "ABCDEFGHIJKLMNOPQRSTUVWXYZ" "0123456789" "_.-";
+    
     /**/
     tlen = strlen( bname );
-    count = 0;
-    count += strspn( bname, "abcdefghijk" );
-    count += strspn( bname, "abcdef" );    
-    count += strspn( bname, "0123456789" );
-    count += strspn( bname, "_.-" );
+    count = strspn( bname, patern );
+    if ( tlen != count )
+    {
+        return 1;
+    }
+
+    /**/
+    if ( bname[0] == '.' )
+    {
+        return 2;
+    }
+
+    /**/
+    if ( bname[0] == '-' )
+    {
+        return 3;
+    }
+    
     return 0;
+    
 }
 
 
@@ -160,6 +307,13 @@ int  ugth_start( char * bname )
     char * ptr;
 
     /* check */
+    iret = ugth_namechk( bname );
+    if ( 0 != iret )
+    {
+        printf( "name check fail, %d\n", iret );
+        printf( "%s\n", bname );
+        return 1;
+    }
     
     /**/
     ptr = strdup( bname );
