@@ -2,6 +2,7 @@
 
 require "ubus"
 require "luci.sys"
+require "uloop"
 socket = require("socket");
 require("uci")
 local x = uci.cursor()
@@ -9,7 +10,7 @@ local macReader = io.popen("eth_mac r lan");
 local macAddr = macReader:read("*all");
 macAddr = string.gsub(macAddr, ":", "");
 macAddr = "we26n_" .. macAddr;
-
+uloop.init();
 http = require "socket.http";
 url = "http://10.4.44.210:8001/enngateway/getdeviceslist?gatewayid=" .. macAddr;
 --url = "http://10.4.44.210:8001/enngateway/getdeviceslist?gatewayid=we26n_78A35106F1A8";
@@ -96,9 +97,6 @@ function require_socket()
 
 	local result = getCommand();
 		print(result);
-
-		--result = '[{ "gatewayid":"we26n_xxxxxx", "deviceid":"zigbee_fbee_xxxxx", "attr":"001", "data":"989797897897897" },{ "gatewayid":"we26n_xxxxxx", "deviceid":"zigbee_jianyou_xxxxx", "attr":"001", "data":"989797897897897" }]';
-
 		if result ~= nil then
             --dispatchCommand(result);
 		 	if not pcall(StringManipulation, result) then
@@ -107,7 +105,6 @@ function require_socket()
 		else
 			print("get command error....");
 		end
-        sleep(10);
 
 end
 
@@ -131,22 +128,25 @@ function getWebServerURL()
 
 end
 
-getWebServerURL()
+getWebServerURL();
+
+require_socket();
+
+local customMethod = {
+	we26n_download_list = {
+		 download_devicesid_list= {
+				function(req, msg)
+					conn:reply(req, {code="S00000", message="devicesid download ok"});	
+					uloop.timer( require_socket, 1 );
+				end, {}
+				}	
+		}
+}
+conn:add(customMethod);
+
+uloop.run();		
 
 
-
-
-local count = 1
-
-while true do
-    print(count)
-    if(count == 1) then
-	    require_socket();
-	    count = 0;
-	end
-	print(count)
-	sleep(30)
-end
 
 
 

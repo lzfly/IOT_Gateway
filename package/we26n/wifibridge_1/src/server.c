@@ -925,19 +925,19 @@ void* enn_meter_thread( void *arg )
 		
 		sprintf(&devicesstr[0], "[");
 				sprintf(&devicesstr[strlen(devicesstr)], "{");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"power_meter_%s\",",powerid);
+				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_meter_%s\",",powerid);
 				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0007\",");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ddd);	
 				sprintf(&devicesstr[strlen(devicesstr)], "},");
 				sprintf(&devicesstr[strlen(devicesstr)], "{");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"water_meter_%s\",",waterid);
+				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_meter_%s\",",waterid);
 				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0008\",");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ccc);	
 				sprintf(&devicesstr[strlen(devicesstr)], "},");
 				sprintf(&devicesstr[strlen(devicesstr)], "{");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"heat_meter_%s\",",heatid);
+				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_meter_%s\",",heatid);
 				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0021\",");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ccc_h);	
