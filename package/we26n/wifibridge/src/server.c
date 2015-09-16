@@ -556,7 +556,7 @@ void* gas_meter_thread( void *arg )
 			{
 				sprintf(&devicesstr[0], "[");
 				sprintf(&devicesstr[strlen(devicesstr)], "{");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"gas_meter_%s\",",gas_meter_id);
+				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_gas_%s\",",gas_meter_id);
 				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0020\",");
 				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",data);	
