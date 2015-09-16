@@ -14,6 +14,7 @@
 #define  MT_OBJ_BLE     3
 #define  MT_OBJ_ZIG     4
 #define  MT_OBJ_WIFI    5
+#define  MT_OBJ_SYS     6           /* 内部产生的消息, 比如 mqtt 连接上服务器了. */
 
 
 
@@ -22,7 +23,7 @@ typedef struct _tag_mmqt_msg
 {
     uint8_t action;
     uint8_t object;
-    char  msg[2];
+    char  msg[4];
 
 } mmqt_msg_t;
 

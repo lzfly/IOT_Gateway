@@ -254,6 +254,32 @@ int  send_get_msg_to_zigbee(char *deviceid, char *attr)
 }
 
 
+
+int  send_ntc_msg_to_devlist( void )
+{
+    uint32_t  id;
+	static struct blob_buf b;
+
+    printf("[send_ntc_msg_to_devlist] start. \r\n" );
+
+    /**/
+	if ( ubus_lookup_id( ubus, "we26n_download_list", &id ) ) {
+		printf( "Failed to look up we26n_download_list object\n" );
+		return 2;
+	}
+	
+	blob_buf_init( &b, 0 );
+	blobmsg_add_string( &b, "gatewayid", "xxxx" ); // not need
+    
+	/**/
+	ubus_invoke( ubus, id, "download_devicesid_list", b.head, test_data_cback, 0, 3000);
+    
+	return 0;
+	
+}
+
+
+
 void  test_get_zigbee( char * msg )
 {
     int  iret;
@@ -399,6 +425,35 @@ void  test_set_gateway( char * msg )
 }
 
 
+void  test_ntc_system( char * msg )
+{
+    if ( 0 == strcmp( msg, "CON" ) )
+    {
+        send_ntc_msg_to_devlist();
+        return;
+    }
+
+    return;
+}
+
+
+void  test_ntc_gateway( char * msg )
+{
+    if ( 0 == strncmp( msg, "ADDDEV|", 7) )
+    {
+        send_ntc_msg_to_devlist();    
+        return;
+    }
+
+    if ( 0 == strncmp( msg, "DELDEV|", 7) )
+    {
+        send_ntc_msg_to_devlist();
+        return;
+    }
+
+    return;
+}
+
 
 void  test_uloopfd_cbk(struct uloop_fd * pufd, unsigned int events)
 {
@@ -429,8 +484,8 @@ void  test_uloopfd_cbk(struct uloop_fd * pufd, unsigned int events)
         }
 
         /**/
-        printf( "msq : %d,%d : %s\n", pmsg->action, pmsg->object, pmsg->msg );
-
+        syslog( LOG_CRIT, "msq : %d,%d : %s\n", pmsg->action, pmsg->object, pmsg->msg );
+        
         /**/
         if ( pmsg->action == MT_ACT_SET )
         {
@@ -459,6 +514,22 @@ void  test_uloopfd_cbk(struct uloop_fd * pufd, unsigned int events)
             default:
                 break;
             }
+        }
+        else if ( pmsg->action == MT_ACT_NTC )
+        {
+            switch( pmsg->object )
+            {
+            case MT_OBJ_GATE:
+                test_ntc_gateway( pmsg->msg );
+                break;
+
+            case MT_OBJ_SYS:
+                test_ntc_system( pmsg->msg );
+                break;
+                
+            default:
+                break;
+            }        
         }
         
     }
@@ -524,9 +595,6 @@ int  test_run( char * ipdr, int port, char * user )
         return 1;
     }
 
-sleep(20);
-syslog( LOG_CRIT, "testrun, sleep, end" );
-
     /**/
     iret = mmqt_init( qctx, ipdr, port, &mtctx );
     if ( 0 != iret )
@@ -543,6 +611,7 @@ syslog( LOG_CRIT, "testrun, sleep, end" );
     iret = mmqt_start_run( mtctx );
     if ( 0 != iret )
     {
+        syslog( LOG_CRIT, "testrun, mmqt_start_run, ret %d", iret );        
         return 3;
     }
 
@@ -564,6 +633,7 @@ syslog( LOG_CRIT, "testrun, sleep, end" );
     iret = test_uloopfd_add( tfd, qctx );
     if ( 0 != iret )
     {
+        printf( "test_uloopfd_add fail, ret= %d\n", iret );    
         return 5;
     }
     
@@ -597,6 +667,7 @@ int test_get_config( char * ipdr, int * port, char * user )
     }
     
     /**/
+    iret = 9;
     uci_foreach_element( &upkg->sections, uele )
     {
         usec = uci_to_section( uele );
@@ -621,24 +692,6 @@ int test_get_config( char * ipdr, int * port, char * user )
 
         /**/
         strcpy( ipdr, ptr );
-
-#if 0
-        /**/
-        ptr = uci_lookup_option_string( uci, usec, "userid" );
-        if ( NULL == ptr )
-        {
-            iret = 4;
-            break;
-        }
-
-        if ( strlen(ptr) > 32 )
-        {
-            iret = 5;
-            break;
-        }
-        
-        strcpy( user, ptr );
-#endif
 
         /**/
 	    ptr = uci_lookup_option_string( uci, usec, "port" );

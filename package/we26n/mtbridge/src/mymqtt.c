@@ -50,7 +50,7 @@ static uint8_t  recognize_action( char * ptr )
 
 static uint8_t  recognize_object( char * ptr )
 {
-printf("action : %s\n", ptr );
+
     if ( 0 == strcmp(ptr, "M:Z") )
     {
         return MT_OBJ_ZIG;
@@ -168,6 +168,7 @@ void  my_message_callback(struct mosquitto * mosq, void * obj, const struct mosq
 void  my_connect_callback(struct mosquitto * mosq, void * obj, int result )
 {
     mmqt_context_t * pctx;
+    mmqt_msg_t  tmsg;
 
     /**/
     pctx = (mmqt_context_t *)obj;
@@ -182,7 +183,19 @@ void  my_connect_callback(struct mosquitto * mosq, void * obj, int result )
 	    fprintf(stderr, "%s\n", mosquitto_connack_string(result));
 	}
 
+    /**/
+    tmsg.action = MT_ACT_NTC;
+    tmsg.object = MT_OBJ_SYS;
+    strcpy( tmsg.msg, "CON" );
+
+    /**/
+    msq_enqueue( pctx->qctx, sizeof(mmqt_msg_t), &tmsg );
+    write( ((int *)pctx->mosq)[1], &tmsg, 1 );    
+        
+    /**/
+    printf( "connect ok, %d\n", result );
 	return;
+	
 }
 
 
@@ -390,15 +403,25 @@ int  mmqt_init( intptr_t qctx, char * ipdr, int port, intptr_t * pret )
     mosquitto_connect_callback_set(mosq, my_connect_callback);
     mosquitto_disconnect_callback_set( mosq, my_disconnect_callback );
     mosquitto_message_callback_set(mosq, my_message_callback);
-    
+
+retry:    
     /**/
     iret = mosquitto_connect_bind_async(mosq, ipdr, port, 60, NULL );
     if ( 0 != iret )
     {
-        syslog( LOG_CRIT, "init, bind_async, ret %d", iret );
-        mosquitto_destroy( mosq );
-        mosquitto_lib_cleanup();
-        return 3;
+        if ( iret == MOSQ_ERR_ERRNO )
+        {
+            printf( "retry connect\n" );
+            sleep(1);
+            goto retry;
+        }
+        else
+        {
+            syslog( LOG_CRIT, "init, bind_async, ret %d", iret );
+            mosquitto_destroy( mosq );
+            mosquitto_lib_cleanup();
+            return 3;
+        }
     }
 
 
