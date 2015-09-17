@@ -52,7 +52,7 @@ local devicesid_str = getdevices_list();
 <head>
 <style> 
 body{ margin:auto;background-color:#1c69bb;}
-img{display:block;border:none;}
+img{display:block};
 a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .big_box{width:100%;height:auto;position:absolute;top:50%;margin-top:-325px;}
 .big_top{ width:1196px;margin:auto;overflow:hidden; padding-top:5px;}
@@ -151,7 +151,7 @@ td.img{
 			document.write("<tr>") ;
 			document.write("<td><center>气表"+"</td>");
 			document.write("</form>");
-			document.write("<td style='width:200px'><center>"+data+"</td>"); 
+			document.write("<td style='width:500px'><center>"+data+"</td>"); 
 			document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/wifi_item") %>"  >');
 			document.write('<td><center><button onclick="del()">删除</button></td>');
 			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
@@ -178,7 +178,7 @@ td.img{
 			document.write("<tr>") ;
 			document.write("<td><center>气表"+"</td>");
 			document.write("</form>");
-			document.write("<td style='width:200px'><center>"+data+"</td>"); 
+			document.write("<td style='width:500px'><center>"+data+"</td>"); 
 			document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/wifi_item") %>"  >');
 		
 			document.write('<td><center><button onclick="add()">添加</button></td>');
