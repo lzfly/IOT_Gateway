@@ -2,6 +2,10 @@
 
 require "ubus"
 require "luci.sys"
+require "uloop"
+
+uloop.init();
+
 
 
 local macReader = io.popen("eth_mac r lan");
@@ -125,28 +129,38 @@ socket = require("socket");
 
 getWebServerURL()
 
-while true do
-	local time = os.time();
-	if time - t >= 1 and not processing then
-		processing = true;
+function  commanddispather()
+		    local result = getCommand();
+		    print(result);
 
-		local result = getCommand();
+		        --result = '[{ "gatewayid":"we26n_xxxxxx", "deviceid":"zigbee_fbee_xxxxx", "attr":"001", "data":"989797897897897" },           { "gatewayid":"we26n_xxxxxx", "deviceid":"zigbee_jianyou_xxxxx", "attr":"001", "data":"989797897897897" }]';
 
-		print(result);
-
-		--result = '[{ "gatewayid":"we26n_xxxxxx", "deviceid":"zigbee_fbee_xxxxx", "attr":"001", "data":"989797897897897" },{ "gatewayid":"we26n_xxxxxx", "deviceid":"zigbee_jianyou_xxxxx", "attr":"001", "data":"989797897897897" }]';
-
-		if result ~= nil then
+   		if result ~= nil then
 			if not pcall(dispatchCommand, result) then
 				print("dispatch command error....");
 			end
 		else
 			print("get command error....");
 		end
+		
+		ttmr:set(3000);
+end		
 
-		processing = false;
-		t = time;
+ttmr = uloop.timer( commanddispather, 3000 );
+	
+local customMethod = {
+	we26n_commanddispather = {
+		    command_dispather= {
+		    function(req, msg)
+		    print("in ubus")
+		    conn:reply(req, {code="S00000", message="" .. resp});
+		    ttmr:set(1);
+		end,{}
+       }
+      }
+}
 
-		socket.sleep(1);
-	end
-end
+conn:add(customMethod);
+
+uloop.run();  
+	
