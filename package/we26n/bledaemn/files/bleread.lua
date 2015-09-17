@@ -7,6 +7,7 @@ require "nixio"
 cjson = require "cjson"
 
 
+
 function  cvt_long( str, idx )
 	local  dd,cc,bb,aa = string.byte( str, idx, idx+4 );
 	local  ret;
@@ -137,7 +138,6 @@ end
 function  ble_gasmeter_getinterval()
 	local  x;
 	local  ret;
-	
 	x = uci.cursor();
     ret = x:get( "ennconfig.@ble[0].gas_interval" );
 	if nil == ret then
@@ -152,7 +152,6 @@ end
 function  ble_gasmeter_getmac()
 	local  x;
 	local  ret;
-	
 	x = uci.cursor();
     ret = x:get( "jyconfig.@deviceid[0].blegasmeter" );
 	if nil == ret then
@@ -242,8 +241,8 @@ end
 
 local tmac = ble_gasmeter_getmac();
 local intv = ble_gasmeter_getinterval();	
-local rytmr;
-local rdtmr;
+local rytmr = nil;
+local rdtmr = nil;
 
 
 function  period_read()
@@ -268,13 +267,44 @@ function  retry_get_mac()
 	if nil == tmac then
         rytmr:set( 2000 );
 	else
+	    rytmr = nil;
         rdtmr = uloop.timer( period_read, 100 );
 	end
 end
 
 
+function sdfsdf()
+    
+
+   
+end
+
+
+local customMethod = {
+	we26n_change_MAC = {
+		change_ble_MAC = {
+			function(req, msg)
+			    if rdtmr ~= nil then
+                    rdtmr:cancel();
+                end
+                nixio.fs.unlink("/tmp/devices_8.ini")
+                rytmr = uloop.timer( retry_get_mac, 100 );
+			    conn:reply(req, {code="S00000"});			
+			end, {}
+		
+		}
+	}
+}
+
+
 
 uloop.init();
+conn = ubus.connect();
+if not conn then
+	error("Failed to connect to ubusd");
+end
+conn:add(customMethod);
+
 rytmr = uloop.timer( retry_get_mac, 100 );
 uloop.run();
 
