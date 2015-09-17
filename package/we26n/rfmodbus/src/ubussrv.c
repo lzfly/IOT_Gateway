@@ -98,7 +98,7 @@ static int rfmodbus_readreg( struct ubus_context *ctx, struct ubus_object *obj,
 
     /**/
     printf( "in rfmodbus_readreg\n" );
-    m4bus_send_req( g_m4bus_ctx, &treq, rfmodbus_readreg_m4bus_cbk, (intptr_t)nreq );
+    m4bus_send_req( g_m4bus_ctx, &treq, rfmodbus_readreg_m4bus_cbk, (intptr_t)nreq, 500 );
     return UBUS_STATUS_OK;
     
 }
@@ -144,7 +144,7 @@ static int rfmodbus_startpair( struct ubus_context *ctx, struct ubus_object *obj
 
     /**/
     // printf( "in rfmodbus_startpair\n" );
-    m4bus_send_req( g_m4bus_ctx, &treq, rfmodbus_startpair_m4bus_cbk, (intptr_t)nreq );
+    m4bus_send_req( g_m4bus_ctx, &treq, rfmodbus_startpair_m4bus_cbk, (intptr_t)nreq, 300 );
     return UBUS_STATUS_OK;
     
 }
@@ -208,7 +208,7 @@ static int rfmodbus_getstate( struct ubus_context *ctx, struct ubus_object *obj,
 
     /**/
     // printf( "in rfmodbus_getstate\n" );
-    iret = m4bus_send_req( g_m4bus_ctx, &treq, rfmodbus_getstate_m4bus_cbk, (intptr_t)nreq );
+    iret = m4bus_send_req( g_m4bus_ctx, &treq, rfmodbus_getstate_m4bus_cbk, (intptr_t)nreq, 300 );
     if ( 0 != iret )
     {
         printf( "in rfmodbus_getstate, send ret = %d\n", iret );
