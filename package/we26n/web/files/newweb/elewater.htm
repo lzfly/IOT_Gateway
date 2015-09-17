@@ -64,9 +64,9 @@ a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .bottom{width:1198px; height:auto background-color:#226fc0; margin:auto;overflow:hidden; padding-bottom:50px;}
 .bottom p{font-size:16px; color:#ffffff;font-family:"微软雅黑";}
 
-.nav{ width:100%; height:50px; background-color:#8eb3db;overflow:hidden;}
-.nav a{ float:left; padding-left:600px; padding-top:5px;text-decoration:none; font-size:26px;color:#ffffff;font-family:"微软雅黑";}
-.title{ float:left; padding-left:600px; padding-top:10px;padding-bottom:10px;text-decoration:none; font-size:20px;color:#ffffff;font-family:"微软雅黑";}
+.nav{ width:100%; line-height:50px; background-color:#8eb3db;overflow:hidden;}
+.nav a{ float:left; padding-left:550px; padding-top:5px;text-decoration:none; font-size:26px;color:#ffffff;font-family:"微软雅黑";}
+.title{ float:left; padding-left:580px; padding-top:10px;padding-bottom:10px;text-decoration:none; font-size:20px;color:#ffffff;font-family:"微软雅黑";}
 table{
 	width:100%;
 }
@@ -149,19 +149,19 @@ td.img{
 		document.write("<table>");
 		document.write("<tr>") ;
 		if(devicetype=="0007")
-			document.write("<td>电表</td>");
+			document.write("<td><center>电表</td>");
 		else if(devicetype=="0008")
-			document.write("<td>水表</td>");
+			document.write("<td><center>水表</td>");
 		else
-		    document.write("<td>热表</td>");	
-			document.write("<td style='width:500px'>"+devId+"</td>"); 
+		    document.write("<td><center>热表</td>");	
+			document.write("<td style='width:500px'><center>"+devId+"</td>"); 
 			//document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
 			//document.write('<input type="hidden" value="0" id="currLightState"/>');
 			//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
 			//document.write("</form>");
-			document.write("<td style='width:200px'>"+data+"</td>"); 
+			document.write("<td style='width:200px'><center>"+data+"</td>"); 
 			document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/elewater_item") %>"  >');
-			document.write('<td><button onclick="del()">删除</button></td>');
+			document.write('<td><center><button onclick="del()">删除</button></td>');
 			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
 			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
 			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
@@ -185,19 +185,19 @@ td.img{
 		document.write("<table>");
 		document.write("<tr>") ;
 		if(devicetype=="0007")
-			document.write("<td>电表</td>");
+			document.write("<td><center>电表</td>");
 		else if(devicetype=="0008")
-			document.write("<td>水表</td>");
+			document.write("<td><center>水表</td>");
 		else
-		    document.write("<td>热表</td>");	
-			document.write("<td style='width:500px'>"+devId+"</td>"); 
+		    document.write("<td><center>热表</td>");	
+			document.write("<td style='width:500px'><center>"+devId+"</td>"); 
 			//document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/light_control") %>"  >');
 			//document.write('<input type="hidden" value="0" id="currLightState"/>');
 			//document.write('<td><img  id="lightBtn" src="<%=resource%>/images/button_01.png" onclick="switchLightState(item);"></td>') ;	
 			//document.write("</form>");
-			document.write("<td style='width:200px'>"+data+"</td>"); 
+			document.write("<td style='width:200px'><center>"+data+"</td>"); 
 			document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/elewater_item") %>"  >');
-			document.write('<td><button onclick="add()">添加</button></td>');
+			document.write('<td><center><button onclick="add()">添加</button></td>');
 			document.write('<input class="id" type="hidden"  name="devId" value="'+devId+'"/>');
 			document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
 			document.write('<input class="id" type="hidden"  name="status" value="'+status+'"/>');
