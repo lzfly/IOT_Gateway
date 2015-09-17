@@ -47,7 +47,7 @@ local devicesid_str = getdevices_list();
 <head>
 <style> 
 body{ margin:auto;background-color:#1c69bb;}
-img{display:block};
+img{display:block;border:none;}
 a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .big_box{width:100%;height:auto;position:absolute;top:50%;margin-top:-325px;}
 .big_top{ width:1196px;margin:auto;overflow:hidden; padding-top:5px;}
@@ -179,7 +179,7 @@ td.img{
 	var j=0;
 	//var item=0;
 	var k=0;
-	document.write('<div class="title" id="title1">已有设备</div>');
+	document.write('<div class="title" style="display:none" id="title1">已有设备</div>');
 	for(i=0;i<switchArr.length;i++){ 
 		var switchData = switchArr[i];
 		var devId = switchData["deviceid"];
@@ -217,7 +217,7 @@ td.img{
 		}
 	}	
 	
-	document.write('<div class="title" id="title2">发现新设备</div>');
+	document.write('<div class="title" style="display:none" id="title2">发现新设备</div>');
 	for(i=0;i<switchArr.length;i++){ 
 		var switchData = switchArr[i];
 		var devId = switchData["deviceid"];
@@ -267,11 +267,11 @@ td.img{
 	document.getElementById("deom").innerHTML="删除成功";
 	}    
 	   
-	if(j==0){
-	   document.getElementById("title1").style.display="none";
+	if(j!=0){
+	   document.getElementById("title1").style.display="block";
 	}
-	if(k==0){
-	   document.getElementById("title2").style.display="none";
+	if(k!=0){
+	   document.getElementById("title2").style.display="block";
 	}
 	</script>
 </div>

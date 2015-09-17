@@ -32,7 +32,8 @@ typedef struct _tag_m4bus_node
     /**/
     m4bus_cbk_func func;
     intptr_t arg;
-
+    int  tms;
+    
     /**/
     intptr_t  ctx;
     struct _tag_m4bus_node * next;
@@ -82,7 +83,7 @@ void  m4bus_inter_timer_callbk( struct uloop_timeout * ptmr )
         /**/
         pnode->timer.pending = 0;
         pnode->timer.cb = m4bus_inter_timer_callbk;
-        uloop_timeout_set( &(pnode->timer), 200 );
+        uloop_timeout_set( &(pnode->timer), pnode->tms );
         
         /**/
         m4bus_inter_send( pctx, idx, pnode );
@@ -139,7 +140,7 @@ void  m4bus_inter_callbk( intptr_t arg, int tlen, void * pdat )
             /**/
             pnode->timer.pending = 0;
             pnode->timer.cb = m4bus_inter_timer_callbk;
-            uloop_timeout_set( &(pnode->timer), 200 );
+            uloop_timeout_set( &(pnode->timer), pnode->tms );
                 
             m4bus_inter_send( pctx, idx, pnode );
         }
@@ -176,7 +177,7 @@ int  m4bus_inter_send( m4bus_context_t * pctx, int idx, m4bus_node_t * pnode )
 }
 
 
-int  m4bus_send_req( intptr_t ctx, m4bus_req_t * preq, m4bus_cbk_func func, intptr_t arg )
+int  m4bus_send_req( intptr_t ctx, m4bus_req_t * preq, m4bus_cbk_func func, intptr_t arg, int tms )
 {
     int  iret;
     int  idx;
@@ -208,6 +209,7 @@ int  m4bus_send_req( intptr_t ctx, m4bus_req_t * preq, m4bus_cbk_func func, intp
     pnode->func = func;
     pnode->arg = arg;
     pnode->ctx = ctx;
+    pnode->tms = tms;
     pnode->next = NULL;
     
     /**/
@@ -226,7 +228,7 @@ int  m4bus_send_req( intptr_t ctx, m4bus_req_t * preq, m4bus_cbk_func func, intp
     /**/
     pnode->timer.pending = 0;
     pnode->timer.cb = m4bus_inter_timer_callbk;
-    uloop_timeout_set( &(pnode->timer), 200 );
+    uloop_timeout_set( &(pnode->timer), pnode->tms );
 
     /**/
     iret = m4bus_inter_send( pctx, idx, pnode );

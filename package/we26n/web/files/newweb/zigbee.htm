@@ -47,7 +47,7 @@ local devicesid_str = getdevices_list();
 <head>
 <style> 
 body{ margin:auto;background-color:#1c69bb;}
-img{display:block};
+img{display:block;border:none;}
 a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 .big_box{width:100%;height:auto;position:absolute;top:50%;margin-top:-325px;}
 .big_top{ width:1196px;margin:auto;overflow:hidden; padding-top:5px;}
@@ -181,8 +181,7 @@ td.img{
 	var k=0;
 	//var item=0;
 	
-	
-	document.write('<div class="title" id="title1">已有设备</div>');
+	document.write('<div class="title" style="display:none" id="title1">已有设备</div>');
 	for(i=0;i<lightArr.length;i++){
 		var lightData = lightArr[i];
 		var devId = lightData["deviceid"];
@@ -191,7 +190,6 @@ td.img{
 		var status=str.indexOf(devId);//status
 		
 		if(status!="-1"){
-			j++;
 		    document.write('<table id="table1">') ;
 		    document.write('<tr id="delCell">') ;
 			document.write("<td style='width:200px'><center>灯"+(i+1)+"</td>"); 
@@ -217,10 +215,11 @@ td.img{
 			document.write("</form>");
 			document.write("</tr>") ;
 			document.write("</table>") ;
+			j++;
 		}
 	}
 	
-	document.write('<div class="title" id="title2">发现新设备</div>');
+	document.write('<div class="title" style="display:none" id="title2">发现新设备</div>');
 	for(i=0;i<lightArr.length;i++){
     var lightData = lightArr[i];
 	var devId = lightData["deviceid"];
@@ -229,7 +228,6 @@ td.img{
 	var status=str.indexOf(devId);//status
 	
 	if(status=="-1"){
-		k++;
 	    document.write('<table id="table2">');
 		document.write('<tr id="delCell">') ;
 		document.write("<td style='width:200px'><center>灯"+(i+1)+"</td>"); 
@@ -256,8 +254,10 @@ td.img{
 			document.write("</form>");
 			document.write("</tr>") ;
 			document.write("</table>") ;
+			k++;
 		}
 	}
+	
 	function add()
 	{
 	//document.write("保存成功");
@@ -268,15 +268,14 @@ td.img{
 	document.getElementById("deom").innerHTML="删除成功";
 	}
 	
-	if(j==0){
-	   document.getElementById("title1").style.display="none";
+	if(j!=0){
+	   document.getElementById("title1").style.display="block";
 	}
-	if(k==0){
-	   document.getElementById("title2").style.display="none";
+	if(k!=0){
+	   document.getElementById("title2").style.display="block";
 	}
 	</script>
-    
-
+	
 	</div>  <!--big_bottom结束-->
 <div class="bottom">
     <p class="deom" id="deom"></p>

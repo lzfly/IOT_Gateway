@@ -28,7 +28,7 @@ local result3=getdevices("3");
 <head>
 <style> 
 body{ margin:auto;background-color:#1c69bb;}
-img{display:block};
+img{display:block;border:none;}
 a{ display:block; text-decoration:none; font-family:"微软雅黑";}
 #body_center{
 
@@ -101,7 +101,6 @@ input{
 	height:40px;
 	margin-left:260px;
 	margin-top:50px;
-	margin-bottom:50px;
 	padding:5px 0;
 	float:left;
 	text-align:center;
@@ -138,7 +137,8 @@ input{
 .power{
 	color:#00C;
 }
-
+.upgrade{text-align:center; width:80px; line-height:40px; background-color:#649aeb;border-top-left-radius:6px;border-top-right-radius:6px;border-bottom-right-radius:6px;border-bottom-left-radius:6px; margin-left:1000px;margin-bottom:50px;}
+.upgrade a{font-size:16px; color:white;text-decoration:none; font-family:"微软雅黑"; }
 </style>
 <meta charset="utf-8">
 <title>安全中心</title>
@@ -202,7 +202,9 @@ input{
 			return true;
 		}
 </script>
-
+<div class="upgrade">
+<a href="upgrade">网页升级</a>
+</div>
 </div>
 
 </div>

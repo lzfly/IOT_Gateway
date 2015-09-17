@@ -220,7 +220,7 @@ int  send_set_msg_to_zigbee(char *deviceid, char *attr, char *data)
 	printf("[send_set_msg_to_zigbee]ubus_invoke, %s,%s, data = %s\r\n", deviceid, attr, data );
 	
 	/**/
-	ubus_invoke( ubus, id, "ctrlcmd", b.head, test_data_cback, 0, 3000 );
+	ubus_invoke( ubus, id, "ctrlcmd", b.head, test_data_cback, 0, 300 );
 	return 0;
 	
 }
@@ -247,7 +247,7 @@ int  send_get_msg_to_zigbee(char *deviceid, char *attr)
 
 	printf("[send_get_msg_to_zigbee]ubus_invoke, %s, attr = %s\r\n", deviceid, attr);
 	/**/
-	ubus_invoke( ubus, id, "getstatecmd", b.head, test_data_cback, 0, 3000);
+	ubus_invoke( ubus, id, "getstatecmd", b.head, test_data_cback, 0, 300 );
 
 	return 0;
 	
@@ -272,12 +272,34 @@ int  send_ntc_msg_to_devlist( void )
 	blobmsg_add_string( &b, "gatewayid", "xxxx" ); // not need
     
 	/**/
-	ubus_invoke( ubus, id, "download_devicesid_list", b.head, test_data_cback, 0, 3000);
+	ubus_invoke( ubus, id, "download_devicesid_list", b.head, test_data_cback, 0, 300 );
     
 	return 0;
 	
 }
 
+
+int  send_ntc_msg_to_commander( void )
+{
+    uint32_t  id;
+	static struct blob_buf b;
+
+    printf("[send_ntc_msg_to_commander] start. \r\n" );
+
+    /**/
+	if ( ubus_lookup_id( ubus, "we26n_commanddispather", &id ) ) {
+		printf( "Failed to look up we26n_commanddispather object\n" );
+		return 2;
+	}
+	
+	blob_buf_init( &b, 0 );
+	blobmsg_add_string( &b, "gatewayid", "xxxx" ); // not need
+    
+	/**/
+	ubus_invoke( ubus, id, "command_dispather", b.head, test_data_cback, 0, 300 );
+	return 0;
+	
+}
 
 
 void  test_get_zigbee( char * msg )
@@ -450,8 +472,15 @@ void  test_ntc_gateway( char * msg )
         send_ntc_msg_to_devlist();
         return;
     }
+    
+    if ( 0 == strncmp( msg, "SCENE|", 6) )
+    {
+        send_ntc_msg_to_commander();
+        return;
+    }
 
     return;
+    
 }
 
 

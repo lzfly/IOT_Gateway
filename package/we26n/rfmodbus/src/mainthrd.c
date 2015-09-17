@@ -679,7 +679,7 @@ int  mthrd_task_start_check( mthrd_context_t * pctx )
     pchk->pctx = pctx;
     
     /**/
-    task_active( tctx, CMD_NULL, 0, NULL, mtask_wait_ready, 20000 );
+    task_active( tctx, CMD_NULL, 0, NULL, mtask_wait_ready, 1000 );
     return 0;
     
 }

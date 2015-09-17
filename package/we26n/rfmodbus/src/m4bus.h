@@ -27,7 +27,7 @@ typedef struct _tag_m4bus_req
 
 typedef void (* m4bus_cbk_func)( intptr_t arg, uint16_t uret, int tlen, uint8_t * pdat );
 
-int  m4bus_send_req( intptr_t ctx, m4bus_req_t * preq, m4bus_cbk_func func, intptr_t arg );
+int  m4bus_send_req( intptr_t ctx, m4bus_req_t * preq, m4bus_cbk_func func, intptr_t arg, int tms );
 int  m4bus_get_fd( intptr_t ctx, int * pfd );
 int  m4bus_try_run( intptr_t ctx );
 int  m4bus_init( int fd, intptr_t * pret );
