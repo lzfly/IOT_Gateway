@@ -42,6 +42,33 @@ static struct uci_package * uci_ennconfig;
 static char time_s[8];
 int times = 0;
 
+int write_to_ini(char *gas_meter_id,long double data)
+{
+                char devicesstr[2048];
+                char *path="/tmp/devices_6.ini";
+                FILE *fp;
+                devicesstr[0] = 0;
+                
+                sprintf(&devicesstr[0], "[");
+				sprintf(&devicesstr[strlen(devicesstr)], "{");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_gas_%s\",",gas_meter_id);
+				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0020\",");
+				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",data);	
+				sprintf(&devicesstr[strlen(devicesstr)], "},");
+				sprintf(&devicesstr[strlen(devicesstr)-1], "]");
+				printf("devicesstr= %s\n",devicesstr);
+				if((fp=fopen(path,"w+")) == NULL)
+				{
+					printf("fail to open\n");
+					return -1;
+				}
+			
+				fwrite(devicesstr,1,strlen(devicesstr),fp);
+				fclose(fp);
+				return 0;
+}
+
 int get_gasmeterid_config(char *jyconfig)
 {
     int rtn = -1;
@@ -394,22 +421,15 @@ int  sendMsgToWeb(char *meterid,unsigned short int attr,long double data)
 void* gas_meter_thread( void *arg )  
 {  
     extern int errno;
-    char devicesstr[2048];
-    devicesstr[0] = 0;
-    char *path="/tmp/devices_6.ini";
-    FILE *fp;
     char buff_path[N];
     int len,k;
     int inicount=0;
-    long double data;
     int connectfd;
     uint8_t crc,crc_o, crc_r;	
-
     char buf[N],buf_f[N],buf_ff[N];
-    
     char *id;
     char str[32];
-
+    long double data;
     printf("ddd=%s\n",&gas_meter_id[3]);
     uint64_t d_ata;
     if((d_ata = strtoull(&gas_meter_id[3], NULL, 10))<0)
@@ -442,7 +462,7 @@ void* gas_meter_thread( void *arg )
     printf("buf[18]= %x\n",crc_o);
     char buf_sleep[21]={0X3C,0X00,0X01,0X00,0X00,0X00,0X00,0X00,0XFD,0X00,0X08,0X08,0X00,0X00,0X00,0X00,0X05,0X00,0X00,0X00,0X13};
     printf( "gas_meter_thread init\n");  
- 
+    write_to_ini(gas_meter_id,0.000000);
 	connectfd = arg;
 	struct timeval timeout = {3,0};  
         setsockopt(connectfd,SOL_SOCKET,SO_RCVTIMEO,(char *)&timeout,sizeof(struct timeval));
@@ -554,24 +574,7 @@ void* gas_meter_thread( void *arg )
 			data=(float)k/10;
 			if(inicount%30 == 0)
 			{
-				sprintf(&devicesstr[0], "[");
-				sprintf(&devicesstr[strlen(devicesstr)], "{");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_gas_%s\",",gas_meter_id);
-				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0020\",");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",data);	
-				sprintf(&devicesstr[strlen(devicesstr)], "},");
-				sprintf(&devicesstr[strlen(devicesstr)-1], "]");
-				printf("devicesstr= %s\n",devicesstr);
-				if((fp=fopen(path,"w+")) == NULL)
-				{
-					printf("fail to open\n");
-					break;
-				}
-			
-				fwrite(devicesstr,1,strlen(devicesstr),fp);
-				fclose(fp);
-				
+				write_to_ini(gas_meter_id,data);
 			}
 			syslog(LOG_CRIT,"[gas_meter]gas meter value=%f", data);
 			

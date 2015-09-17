@@ -52,6 +52,47 @@ double pow(double num,int n)
     return powint;
 }*/
 
+int write_to_ini(char *powerid,char *waterid,char *heatid,double ddd,double ccc,double ccc_h)
+{
+    char *path="/tmp/devices_7.ini";
+    FILE *fp;
+    char devicesstr[2048];
+    devicesstr[0] = 0;
+    
+    sprintf(&devicesstr[0], "[");
+	sprintf(&devicesstr[strlen(devicesstr)], "{");
+	sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_meter_%s\",",powerid);
+	sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
+	sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0007\",");
+	sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ddd);	
+	sprintf(&devicesstr[strlen(devicesstr)], "},");
+	sprintf(&devicesstr[strlen(devicesstr)], "{");
+	sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_meter_%s\",",waterid);
+	sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
+	sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0008\",");
+	sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ccc);	
+	sprintf(&devicesstr[strlen(devicesstr)], "},");
+	sprintf(&devicesstr[strlen(devicesstr)], "{");
+	sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_meter_%s\",",heatid);
+	sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
+	sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0021\",");
+	sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ccc_h);	
+	sprintf(&devicesstr[strlen(devicesstr)], "},");
+	sprintf(&devicesstr[strlen(devicesstr)-1], "]");
+	printf("devicesstr= %s\n",devicesstr);
+	if((fp=fopen(path,"w+")) == NULL)
+	{
+		printf("fail to open\n");
+		return -1;
+	}
+			
+	fwrite(devicesstr,1,strlen(devicesstr),fp);
+	fclose(fp);
+	return 0;
+		
+}
+
+
 int get_Deviceid_config(char *jyconfig)
 {
       int rtn = -1;
@@ -698,10 +739,8 @@ int  sendMsgToWeb(char *ieeestr,unsigned short int type,double data)
 
 void* enn_meter_thread( void *arg )  
 {  
-	char devicesstr[2048];
-        devicesstr[0] = 0;
-	char *path="/tmp/devices_7.ini";
-        FILE *fp;
+	
+	
 	int i,j,p,q,k;
 	int m=0,n=0,t=0;
 	float bbb,bbb_h;
@@ -729,6 +768,7 @@ void* enn_meter_thread( void *arg )
 	
 	printf("connectfd = %d\n",connectfd);
 	printf("out of while\n");
+	write_to_ini(powerid,waterid,heatid,0.000000,0.000000,0.000000);
 	while(1)
 	{      
 		printf("in while \n");
@@ -812,9 +852,9 @@ void* enn_meter_thread( void *arg )
 			if(q<=0)
 			    continue;
 
-                        memcpy(buf_water+len_w, buff2, q);
+            memcpy(buf_water+len_w, buff2, q);
 			len_w = len_w + q;
-                        sleep(1);
+            sleep(1);
 			
 		}
 		if(len_w != 13)
@@ -923,36 +963,7 @@ void* enn_meter_thread( void *arg )
 		sleep(timeh*20);
 		printf("heat sleep time:%d\n",timeh);
 		
-		sprintf(&devicesstr[0], "[");
-				sprintf(&devicesstr[strlen(devicesstr)], "{");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_meter_%s\",",powerid);
-				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0007\",");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ddd);	
-				sprintf(&devicesstr[strlen(devicesstr)], "},");
-				sprintf(&devicesstr[strlen(devicesstr)], "{");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_meter_%s\",",waterid);
-				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0008\",");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ccc);	
-				sprintf(&devicesstr[strlen(devicesstr)], "},");
-				sprintf(&devicesstr[strlen(devicesstr)], "{");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_meter_%s\",",heatid);
-				sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0021\",");
-				sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ccc_h);	
-				sprintf(&devicesstr[strlen(devicesstr)], "},");
-				sprintf(&devicesstr[strlen(devicesstr)-1], "]");
-				printf("devicesstr= %s\n",devicesstr);
-				if((fp=fopen(path,"w+")) == NULL)
-				{
-					printf("fail to open\n");
-					break;
-				}
-			
-				fwrite(devicesstr,1,strlen(devicesstr),fp);
-				fclose(fp);
-				
+		write_to_ini(powerid,waterid,heatid,ddd,ccc,ccc_h);
 		
 		
 	}
