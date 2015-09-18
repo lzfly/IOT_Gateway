@@ -43,6 +43,7 @@ define Package/web/install
 	$(INSTALL_DIR) 	$(1)/usr/lib/lua/luci/view/themes/bootstrap/
 	$(INSTALL_DIR)  $(1)/usr/lib/lua/luci/view/
 	$(INSTALL_DIR)  $(1)/usr/lib/lua/luci/view/thems/
+	$(INSTALL_DIR)  $(1)/usr/lib/lua/luci/view/admin_system/
 	$(INSTALL_BIN) ./files/newweb.lua  $(1)/usr/lib/lua/luci/controller/admin/newweb.lua
 	$(INSTALL_BIN) ./files/cascade.css  $(1)/www/luci-static/bootstrap/cascade.css
 	$(INSTALL_BIN) ./files/index.htm  $(1)/www/index.htm
@@ -51,6 +52,8 @@ define Package/web/install
 	$(CP) ./files/bootstrap/header.htm $(1)/usr/lib/lua/luci/view/themes/bootstrap/header.htm
 	$(CP) ./files/bootstrap/footer.htm $(1)/usr/lib/lua/luci/view/themes/bootstrap/footer.htm
 	$(CP) ./files/sysauth.htm $(1)/usr/lib/lua/luci/view/sysauth.htm
+	$(CP) ./files/flashops.htm $(1)/usr/lib/lua/luci/view/admin_system/flashops.htm
+	$(CP) ./files/upgrade.htm $(1)/usr/lib/lua/luci/view/admin_system/upgrade.htm
 	$(CP) ./files/newweb/index.htm $(1)/usr/lib/lua/luci/view/newweb/index.htm
 
 endef
