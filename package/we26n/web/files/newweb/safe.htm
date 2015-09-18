@@ -57,14 +57,13 @@ margin-top:-325px;
 }
 
 .password_box{
-	margin-top:80px;
+	margin-top:40px;
 	background-image:url(bg_02.png);
-	height:400px;
-	margin-left:200px;
+
 }
 .password{
-	padding-top:80px;
-	padding-left:90px;
+	padding-bottom:70px;
+	padding-left:300px;
 	overflow:hidden;
 }
 .password input,.cbi-value-title{ 
@@ -95,8 +94,7 @@ input{
 	background-color:#649aeb;
 	width:100px;
 	height:40px;
-	margin-left:280px;
-	margin-top:50px;
+	margin-left:500px;
 	float:left;
 	text-align:center;
 	cursor: pointer;
@@ -110,7 +108,7 @@ input{
 .button p{
    width:100px;
 	height:30px;
-	margin-left:260px;
+	margin-left:160px;
 	margin-top:30px;
 	padding-top:5px;
 	float:left;
@@ -126,7 +124,10 @@ input{
 .power{
 	color:#00C;
 }
-.upgrade{font-size:26px; color:white;padding-left:20px; padding-top:4px;font-family:"微软雅黑"; }
+.revise{font-size:26px; color:white;padding-left:120px; padding-top:50px; font-family:"微软雅黑"; }
+.upgrade{padding-left:120px; padding-bottom:50px;}
+.upgrade a{font-size:26px; color:#01046f; font-family:"微软雅黑";clear:left; }
+.upgrade a:hover{color:white;}
 </style>
 <meta charset="utf-8">
 <title>安全中心</title>
@@ -141,12 +142,11 @@ input{
 	
 	<div class="big_top">
     	<a href="newweb_index"> <img src="<%=resource%>/images/back.png"></a>
-        <a class="safe" href="newweb_index">&nbsp;&nbsp;修改密码</a>
-		<a class="upgrade" href="<%= luci.dispatcher.build_url("admin/system/flashops") %>">网页升级</a>
+        <a class="safe" href="newweb_index">&nbsp;&nbsp;安全中心</a>
     </div>
     
 <div class="big_bottom">
-
+<a class="revise">修改密码</a>
 <form name="userform" method="post" action="<%= luci.dispatcher.build_url("admin/newweb/password_set") %>">
 <div class="password_box">
 	
@@ -167,6 +167,9 @@ input{
         <p id="deom"></p>
     </div>
 	
+</div>
+<div class="upgrade">
+<a href="<%= luci.dispatcher.build_url("admin/system/flashops") %>">网页升级</a>
 </div>
 </form>
 
