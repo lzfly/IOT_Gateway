@@ -143,7 +143,7 @@ function  commanddispather()
 			print("get command error....");
 		end
 		
-		ttmr:set(3000);
+		ttmr:set(60000);
 end		
 
 ttmr = uloop.timer( commanddispather, 3000 );
