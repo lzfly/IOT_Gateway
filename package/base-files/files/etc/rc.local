@@ -21,5 +21,7 @@ start-stop-daemon -b -S -x add_del_deviceid.lua
 start-stop-daemon -b -S -x mtbridge
 start-stop-daemon -b -S -x bledaemn
 start-stop-daemon -b -S -x bleread.lua
+start-stop-daemon -b -S -x rfmodbus
+start-stop-daemon -b -S -x rfreader.lua
 
 exit 0

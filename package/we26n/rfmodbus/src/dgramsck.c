@@ -98,8 +98,10 @@ int  dgram_sock_try_run( intptr_t obj )
 	    	return 1;
 	    }
 
+#if 0
 printf( "dgram recv %d\n", iret );
 dump_hex( &(tary[0]), iret );
+#endif
 
         /**/
         if ( NULL != pctx->func )

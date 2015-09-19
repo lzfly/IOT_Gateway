@@ -49,8 +49,6 @@ void  rfmodbus_readreg_m4bus_cbk( intptr_t arg, uint16_t uret, int tlen, uint8_t
         blobmsg_add_field( &b, BLOBMSG_TYPE_STRING, "data", pdat, tlen+1 );
     }
 
-    printf( "read reg, %d\n", tlen );
-    
     /**/
     ubus_send_reply( ctx, nreq, b.head );
     ubus_complete_deferred_request( ctx, nreq, 0 );
@@ -97,7 +95,6 @@ static int rfmodbus_readreg( struct ubus_context *ctx, struct ubus_object *obj,
     ubus_defer_request( ctx, req, nreq);
 
     /**/
-    printf( "in rfmodbus_readreg\n" );
     m4bus_send_req( g_m4bus_ctx, &treq, rfmodbus_readreg_m4bus_cbk, (intptr_t)nreq, 500 );
     return UBUS_STATUS_OK;
     

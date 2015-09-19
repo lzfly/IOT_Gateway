@@ -123,7 +123,7 @@ dump_hex( pdat, tlen );
         if ( tlen >= 6 )
         {
             memcpy( pair->taddr, pdat, 6 );
-            task_reactive( tctx, CMD_GET_DHOST, 6, pair->taddr, mtask_set_target_host, 6000 );    
+            task_reactive( tctx, CMD_GET_DHOST, 6, pair->taddr, mtask_set_target_host, 3000 );    
             return 1;
         }
     }
@@ -466,12 +466,44 @@ dump_hex( pdat, tlen );
 }
 
 
+int  mtask_clear_target_host( intptr_t tctx, uint16_t cmd, int tlen, uint8_t * pdat )
+{
+    mtask_start_pair_t * pair;
+
+printf( "clear host, cmd = %X : ", cmd );
+dump_hex( pdat, tlen );
+
+    /**/
+    task_getptr( tctx, (void **)&pair );
+    if ( cmd == ACK_GET_DHOST )
+    {
+        if ( tlen >= 6 )
+        {
+            task_reactive( tctx, CMD_NODE_TYP, 0, NULL, mtask_get_node_type, 1000 );
+            return 1;
+        }
+    }
+    
+    /**/
+    if ( cmd == ACK_TMR_OUT )
+    {
+        pair->pctx->state = ST_ERROR;
+        pair->pctx->ecode = 11;
+        return 0;
+    }
+
+    return 1;
+    
+}
+
+
+
 int  mthrd_task_start_pair( mthrd_context_t * pctx )
 {
     int  iret;
     intptr_t  tctx;
     mtask_start_pair_t * pair;
-    
+
     /**/
     iret = task_init( pctx->pevbase, pctx->uctx, sizeof(mtask_start_pair_t), &tctx );
     if ( 0 != iret )
@@ -482,9 +514,14 @@ int  mthrd_task_start_pair( mthrd_context_t * pctx )
     /**/
     task_getptr( tctx, (void **)&pair );
     pair->pctx = pctx;
-    
+
+    /* clear host addr */
+    memset( pair->taddr, 0, 6 );
+    task_active( tctx, CMD_GET_DHOST, 6, pair->taddr, mtask_clear_target_host, 3000 );
+
     /**/
-    task_active( tctx, CMD_NODE_TYP, 0, NULL, mtask_get_node_type, 1000 );
+    pctx->state = ST_PAIRING;
+    pctx->ecode = 0;
     return 0;
 
 }
@@ -639,8 +676,6 @@ int  mtask_wait_reboot( intptr_t tctx, uint16_t cmd, int tlen, uint8_t * pdat )
 
 int  mtask_wait_ready( intptr_t tctx, uint16_t cmd, int tlen, uint8_t * pdat )
 {
-    uint8_t  tary[64];
-
     printf( "cmd = %X : ", cmd );
     dump_hex( pdat, tlen );
 
@@ -658,6 +693,7 @@ int  mtask_wait_ready( intptr_t tctx, uint16_t cmd, int tlen, uint8_t * pdat )
     }
     
     return 1;
+    
 }
 
 
@@ -719,7 +755,10 @@ dump_hex( pdat, tlen );
             else
             {
                 /* retry? */
-                mthrd_dgram_reply_code( pdrq->pctx, &(pdrq->treq), 0xff01 );                
+                mthrd_dgram_reply_code( pdrq->pctx, &(pdrq->treq), 0xff01 );
+
+                /**/
+                pdrq->pctx->dtask = 0;
                 return 0;
             }
         }
@@ -733,68 +772,31 @@ dump_hex( pdat, tlen );
             if ( pdat[0] == 0 )
             {
                 pdrq->stage = 2;
+
+                /**/
+                pdrq->pctx->dtask = 0;
                 return 0;
             }
             else
             {
                 /* retry? */
                 mthrd_dgram_reply_code( pdrq->pctx, &(pdrq->treq), 0xff02 );
+
+                /**/
+                pdrq->pctx->dtask = 0;
                 return 0;
             }
         }
     }
-
-#if 0
-    m4bus_rsp_t * prsp;
-
-    /**/
-    if ( cmd == ACK_RECV_DAT )
-    {
-        if ( tlen < 6 )
-        {
-            return 1;
-        }
-
-        /**/
-        if ( 0 != memcmp( pdat, pdrq->pctx->taddr, 6) )
-        {
-            return 2;
-        }
-
-        /**/
-        if ( (tlen - 6) < sizeof(m4bus_rsp_t) )
-        {
-            return 3;
-        }
-
-        /**/
-        prsp = (m4bus_rsp_t *)(pdat + 6);
-        
-        if ( (prsp->bus != pdrq->treq.bus) || (prsp->addr != pdrq->treq.addr) || (prsp->reg != pdrq->treq.reg) )
-        {
-            return 4;
-        }
-
-        /**/
-        if ( 0 != prsp->uret )
-        {
-            mthrd_dgram_reply_code( pdrq->pctx, &(pdrq->treq), prsp->uret );
-        }
-        else
-        {
-            mthrd_dgram_reply_array( pdrq->pctx, &(pdrq->treq), tlen-6-sizeof(m4bus_rsp_t), prsp->tary );
-        }
-
-        return 0;
-        
-    }
-#endif
 
     /**/
     if ( cmd == ACK_TMR_OUT )
     {
         printf( "data, trans, timeout \n");
         mthrd_dgram_reply_code( pdrq->pctx, &(pdrq->treq), 0xff03 );
+
+        /**/
+        pdrq->pctx->dtask = 0;
         return 0;
     }
 
@@ -835,6 +837,9 @@ int  mthrd_task_data_request( mthrd_context_t * pctx, m4bus_req_t * preq )
     
     /**/
     task_active( tctx, CMD_SEND_DAT, 12, pdrq->tary, mtask_data_trans, 3000 );
+
+    /**/
+    pctx->dtask = tctx;
     return 0;
     
 }
@@ -931,9 +936,16 @@ void  mthrd_inter_dgram_cbk( intptr_t arg, int tlen, void * pdat )
 
         case 1:
             /**/
+            if ( (ST_PAIRING == pctx->state) || (ST_UNKNOW == pctx->state) )
+            {
+                mthrd_dgram_reply_code( pctx, preq, 0x1 );
+                break;
+            }
+            
             mthrd_dgram_reply_code( pctx, preq, 0 );
             mthrd_task_start_pair( pctx );
             break;
+            
         }
     }
     else

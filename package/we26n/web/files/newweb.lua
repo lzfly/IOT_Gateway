@@ -244,8 +244,8 @@ end
 function pair470_control()
 
 	local result = conn:call("we26n_rfmodbus", "startpair", {});
-	
-        luci.http.redirect(luci.dispatcher.build_url("admin/newweb/elewater"))
+    luci.http.redirect(luci.dispatcher.build_url("admin/newweb/elewater"))
+    
 end
 
 function get_470_state()
