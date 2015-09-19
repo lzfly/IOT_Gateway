@@ -46,6 +46,7 @@ endef
 define Package/rfmodbus/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/rfmodbus $(1)/usr/bin/rfmodbus
+	$(INSTALL_BIN) ./files/rfreader.lua  $(1)/usr/bin
 endef
 
 $(eval $(call BuildPackage,rfmodbus))

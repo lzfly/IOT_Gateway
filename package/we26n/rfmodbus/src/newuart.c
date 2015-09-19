@@ -358,7 +358,7 @@ int  nuart_trysend( nuart_context_t * pctx, int tlen, uint8_t * pdat )
     int  iret;
     
     /**/
-    printf( "write tlen = %d\n", tlen );
+    // printf( "write tlen = %d\n", tlen );
     
     iret = write( pctx->ufd, pdat, tlen );
     if ( iret >= 0 )
@@ -560,7 +560,7 @@ int  nuart_send( intptr_t ctx, uint16_t cmd, int tlen, void * pdat )
 
     /**/
     code_encode( pctx->cctx, cmd, tlen, (uint8_t *)pdat, &petr, &elen );
-    dump_hex( petr, elen );
+    // dump_hex( petr, elen );
 
     /**/
     if ( pctx->sptr == NULL )
