@@ -1,0 +1,110 @@
+<%#
+LuCI - Lua Configuration Interface
+Copyright 2008 Steven Barth <steven@midlink.org>
+Copyright 2008 Jo-Philipp Wich <xm@leipzig.freifunk.net>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+$Id$
+
+-%>
+<!doctype html>
+<html>
+<head>
+<style> 
+body{ margin:auto;background-color:#1c69bb;}
+a{ display:block; text-decoration:none; font-family:"微软雅黑";}
+.big_box{width:100%;height:auto;position:absolute;top:50%;margin-top:-325px;}
+.big_top{ width:1200px;margin:auto;overflow:hidden; padding-top:5px;}
+.big_top img,.big_top a{ float:left;padding-bottom:15px;text-decoration:none;}
+.big_top a{font-size:26px; text-decoration:none;  color:white;font-family:"微软雅黑"; }
+#content{color:white;}
+.big_bottom{width:1196px; background-color:#226fc0;margin:auto;border-top:1px solid #407CB8;}
+.cbi-section{margin-top:30px;}
+.bottom_box{margin:50px 100px;}
+</style>
+
+<div class="big_box">
+<div class="big_top">
+<a href="<%= luci.dispatcher.build_url("admin/newweb/safe") %>"><img src="<%=resource%>/images/back.png"></a>
+<a href="<%= luci.dispatcher.build_url("admin/newweb/safe") %>"id="content" name="content">&nbsp;&nbsp;备份升级</a>
+</div>
+<div class="big_bottom">
+<div class="bottom_box">
+<fieldset class="cbi-section">
+	<fieldset class="cbi-section">
+		<legend><%:备份/恢复%></legend>
+		<form method="post" action="<%=REQUEST_URI%>" enctype="multipart/form-data">
+			<div class="cbi-section-descr"><%:点击按钮来下载一个当前的配置文件用作备份 %></div>
+			<div class="cbi-section-node">
+				<div class="cbi-value<% if not reset_avail then %> cbi-value-last<% end %>">
+					<label class="cbi-value-title" for="image"><%:下载备份%>:</label>
+					<div class="cbi-value-field">
+						<input class="cbi-button cbi-button-apply" type="submit" name="backup" value="<%:Generate archive%>" />
+					</div>
+				</div>
+				<% if reset_avail then %>
+				<div class="cbi-value cbi-value-last">
+					<label class="cbi-value-title"><%:恢复出厂设置%>:</label>
+					<div class="cbi-value-field">
+						<input onclick="return confirm('<%:Really reset all changes?%>')" class="cbi-button cbi-button-reset" type="submit" name="reset" value="<%:Perform reset%>" />
+					</div>
+				</div>
+				<% end %>
+			</div>
+			<br />
+			<div class="cbi-section-descr"><%:您可以在这个位置上传您之前生成的备份文档，用来恢复之前的配置%></div>
+			<div class="cbi-section-node">
+				<div class="cbi-value cbi-value-last">
+					<label class="cbi-value-title" for="archive"><%:恢复备份%>:</label>
+					<div class="cbi-value-field">
+						<input type="file" name="archive" id="archive" />
+						<input type="submit" class="cbi-button cbi-input-apply" name="restore" value="<%:Upload archive...%>" />
+					</div>
+				</div>
+			</div>
+		</form>
+	</fieldset>
+
+	<br />
+
+	<fieldset class="cbi-section">
+		<legend><%:系统升级%></legend>
+		<% if upgrade_avail then %>
+			<form method="post" action="<%=REQUEST_URI%>" enctype="multipart/form-data">
+				<div class="cbi-section-descr"><%:在这个位置上传一个镜像文件，来替换已有的系统.选择保留设置来保持原来的设置。%></div>
+				<div class="cbi-section-node">
+					<div class="cbi-value">
+						<label class="cbi-value-title" for="keep"><%:保留设置%>:</label>
+						<div class="cbi-value-field">
+							<input type="checkbox" name="keep" id="keep" checked="checked" />
+						</div>
+					</div>
+					<div class="cbi-value cbi-value-last<% if image_invalid then %> cbi-value-error<% end %>">
+						<label class="cbi-value-title" for="image"><%:镜像文件%>:</label>
+						<div class="cbi-value-field">
+							<input type="file" name="image" id="image" />
+							<input type="submit" class="cbi-button cbi-input-apply" value="<%:Flash image...%>" />
+						</div>
+					</div>
+				</div>
+				<% if image_invalid then %>
+					<div class="cbi-section-error"><%:The uploaded image file does not contain a supported format. Make sure that you choose the generic image format for your platform. %></div>
+				<% end %>
+			</form>
+		<% else %>
+			<div class="cbi-section-descr"><%:Sorry, there is no sysupgrade support present; a new firmware image must be flashed manually. Please refer to the OpenWrt wiki for device specific install instructions.%></div>
+		<% end %>
+	</fieldset>
+
+</fieldset>
+
+<%+footer%>
+</div>
+</div>
+</div>
+

@@ -1,3 +1,25 @@
+<%
+
+require "luci.sys"
+
+local str = luci.sys.exec("cat /etc/openwrt_release")
+local sss = string.find(str,"DISTRIB_REVISION")
+local vison = string.sub(str,sss+18,87)
+
+local macReader = io.popen("eth_mac r lan")
+local macAddr = macReader:read("*all")
+macAddr = string.gsub(macAddr,":","")
+macAddr = "we26n_"..macAddr
+
+macAddr = string.gsub(macAddr,"%\r","") 
+macAddr = string.gsub(macAddr,"%\n","")
+
+
+
+%>
+
+
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -183,7 +205,7 @@ a:active {
 
  margin:auto;
 
- position:relative;
+ position:relative; 
 
  }
 
@@ -794,7 +816,7 @@ margin-top:10px;
 
   display:inline;
 
-  margin-left:25px;
+  margin-left:10px;
 
  }	
 
@@ -1245,14 +1267,15 @@ function error(){
 
   <ul>
 
-    <li>@新奥燃气&nbsp;<a href="" target="_blank" style="border-bottom:1px solid #FFFFFF;"></a>&nbsp;版权所有</li>
 
-	<li id="last_version">当前版本 V0.1</li>
+
+	<li id="last_version">当前版本 V&nbsp;<%=vison%></li>
 
 	<li id="update_version"></li>
-
+	
+	<li>网关ID <%=macAddr%></li>
   </ul>
-
+    <div>新奥燃气&nbsp;<a href="" target="_blank" style="border-bottom:1px solid #FFFFFF;"></a>&nbsp;版权所有</div>
 <div id="tip">
 
    <span class="loading"><img src="<%=resource%>/images/loading.gif"/></span>
