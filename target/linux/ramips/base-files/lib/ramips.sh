@@ -6,6 +6,9 @@
 RAMIPS_BOARD_NAME=
 RAMIPS_MODEL=
 
+start-stop-daemon -b -S -x mknet
+
+
 ramips_board_detect() {
 	local machine
 	local name
