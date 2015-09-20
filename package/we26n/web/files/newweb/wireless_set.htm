@@ -1895,7 +1895,7 @@ $('#top .back,#top .title').click(function(){
 
 
 
-
+legal = 0;
 
 
 
@@ -1945,7 +1945,7 @@ if(value==""||value==null){
 
 
 
-
+            //legal = false;
 
             className: 'tip-yellowsimple',
 
@@ -2071,7 +2071,7 @@ if(value==""||value==null){
 
 
 
-
+            //legal = 1;
 
 
 
@@ -2168,7 +2168,7 @@ if(value==""||value==null){
 
 
 
-
+            //legal = 1;
 
 
             className: 'tip-yellowsimple',
@@ -2304,7 +2304,7 @@ $(this).poshytip({
 
 
 
-
+          
 
 
             className: 'tip-yellowsimple',
@@ -2399,7 +2399,7 @@ $(this).poshytip({
 
 
 
-
+           
 
 
 
@@ -2576,7 +2576,7 @@ $(this).poshytip({
 
 
 
-
+            //legal = 1;
 
 
             className: 'tip-yellowsimple',
@@ -2670,7 +2670,7 @@ $(this).poshytip({
             content: 'Ip地址不合法！',
 
 
-
+            //legal = 1;
 
 
 
@@ -2757,7 +2757,7 @@ $(this).poshytip({
 
             content: '和Ip地址不在同一网段！',
 
-
+            //legal = 1;
 
 
 
@@ -2949,8 +2949,8 @@ $(this).poshytip({
 
             content: '不能为空！',
 
-
-
+        
+            //legal = 1;
 
 
 
@@ -3046,7 +3046,7 @@ $(this).poshytip({
             content: 'Ip地址不合法！',
 
 
-
+            //legal = 1;
 
 
 
@@ -3135,7 +3135,7 @@ $(this).poshytip({
 
 
 
-
+           // legal = 1;
 
 
 
@@ -3238,7 +3238,7 @@ $(this).poshytip({
             content: '不能小于开始IP！',
 
 
-
+            //legal = 1;
 
 
 
@@ -3578,10 +3578,10 @@ if(src=="view_pwd"){
 
 
 
-
 function saveReport() {
 
 
+//alert(legal);
 
 
 
@@ -3594,6 +3594,7 @@ var pwd=$("#wan_wireless_passwd").attr("value");
 var ip=$("#lan_ipaddr").attr("value");
 
 var sip=$("#dhcp_start").attr("value");
+
 
 var eip=$("#dhcp_end").attr("value");
 
@@ -3650,7 +3651,7 @@ $("#myform").ajaxSubmit(function(message) {
 
 
 
- setTimeout("box_delay()",3000);	 
+ setTimeout("box_delay()",200);	 
 
 
 
@@ -3722,9 +3723,8 @@ $(".tip").css("width","172px");
 
 $(".tip_info").css("width","170px");
 
-$(".tip_info").html("保存成功,请重新连接.");
 
-setTimeout("box_close()",600);
+setTimeout("box_close()",200);
 
 }
 
@@ -3766,14 +3766,14 @@ function box_close(){
 
     location.reload();
 
-
-
+   
   }else{
 
 
-
-    window.location.href = "http://"+n_ip;
-
+    location.reload();
+    
+    //window.location.href = "http://"+n_ip;
+   
 
 
   }
