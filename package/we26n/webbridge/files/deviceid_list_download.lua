@@ -23,6 +23,15 @@ function sleep(n)
 	os.execute("sleep " .. n)
 end
 
+function file_exists(filename)
+    local file = io.open(filename,"rb")
+    if file then
+        file:close()
+        return file
+    end
+    return nil
+end
+
 function Split(szFullString, szSeparator)  
 	local nFindStartIndex = 1  
 	local nSplitIndex = 1  
@@ -52,6 +61,7 @@ end
 
 function  write_id_to_config(meterstr)
     local meterid = string.gsub(meterstr,"wifi_gas_","")
+    
     luci.sys.exec("uci set jyconfig.@deviceid[0].gasmeter="..meterid)
     x:commit("jyconfig")
 end
@@ -77,6 +87,12 @@ function StringManipulation(data)
         --print("in if")
     --end
     --print(if_exit)
+    if file_exists("/etc/config/devicesid_list") == nil then
+    
+        luci.sys.exec("touch /etc/config/devicesid_list");
+        luci.sys.exec("uci add devicesid_list.@devicesid[0]")
+    
+    end
      luci.sys.exec("uci delete devicesid_list.@devicesid[0].id")
     for j = 1 ,size,1 do
     print(config[j]);

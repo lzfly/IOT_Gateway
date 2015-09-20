@@ -44,7 +44,7 @@ define Package/web/install
 	$(INSTALL_DIR)  $(1)/usr/lib/lua/luci/view/
 	$(INSTALL_DIR)  $(1)/usr/lib/lua/luci/view/thems/
 	$(INSTALL_DIR)  $(1)/usr/lib/lua/luci/view/admin_system/
-	$(INSTALL_DIR)  $(1)/$(1)/etc/hotplug.d/block/
+	$(INSTALL_DIR)  $(1)/etc/hotplug.d/block/
 	$(INSTALL_BIN) ./files/newweb.lua  $(1)/usr/lib/lua/luci/controller/admin/newweb.lua
 	$(INSTALL_BIN) ./files/cascade.css  $(1)/www/luci-static/bootstrap/cascade.css
 	$(INSTALL_BIN) ./files/index.htm  $(1)/www/index.htm
