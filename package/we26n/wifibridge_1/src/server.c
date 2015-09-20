@@ -830,6 +830,7 @@ void* enn_meter_thread( void *arg )
                 }
 				else{
 				    syslog(LOG_CRIT,"[power_meter] crc error");
+				    break;
 				}
                     
                 
@@ -887,6 +888,7 @@ void* enn_meter_thread( void *arg )
 				else
 				{
 				    syslog(LOG_CRIT,"[water_meter] crc error");
+				    break;
 				}
 
 
@@ -956,6 +958,7 @@ void* enn_meter_thread( void *arg )
 				else
 				{
 				    syslog(LOG_CRIT,"[heat_meter] crc error");
+				    break;
 				}
 
 
