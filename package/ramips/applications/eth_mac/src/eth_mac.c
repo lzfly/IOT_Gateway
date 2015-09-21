@@ -17,6 +17,7 @@
 #else
 #define LAN_OFFSET    0x28
 #define WAN_OFFSET    0x2E
+#define WIFI_OFFSET   0x04
 #endif
 
 #define MACADDR_LEN     6
@@ -56,7 +57,9 @@ int mtd_read(char *side)
         return -1;
     }
 
-    if (!strcmp(side, "wan"))
+    if (!strcmp(side, "wifi"))
+        lseek(fd, WIFI_OFFSET, SEEK_SET);
+    else if (!strcmp(side, "wan"))
         lseek(fd, WAN_OFFSET, SEEK_SET);
     else
         lseek(fd, LAN_OFFSET, SEEK_SET);
@@ -144,7 +147,7 @@ write_fail:
 void usage(char **str)
 {
     printf("How to use:\n");
-    printf("\tread:   %s r <lan|wan>\n", str[0]);
+    printf("\tread:   %s r <lan|wan|wifi>\n", str[0]);
     printf("\twrite:  %s w <lan|wan> <MACADDR[0]> <MACADDR[1]> ...\n", str[0]);
 }
 
