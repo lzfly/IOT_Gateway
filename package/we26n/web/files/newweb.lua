@@ -6,7 +6,6 @@ local nw = require "luci.model.network".init(x)
 local io = require "io"
 require "luci.fs"
 require "luci.sys"
-
 require "ubus"
 
 conn = ubus.connect();
@@ -103,6 +102,8 @@ function index()
 		entry({"admin","newweb","sensor_item"},call("sensor_item"),nil)
 		entry({"admin","newweb","alertor_item"},call("alertor_item"),nil)
 		entry({"admin","newweb","pair470_control"},call("pair470_control"),nil)
+	entry({"admin","newweb","pair470_getstate"},call("pair470_getstate"),nil)
+	
 end
 
 
@@ -213,8 +214,7 @@ function sensor_item()
   end
   luci.http.redirect(luci.dispatcher.build_url("admin/newweb/sensor"))
 
-
-   end  
+end  
    
 function alertor_item()
   local deviceid=luci.http.formvalue("devId")
@@ -228,38 +228,47 @@ function alertor_item()
   end
   luci.http.redirect(luci.dispatcher.build_url("admin/newweb/alertor"))
 
-   end
+end
 
    
 function light_control()
   
   luci.http.redirect(luci.dispatcher.build_url("admin/newweb/zigbee"))
 end
+
+
 function entrynet_control()
 
 	local result = conn:call("we26n_zigbee_febee", "ctrlcmd", { gatewayid =macAddr , deviceid = "zigbee_fbee_entrynet_ffffffffffffffff_99", attr = "9999", data = "0" });
         luci.http.redirect(luci.dispatcher.build_url("admin/newweb/zigbee"))
 end
 
+
 function pair470_control()
 
-	local result = conn:call("we26n_rfmodbus", "startpair", {});
-    luci.http.redirect(luci.dispatcher.build_url("admin/newweb/elewater"))
+	local ret = conn:call("we26n_rfmodbus", "startpair", {});
+	conn:call( "we26n_rfreader","change_peer", {} );
+	
+    luci.http.prepare_content("text/plain")
+	luci.http.write_json( ret );
+    luci.http.write( nil );
     
 end
 
-function get_470_state()
 
-local ret = conn:call( "we26n_rfmodbus", "getstate", {} );
-	if ret.result == "0" and ret.state == "4" then
-	    luci.http.prepare_content("text/plain")
-	    luci.http.write("pairing ok")
-	else
-	    luci.http.prepare_content("text/plain")
-	    luci.http.write("pair fail")
+function pair470_getstate()
+    local ret = conn:call( "we26n_rfmodbus", "getstate", {} );
+
+    if ret.addr ~= nil then
+	    ret.addr = string.format( "%x:%x:%x:%x:%x:%x", string.byte(ret.addr,1,6) );
 	end
-
+	
+    luci.http.prepare_content("text/plain")
+	luci.http.write_json( ret );
+    luci.http.write( nil );
+	
 end
+
 
 
 function gas_meter_set()
