@@ -13,7 +13,7 @@ conn = ubus.connect();
 if not conn then
 	error("Failed to connect to ubusd");
 end
-local macReader = io.popen("eth_mac r lan");
+local macReader = io.popen("eth_mac r wifi");
 local macAddr = macReader:read("*all");
 macAddr = string.gsub(macAddr, ":", "");
 macAddr = "we26n_" .. macAddr;
