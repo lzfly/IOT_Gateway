@@ -22,7 +22,7 @@ enable_mt7620() {
 
 detect_mt7620() {
 #	detect_ralink_wifi mt7620 mt7620
-	ssid=enn-`ifconfig ra0 | grep HWaddr | cut -c 51- | sed 's/://g'`
+	ssid=enn-`eth_mac r wifi | cut -c 13- | sed 's/://g'`
 	cd /sys/module/
 	[ -d $module ] || return
 	[ -e /etc/config/wireless ] && return
