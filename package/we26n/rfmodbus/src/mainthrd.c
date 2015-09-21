@@ -73,38 +73,28 @@ typedef struct _tag_mtask_start_pair
 } mtask_start_pair_t;
 
 
-
-int  mtask_set_target_host( intptr_t tctx, uint16_t cmd, int tlen, uint8_t * pdat )
+void  mthrd_clear_taddr( mthrd_context_t * pctx )
 {
-    mtask_start_pair_t * pair;
-
-printf( "cmd = %X : ", cmd );
-dump_hex( pdat, tlen );
-
-    /**/
-    task_getptr( tctx, (void **)&pair );
-    if ( cmd == ACK_GET_DHOST )
-    {
-        if ( tlen >= 6 )
-        {
-            memcpy( pair->pctx->taddr, pair->taddr, 6 );
-            pair->pctx->state = ST_PAIRED;
-            pair->pctx->ecode = 0;
-            return 0;
-        }
-    }
-    
-    /**/
-    if ( cmd == ACK_TMR_OUT )
-    {
-        pair->pctx->state = ST_ERROR;
-        pair->pctx->ecode = 11;
-        return 0;
-    }
-
-    return 1;
-    
+    memset( pctx->taddr, 0, 6 );
+    system( "uci set jyconfig.@deviceid[0].470station=000000000000" );
+    return;
 }
+
+
+void  mthrd_commit_taddr( mthrd_context_t * pctx, uint8_t * taddr )
+{
+    char  tstr[200];
+    
+    memcpy( pctx->taddr, taddr, 6 );
+    sprintf( tstr, "uci set jyconfig.@deviceid[0].470station=%02x%02x%02x%02x%02x%02x",
+        taddr[0], taddr[1], taddr[2], taddr[3], taddr[4], taddr[5] );
+
+    /**/
+    system( tstr );
+    system( "uci commit jyconfig" );
+    return;
+}
+
 
 
 int  mtask_get_target_addr( intptr_t tctx, uint16_t cmd, int tlen, uint8_t * pdat )
@@ -123,8 +113,10 @@ dump_hex( pdat, tlen );
         if ( tlen >= 6 )
         {
             memcpy( pair->taddr, pdat, 6 );
-            task_reactive( tctx, CMD_GET_DHOST, 6, pair->taddr, mtask_set_target_host, 3000 );    
-            return 1;
+            mthrd_commit_taddr( pair->pctx, pdat );
+            pair->pctx->state = ST_PAIRED;
+            pair->pctx->ecode = 0;
+            return 0;
         }
     }
     
@@ -280,6 +272,7 @@ dump_hex( pdat, tlen );
         }
 
         /**/
+        pair->pctx->ecode = 80;
         tary[0] = 1;
         task_reactive( tctx, CMD_IO_PAIR, 1, tary, mtask_start_pair, 30000 );
         return 1;
@@ -315,7 +308,7 @@ dump_hex( pdat, tlen );
         {
             if ( pdat[0] == 0 )
             {
-                task_reactive( tctx, CMD_AUTO_CHN, 0, NULL, mtask_auto_chn, 10000 );
+                task_reactive( tctx, CMD_AUTO_CHN, 0, NULL, mtask_auto_chn, 80000 );
             }
             else
             {
@@ -466,38 +459,6 @@ dump_hex( pdat, tlen );
 }
 
 
-int  mtask_clear_target_host( intptr_t tctx, uint16_t cmd, int tlen, uint8_t * pdat )
-{
-    mtask_start_pair_t * pair;
-
-printf( "clear host, cmd = %X : ", cmd );
-dump_hex( pdat, tlen );
-
-    /**/
-    task_getptr( tctx, (void **)&pair );
-    if ( cmd == ACK_GET_DHOST )
-    {
-        if ( tlen >= 6 )
-        {
-            task_reactive( tctx, CMD_NODE_TYP, 0, NULL, mtask_get_node_type, 1000 );
-            return 1;
-        }
-    }
-    
-    /**/
-    if ( cmd == ACK_TMR_OUT )
-    {
-        pair->pctx->state = ST_ERROR;
-        pair->pctx->ecode = 11;
-        return 0;
-    }
-
-    return 1;
-    
-}
-
-
-
 int  mthrd_task_start_pair( mthrd_context_t * pctx )
 {
     int  iret;
@@ -516,8 +477,8 @@ int  mthrd_task_start_pair( mthrd_context_t * pctx )
     pair->pctx = pctx;
 
     /* clear host addr */
-    memset( pair->taddr, 0, 6 );
-    task_active( tctx, CMD_GET_DHOST, 6, pair->taddr, mtask_clear_target_host, 3000 );
+    mthrd_clear_taddr( pctx );
+    task_active( tctx, CMD_NODE_TYP, 0, NULL, mtask_get_node_type, 1000 );
 
     /**/
     pctx->state = ST_PAIRING;
@@ -533,57 +494,8 @@ typedef struct _tag_mtask_start_check
     mthrd_context_t * pctx;
     uint8_t  saddr[6];
     uint8_t  taddr[6];
-    uint8_t  thaddr[6];
     
 } mtask_start_check_t;
-
-
-
-int  mtask_get_dest_host( intptr_t tctx, uint16_t cmd, int tlen, uint8_t * pdat )
-{
-    mtask_start_check_t * pchk;
-
-printf( "cmd = %X : ", cmd );
-dump_hex( pdat, tlen );
-
-    /**/
-    task_getptr( tctx, (void **)&pchk );
-
-    /**/
-    if ( cmd == ACK_GET_DHOST )
-    {
-        if ( tlen >= 6 );
-        {
-            memcpy( pchk->thaddr, pdat, 6 );
-            memcpy( pchk->pctx->saddr, pchk->saddr, 6 );
-            memcpy( pchk->pctx->taddr, pchk->taddr, 6 );
-
-            if ( 0 == memcmp( pchk->taddr, pchk->thaddr, 6) )
-            {
-                pchk->pctx->state = ST_PAIRED;
-                pchk->pctx->ecode = 0;
-            }
-            else
-            {
-                pchk->pctx->state = ST_UNPAIR;
-                pchk->pctx->ecode = 0;
-            }
-            
-            return 0;
-        }
-    }
-    
-    /**/
-    if ( cmd == ACK_TMR_OUT )
-    {
-        pchk->pctx->state = ST_ERROR;
-        pchk->pctx->ecode = 2;
-        return 0;
-    }
-
-    return 1;
-
-}
 
 
 
@@ -603,12 +515,24 @@ dump_hex( pdat, tlen );
         if ( tlen >= 6 );
         {
             memcpy( pchk->taddr, pdat, 6 );
-
-            /**/
-            task_reactive( tctx, CMD_GET_DHOST, 0, NULL, mtask_get_dest_host, 1000 );
+            memcpy( pchk->pctx->saddr, pchk->saddr, 6 );
+            
+            if ( 0 == memcmp( pchk->pctx->taddr, pchk->taddr, 6) )
+            {
+                pchk->pctx->state = ST_PAIRED;
+                pchk->pctx->ecode = 0;
+            }
+            else
+            {
+                mthrd_clear_taddr( pchk->pctx );
+                pchk->pctx->state = ST_UNPAIR;
+                pchk->pctx->ecode = 0;
+            }
+            
+            return 0;
         }
     }
-
+    
     /**/
     if ( cmd == ACK_TMR_OUT )
     {
@@ -657,35 +581,11 @@ dump_hex( pdat, tlen );
 }
 
 
-int  mtask_wait_ready( intptr_t tctx, uint16_t cmd, int tlen, uint8_t * pdat );
-
-
-int  mtask_wait_reboot( intptr_t tctx, uint16_t cmd, int tlen, uint8_t * pdat )
-{
-    printf( "cmd = %X : ", cmd );
-    dump_hex( pdat, tlen );
-
-    if ( cmd == ACK_REBOOT )
-    {
-        task_active( tctx, CMD_NULL, 0, NULL, mtask_wait_ready, 6000 );
-    }
-
-    return 1;
-}
-
 
 int  mtask_wait_ready( intptr_t tctx, uint16_t cmd, int tlen, uint8_t * pdat )
 {
     printf( "cmd = %X : ", cmd );
     dump_hex( pdat, tlen );
-
-#if 0
-    if ( cmd == EVT_LDR_INFO )
-    {
-        tary[0] = 0;
-        task_reactive( tctx, CMD_REBOOT, 1, tary, mtask_wait_reboot, 1000 );
-    }
-#endif
 
     if ( cmd == ACK_TMR_OUT )
     {
@@ -1023,7 +923,7 @@ void  mthrd_inter_udata_cbk( intptr_t arg, int tlen, void * pdat )
 }
 
 
-int  mthrd_init( intptr_t * pret )
+int  mthrd_init( uint8_t * macbin, intptr_t * pret )
 {
     int  iret;
     mthrd_context_t * pctx;
@@ -1081,6 +981,8 @@ int  mthrd_init( intptr_t * pret )
     event_add( pctx->prdevt, NULL );
 
     /**/
+    memset( pctx->saddr, 0, 6 );
+    memcpy( pctx->taddr, macbin, 6 );
     pctx->state = ST_UNKNOW;
     pctx->ecode = 0;
     pctx->dtask = 0;

@@ -474,9 +474,10 @@ local customMethod = {
 
 			    if readtmr ~= nil then
                     readtmr:cancel();
+		    readtmr = nil;
                 end
 				
-                nixio.fs.unlink( "/tmp/devices_9.ini" );
+                nixio.fs.unlink( "/tmp/devices_7.ini" );
                 rtrytmr = uloop.timer( retry_get_state, 500 );
 			    conn:reply( req, {code="S00000"} );
 			end, {}

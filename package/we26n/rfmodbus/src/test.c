@@ -476,14 +476,134 @@ int  test_test_upgrade( int argc, char * argv[] )
 
 
 
+#include <uci.h>
 #include "mainthrd.h"
+
+
+int test_get_config( char * pmac )
+{
+    struct uci_context * uci;
+    struct uci_package * upkg;
+    struct uci_element * uele;
+    struct uci_section * usec;
+    const char * ptr;
+    int iret;
+    
+
+    /**/
+    uci = uci_alloc_context();
+    iret = uci_load( uci, "jyconfig", &upkg );
+    if ( 0 != iret )
+    {
+        uci_free_context( uci );
+		return 1;
+    }
+    
+    /**/
+    iret = 9;
+    uci_foreach_element( &upkg->sections, uele )
+    {
+        usec = uci_to_section( uele );
+        if( 0 != strcmp( usec->type, "deviceid") )
+        {
+            continue;
+        }
+
+        /**/
+        ptr = uci_lookup_option_string( uci, usec, "470station" );
+        if ( NULL == ptr )
+        {
+            iret = 2;
+            break;
+        }
+
+        if ( strlen(ptr) != 12 ) 
+        {
+            iret = 3;
+            break;
+        }
+        
+        /**/
+        memcpy( pmac, ptr, 13 );
+        iret = 0;
+        break;
+    }
+    
+    uci_free_context( uci );
+    return iret;
+    
+}
+
+
+
+int  test_macstr_tobin( char * macstr, uint8_t * pmac )
+{
+    int  i;
+    uint8_t  value;
+    char  temp;
+
+    /**/
+    for( i=0; i<6; i++ )
+    {
+        temp = macstr[i*2];
+        if ( (temp >= '0') && (temp <= '9') )
+        {
+            value = temp - '0';
+        }
+        else if ( (temp >= 'A') && (temp <= 'F') )
+        {
+            value = temp - 'A';
+        }
+        else if ( (temp >= 'a') && (temp <= 'f') )
+        {
+            value = temp - 'a';
+        }
+        else
+        {
+            return 1;
+        }
+
+        value = value << 4;
+        temp = macstr[i*2+1];
+        if ( (temp >= '0') && (temp <= '9') )
+        {
+            value |= temp - '0';
+        }
+        else if ( (temp >= 'A') && (temp <= 'F') )
+        {
+            value |= temp - 'A';
+        }
+        else if ( (temp >= 'a') && (temp <= 'f') )
+        {
+            value |= temp - 'a';
+        }
+        else
+        {
+            return 2;
+        }
+
+        /**/
+        pmac[i] = value;
+        
+    }  
+
+    return 0;
+    
+}
+ 
+
+
+
 
 int  main( int argc, char * argv[] )
 {
     int  iret;
     int  sfd;
     intptr_t  mnctx;
-
+    char  macstr[16];
+    uint8_t  macbin[6];
+    
+    
     if ( argc != 1 )
     {
         test_test_upgrade( argc, argv );
@@ -491,7 +611,22 @@ int  main( int argc, char * argv[] )
     }
 
     /**/
-    iret = mthrd_init( &mnctx );
+    memset( macbin, 0, 6 );
+    iret = test_get_config( macstr );
+    if ( 0 == iret )
+    {
+        printf( "470mac : %s", macstr );
+        
+        iret = test_macstr_tobin( macstr, macbin );
+        if ( 0 != iret )
+        {
+            memset( macbin, 0, 6 );        
+        }
+    }
+
+    
+    /**/
+    iret = mthrd_init( macbin, &mnctx );
     if ( 0 != iret )
     {
         printf( "mthrd_init ret = %d\n", iret );

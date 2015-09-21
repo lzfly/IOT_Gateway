@@ -21,7 +21,7 @@ define Package/rfmodbus
   CATEGORY:=WE26N
   TITLE:=test program for rfmodbus
   MAINTAINER:=wangmingdong <wang_leaf@sina.com>
-  DEPENDS:=+libpthread +libubus +libubox +libevent2-core 
+  DEPENDS:=+libpthread +libubus +libubox +libuci +libevent2-core 
 endef
 
 define Package/rfmodbus/description
@@ -39,7 +39,7 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 	CC="$(TARGET_CC)" \
 	CFLAGS="$(TARGET_CFLAGS) -Wall" \
-	LDFLAGS="$(TARGET_LDFLAGS) -lpthread -lubox -lubus -levent_core" \
+	LDFLAGS="$(TARGET_LDFLAGS) -lpthread -lubox -lubus -luci -levent_core" \
 	-f test.mk
 endef
 
