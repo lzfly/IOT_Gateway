@@ -372,7 +372,7 @@ end
 
 function  meter_record_init()
 
-	local fp = io.popen( "eth_mac r lan" );
+	local fp = io.popen( "eth_mac r wifi" );
 	local tmac = fp:read( "*l" );
 	fp:close();
 	

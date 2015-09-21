@@ -317,7 +317,7 @@ static int  mmqt_get_macaddr( char * pmac )
     char * dst;
     
     /**/
-    fout = popen( "eth_mac r lan", "r" );
+    fout = popen( "eth_mac r wifi", "r" );
     if ( fout == NULL )
     {
         return 1;
