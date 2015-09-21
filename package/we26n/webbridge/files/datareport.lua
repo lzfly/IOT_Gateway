@@ -39,7 +39,7 @@ end
 function getGateWayId()
 	local mfp, mac;
 	
-    mfp = io.popen( "eth_mac r lan" );	
+    mfp = io.popen( "eth_mac r wifi" );	
 	mac = mfp:read( "*l" );
 	mfp:close();
 	mac = string.gsub( mac, ":", "" );

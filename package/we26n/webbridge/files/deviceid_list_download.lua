@@ -6,7 +6,7 @@ require "uloop"
 socket = require("socket");
 require("uci")
 local x = uci.cursor()
-local macReader = io.popen("eth_mac r lan");
+local macReader = io.popen("eth_mac r wifi");
 local macAddr = macReader:read("*all");
 macAddr = string.gsub(macAddr, ":", "");
 macAddr = "we26n_" .. macAddr;
