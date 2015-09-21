@@ -188,6 +188,56 @@ uint8_t sub(char *buff_sub,int len_sub)
 	return ret_sub;
 }
 	
+static int  mmqt_get_macaddr( char * pmac )
+{
+    FILE * fout;
+    char  tbuf[100];
+    char * ptr;
+    char * dst;
+    
+    /**/
+    fout = popen( "eth_mac r wifi", "r" );
+    if ( fout == NULL )
+    {
+        return 1;
+    }
+
+    /**/
+    ptr = fgets( tbuf, 90, fout );
+    if ( NULL == ptr )
+    {
+        return 2;
+    }
+
+    /**/
+    pclose( fout );
+
+    /**/
+    dst = pmac;
+    ptr = tbuf;
+    while( '\0' != *(ptr) )
+    {
+        if ( *(ptr) != ':' )
+        {
+            *dst++ = *ptr++;
+        }
+        else
+        {
+            ptr++;
+        }
+    }
+
+    /**/
+    if ( *(dst-1) == 0x0a )
+    {
+        *(dst-1) = '\0';
+    }
+    
+    *dst = '\0';
+    return 0;
+    
+}
+	
 int getLocalIPandMAC ()
 {
     register int fd, intrface, retn = 0;
@@ -239,34 +289,7 @@ int getLocalIPandMAC ()
                     sprintf (str, "cpm: ioctl device %s", buf[intrface].ifr_name);
                     perror (str);
                 }
-                /* this section can't get Hardware Address,I don't know whether the reason is module driver*/
 
-                if (!(ioctl (fd, SIOCGIFHWADDR, (char *) &buf[intrface])))
-                {
-                    printf ("HW address is:" );
-                    printf("%02x:%02x:%02x:%02x:%02x:%02x\n",
-                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[0],
-                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[1],
-                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[2],
-                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[3],
-                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[4],
-                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[5]);
-				 sprintf(g_localMAC, "%02X%02X%02X%02X%02X%02X",
-                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[0],
-                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[1],
-                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[2],
-                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[3],
-                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[4],
-                                (unsigned char)buf[intrface].ifr_hwaddr.sa_data[5]);
-                    printf("g_localMAC=%s\n", g_localMAC);
-                    printf("" );
-                }
-                else
-                {
-                    char str[256];
-                    sprintf (str, "cpm: ioctl device %s", buf[intrface].ifr_name);
-                    printf (str);
-                }
              } //while
          } else
          printf ("cpm: ioctl" );
@@ -274,6 +297,7 @@ int getLocalIPandMAC ()
       printf ("cpm: socket" );
     
     close (fd);
+	mmqt_get_macaddr(g_localMAC);
     return retn;
 } 
 void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
