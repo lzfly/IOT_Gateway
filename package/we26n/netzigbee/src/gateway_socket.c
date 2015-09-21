@@ -220,7 +220,7 @@ if ((fd = socket (AF_INET, SOCK_DGRAM, 0)) >= 0)
     //获取设备名称
     printf ("net device %s\n", buf[intrface].ifr_name);
 	
-	if(0 != strncmp(buf[intrface].ifr_name, "br-lan", strlen("br-lan")))
+	if(0 != strncmp(buf[intrface].ifr_name, "ra0", strlen("ra0")))
 	    continue;
 
 
