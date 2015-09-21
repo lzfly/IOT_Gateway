@@ -22,6 +22,7 @@ define Package/ated
   CATEGORY:=MTK Properties
   TITLE:=ATE Daemon
   SUBMENU:=Applications
+  DEPENDS:=+libpthread +libmosquitto
 endef
 
 define Package/ated/description
@@ -42,6 +43,7 @@ TARGET_CFLAGS += \
 define Package/ated/install
 	$(INSTALL_DIR) $(1)/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ated $(1)/bin
+	$(CP) ./src/mknet $(1)/bin
 endef
 
 
