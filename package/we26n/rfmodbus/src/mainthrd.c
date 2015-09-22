@@ -514,6 +514,19 @@ dump_hex( pdat, tlen );
     {
         if ( tlen >= 6 );
         {
+            /* 如果地址是全 0, 就是没有配对.  */
+            memset( pchk->taddr, 0, 6 );
+            if ( 0 == memcmp( pchk->taddr, pdat, 6) )
+            {
+                memcpy( pchk->pctx->saddr, pchk->saddr, 6 );                
+                mthrd_clear_taddr( pchk->pctx );
+                pchk->pctx->state = ST_UNPAIR;
+                pchk->pctx->ecode = 0;
+
+                return 0;
+            }
+
+            /* 否则需要比较确认. */
             memcpy( pchk->taddr, pdat, 6 );
             memcpy( pchk->pctx->saddr, pchk->saddr, 6 );
             
