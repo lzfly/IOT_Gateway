@@ -88,6 +88,8 @@ int write_to_ini(char *powerid,char *waterid,char *heatid,double ddd,double ccc,
 			
 	fwrite(devicesstr,1,strlen(devicesstr),fp);
 	fclose(fp);
+	printf("[wifi_meter]write to ini file ok\n");
+	syslog(LOG_CRIT,"[wifi_meter]write to ini file ok");
 	return 0;
 		
 }
@@ -847,10 +849,10 @@ void* enn_meter_thread( void *arg )
 		    aaa = modbus_conv_long(&(puc_power[3]));
 		    //ddd = aaa*250*60;
 		    //ddd = ddd/18000000;
-                    ddd = aaa/(18000000/(250*60));
+            ddd = aaa/(18000000/(250*60));
 
 		    printf("The power meter reading is :%lf\n",ddd);
-                    syslog(LOG_CRIT,"[power_meter]power meter send value=%f", ddd);
+            syslog(LOG_CRIT,"[power_meter]power meter send value=%f", ddd);
 		    sendMsgToWeb(powerid,POWER,ddd);
                 }
 				else{
@@ -977,7 +979,7 @@ void* enn_meter_thread( void *arg )
 		            ccc_h = (pow(10,by_take-4))*ccc_h;
 		            printf("The heat meter after count reading is :%f\n",ccc_h);
 		          // printf("The heat meter reading is :%f\n",pow(10,by_take));
-                            syslog(LOG_CRIT,"[heat_meter]heat meter send value=%f", ccc_h);
+                    syslog(LOG_CRIT,"[heat_meter]heat meter send value=%f", ccc_h);
 		            sendMsgToWeb(heatid,HEAT,ccc_h);
                 }
 				else

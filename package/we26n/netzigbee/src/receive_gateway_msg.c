@@ -69,7 +69,6 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
 	static struct blob_buf b;
     if((strstr(ZigbeeId,ieeestr) == NULL) && ZIGBEE_ENABLE)
 	{
-		printf("\n*************************\n");
 		printf("sleep time:%d\n",g_ReportTime.hum_time);
 		return;
 	}
@@ -85,25 +84,25 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
 	    return -1;
 	}
 
-    printf("[sendMsgToWeb] start--1\r\n");
+    //printf("[sendMsgToWeb] start--1\r\n");
 
     /**/
 	if ( ubus_lookup_id(ctx, "jianyou", &id) ) {
 		fprintf(stderr, "Failed to look up jianyou object\n");
 		return;
 	}
-	printf("[sendMsgToWeb] start--2\r\n");
+	//printf("[sendMsgToWeb] start--2\r\n");
 
 	blob_buf_init( &b, 0 );
 	char gatewayidstr[32];
 	sprintf(gatewayidstr, "we26n_%s", g_localMAC);
 	blobmsg_add_string( &b, "gatewayid", gatewayidstr );
 
-        printf("[sendMsgToWeb] start--3\r\n");
+    //printf("[sendMsgToWeb] start--3\r\n");
 	
 	char deviceidstr[64];
 	sprintf(deviceidstr, "zigbee_fbee_%s_%d", ieeestr, endpoint);
-        printf("[sendMsgToWeb] start--%s\r\n", deviceidstr);
+    //printf("[sendMsgToWeb] start--%s\r\n", deviceidstr);
 	blobmsg_add_string( &b, "deviceid", deviceidstr);
 	
 	char devicetypestr[8];
@@ -268,17 +267,17 @@ int receiveDeviceMsg(char *buf, int len)
 					w26n_byte IEEE[8];
 					memcpy(&IEEE[0], &buffer[12 + g_devices[g_devices_count].namelen], 8);
 					memcpy(&g_devices[g_devices_count].IEEE[0], &buffer[12 + g_devices[g_devices_count].namelen], 8);
-                                        sprintf(g_devices[g_devices_count].ieeestr,"%02x%02x%02x%02x%02x%02x%02x%02x", IEEE[0], IEEE[1], IEEE[2], IEEE[3], IEEE[4], IEEE[5], IEEE[6], IEEE[7]);
+                    sprintf(g_devices[g_devices_count].ieeestr,"%02x%02x%02x%02x%02x%02x%02x%02x", IEEE[0], IEEE[1], IEEE[2], IEEE[3], IEEE[4], IEEE[5], IEEE[6], IEEE[7]);
 
-					printf("%s",g_devices[g_devices_count].ieeestr);
+				/*	printf("[receiveDeviceMsg]ieeestr=%s\n",g_devices[g_devices_count].ieeestr);
 					for(iii=0;iii<=7;iii++)
 					{
 						printf("\n");
 						printf("%02x",IEEE[iii]);
 						printf("\n");
-					}
+					}*/
 
-                                        printf("[receiveDeviceMsg]IEEE=%s\r\n",g_devices[g_devices_count].ieeestr);
+                    printf("[receiveDeviceMsg]IEEE=%s\r\n",g_devices[g_devices_count].ieeestr);
 
 					g_devices[g_devices_count].SNlen = buffer[20 + g_devices[g_devices_count].namelen];
                                         if(g_devices[g_devices_count].SNlen > 100)

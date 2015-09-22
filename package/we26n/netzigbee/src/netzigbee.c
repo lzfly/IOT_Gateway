@@ -154,9 +154,6 @@ int getzigbeeid_config(char *zigbeeid)
                		}
                		
                		
-               			printf("id = %s\n",&ZigbeeId[0]);
-               			printf("len = %d\n",strlen(ZigbeeId));
-               			
                	}
                	
 

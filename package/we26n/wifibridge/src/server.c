@@ -66,6 +66,8 @@ int write_to_ini(char *gas_meter_id,long double data)
 			
 				fwrite(devicesstr,1,strlen(devicesstr),fp);
 				fclose(fp);
+				printf("[gas_meter]write to ini file ok\n");
+				syslog(LOG_CRIT,"[gas_meter]write to ini file ok");
 				return 0;
 }
 
@@ -405,7 +407,7 @@ int  sendMsgToWeb(char *meterid,unsigned short int attr,long double data)
 	sprintf(gatewayidstr, "we26n_%s", g_localMAC);
 	blobmsg_add_string( &b, "gatewayid", gatewayidstr );
 
-        printf("[sendMsgToWeb] start--3\r\n");
+        //printf("[sendMsgToWeb] start--3\r\n");
 	
 	char deviceidstr[64];
 	sprintf(deviceidstr, "wifi_gas_%s", meterid);
@@ -419,7 +421,7 @@ int  sendMsgToWeb(char *meterid,unsigned short int attr,long double data)
 	
 	sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_GAS_METER);
 	sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_GASMETER_VALUE);
-	 printf("1111111111\n");
+	
 	sprintf(devicedatastr, "%lf", data);
 	
 	blobmsg_add_string( &b, "devicetype", devicetypestr);
@@ -499,7 +501,7 @@ void* gas_meter_thread( void *arg )
                     len = recv(connectfd,buf,18,0);
                 }while(len > 0);
 				
-                        printf("\n******gas_meter read  sleep = %d\n", len);
+             printf("\n******gas_meter read  sleep = %d\n", len);
 
 			printf("\n******gas_meter awake ********\n");
 			
