@@ -90,7 +90,9 @@ function StringManipulation(data)
     if file_exists("/etc/config/devicesid_list") == nil then
     
         luci.sys.exec("touch /etc/config/devicesid_list");
-        luci.sys.exec("uci add devicesid_list.@devicesid[0]")
+        local f =io.open("/etc/config/devicesid_list","w")
+        f:write("config devicesid \n")
+        f:close()
     
     end
      luci.sys.exec("uci delete devicesid_list.@devicesid[0].id")

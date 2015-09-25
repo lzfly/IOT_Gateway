@@ -828,6 +828,7 @@ void* enn_meter_thread( void *arg )
 		}
 		if(len_p != 9)
 		{
+		    dump_hex(buf_power,len_p);
 			syslog(LOG_CRIT,"[power_meter]power meter read not 9");
 			printf("power meter read not 9\n");
 			break;
