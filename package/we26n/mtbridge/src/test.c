@@ -742,6 +742,166 @@ int test_get_config( char * ipdr, int * port, char * user )
 }
 
 
+
+
+#include <signal.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+
+#define RALINK_GPIO_SET_DIR_IN		0x11
+#define RALINK_GPIO_ENABLE_INTP		0x08
+#define RALINK_GPIO_REG_IRQ		    0x0A
+
+typedef struct {
+unsigned int irq;		//request irq pin number	
+pid_t pid;			//process id to notify
+} ralink_gpio_reg_info;
+
+
+void  signal_handler( int signum )
+{
+	printf("gpio tester: signal ");
+
+	if (signum == SIGUSR1)
+	{
+		printf("SIGUSR1\n");
+	}
+	else if (signum == SIGUSR2)
+	{
+		printf("SIGUSR2\n");
+
+        /**/
+		system( "jffs2mark -y" );
+		system( "reboot" );
+		
+	}
+	else
+	{
+		printf("%d", signum);
+	}
+		
+	printf(" received %d\n", signum);
+	
+}
+
+
+int  test_test_regint( int fd, int nio )
+{
+    int  iret;
+    ralink_gpio_reg_info info;
+
+    /* setdir( input )*/
+    iret = ioctl( fd, RALINK_GPIO_SET_DIR_IN, 1<<nio );
+    if ( iret < 0 )
+    {
+        return 2;
+    }
+
+    /* enable pio irq */
+    iret = ioctl( fd, RALINK_GPIO_ENABLE_INTP );
+    if ( iret < 0 )
+    {
+        return 3;
+    }
+
+    info.pid = getpid();
+    info.irq = nio;
+    iret = ioctl( fd, RALINK_GPIO_REG_IRQ, &info );
+    if ( iret < 0 )
+    {       
+        return 4;
+    }
+
+    return 0;
+    
+}
+
+
+/* gpio1, gpio2 */
+int  test_test_button( int nio )
+{
+    int  iret;
+    int  fd;
+
+    /**/
+    fd = open( "/dev/gpio", O_RDONLY );
+    if ( fd < 0 )
+    {
+        return 1;
+    }
+
+    iret = test_test_regint( fd, nio );
+    close( fd );
+    if ( iret != 0 )
+    {
+        printf( "reg int ret = %d\n", iret );
+        return 2;
+    }
+	
+	//issue a handler to handle SIGUSR1
+	signal(SIGUSR1, signal_handler);
+	signal(SIGUSR2, signal_handler);
+	return 0;
+	
+}
+
+
+int  test_test_mknod( void )
+{
+    int  iret;
+    dev_t  dev;
+    struct stat  tsat;
+
+    /**/
+    iret = stat( "/dev/gpio", &tsat );
+    if ( 0 != iret )
+    {
+        if ( errno == ENOENT )
+        {
+            goto trymknod;
+        }
+        else
+        {
+            return 1;
+        }
+    }
+
+    if ( (S_IFCHR & tsat.st_mode) != S_IFCHR )
+    {
+        return 2;
+    }
+
+    /**/
+    if ( (252 != major(tsat.st_rdev)) || (0 != minor(tsat.st_rdev)) )
+    {
+        return 3;
+    }
+
+    return 0;
+    
+trymknod:
+
+    /**/
+    dev = makedev( 252, 0 );
+    
+    /**/
+    iret = mknod( "/dev/gpio", S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH | S_IFCHR, dev );
+    if ( 0 != iret )
+    {
+        return 4;
+    }
+
+    /**/
+    return 0;
+    
+}
+
+
+
 int  main( int argc, char * argv[] )
 {
     int  iret;
@@ -751,6 +911,24 @@ int  main( int argc, char * argv[] )
 
     openlog( "mtbridge", 0, 0 );
 
+    /**/
+    iret = test_test_mknod();
+    if ( 0 != iret )
+    {
+        printf( "test_mknod fail, %d\n", iret );
+        syslog( LOG_CRIT, "test_mknod fail, %d\n", iret );
+        return 1;
+    }
+    
+    /**/
+    iret = test_test_button( 1 );
+    if ( 0 != iret )
+    {
+        printf( "test button, ret = %d\n", iret );
+        syslog( LOG_CRIT, "test button, ret = %d\n", iret );
+        return 2;
+    }
+    
     /**/
     iret = test_get_config( ipdr, &port, user );
     if ( 0 != iret )
