@@ -56,7 +56,7 @@ local customMethod = {
 			    
 			    local deviceid_str = luci.sys.exec("uci get devicesid_list.@devicesid[0].id")
 			    print(deviceid_str)	
-			    if(deviceid_str == nil)
+			    if deviceid_str == nil then
 			        return;
 			    end
 			    --for key, value in pairs(deviceid_str) do 
