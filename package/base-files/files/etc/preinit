@@ -7,8 +7,8 @@
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 
 pi_ifname=
-pi_ip=192.168.1.1
-pi_broadcast=192.168.1.255
+pi_ip=192.168.2.1
+pi_broadcast=192.168.2.255
 pi_netmask=255.255.255.0
 
 fs_failsafe_ifname=

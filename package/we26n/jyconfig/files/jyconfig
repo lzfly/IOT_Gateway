@@ -7,7 +7,7 @@ config deviceid
         option blegasmeter 'AF3B8EEA1700' 
 
 config mqttclient
-	option server '10.4.44.210'
+	option server '101.200.1.101'
 	option port '8020'
 	option userid '1234'
 
@@ -15,5 +15,5 @@ config mqttserver
 	option port '1883'
 
 config webserver
-        option ip '10.4.44.210'
+        option ip '101.200.1.101'
         option port '8001'
