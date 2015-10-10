@@ -523,6 +523,7 @@ void  test_recv_cbk( struct uloop_fd * pufd, unsigned int events )
         dump_hex( &(tary[0]), iret );
 
         /* report to web */
+        g_state = 1;
         memcpy( &data, tary, sizeof(data) );
         test_write_to_ini( g_gas_id, data );
         sendMsgToWeb( g_gas_id, ENN_DEVICE_ATTR_GASMETER_VALUE, data );
