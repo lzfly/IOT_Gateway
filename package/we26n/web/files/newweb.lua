@@ -275,10 +275,10 @@ function gas_meter_set()
 
 	local c_gas_id=luci.http.formvalue("id")
 	
-	
 	luci.sys.exec("uci set jyconfig.@deviceid[0].gasmeter="..c_gas_id)
-
 	x:commit("jyconfig")
+	
+	conn:call( "we26n_wifibridge", "notify", {} );
 		
 	luci.http.redirect(luci.dispatcher.build_url("admin/newweb/wifi"))
 end

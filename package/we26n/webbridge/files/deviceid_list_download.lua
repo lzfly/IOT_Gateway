@@ -97,12 +97,14 @@ function StringManipulation(data)
     end
      luci.sys.exec("uci delete devicesid_list.@devicesid[0].id")
     for j = 1 ,size,1 do
-    print(config[j]);
-    luci.sys.exec("uci add_list devicesid_list.@devicesid[0].id=" ..config[j])
-    local gas_meter_seach = string.match(config[j],"wifi_gas_")
-        if gas_meter_seach then
-            write_id_to_config(config[j])
-        end
+    	print(config[j]);
+    	luci.sys.exec("uci add_list devicesid_list.@devicesid[0].id=" ..config[j])
+    	
+    	-- local gas_meter_seach = string.match(config[j],"wifi_gas_")
+        -- if gas_meter_seach then
+        --    write_id_to_config(config[j])
+        -- end
+        
     end 
     x:commit("devicesid_list")
     return 1;

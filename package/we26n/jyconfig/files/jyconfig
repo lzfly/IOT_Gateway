@@ -1,6 +1,6 @@
 
 config deviceid
-	option gasmeter 'A01511504001758'
+	option gasmeter 'A01000000000000'
 	option powermeter '1507080600179'
 	option watermeter 'TS0004482'
 	option heatmeter '50001482'
