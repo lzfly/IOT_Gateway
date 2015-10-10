@@ -35,6 +35,11 @@ char  g_mac_addr[200];
 intptr_t  g_gthrd = 0;
 char  g_gas_id[200];
 
+/**/
+int  g_intver = 1;
+struct uloop_timeout * g_ptmr = NULL;
+int  g_state = 0;
+
 
 int  test_get_macaddr( void )
 {
@@ -340,6 +345,11 @@ static int wifib_notify( struct ubus_context *ctx, struct ubus_object *obj,
     get_gas_meter_id();
     mid = strtoull( &g_gas_id[3], NULL, 10 );
     gthrd_notify_mid( g_gthrd, mid );
+    system( "rm /tmp/devices_6.ini" );
+    g_state = 0;
+    uloop_timeout_set( g_ptmr, 15000 );
+
+    /**/
     printf( "wifib_notify, %llu\n", mid );
     
     /* send reply */
@@ -421,7 +431,10 @@ void  test_accept_cbk( struct uloop_fd * pufd, unsigned int events )
     printf( "client IP and Port %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port) );
 
     /**/
+#if 0
     test_write_to_ini( g_gas_id, 0.0 );
+#endif
+
     gthrd_notify_sock( g_gthrd, sock );
     
     /**/
@@ -580,9 +593,16 @@ void  test_timer_cbk( struct uloop_timeout * ptmr )
 {
     /**/
     gthrd_notify_ever( g_gthrd );
+
+    if ( 0 == g_state )
+    {
+        uloop_timeout_set( ptmr, 15000 );
+    }
+    else
+    {
+        uloop_timeout_set( ptmr, g_intver * 60000 );    
+    }
     
-    /**/
-    uloop_timeout_set( ptmr, 10000 );
     return;
 }
 
@@ -602,24 +622,35 @@ int  test_timer_start( void )
     /* flow meter */
     memset( ptmr, 0, sizeof(struct uloop_timeout) );
     ptmr->cb = test_timer_cbk;
-    uloop_timeout_set( ptmr, 2000 );
-    
+    uloop_timeout_set( ptmr, 15000 );
+
+    /**/
+    g_ptmr = ptmr;
     return 0;
-    
 }
+
 
 
 
 int  main( void )
 {
     int  iret;
-
+    int  temp;
+    
     /**/
     openlog( "wifibridge", 0, 0 );    
     syslog( LOG_CRIT, "begin wifibridge ..." );
 
     /**/
     get_gas_meter_id();
+    iret = get_gas_report_time( &temp );
+    if ( 0 != iret )
+    {
+        temp = 1;
+    }
+    g_intver = temp;
+    syslog( LOG_CRIT, "interval, %d", g_intver );
+    
 
     /**/
     iret = test_get_macaddr();
