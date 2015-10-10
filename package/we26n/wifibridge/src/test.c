@@ -347,7 +347,7 @@ static int wifib_notify( struct ubus_context *ctx, struct ubus_object *obj,
     gthrd_notify_mid( g_gthrd, mid );
     system( "rm /tmp/devices_6.ini" );
     g_state = 0;
-    uloop_timeout_set( g_ptmr, 15000 );
+    uloop_timeout_set( g_ptmr, 500 );
 
     /**/
     printf( "wifib_notify, %llu\n", mid );
