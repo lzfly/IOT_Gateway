@@ -21,7 +21,7 @@ define Package/wifibridge
   CATEGORY:=WE26N
   TITLE:=test program for wifibridge
   MAINTAINER:=dwz <weizheng.duan@jianluyou.com>
-  DEPENDS:=+libpthread +libubox +libubus +libuci
+  DEPENDS:=+libpthread +libubox +libubus +libuci +libevent2-core 
 endef
 
 define Package/wifibridge/description
@@ -40,7 +40,7 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 	CC="$(TARGET_CC)" \
 	CFLAGS="$(TARGET_CFLAGS) -Wall -I ./enn" \
-	LDFLAGS="$(TARGET_LDFLAGS) -lpthread -lubox -lubus -luci" \
+	LDFLAGS="$(TARGET_LDFLAGS) -lpthread -lubox -lubus -luci -levent_core" \
 	-f test.mk
 endef
 
@@ -50,3 +50,4 @@ define Package/wifibridge/install
 endef
 
 $(eval $(call BuildPackage,wifibridge))
+
