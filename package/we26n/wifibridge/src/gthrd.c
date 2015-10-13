@@ -128,24 +128,60 @@ int  util_patch_read_buf( uint8_t * rdbuf, uint64_t mid )
 
 int  util_check_wake_resp( uint8_t * resp, int tlen )
 {
+    uint8_t  temp;
+
+    /**/
+    if ( resp[0] != 0x3C )
+    {
+        syslog( LOG_CRIT,"check wake, head byte error" );
+        return 1;
+    }
+    
+    /**/
+    temp = util_calc_sum( &(resp[1]), tlen-2 );
+    if ( temp != resp[tlen-1] )
+    {
+        syslog( LOG_CRIT,"check wake, crc error" );
+        return 2;
+    }
+    
     return 0;
+    
 }
 
 
-int  util_check_read_resp( uint8_t * resp, int tlen, double * pval )
+int  util_check_read_resp( uint8_t * resp, int tlen, uint64_t mid, double * pval )
 {
     uint8_t  temp;
     uint32_t  uval;
     double  data;
+    uint64_t  tu64;
+    
+    /**/
+    if ( resp[0] != 0x3C )
+    {
+        syslog( LOG_CRIT,"check read, head byte error" );
+        return 1;
+    }
     
     /**/
     temp = util_calc_sum( &(resp[1]), tlen-2 );
     if ( temp != resp[tlen-1] )
     {
         syslog( LOG_CRIT,"check read, crc error" );
-        return 1;
+        return 2;
     }
 
+    /* check id */
+    tu64 = resp[7];
+    tu64 = (tu64 << 8) | resp[6];
+    tu64 = (tu64 << 8) | resp[5];
+    tu64 = (tu64 << 8) | resp[4];
+    if ( tu64 != (mid & 0xFFFFFFFF) )
+    {
+        return 3;
+    }
+    
     /**/
     uval = resp[18];
     uval = resp[17] | (uval << 8);
@@ -191,6 +227,7 @@ struct _tag_gthrd_context
     struct evbuffer * pbuf;
 
     /**/
+    uint64_t  mid;
     uint8_t buf_wake[32];
     uint8_t buf_read[32];
     uint8_t buf_slep[32];
@@ -357,7 +394,7 @@ void  task_wait_read( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 
     /* check wake resp */
     resp = evbuffer_pullup( pctx->pbuf, READ_RSP_LEN );
-    iret = util_check_read_resp( resp, READ_RSP_LEN, &value );
+    iret = util_check_read_resp( resp, READ_RSP_LEN, pctx->mid, &value );
     if ( 0 != iret )
     {
         gth_task_fini( pctx );
@@ -557,6 +594,7 @@ void  gthrd_inter_dgram_cbk( intptr_t arg, int tlen, void * pdat )
     switch ( pmsg->type )
     {
     case 0x11111111:
+        pctx->mid = pmsg->value.mid;
         util_patch_read_buf( pctx->buf_read, pmsg->value.mid );
         break;
         
@@ -628,6 +666,7 @@ int  gthrd_init( intptr_t * pret )
     /**/
     pctx->pevbuf = NULL;
     pctx->tfunc = NULL;
+    pctx->mid = 0;
     memcpy( pctx->buf_wake, buf_wake, WAKE_REQ_LEN );
     memcpy( pctx->buf_read, buf_read, READ_REQ_LEN );
     memcpy( pctx->buf_slep, buf_slep, SLEP_REQ_LEN );
