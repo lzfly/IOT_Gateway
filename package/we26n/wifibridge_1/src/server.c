@@ -966,6 +966,10 @@ void * enn_meter_thread( void * arg )
 
             int by_take = 0;
             by_take = get_By_multiplication_factor(connectfd,buff_heat_take);
+            if(by_tyke < 0)
+            {
+                break;
+            }
             printf("\n********in heat meter recv*********\n");
             printf("By multiplication factor is:%d\n",by_take);
 
