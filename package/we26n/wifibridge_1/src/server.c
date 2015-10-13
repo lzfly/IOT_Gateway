@@ -966,7 +966,7 @@ void * enn_meter_thread( void * arg )
 
             int by_take = 0;
             by_take = get_By_multiplication_factor(connectfd,buff_heat_take);
-            if(by_tyke < 0)
+            if(by_take < 0)
             {
                 break;
             }
