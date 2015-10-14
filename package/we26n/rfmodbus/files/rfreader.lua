@@ -371,7 +371,7 @@ end
 
 
 function  meter_record_init()
-
+	local x;
 	local fp = io.popen( "eth_mac r wifi" );
 	local tmac = fp:read( "*l" );
 	fp:close();
@@ -389,6 +389,23 @@ function  meter_record_init()
 	mtrec.heat = {};
 	mtrec.heat.deviceid = "rf470_heat_" .. tmac .. "_21";
 	mtrec.heat.devicetype = "0021";
+	
+	
+	x = uci.cursor();
+    ret = x:get( "jyconfig.@deviceid[0].powermeter" );
+	if nil ~= ret then
+		mtrec.power.deviceid = "rf470_power_" .. ret .. "_07";
+	end
+	
+    ret = x:get( "jyconfig.@deviceid[0].watermeter" );
+	if nil ~= ret then
+		mtrec.water.deviceid = "rf470_water_" .. ret .. "_08";
+	end
+		
+    ret = x:get( "jyconfig.@deviceid[0].heatmeter" );
+	if nil ~= ret then
+		mtrec.heat.deviceid = "rf470_heat_" .. ret .. "_21";
+	end
 	
 end
 
@@ -416,7 +433,7 @@ end
 
 function  period_read_meter()
 
-	ret,val = rf_power_getval( conn, 3, 1 );
+	ret,val = rf_power_getval( conn, 1, 1 );
 	print( "power ret: " .. ret );
 	if 0 ~= ret then
 		meter_record_update( "power", 0, 0 );
@@ -427,7 +444,7 @@ function  period_read_meter()
 	
 	--print( "val: " .. val );
 
-	ret,val = rf_water_getval( conn, 3, 2 );
+	ret,val = rf_water_getval( conn, 1, 2 );
 	print( "water ret: " .. ret );
 	if 0 ~= ret then
 		meter_record_update( "water", 0, 0 );
@@ -436,7 +453,7 @@ function  period_read_meter()
 		meter_record_report( "water" );
     end
 
-	ret,val = rf_heat_getval( conn, 3, 3 );
+	ret,val = rf_heat_getval( conn, 1, 3 );
 	print( "heat ret: " .. ret );
 	if 0 ~= ret then
 		meter_record_update( "heat", 0, 0 );

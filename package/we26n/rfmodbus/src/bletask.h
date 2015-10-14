@@ -24,6 +24,9 @@
 #define CMD_REBOOT      0x4013
 #define ACK_REBOOT      0x8013
 
+#define CMD_THRESHOLD   0x4012
+#define ACK_THRESHOLD   0x8012
+
 #define CMD_AUTO_CHN    0x4014
 #define ACK_AUTO_CHN    0x8014
 #define EVT_AUTO_CHN    0x8015

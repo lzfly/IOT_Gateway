@@ -18,18 +18,14 @@
 #include <limits.h>
 #include <errno.h>
 #include <sys/socket.h>
-
 #include <event2/event.h>
+#include <syslog.h>
 
 #include "newuart.h"
 #include "bletask.h"
 #include "pktintf.h"
 #include "dgramsck.h"
 #include "ubussrv.h"
-
-
-
-
 
 
 
@@ -480,6 +476,62 @@ int  test_test_upgrade( int argc, char * argv[] )
 #include "mainthrd.h"
 
 
+int test_get_threshold( int * pret )
+{
+    struct uci_context * uci;
+    struct uci_package * upkg;
+    struct uci_element * uele;
+    struct uci_section * usec;
+    const char * ptr;
+    int iret;
+    
+
+    /**/
+    uci = uci_alloc_context();
+    iret = uci_load( uci, "ennconfig_ever", &upkg );
+    if ( 0 != iret )
+    {
+        uci_free_context( uci );
+		return 1;
+    }
+    
+    /**/
+    iret = 9;
+    uci_foreach_element( &upkg->sections, uele )
+    {
+        usec = uci_to_section( uele );
+        if( 0 != strcmp( usec->type, "470m") )
+        {
+            continue;
+        }
+
+        /**/
+        ptr = uci_lookup_option_string( uci, usec, "rf470_threshold" );
+        if ( NULL == ptr )
+        {
+            iret = 2;
+            break;
+        }
+
+        /**/
+        iret = (int)strtoul( ptr, NULL, 10 );
+        if ( (iret < 0) || (iret > 128) )
+        {
+            iret = 63;
+        }
+        
+        /**/
+        *pret = iret;
+        iret = 0;
+        break;
+    }
+    
+    uci_free_context( uci );
+    return iret;
+    
+}
+
+
 int test_get_config( char * pmac )
 {
     struct uci_context * uci;
@@ -609,6 +661,10 @@ int  main( int argc, char * argv[] )
         test_test_upgrade( argc, argv );
         return 1;
     }
+
+    /**/
+    openlog( "rfmodbus", 0, 0 );    
+    syslog( LOG_CRIT, "begin rfmodbus ..." );
 
     /**/
     memset( macbin, 0, 6 );

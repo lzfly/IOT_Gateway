@@ -14,6 +14,7 @@ config 470m
     option power_interval    5  
     option water_interval    6  
     option heat_interval     5  
+	option rf470_threshold   74
 	
 config wifi
     option gas_interval	     3  

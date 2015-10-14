@@ -15,6 +15,7 @@
 #include <errno.h>
 #include <sys/socket.h>
 #include <alloca.h>
+#include <syslog.h>
 
 #include <event2/event.h>
 
@@ -67,6 +68,7 @@ typedef struct _tag_mthrd_context
 typedef struct _tag_mtask_start_pair
 {
     mthrd_context_t * pctx;
+    int  threshold;
     uint8_t  taddr[6];
     int  result;
     
@@ -124,7 +126,7 @@ dump_hex( pdat, tlen );
     if ( cmd == ACK_TMR_OUT )
     {
         pair->pctx->state = ST_ERROR;
-        pair->pctx->ecode = 10;
+        pair->pctx->ecode = 11;
         return 0;
     }
 
@@ -180,7 +182,7 @@ dump_hex( pdat, tlen );
     if ( cmd == ACK_TMR_OUT )
     {
         pair->pctx->state = ST_ERROR;
-        pair->pctx->ecode = 9;
+        pair->pctx->ecode = 10;
         return 0;    
     }
 
@@ -268,7 +270,9 @@ dump_hex( pdat, tlen );
 
         if ( pdat[0] != 0 )
         {
-            return 1;
+            pair->pctx->state = ST_ERROR;
+            pair->pctx->ecode = 9;
+            return 0;
         }
 
         /**/
@@ -278,6 +282,38 @@ dump_hex( pdat, tlen );
         return 1;
     }
 
+    if ( cmd == ACK_TMR_OUT )
+    {
+        pair->pctx->state = ST_ERROR;
+        pair->pctx->ecode = 9;
+        return 0;
+    }
+
+    return 1;
+    
+}
+
+
+// task_reactive( tctx, CMD_AUTO_CHN, 0, NULL, mtask_auto_chn, 80000 );
+int  mtask_set_threshold( intptr_t tctx, uint16_t cmd, int tlen, uint8_t * pdat )
+{
+    mtask_start_pair_t * pair;
+
+    /**/
+    printf( "cmd = %X : ", cmd );
+    dump_hex( pdat, tlen );
+
+    /**/
+    task_getptr( tctx, (void **)&pair );
+    
+    /**/
+    if ( cmd == ACK_THRESHOLD )
+    {
+        task_reactive( tctx, CMD_AUTO_CHN, 0, NULL, mtask_auto_chn, 100000 );
+        return 1;
+    }
+
+    /**/
     if ( cmd == ACK_TMR_OUT )
     {
         pair->pctx->state = ST_ERROR;
@@ -308,7 +344,8 @@ dump_hex( pdat, tlen );
         {
             if ( pdat[0] == 0 )
             {
-                task_reactive( tctx, CMD_AUTO_CHN, 0, NULL, mtask_auto_chn, 80000 );
+                tary[0] = (uint8_t)(pair->threshold);
+                task_reactive( tctx, CMD_THRESHOLD, 1, tary, mtask_set_threshold, 1000 );
             }
             else
             {
@@ -331,6 +368,8 @@ dump_hex( pdat, tlen );
 }
 
 
+
+
 int  mtask_get_io_pair( intptr_t tctx, uint16_t cmd, int tlen, uint8_t * pdat )
 {
     mtask_start_pair_t * pair;
@@ -349,7 +388,8 @@ dump_hex( pdat, tlen );
         {
             if ( pdat[0] == 0 )
             {
-                task_reactive( tctx, CMD_AUTO_CHN, 0, NULL, mtask_auto_chn, 10000 );
+                tary[0] = (uint8_t)(pair->threshold);
+                task_reactive( tctx, CMD_THRESHOLD, 1, tary, mtask_set_threshold, 1000 );
             }
             else
             {
@@ -458,6 +498,7 @@ dump_hex( pdat, tlen );
     
 }
 
+extern int test_get_threshold( int * pret );
 
 int  mthrd_task_start_pair( mthrd_context_t * pctx )
 {
@@ -476,6 +517,16 @@ int  mthrd_task_start_pair( mthrd_context_t * pctx )
     task_getptr( tctx, (void **)&pair );
     pair->pctx = pctx;
 
+    /**/
+    iret = test_get_threshold( &(pair->threshold) );
+    if ( 0 != iret )
+    {
+        pair->threshold = 64;
+    }
+    
+    /**/
+    syslog( LOG_CRIT, "threshold, %d", pair->threshold );
+    
     /* clear host addr */
     mthrd_clear_taddr( pctx );
     task_active( tctx, CMD_NODE_TYP, 0, NULL, mtask_get_node_type, 1000 );
@@ -826,6 +877,7 @@ void  mthrd_dgram_reply_code( mthrd_context_t * pctx, m4bus_req_t * preq, uint16
     pctx->pintf->pkti_send( pctx->dgctx, sizeof(m4bus_rsp_t), &trsp );
     return;
 }
+
 
 
 void  mthrd_inter_dgram_cbk( intptr_t arg, int tlen, void * pdat )

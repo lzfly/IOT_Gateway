@@ -108,6 +108,7 @@ var pairtmr;
 function refreshstate()
 {
 	$.get("<%=luci.dispatcher.build_url("admin/newweb/pair470_getstate")%>", function(data,status) {
+		var node = document.getElementById( "rf470" );
 		var ret = window.JSON.parse(data);
 		if ( 0 != ret.result )
 		{
@@ -116,27 +117,27 @@ function refreshstate()
 		
 		if ( ret.state == 2 )
 		{
-			$("#rf470")[0].innerText = "没有配对的采集器.";
+			node.innerHTML = "没有配对的采集器.";
 		}
 		else if ( ret.state == 3 )
 		{
 			idx += 1;
 			if ( ret.ecode < 80 )
 			{
-				$("#rf470")[0].innerText = "配对进行中, 寻找空闲通道..." + idx;
+				node.innerHTML = "正在寻找空闲通道..." + idx;
 			}
 			else
 			{
-				$("#rf470")[0].innerText = "配对进行中, 寻找采集器..." + idx;
+				node.innerHTML = "正在寻找采集器..." + idx;
 			}
 		}
 		else if ( ret.state == 4 )
 		{
-			$("#rf470")[0].innerText = "配对成功: " + ret.addr;
+			node.innerHTML = "配对成功: " + ret.addr;
 		}
 		else
 		{
-			$("#rf470")[0].innerText = "配对错误: " + ret.ecode;
+			node.innerHTML = "配对错误: " + ret.ecode;
 		}
 		
 		if ( ret.state != 3 )
@@ -157,7 +158,6 @@ function startpair()
 		else
 		{
 			idx = 0;
-			refreshstate();
 			pairtmr = setInterval( "refreshstate()", 1000 );
 		}
 	});
@@ -179,7 +179,7 @@ $(window).load( function() {
         <a href="newweb_index">&nbsp;&nbsp;470</a>
         <a class="button" href="javascript:void(0)" onclick="startpair()"><img src="<%=resource%>/images/pair.png"></a>
         <p>配对</p>
-		<p id="rf470" class="button">state unknow</p>
+		<div id="rf470" class="button" >state unknow</div>
     </div>
     
 	<div class="big_bottom">
