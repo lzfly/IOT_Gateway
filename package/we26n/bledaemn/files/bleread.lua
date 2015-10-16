@@ -153,7 +153,8 @@ function  ble_gasmeter_getmac()
 	local  x;
 	local  ret;
 	x = uci.cursor();
-    ret = x:get( "jyconfig.@deviceid[0].blegasmeter" );
+        ret = x:get( "jyconfig.@deviceid[0].blegasmeter" );
+        x:__gc();
 	if nil == ret then
 		return nil;
 	else
@@ -166,28 +167,33 @@ function  ble_gasmeter_read( tmac )
 
 	conn = ubus.connect( nil, 6000 );
 	if conn == nil then
+		conn:close();
 		return 10;
 	end
 	
 	ret,state = test_connect( conn, tmac );
 	if ret ~= 0 then
+		conn:close();
 		return 20 + ret;
 	end
 
 
 	ret,addr = test_getaddr( conn );
 	if ret ~= 0 then
+		conn:close();
 		return 30 + ret;
 	end
 
     
 	ret,data = test_getdata( conn, addr );
 	if ret ~= 0 then
+		conn:close();
 		return 40 + ret;
 	end
 
 	ret = test_disconnect( conn );
-    return 0,data;
+        conn:close();
+	return 0,data;
 end
 
 
