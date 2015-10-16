@@ -138,6 +138,7 @@ function  rf_power_getval( conn, tbus, taddr )
 	end
 	
 	if ret.result ~= 0 then
+		nixio.syslog( "debug", "power,getval, " .. ret.result );
 		return 2;
 	end	
 	
@@ -160,6 +161,7 @@ function  rf_water_getval( conn, tbus, taddr )
 	end
 	
 	if ret.result ~= 0 then
+		nixio.syslog( "debug", "water,getval, " .. ret.result );
 		return 2;
 	end	
     
@@ -212,6 +214,7 @@ function  rf_heat_getval( conn, tbus, taddr )
 	end
 	
 	if ret.result ~= 0 then
+		nixio.syslog( "debug", "heat,getval, " .. ret.result );
 		return 2;
 	end
     
@@ -227,6 +230,7 @@ function  rf_heat_getval( conn, tbus, taddr )
 	end
 	
 	if ret.result ~= 0 then
+		nixio.syslog( "debug", "heat,multi, " .. ret.result );
 		return 4;
 	end
     
@@ -317,7 +321,8 @@ function  meter_record_report( meter )
 		
 		conn:call( "jianyou", "report", rpt );
 		
-		print( ":::report, " .. meter .. "  " .. temp );
+		nixio.syslog( "debug", "report, " .. meter .. "  " .. rpt.data );
+		
 	end
 	
 end
@@ -503,7 +508,7 @@ local customMethod = {
 }
 
 
-
+nixio.openlog( "rfreader" );
 meter_record_init();
 meter_record_getintv();
 
