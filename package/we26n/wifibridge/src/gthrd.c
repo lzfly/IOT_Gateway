@@ -214,6 +214,7 @@ struct _tag_gthrd_context
 {
     struct event_base * pevbase;
     struct bufferevent * pevbuf;
+    int  dbg_close_count;
     
     /* socket pair */
     int  sv[2];
@@ -503,6 +504,11 @@ int  gthrd_inter_delete_evbuf( gthrd_context_t * pctx )
 {
     int  sock;
 
+    if ( pctx->pevbuf == NULL )
+    {
+        return 1;
+    }
+    
     /**/
     sock = (int)bufferevent_getfd( pctx->pevbuf );
     bufferevent_free( pctx->pevbuf );
@@ -510,6 +516,7 @@ int  gthrd_inter_delete_evbuf( gthrd_context_t * pctx )
 
     /**/
     close( sock );
+    pctx->dbg_close_count += 1;
     return 0;
 }
 
@@ -667,6 +674,8 @@ int  gthrd_init( intptr_t * pret )
     pctx->pevbuf = NULL;
     pctx->tfunc = NULL;
     pctx->mid = 0;
+    pctx->dbg_close_count = 0;
+    
     memcpy( pctx->buf_wake, buf_wake, WAKE_REQ_LEN );
     memcpy( pctx->buf_read, buf_read, READ_REQ_LEN );
     memcpy( pctx->buf_slep, buf_slep, SLEP_REQ_LEN );
@@ -751,6 +760,31 @@ int  gthrd_start( intptr_t ctx )
     }
     
     return 0;
+}
+
+
+int  gthrd_getstat( intptr_t ctx, char * pstr )
+{
+    gthrd_context_t * pctx;
+    int  offset;
+    
+    /**/
+    pctx = (gthrd_context_t *)ctx;
+
+    /**/
+    offset = sprintf( pstr, "mid=%lld,", pctx->mid );
+    if ( pctx->pevbuf == NULL )
+    {
+        offset += sprintf( pstr+offset, "sock not connected," );
+    }
+    else
+    {
+        offset += sprintf( pstr+offset, "sock is connected," );
+    }
+    offset += sprintf( pstr+offset, "close count=%d,", pctx->dbg_close_count );
+    
+    return 0;
+    
 }
 
 

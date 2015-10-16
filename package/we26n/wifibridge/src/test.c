@@ -40,6 +40,10 @@ int  g_intver = 1;
 struct uloop_timeout * g_ptmr = NULL;
 int  g_state = 0;
 
+/**/
+int  g_con_count = 0;
+char  g_con_ipstr[20] = { 0 };
+
 
 int  test_get_macaddr( void )
 {
@@ -363,9 +367,39 @@ static int wifib_notify( struct ubus_context *ctx, struct ubus_object *obj,
 }
 
 
+static int wifib_getstat( struct ubus_context *ctx, struct ubus_object *obj,
+                struct ubus_request_data *req, const char *method,
+                struct blob_attr *msg )
+{
+
+    static struct blob_buf b;
+    char  tstr[1024];
+    
+    /**/
+    printf( "wifib_getstat" );
+    
+    /* send reply */
+    blob_buf_init( &b, 0 );
+    blobmsg_add_string( &b, "return",  "ok" );
+
+    /**/
+    sprintf( tstr, "mid=%s, interval=%d, state=%d, accept=%d, ipadr=%s", g_gas_id, g_intver, g_state, g_con_count, g_con_ipstr );
+    blobmsg_add_string( &b, "global",  tstr );
+
+    /**/
+    gthrd_getstat( g_gthrd, tstr );
+    blobmsg_add_string( &b, "gthrd",  tstr );
+    
+    /**/
+    ubus_send_reply( ctx, req, b.head );
+    return UBUS_STATUS_OK;
+    
+}
+
 
 static const struct ubus_method wifib_methods[] = {
     UBUS_METHOD_NOARG( "notify",  wifib_notify ),
+    UBUS_METHOD_NOARG( "getstat",  wifib_getstat ),
 };
 
 
@@ -434,7 +468,10 @@ void  test_accept_cbk( struct uloop_fd * pufd, unsigned int events )
 #if 0
     test_write_to_ini( g_gas_id, 0.0 );
 #endif
-
+    
+    sprintf( g_con_ipstr, "%s", inet_ntoa(client_addr.sin_addr) );
+    g_con_count += 1;
+    
     gthrd_notify_sock( g_gthrd, sock );
     
     /**/
@@ -697,7 +734,7 @@ int  main( void )
     {
         printf( "timer start fail, ret = %d\n", iret );
         uloop_done();
-        return 3;
+        return 4;
     }
     
     /**/
