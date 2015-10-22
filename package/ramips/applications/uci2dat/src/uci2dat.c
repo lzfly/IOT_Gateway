@@ -96,6 +96,13 @@ typedef struct _vif
     param rekeyinteval;
     param preauth;
     param pmkcacheperiod;
+
+	/*apcli*/
+	param apcli_enable;
+	param apcli_ssid;
+	param apcli_authmode;
+	param apcli_encryptype;
+	param apcli_password;
 } vif;
 
 typedef struct
@@ -134,6 +141,13 @@ vif VIF =
     .pmkcacheperiod     = {NULL, "pmkcacheperiod", {0}, NULL,  NULL},
     .preauth            = {NULL, "preauth", {0}, NULL,  NULL},
     .rekeyinteval       = {NULL, "rekeyinteval", {0}, NULL,  NULL},
+
+	/* ap-clinet */
+	.apcli_enable	    = {NULL, "ApCliEnable", {0}, NULL, NULL},
+	.apcli_ssid         = {NULL, "ApCliSsid", {0}, NULL, NULL},
+	.apcli_authmode     = {NULL, "ApCliAuthMode", {0}, NULL, NULL},
+	.apcli_encryptype   = {NULL, "ApCliEncrypType", {0}, NULL, NULL},
+	.apcli_password     = {NULL, "ApCliWPAPSK", {0}, NULL, NULL},
 };
 
 param CFG_ELEMENTS[] =
@@ -369,12 +383,12 @@ param CFG_ELEMENTS[] =
     {"idle_timeout_interval", "idle_intv", {0}, hooker, "0"},
     {"WiFiTest", NULL, {0}, NULL, "0"},
     {"TGnWifiTest", "tgnwifitest", {0}, hooker, "0"},
-    {"ApCliEnable", NULL, {0}, NULL, "0"},
-    {"ApCliSsid", NULL, {0}, NULL, NULL},
-    {"ApCliBssid", NULL, {0}, NULL, NULL},
-    {"ApCliAuthMode", NULL, {0}, NULL, NULL},
-    {"ApCliEncrypType", NULL, {0}, NULL, NULL},
-    {"ApCliWPAPSK", NULL, {0}, NULL, NULL},
+    {"ApCliEnable", "ApCliEnable", {0}, hooker, "0"},
+    {"ApCliSsid", "ApCliSsid", {0}, hooker, NULL},
+    {"ApCliBssid", "ApCliBssid", {0}, hooker, NULL},
+    {"ApCliAuthMode", "ApCliAuthMode", {0}, hooker, NULL},
+    {"ApCliEncrypType","ApCliEncrypType", {0}, hooker, NULL},
+    {"ApCliWPAPSK", "ApCliWPAPSK", {0}, hooker, NULL},
     {"ApCliDefaultKeyID", NULL, {0}, NULL, "0"},
     {"ApCliKey1Type", NULL, {0}, NULL, "0"},
     {"ApCliKey1Str", NULL, {0}, NULL, NULL},
@@ -648,6 +662,12 @@ void parse_uci(char * arg)
             PARSE_UCI_OPTION(wifi_cfg[cur_dev].vifs[cur_vif].rekeyinteval, value);
             PARSE_UCI_OPTION(wifi_cfg[cur_dev].vifs[cur_vif].preauth, value);
             PARSE_UCI_OPTION(wifi_cfg[cur_dev].vifs[cur_vif].pmkcacheperiod, value);
+			/*AP-CLIENT*/
+			PARSE_UCI_OPTION(wifi_cfg[cur_dev].vifs[cur_vif].apcli_enable, value);
+			PARSE_UCI_OPTION(wifi_cfg[cur_dev].vifs[cur_vif].apcli_ssid, value);
+			PARSE_UCI_OPTION(wifi_cfg[cur_dev].vifs[cur_vif].apcli_authmode, value);
+			PARSE_UCI_OPTION(wifi_cfg[cur_dev].vifs[cur_vif].apcli_encryptype, value);
+			PARSE_UCI_OPTION(wifi_cfg[cur_dev].vifs[cur_vif].apcli_password, value);
 #if 0
             PARSE_UCI_OPTION(wifi_cfg[cur_dev].vifs[cur_vif].authmode, value);
             PARSE_UCI_OPTION(wifi_cfg[cur_dev].vifs[cur_vif].cipher, value);
@@ -1040,6 +1060,26 @@ void hooker(FILE * fp, param * p, const char * devname)
         /* TODO */
     }
 #endif
+	else if (0 == strmatch(p->dat_key, "ApCliEnable"))
+	{
+		FPRINT(fp, p, "%s", wifi_cfg[N].vifs[i].apcli_enable.value);
+	}
+	else if (0 == strmatch(p->dat_key, "ApCliSsid"))
+	{
+		FPRINT(fp, p, "%s", wifi_cfg[N].vifs[i].apcli_ssid.value);
+	}
+	else if (0 == strmatch(p->dat_key, "ApCliAuthMode"))
+	{
+		FPRINT(fp, p, "%s", wifi_cfg[N].vifs[i].apcli_authmode.value);
+	}
+	else if (0 == strmatch(p->dat_key, "ApCliEncrypType"))
+	{
+		FPRINT(fp, p, "%s", wifi_cfg[N].vifs[i].apcli_encryptype.value);
+	}
+	else if (0 == strmatch(p->dat_key, "ApCliWPAPSK"))
+	{
+		FPRINT(fp, p, "%s", wifi_cfg[N].vifs[i].apcli_password.value);
+	}
     /* the rest part is quite simple! */
     else
     {
