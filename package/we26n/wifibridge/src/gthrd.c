@@ -614,7 +614,9 @@ void  gthrd_inter_dgram_cbk( intptr_t arg, int tlen, void * pdat )
 
         /**/
         gthrd_inter_create_evbuf( pctx, pmsg->value.sock );
+#if  0
         gthrd_inter_spawn_task( pctx );
+#endif
         break;
 
     case 0x33333333:
