@@ -463,6 +463,7 @@ void  test_accept_cbk( struct uloop_fd * pufd, unsigned int events )
     /**/
     printf( "accept, %d \n", sock );
     printf( "client IP and Port %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port) );
+    syslog( LOG_CRIT, "client IP and Port %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port) );
 
     /**/
 #if 0
