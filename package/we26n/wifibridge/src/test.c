@@ -41,6 +41,11 @@ struct uloop_timeout * g_ptmr = NULL;
 int  g_state = 0;
 
 /**/
+double  g_threshold = 5.0;
+int  g_warning = 0;
+
+
+/**/
 int  g_con_count = 0;
 char  g_con_ipstr[20] = { 0 };
 
@@ -230,6 +235,86 @@ int  get_gas_report_time( int * pret )
     }
     
     printf("read config ennconfig_ever fail, get_report_time = %d\n ", *pret );
+    return 1;
+    
+}
+
+
+int  get_gas_battery_threshold_config( char * ennconfig, double * pret )
+{
+    int  iret;
+    struct uci_context * uci_ctx;
+    struct uci_package * uci_pkg;
+    struct uci_element * uci_ele;
+    struct uci_section * uci_sec; 
+    const char * value_s = NULL;
+    char * endptr;
+    
+    /* 读取配置文件数据上报时间 */
+    uci_ctx = uci_alloc_context();
+
+    iret = uci_load( uci_ctx, ennconfig, &uci_pkg );
+    if ( iret != 0 )
+    {
+        printf("uci load ENN config fail\n");
+        uci_free_context( uci_ctx );        
+        return 1;
+    }
+
+    /* scan enn config ! */
+    uci_foreach_element(&uci_pkg->sections, uci_ele)
+    {
+        uci_sec = uci_to_section(uci_ele);
+        
+        if( 0 == strcmp(uci_sec->type, "wifi") )
+        {
+
+            value_s = uci_lookup_option_string(uci_ctx, uci_sec, "gas_bat_threshold");
+
+            if (value_s)
+            {
+                *pret = strtod( value_s, &endptr );
+                uci_free_context( uci_ctx );
+
+                if ( endptr == value_s )
+                {
+                    return 3;
+                }
+
+                return 0;
+            }
+            else
+            {
+                uci_free_context( uci_ctx );            
+                return 1;
+            }
+        }
+    }
+
+    uci_free_context( uci_ctx );
+    return 2;
+    
+}
+
+
+int  get_gas_battery_threshold( double * pret )
+{
+    int  iret;
+
+    /**/
+    iret = get_gas_battery_threshold_config( "ennconfig", pret );
+    if ( iret == 0)
+    {
+        return 0;
+    }
+
+    iret =  get_gas_battery_threshold_config( "ennconfig_ever", pret );
+    if ( iret == 0 )
+    {
+        return 0;
+    }
+    
+    printf("read config ennconfig_ever fail, get_gas_battery_threshold = %f\n ", *pret );
     return 1;
     
 }
@@ -463,6 +548,7 @@ void  test_accept_cbk( struct uloop_fd * pufd, unsigned int events )
     /**/
     printf( "accept, %d \n", sock );
     printf( "client IP and Port %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port) );
+    syslog( LOG_CRIT, "client IP and Port %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port) );
 
     /**/
 #if 0
@@ -527,6 +613,7 @@ void  test_recv_cbk( struct uloop_fd * pufd, unsigned int events )
     int  iret;
     uint8_t  tary[2048];
     double  data;
+    double  batty;
     
     /**/
     while (1)
@@ -562,9 +649,23 @@ void  test_recv_cbk( struct uloop_fd * pufd, unsigned int events )
         /* report to web */
         g_state = 1;
         memcpy( &data, tary, sizeof(data) );
+        memcpy( &batty, tary + sizeof(data), sizeof(batty) );
+
+        /**/
         test_write_to_ini( g_gas_id, data );
         sendMsgToWeb( g_gas_id, ENN_DEVICE_ATTR_GASMETER_VALUE, data );
 
+        /**/
+        syslog( LOG_CRIT, "battery, %f", batty );
+        if ( batty < g_threshold )
+        {
+            sendMsgToWeb( g_gas_id, ENN_DEVICE_ATTR_GAS_ALERT, 1 );        
+        }
+        else
+        {
+            sendMsgToWeb( g_gas_id, ENN_DEVICE_ATTR_GAS_ALERT, 0 );        
+        }
+        
     }
     
     return;
@@ -674,6 +775,7 @@ int  main( void )
 {
     int  iret;
     int  temp;
+    double  thres;
     
     /**/
     openlog( "wifibridge", 0, 0 );    
@@ -690,6 +792,17 @@ int  main( void )
     syslog( LOG_CRIT, "interval, %d", g_intver );
     
 
+    /**/
+    iret = get_gas_battery_threshold( &thres );
+    if ( 0 != iret )
+    {
+        thres = 5.0;
+    }
+    
+    g_threshold = thres;
+    syslog( LOG_CRIT, "battery thres, %f", g_threshold );
+    
+    
     /**/
     iret = test_get_macaddr();
     if ( 0 != iret )

@@ -86,10 +86,16 @@ void  dump_hex( const unsigned char * ptr, size_t  len )
 }
 
 
-int  util_send_to_uloop( int sock, double data )
+int  util_send_to_uloop( int sock, double data, double batty )
 {
+    double  tary[4];
+
     /**/
-    send( sock, &data, sizeof(data), 0 );
+    tary[0] = data;
+    tary[1] = batty;
+    
+    /**/
+    send( sock, tary, sizeof(tary), 0 );
     return 0;
 }
 
@@ -150,11 +156,12 @@ int  util_check_wake_resp( uint8_t * resp, int tlen )
 }
 
 
-int  util_check_read_resp( uint8_t * resp, int tlen, uint64_t mid, double * pval )
+int  util_check_read_resp( uint8_t * resp, int tlen, uint64_t mid, double * pval, double * pbat )
 {
     uint8_t  temp;
     uint32_t  uval;
     double  data;
+    double  baty;    
     uint64_t  tu64;
     
     /**/
@@ -193,7 +200,14 @@ int  util_check_read_resp( uint8_t * resp, int tlen, uint64_t mid, double * pval
     data = data / 10.0;
 
     /**/
+    uval = resp[20];
+    uval = uval >> 3;
+    baty = uval;
+    baty = (baty * 0.1) + 3.0;
+    
+    /**/
     *pval = data;    
+    *pbat = baty;
     return 0;
     
 }
@@ -376,6 +390,7 @@ void  task_wait_read( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
     int  iret;
     uint8_t * resp;
     double  value;
+    double  batty;
     
     /**/
     if ( tlen == 0 )
@@ -395,7 +410,7 @@ void  task_wait_read( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 
     /* check wake resp */
     resp = evbuffer_pullup( pctx->pbuf, READ_RSP_LEN );
-    iret = util_check_read_resp( resp, READ_RSP_LEN, pctx->mid, &value );
+    iret = util_check_read_resp( resp, READ_RSP_LEN, pctx->mid, &value, &batty );
     if ( 0 != iret )
     {
         gth_task_fini( pctx );
@@ -404,7 +419,7 @@ void  task_wait_read( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
     }
 
     /* send to uloop thread */
-    util_send_to_uloop( pctx->sv[0], value );
+    util_send_to_uloop( pctx->sv[0], value, batty );
     syslog( LOG_CRIT, "read data, value = %f", value );    
     
     /**/
@@ -614,7 +629,9 @@ void  gthrd_inter_dgram_cbk( intptr_t arg, int tlen, void * pdat )
 
         /**/
         gthrd_inter_create_evbuf( pctx, pmsg->value.sock );
+#if  0
         gthrd_inter_spawn_task( pctx );
+#endif
         break;
 
     case 0x33333333:

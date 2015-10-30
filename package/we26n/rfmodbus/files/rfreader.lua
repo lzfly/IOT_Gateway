@@ -357,17 +357,18 @@ function  meter_record_update( meter, status, value )
 	    mtrec[meter] = {};
 	end
 	
-	if mtrec[meter].valid ~= nil and mtrec[meter].valid then
-	    -- check diff
-		temp = value - mtrec[meter].data;
-		if temp < -1 or temp > 10000 then
-			return;
-		end
-	end
-	
 	mtrec[meter].status = status;
 	
 	if status ~= 0 then
+		
+		if mtrec[meter].valid ~= nil and mtrec[meter].valid then
+		    -- check diff
+			temp = value - mtrec[meter].data;
+			if temp < -1 or temp > 10000 then
+				return;
+			end
+		end
+	
 		mtrec[meter].valid = true;
 	    mtrec[meter].data = value;
 	end
