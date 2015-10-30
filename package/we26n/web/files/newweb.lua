@@ -91,6 +91,7 @@ function index()
         entry({"admin","newweb","light_control"},call("light_control"),nil)
         entry({"admin","newweb","entrynet_control"},call("entrynet_control"),nil)
 		entry({"admin","newweb","gas_meter_set"},call("gas_meter_set"),nil)
+		entry({"admin","newweb","CB_tem_set"},call("CB_tem_set"),nil)
 		entry({"admin","newweb","blegas_meter_set"},call("blegas_meter_set"),nil)
 		entry({"admin","newweb","password_set"},call("password_set"),nil)
 		entry({"admin","newweb","elewater_item"},call("elewater_item"),nil)
@@ -155,6 +156,13 @@ function wifi_item()
 
 
    end
+
+function CB_tem_set()
+
+    local temp=luci.http.formvalue("tem")
+    local result = conn:call("we26n_CB","notify",{tem= temp })
+    luci.http.redirect(luci.dispatcher.build_url("admin/newweb/wifi"))
+end
    
 function zigbee_item()
   local deviceid=luci.http.formvalue("devId")

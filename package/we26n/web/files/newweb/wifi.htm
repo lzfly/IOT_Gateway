@@ -39,9 +39,35 @@ function getdevices_list()
         return datad;                                                           
 end
 
+function get_CBtem()                                    
+                                                               
+        filename = "/tmp/Short-range.ini";                 
+    	local file = io.open(filename,"r");                        
+                                                                                
+        if(file==nil) then                                     
+                return;                                                         
+        end                                                                     
+        local datad = file:read("*a");                                          
+                                                                                
+        datad = string.gsub(datad, "\r", "");                                   
+        datad = string.gsub(datad, "\n", "");  
+		 datad = string.gsub(datad, "%[", ""); 
+		 datad = string.gsub(datad, "{", ""); 
+		 datad = string.gsub(datad, "\"", ""); 
+		 datad = string.gsub(datad, "Short", "");
+		 datad = string.gsub(datad, "-", "");
+		 datad = string.gsub(datad, "range", "");   
+		 datad = string.gsub(datad, ":", ""); 
+		  datad = string.gsub(datad, ",}]", ""); 
+        file:close();                                                           
+                                                                                
+        return datad;                                                           
+end
+
+
 local result6=getdevices(6);
 local devicesid_str = getdevices_list();
-
+local tem = get_CBtem();
 %>
 
 
@@ -89,9 +115,9 @@ td.img{
 .bottom{width:1198px;margin:auto;padding-top:50px;}
 .bottom p{font-size:16px; color:#ffffff;font-family:"微软雅黑";}
 </style>
+
 <meta charset="utf-8">
 <title>wifi设备</title>
-
 <script type="text/javascript" src="<%=resource%>/js/jquery-1.8.1.min.js"></script>
 
 		<script type="text/javascript" src="<%=resource%>/js/jquery.rotate.js"></script>
@@ -203,11 +229,32 @@ td.img{
 	   <p id="deom"></p>
    </form>
 </div>
+
+<div class="bottom">
+   <form action="<%= luci.dispatcher.build_url("admin/newweb/CB_tem_set") %>" method="post">
+		<p>请设置壁挂炉温度：</p>
+        <input type="text"  name="tem"/>
+       <input type="submit"  value="保存" font-size:14px;font-family:"微软雅黑";" onClick="add2()"/>
+	   <p id="deom"></p>
+   </form>
+</div>
+<h4>近程温度：</h4>
+<table border="1">
+<tr>
+    <td><%=tem%></td>
+</tr>
+</table>
+
 <script>
     function add1()
 	{
 	//document.write("保存成功");
 	document.getElementById("deom").innerHTML="保存成功";
+	}
+	function add2()
+	{
+	//document.write("保存成功");
+	document.getElementById("deom").innerHTML="设置成功";
 	}
 		function add()
 	{
