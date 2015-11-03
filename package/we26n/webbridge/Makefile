@@ -44,6 +44,7 @@ define Package/webbridge/install
 	$(INSTALL_BIN) ./files/ennconfig_download.lua  $(1)/usr/bin/ennconfig_download.lua
 	$(INSTALL_BIN) ./files/userid_download.lua  $(1)/usr/bin/userid_download.lua
 	$(INSTALL_BIN) ./files/add_del_deviceid.lua  $(1)/usr/bin/add_del_deviceid.lua
+	$(INSTALL_BIN) ./files/gatewayreport.lua  $(1)/usr/bin/gatewayreport.lua
 endef
 
 $(eval $(call BuildPackage,webbridge))
