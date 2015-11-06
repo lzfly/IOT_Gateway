@@ -47,6 +47,9 @@ endef
 define Package/CB_CTRL/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/CB_CTRL $(1)/usr/bin/CB_CTRL
+	$(INSTALL_DIR)  $(1)/etc/CB/
+	$(CP) ./CB/  $(1)/etc/
+	
 endef
 
 $(eval $(call BuildPackage,CB_CTRL))

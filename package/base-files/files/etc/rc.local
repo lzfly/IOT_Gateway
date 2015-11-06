@@ -24,5 +24,6 @@ start-stop-daemon -b -S -x bledaemn
 start-stop-daemon -b -S -x bleread.lua
 start-stop-daemon -b -S -x rfmodbus
 start-stop-daemon -b -S -x rfreader.lua
+start-stop-daemon -b -S -x CB_CTRL
 
 exit 0

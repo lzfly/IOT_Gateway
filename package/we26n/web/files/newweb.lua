@@ -103,7 +103,11 @@ function index()
 		entry({"admin","newweb","sensor_item"},call("sensor_item"),nil)
 		entry({"admin","newweb","alertor_item"},call("alertor_item"),nil)
 		entry({"admin","newweb","pair470_control"},call("pair470_control"),nil)
-	entry({"admin","newweb","pair470_getstate"},call("pair470_getstate"),nil)
+	    entry({"admin","newweb","pair470_getstate"},call("pair470_getstate"),nil)
+	    
+	    entry({"admin","newweb","CB_add"},call("CB_add"),nil)
+	      entry({"admin","newweb","CB_del"},call("CB_del"),nil)
+	    
 	
 end
 
@@ -111,6 +115,20 @@ end
 function gotoindex()
     luci.http.redirect(luci.dispatcher.build_url("admin/newweb/newweb_index"))
 end
+
+function CB_add()
+    local deviceid = luci.http.formvalue("deviceid");
+    local devicetype=luci.http.formvalue("devicetype")
+    local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
+     luci.http.redirect(luci.dispatcher.build_url("admin/newweb/wifi"))
+end
+
+function CB_del()
+    local deviceid = luci.http.formvalue("deviceid");
+    local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+     luci.http.redirect(luci.dispatcher.build_url("admin/newweb/wifi"))
+end
+
 
 function elewater_item()
   local deviceid=luci.http.formvalue("devId")

@@ -195,6 +195,35 @@ void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
 	return;
 }
 
+int  send_set_msg_to_wifi(char *deviceid, char *attr, char *data)
+{
+    uint32_t  id;
+	static struct blob_buf b;
+
+    printf("[send_set_msg_to_zigbee] start\r\n");
+
+    /**/
+	if ( ubus_lookup_id( ubus, "we26n_CB", &id) ) {
+		fprintf(stderr, "Failed to look up we26n_CB object\n");
+		return 2;
+	}
+	
+	blob_buf_init( &b, 0 );
+
+	blobmsg_add_string( &b, "gatewayid", "xxxx" ); // not need
+	blobmsg_add_string( &b, "deviceid", deviceid );
+	blobmsg_add_string( &b, "devicetype", "xxxx" );// not need
+	blobmsg_add_string( &b, "attr", attr );
+	blobmsg_add_string( &b, "data", data );
+
+	printf("[send_set_msg_to_zigbee]ubus_invoke, %s,%s, data = %s\r\n", deviceid, attr, data );
+	
+	/**/
+	ubus_invoke( ubus, id, "ctrlcmd", b.head, test_data_cback, 0, 300 );
+	return 0;
+	
+}
+
 
 int  send_set_msg_to_zigbee(char *deviceid, char *attr, char *data)
 {
@@ -339,6 +368,71 @@ void  test_get_zigbee( char * msg )
 
     /**/
     iret = send_get_msg_to_zigbee( devid, attr );
+    if ( 0 != iret )
+    {
+        printf( "set zigbee, ret = %d", iret );
+    }
+    
+    return;
+    
+}
+
+
+void  test_set_wifi( char * msg )
+{
+    int  iret;
+    char * ptr;
+    char * devid;
+    char * attr;
+    char * data;
+
+	printf("1111" );
+
+    /* device id */
+    devid = msg;
+    ptr = devid;
+    ptr = strchr( ptr, '|' );
+    if ( NULL == ptr )
+    {
+	printf("2222" );    
+        return;
+    }
+
+    /* device type */
+    *ptr = '\0';
+    ptr = ptr + 1;
+    ptr = strchr( ptr, '|' );
+    if ( NULL == ptr )
+    {
+	printf("3333" );    
+        return;
+    }
+    
+    /* attribure */
+    *ptr = '\0';
+    attr = ptr + 1;
+    ptr = attr;
+    ptr = strchr( ptr, '|' );
+    if ( NULL == ptr )
+    {
+		printf("4444" );
+
+        return;
+    }
+
+    /* data */
+    *ptr = '\0';
+    data = ptr + 1;
+
+    if ( (strlen(devid) <= 0) || (strlen(attr) <= 0) || (strlen(data) <= 0) )
+    {
+	printf("5555" );    
+        return;
+    }
+
+    /**/
+	printf("before send, %s,%s,%s\n",devid, attr, data);
+    iret = send_set_msg_to_wifi( devid, attr, data );
     if ( 0 != iret )
     {
         printf( "set zigbee, ret = %d", iret );
@@ -527,7 +621,9 @@ void  test_uloopfd_cbk(struct uloop_fd * pufd, unsigned int events)
             case MT_OBJ_ZIG:
                 test_set_zigbee( pmsg->msg );
                 break;
-
+			case MT_OBJ_WIFI:
+				test_set_wifi(pmsg->msg);
+				break;
             default:
                 break;
             }
@@ -911,7 +1007,7 @@ int  main( int argc, char * argv[] )
 
     openlog( "mtbridge", 0, 0 );
 
-    /**/
+    /*恢复出厂设置*/
     iret = test_test_mknod();
     if ( 0 != iret )
     {
@@ -920,7 +1016,7 @@ int  main( int argc, char * argv[] )
         return 1;
     }
     
-    /**/
+    /*按键*/
     iret = test_test_button( 1 );
     if ( 0 != iret )
     {

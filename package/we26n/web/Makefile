@@ -56,6 +56,7 @@ define Package/web/install
 	$(CP) ./files/flashops.htm $(1)/usr/lib/lua/luci/view/admin_system/flashops.htm
 	$(CP) ./files/upgrade.htm $(1)/usr/lib/lua/luci/view/admin_system/upgrade.htm
 	$(CP) ./files/newweb/index.htm $(1)/usr/lib/lua/luci/view/newweb/index.htm
+	$(CP) ./files/newweb/wifi.htm $(1)/usr/lib/lua/luci/view/newweb/wifi.htm
 	$(CP) ./files/30-usbmount  $(1)/etc/hotplug.d/block/
 
 endef
