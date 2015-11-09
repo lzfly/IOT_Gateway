@@ -177,8 +177,8 @@ function wifi_item()
 
 function CB_tem_set()
 
-    local temp=luci.http.formvalue("tem")
-    local result = conn:call("we26n_CB","notify",{tem= temp })
+    local temp=luci.http.formvalue("data")
+    local result = conn:call("we26n_CB","ctrlcmd",{gatewayid = "we26n_78A351097F44",deviceid = "CB_controller_5EC5D4B5009540000001",devicetype = "0032",attr = "1014",data = temp})
     luci.http.redirect(luci.dispatcher.build_url("admin/newweb/wifi"))
 end
    
