@@ -1,6 +1,41 @@
 --- a/drivers/tty/pty.c
 +++ b/drivers/tty/pty.c
-@@ -558,6 +558,7 @@ static int pty_unix98_ioctl(struct tty_s
+@@ -267,8 +267,34 @@
+ static void pty_set_termios(struct tty_struct *tty,
+ 					struct ktermios *old_termios)
+ {
++	struct tty_struct * to = tty->link;
++	unsigned long flags;
++		
++	while (tty->driver->subtype == PTY_TYPE_SLAVE) {
++		/**/	
++		if (!to)
++			break;
++		
++		if ( tty->termios.c_ospeed == old_termios->c_ospeed )	
++		{
++			break;
++		}
++			
++		printk(KERN_ERR "DDD:slave set termios, %d, %d\n", tty->index, tty->termios.c_ospeed );
++
++		if (to->packet) {
++			spin_lock_irqsave(&tty->ctrl_lock, flags);
++			tty->ctrl_status |= 0x80;
++			wake_up_interruptible(&to->read_wait);
++			spin_unlock_irqrestore(&tty->ctrl_lock, flags);
++		}
++		
++		break;
++	}
++	
+ 	tty->termios.c_cflag &= ~(CSIZE | PARENB);
+ 	tty->termios.c_cflag |= (CS8 | CREAD);
++
+ }
+ 
+ /**
+@@ -558,6 +584,7 @@
  	case TIOCGPKT: /* Get PT packet mode */
  		return pty_get_pktmode(tty, (int __user *)arg);
  	case TIOCGPTN: /* Get PT Number */
