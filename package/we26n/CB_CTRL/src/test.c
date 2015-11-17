@@ -910,15 +910,20 @@ int  test_gthrd_start( void )
 
 void  test_timer_cbk( struct uloop_timeout * ptmr )
 {
-    /**/
-   // gthrd_notify_ever( g_gthrd );
+  
+    
+    read_tem( g_gthrd );
+    
+    
     if ( 0 == g_state )
     {
-        uloop_timeout_set( ptmr, 15000 );
+        uloop_timeout_set( ptmr, 50000 );
     }
+  
     else
     {
-        uloop_timeout_set( ptmr, g_intver * 60000 );    
+        //uloop_timeout_set( ptmr, g_intver * 60000 );    
+         uloop_timeout_set( ptmr, 50000 );
     }
     
     return;

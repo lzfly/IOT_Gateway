@@ -6,13 +6,14 @@ local nw = require "luci.model.network".init(x)
 local io = require "io"
 require "luci.fs"
 require "luci.sys"
+
 require "ubus"
 
 conn = ubus.connect();
 if not conn then
 	error("Failed to connect to ubusd");
 end
-local macReader = io.popen("eth_mac r wifi");
+local macReader = io.popen("eth_mac r lan");
 local macAddr = macReader:read("*all");
 macAddr = string.gsub(macAddr, ":", "");
 macAddr = "we26n_" .. macAddr;
@@ -91,7 +92,6 @@ function index()
         entry({"admin","newweb","light_control"},call("light_control"),nil)
         entry({"admin","newweb","entrynet_control"},call("entrynet_control"),nil)
 		entry({"admin","newweb","gas_meter_set"},call("gas_meter_set"),nil)
-		entry({"admin","newweb","CB_tem_set"},call("CB_tem_set"),nil)
 		entry({"admin","newweb","blegas_meter_set"},call("blegas_meter_set"),nil)
 		entry({"admin","newweb","password_set"},call("password_set"),nil)
 		entry({"admin","newweb","elewater_item"},call("elewater_item"),nil)
@@ -103,18 +103,21 @@ function index()
 		entry({"admin","newweb","sensor_item"},call("sensor_item"),nil)
 		entry({"admin","newweb","alertor_item"},call("alertor_item"),nil)
 		entry({"admin","newweb","pair470_control"},call("pair470_control"),nil)
-	    entry({"admin","newweb","pair470_getstate"},call("pair470_getstate"),nil)
-	    
-	    entry({"admin","newweb","CB_add"},call("CB_add"),nil)
-	      entry({"admin","newweb","CB_del"},call("CB_del"),nil)
-	    
-	
+		
+		entry({"admin","newweb","CB_add"},call("CB_add"),nil)
+		entry({"admin","newweb","CB_del"},call("CB_del"),nil)
+		entry({"admin","newweb","CB_tem_set"},call("CB_tem_set"),nil)
+		
+
 end
 
+function CB_tem_set()
+   local temp=luci.http.formvalue("data")
+   local result = conn:call("we26n_CB","ctrlcmd",{gatewayid = "we26n_78A351097F44",deviceid = "CB_controller_5EC5D4B5009540000001",devicetype = "0032",attr = "1014",data = temp})
+     luci.http.redirect(luci.dispatcher.build_url("admin/newweb/wifi"))
+ end
 
-function gotoindex()
-    luci.http.redirect(luci.dispatcher.build_url("admin/newweb/newweb_index"))
-end
+
 
 function CB_add()
     local deviceid = luci.http.formvalue("deviceid");
@@ -129,6 +132,10 @@ function CB_del()
      luci.http.redirect(luci.dispatcher.build_url("admin/newweb/wifi"))
 end
 
+
+function gotoindex()
+    luci.http.redirect(luci.dispatcher.build_url("admin/newweb/newweb_index"))
+end
 
 function elewater_item()
   local deviceid=luci.http.formvalue("devId")
@@ -174,13 +181,6 @@ function wifi_item()
 
 
    end
-
-function CB_tem_set()
-
-    local temp=luci.http.formvalue("data")
-    local result = conn:call("we26n_CB","ctrlcmd",{gatewayid = "we26n_78A351097F44",deviceid = "CB_controller_5EC5D4B5009540000001",devicetype = "0032",attr = "1014",data = temp})
-    luci.http.redirect(luci.dispatcher.build_url("admin/newweb/wifi"))
-end
    
 function zigbee_item()
   local deviceid=luci.http.formvalue("devId")
@@ -240,7 +240,8 @@ function sensor_item()
   end
   luci.http.redirect(luci.dispatcher.build_url("admin/newweb/sensor"))
 
-end  
+
+   end  
    
 function alertor_item()
   local deviceid=luci.http.formvalue("devId")
@@ -254,57 +255,48 @@ function alertor_item()
   end
   luci.http.redirect(luci.dispatcher.build_url("admin/newweb/alertor"))
 
-end
+   end
 
    
 function light_control()
   
   luci.http.redirect(luci.dispatcher.build_url("admin/newweb/zigbee"))
 end
-
-
 function entrynet_control()
 
 	local result = conn:call("we26n_zigbee_febee", "ctrlcmd", { gatewayid =macAddr , deviceid = "zigbee_fbee_entrynet_ffffffffffffffff_99", attr = "9999", data = "0" });
         luci.http.redirect(luci.dispatcher.build_url("admin/newweb/zigbee"))
 end
 
-
 function pair470_control()
 
-	local ret = conn:call("we26n_rfmodbus", "startpair", {});
-	conn:call( "we26n_rfreader","change_peer", {} );
+	local result = conn:call("we26n_rfmodbus", "startpair", {});
 	
-    luci.http.prepare_content("text/plain")
-	luci.http.write_json( ret );
-    luci.http.write( nil );
-    
+        luci.http.redirect(luci.dispatcher.build_url("admin/newweb/elewater"))
 end
 
+function get_470_state()
 
-function pair470_getstate()
-    local ret = conn:call( "we26n_rfmodbus", "getstate", {} );
-
-    if ret.addr ~= nil then
-	    ret.addr = string.format( "%x:%x:%x:%x:%x:%x", string.byte(ret.addr,1,6) );
+local ret = conn:call( "we26n_rfmodbus", "getstate", {} );
+	if ret.result == "0" and ret.state == "4" then
+	    luci.http.prepare_content("text/plain")
+	    luci.http.write("pairing ok")
+	else
+	    luci.http.prepare_content("text/plain")
+	    luci.http.write("pair fail")
 	end
-	
-    luci.http.prepare_content("text/plain")
-	luci.http.write_json( ret );
-    luci.http.write( nil );
-	
-end
 
+end
 
 
 function gas_meter_set()
 
 	local c_gas_id=luci.http.formvalue("id")
 	
-	luci.sys.exec("uci set jyconfig.@deviceid[0].gasmeter="..c_gas_id)
-	x:commit("jyconfig")
 	
-	conn:call( "we26n_wifibridge", "notify", {} );
+	luci.sys.exec("uci set jyconfig.@deviceid[0].gasmeter="..c_gas_id)
+
+	x:commit("jyconfig")
 		
 	luci.http.redirect(luci.dispatcher.build_url("admin/newweb/wifi"))
 end
@@ -352,7 +344,14 @@ function wireless_update()
     local limit = luci.http.formvalue("dhcp_end")
     local ipaddr = luci.http.formvalue("lan_ipaddr") 
 	local winame = luci.http.formvalue("winame")
-
+    
+    local slegal = start
+    slegal = slegal .. "."
+    local sslegal =  Split(slegal , ".")
+    if sslegal[1] =="" or ssslegal[1] >= 255 then
+        return;
+    end 
+    
 	if not winame or winame == "" then
 		winame = x:add("wireless", "wifi-iface")
 		x:set("wireless", winame, "device", "mt7620")

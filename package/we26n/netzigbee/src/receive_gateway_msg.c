@@ -36,6 +36,59 @@
 static int alertcount = 0;
 static int humcount = 0;
 
+void  dump_hex( const char * ptr, size_t  len )
+{
+    int  i;
+    int  nn;
+    int  len2 = len;
+    printf( "len = %d\n", len);
+    nn = 0;
+    while ( (len2 - nn) >= 16 )
+    {
+        for ( i=0; i<16; i++ )
+        {
+            printf( "%02x ", ptr[nn + i] );
+        }
+
+        printf("  |  ");
+
+        for ( i=0; i<16; i++ )
+        {
+            int  c = ptr[nn + i];
+
+            if ( (c < 32) || (c > 127) )
+                c = '.';
+
+            printf("%c", c);
+        }
+
+        nn += 16;
+        printf("\n");
+
+    }
+
+    if ( len2 > nn )
+    {
+        for ( i = 0; i < (len2-nn); i++ )
+            printf("%02x ", ptr[nn + i]);
+        printf("  >  ");
+
+        for ( i = 0; i < (len2-nn); i++ )
+        {
+            int  c = ptr[nn + i];
+            if (c < 32 || c > 127)
+                c = '.';
+            printf("%c", c);
+        }
+
+        printf("\n");
+    }
+
+    fflush(stdout);
+
+}
+
+
 void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
 {
 	static const struct blobmsg_policy policy[2] = { { "args", BLOBMSG_TYPE_INT32 }, { "argv", BLOBMSG_TYPE_INT32 } };
@@ -603,18 +656,45 @@ int receiveDeviceMsg(char *buf, int len)
 						printf("[receiveDeviceMsg] value=%d\r\n",value);
 
 						w26n_uint16 attr1 = (buffer[13]&0xFF)|((buffer[14]&&0xFF)<<8);
-						printf("[receiveDeviceMsg]attr=%d\r\n",attr);
+						printf("[receiveDeviceMsg]attr1=%d\r\n",attr);
 
 						w26n_byte type1 = buffer[15];
 						printf("[receiveDeviceMsg]type1=%d\r\n",type1);
 
 						w26n_byte value1 = buffer[16];
 						printf("[receiveDeviceMsg] value1=%d\r\n",value1);
-                        					
-						    sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_TEMP_VALUE, value);
-						  
-			
-						  sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_HUM_VALUE, value1);
+						
+						printf("\n**********************\n");
+						dump_hex( buffer, 17 );
+						printf("\n**********************\n");
+                        	if(type == 41 && num == 1)
+                        	{		
+                        	    if(humcount == 0 && value == 1)
+                        	    {
+                        	        humcount = 1;
+                        	        printf("in 41\n");
+                        	        return;
+                        	    }
+                        	     printf("after 41\n");	
+						        sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_TEMP_VALUE, value);
+						     }
+						     else if(type == 33 && num ==1)
+						      {   
+						              if(humcount == 0 && value == 1)
+                        	        { printf("in 33\n");
+                        	          humcount = 1;
+                        	             return;
+                        	        }	
+                        	         printf("in 33\n");
+								    sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_HUM_VALUE, value/100);
+						        }
+						        /*
+						        else if(num == 2 && type != 32)
+						        {
+						             sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_TEMP_VALUE, value);
+						              sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_HUM_VALUE, value1);
+						        }
+						        */
 						 
 					}
 					else{

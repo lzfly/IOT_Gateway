@@ -482,22 +482,13 @@ void  task_wait_read( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 
     /* check wake resp */
     resp = evbuffer_pullup( pctx->pbuf, READ_RSP_LEN );
-   /* iret = util_check_read_resp( resp, READ_RSP_LEN, pctx->mid, &value );
-    if ( 0 != iret )
-    {
-        gth_task_fini( pctx );
-        syslog( LOG_CRIT, "read data, check resp, fail" );
-        return;
-    }
-*/
+  
     /* send to uloop thread */
-    //util_send_to_uloop( pctx->sv[0], value );
     syslog( LOG_CRIT, "read data, value = %f", value );    
     
     /**/
     iret = evbuffer_get_length( pctx->pbuf );
     evbuffer_drain( pctx->pbuf, iret + 1 );
-    //gth_task_init( pctx, task_wait_sleep );
     gth_task_active( pctx, READ_REQ_LEN, pctx->buf_read, 1000 );
     return;
     
@@ -529,12 +520,6 @@ void  task_set_tem( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
     {
         gth_task_fini( pctx );
         syslog( LOG_CRIT, "wakeup, time out" );
-		
-#if 0
-    /* send to uloop thread */
-    util_send_to_uloop( pctx->sv[0], 222.222 );
-
-#endif
         return;
     } 
 
@@ -548,7 +533,7 @@ void  task_set_tem( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 
     /* check wake resp */
     resp = evbuffer_pullup( pctx->pbuf, SET_RSP_LEN );
-   //iret = util_check_wake_resp( resp, READ_RSP_LEN );
+  
   
    iret = util_check_settem_resp( resp, SET_RSP_LEN );
     if ( 0 != iret )
@@ -558,21 +543,11 @@ void  task_set_tem( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
         return;
     }
 	
-	//tem.attr = CB_ATTR_SET;
-	//tem.data = pctx->buf_set[4]; 
-	//send_tem_to_uloop(pctx->sv[0],tem);
+	
 	
     syslog( LOG_CRIT, "set tem, success" );
 	printf("set tem\n");
     gth_task_fini( pctx );
-    /*
-
-    iret = evbuffer_get_length( pctx->pbuf );
-    evbuffer_drain( pctx->pbuf, iret + 1 );
-    gth_task_init( pctx, task_wait_wait5 );
-    gth_task_active( pctx, 0, NULL, 5000 );
-
-	printf("after wakeup\n");*/
     return;
     
 }
@@ -588,12 +563,6 @@ void  task_set_time( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
     {
         gth_task_fini( pctx );
         syslog( LOG_CRIT, "set time, time out" );
-		
-#if 0
-    /* send to uloop thread */
-    util_send_to_uloop( pctx->sv[0], 222.222 );
-
-#endif
         return;
     } 
 
@@ -607,7 +576,6 @@ void  task_set_time( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 
     /* check wake resp */
     resp = evbuffer_pullup( pctx->pbuf, SET_TIM_RSP );
-   //iret = util_check_wake_resp( resp, READ_RSP_LEN );
   
    iret = util_check_settem_resp( resp, SET_TIM_RSP );
     if ( 0 != iret )
@@ -617,21 +585,10 @@ void  task_set_time( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
         return;
     }
 	
-	//tem.attr = CB_ATTR_SET;
-	//tem.data = pctx->buf_set[4]; 
-	//send_tem_to_uloop(pctx->sv[0],tem);
 	
     syslog( LOG_CRIT, "set time, success" );
 	printf("set time\n");
     gth_task_fini( pctx );
-    /*
-
-    iret = evbuffer_get_length( pctx->pbuf );
-    evbuffer_drain( pctx->pbuf, iret + 1 );
-    gth_task_init( pctx, task_wait_wait5 );
-    gth_task_active( pctx, 0, NULL, 5000 );
-
-	printf("after wakeup\n");*/
     return;
     
 }
@@ -648,11 +605,6 @@ void  task_get_stat( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
     {
         gth_task_fini( pctx );
         syslog( LOG_CRIT, "get status, time out" );
-		
-#if 0
-    /* send to uloop thread */
-    util_send_to_uloop( pctx->sv[0], 222.222 );
-#endif
         return;
     } 
 
@@ -666,13 +618,11 @@ void  task_get_stat( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 
     /* check wake resp */
     resp = evbuffer_pullup( pctx->pbuf, READ_RSP_LEN );
-   //iret = util_check_wake_resp( resp, READ_RSP_LEN );
+ 
   
    iret = util_check_readtem_resp( resp, READ_RSP_LEN );
     if ( 0 != iret )
     {
-     /*   gth_task_fini( pctx );
-        syslog( LOG_CRIT, "wakeup, check resp, fail" );*/
         return;
     }
 	printf("status = %d\n",resp[3]);
@@ -682,19 +632,12 @@ void  task_get_stat( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 	
     syslog( LOG_CRIT, "wakeup, success" );
 	printf("wakeup\n");
-
-    /*
-    iret = evbuffer_get_length( pctx->pbuf );
-    evbuffer_drain( pctx->pbuf, iret + 1 );
-    gth_task_init( pctx, task_wait_wait5 );
-    gth_task_active( pctx, 0, NULL, 5000 );
-	printf("after wakeup\n");*/
     return;
     
 }
 
 
-void  task_rem_wakeup( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
+void  task_read_rem_tem( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 {
     int  iret;
     uint8_t * resp;
@@ -706,10 +649,7 @@ void  task_rem_wakeup( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
         gth_task_fini( pctx );
         syslog( LOG_CRIT, "wakeup, time out" );
 		
-#if 0
-    /* send to uloop thread */
-    util_send_to_uloop( pctx->sv[0], 222.222 );
-#endif
+
         return;
     } 
 
@@ -723,13 +663,11 @@ void  task_rem_wakeup( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 
     /* check wake resp */
     resp = evbuffer_pullup( pctx->pbuf, READ_RSP_LEN );
-   //iret = util_check_wake_resp( resp, READ_RSP_LEN );
+ 
   
    iret = util_check_readtem_resp( resp, READ_RSP_LEN );
     if ( 0 != iret )
     {
-     /*   gth_task_fini( pctx );
-        syslog( LOG_CRIT, "wakeup, check resp, fail" );*/
         return;
     }
 	printf("Remote = %d\n",resp[3]);
@@ -742,20 +680,13 @@ void  task_rem_wakeup( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
     /**/
     syslog( LOG_CRIT, "wakeup, success" );
 	printf("wakeup\n");
-
-    /*
-    iret = evbuffer_get_length( pctx->pbuf );
-    evbuffer_drain( pctx->pbuf, iret + 1 );
-    gth_task_init( pctx, task_wait_wait5 );
-    gth_task_active( pctx, 0, NULL, 5000 );
-	printf("after wakeup\n");*/
     return;
     
 }
 
 
 /**/
-void  task_wait_wakeup( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
+void  task_read_tem( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 {
     int  iret;
     uint8_t * resp;
@@ -766,11 +697,6 @@ void  task_wait_wakeup( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
     {
         gth_task_fini( pctx );
         syslog( LOG_CRIT, "wakeup, time out" );
-		
-#if 0
-    /* send to uloop thread */
-    util_send_to_uloop( pctx->sv[0], 222.222 );
-#endif
         return;
     } 
 
@@ -784,13 +710,11 @@ void  task_wait_wakeup( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 
     /* check wake resp */
     resp = evbuffer_pullup( pctx->pbuf, READ_RSP_LEN );
-   //iret = util_check_wake_resp( resp, READ_RSP_LEN );
+   
   
    iret = util_check_readtem_resp( resp, READ_RSP_LEN );
     if ( 0 != iret )
     {
-     /*   gth_task_fini( pctx );
-        syslog( LOG_CRIT, "wakeup, check resp, fail" );*/
         return;
     }
 	printf("temp = %d\n",resp[3]);
@@ -802,12 +726,14 @@ void  task_wait_wakeup( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
     syslog( LOG_CRIT, "wakeup, success" );
 	printf("wakeup\n");
 
-    /*
+
     iret = evbuffer_get_length( pctx->pbuf );
     evbuffer_drain( pctx->pbuf, iret + 1 );
-    gth_task_init( pctx, task_wait_wait5 );
-    gth_task_active( pctx, 0, NULL, 5000 );
-	printf("after wakeup\n");*/
+    
+    gth_task_init( pctx, task_read_rem_tem );
+    gth_task_active( pctx, READ_REQ_LEN, pctx->buf_rem, 6000 );
+
+
     return;
     
 }
@@ -824,7 +750,7 @@ int read_tem(gthrd_context_t * pctx)
 	}
     /**/
     evbuffer_drain( pctx->pbuf, 999999 );    
-    gth_task_init( pctx, task_wait_wakeup );
+    gth_task_init( pctx, task_read_tem );
     gth_task_active( pctx, READ_REQ_LEN, pctx->buf_read, 6000 );
     return 0;
 
@@ -836,13 +762,13 @@ int read_rem_tem(gthrd_context_t * pctx)
 	
 	/**/
 	if ( NULL != pctx->tfunc )
-	{printf("read temp aaa\n");
+	{
 	    syslog( LOG_CRIT, "spawn task, but func is not null" );
 	    return 1;
 	}
     /**/
     evbuffer_drain( pctx->pbuf, 999999 );    
-    gth_task_init( pctx, task_rem_wakeup );
+    gth_task_init( pctx, task_read_rem_tem );
     gth_task_active( pctx, READ_REQ_LEN, pctx->buf_rem, 6000 );
     return 0;
 
@@ -1043,7 +969,6 @@ void  gthrd_inter_dgram_cbk( intptr_t arg, int tlen, void * pdat )
 		if ( NULL != pctx->pevbuf )
 			{
 				read_rem_tem( pctx );
-				printf("case 5555\n");
 			}
         break;
 	case 0x66666666:
@@ -1249,7 +1174,7 @@ int get_rem_tem( intptr_t ctx )
     
     /**/
     pctx = (gthrd_context_t *)ctx;
-
+    
     /**/
     msg.type = 0x55555555;
 	send( pctx->sv[1], &msg, sizeof(msg), 0 );
