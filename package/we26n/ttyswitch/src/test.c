@@ -79,6 +79,11 @@ void  dump_hex( const unsigned char * ptr, size_t  len )
 
 typedef struct _tag_test_context
 {
+    struct event_base * pevbase;
+    struct timeval tv;
+    struct event * evt;
+    int  count;
+    
     intptr_t  uctx;
     intptr_t  mctx0;    
     intptr_t  mctx1;
@@ -95,10 +100,12 @@ void  test_nuart_callbk( intptr_t arg, int tidx, int tlen, void * pdat )
     /**/
     pctx = (test_context_t *)arg;
 
+#if 0
     /**/
     printf( "uart recv : %d : ", tidx );
     dump_hex( pdat, tlen );
-    
+#endif
+
     switch ( tidx )
     {
     case 0:
@@ -130,10 +137,12 @@ void  test_ptmx0_callbk( intptr_t arg, int tlen, void * pdat )
     /**/
     pctx = (test_context_t *)arg;
 
-    
+#if 0    
     /**/
     printf( "ptmx 0 recv : " );
     dump_hex( pdat, tlen );
+#endif
+
 
     /**/
     nuart_send( pctx->uctx, 0, tlen, pdat );
@@ -148,10 +157,11 @@ void  test_ptmx1_callbk( intptr_t arg, int tlen, void * pdat )
     /**/
     pctx = (test_context_t *)arg;
 
-    
+#if 0    
     /**/
     printf( "ptmx 1 recv : " );
     dump_hex( pdat, tlen );
+#endif
 
     /**/
     nuart_send( pctx->uctx, 1, tlen, pdat );
@@ -166,10 +176,11 @@ void  test_ptmx2_callbk( intptr_t arg, int tlen, void * pdat )
     /**/
     pctx = (test_context_t *)arg;
 
-    
+#if 0    
     /**/
     printf( "ptmx 2 recv : " );
     dump_hex( pdat, tlen );
+#endif
 
     /**/
     nuart_send( pctx->uctx, 2, tlen, pdat );
@@ -177,21 +188,96 @@ void  test_ptmx2_callbk( intptr_t arg, int tlen, void * pdat )
 }
 
 
+
+static void  test_set_baud( intptr_t uctx, int idx, uint32_t speed )
+{
+    uint8_t  cbaud[5] = { 0xCC, 0x03, 0x00, 0xC2, 0x01 };
+
+    /**/
+    if ( (idx < 0)  || (idx > 3) )
+    {
+        return;
+    }
+
+    /**/
+    printf( "::::::change %d baud to %d, %X\n", idx, speed, speed );
+
+    /**/
+    cbaud[0] = 0xCC;
+    cbaud[1] = idx;
+
+    /**/
+    cbaud[2] = speed & 0xff;
+    speed >>= 8;
+    cbaud[3] = speed & 0xff;
+    speed >>= 8;
+    cbaud[4] = speed & 0xff;
+    
+    /**/
+    nuart_send( uctx, 0, 5, cbaud );
+    return;
+    
+}
+
+
+
+
+
+
 void  test_ptmx3_callbk( intptr_t arg, int tlen, void * pdat )
 {
     test_context_t * pctx;
+    uint8_t * pu8;
+    uint32_t  speed;
 
     /**/
     pctx = (test_context_t *)arg;
 
     
     /**/
+#if 0    
     printf( "ptmx 3 recv : " );
     dump_hex( pdat, tlen );
+#endif
 
     /**/
-    nuart_send( pctx->uctx, 3, tlen, pdat );
+    pu8 = (uint8_t *)pdat;
+
+    
+    if ( pu8[0] != 0 )
+    {
+        if ( (pu8[0] & 0x80) != 0 )
+        {
+        	ptmx_getspeed( pctx->mctx3, &speed );
+        	test_set_baud( pctx->uctx, 3, speed );
+        }
+    }
+    else
+    {
+        /**/
+        nuart_send( pctx->uctx, 3, tlen-1, pu8+1 );
+    }
+
+#if 0
+    uint8_t  match[6] = { 0xfe, 0x01, 0x41, 0x00, 0x00, 0x40 };
+    
+
+    if ( tlen == 6 )
+    {
+        if ( 0 == memcmp( match, pdat, 6 ) )
+        {
+            pctx->count += 1;
+
+            if ( pctx->count == 2 )
+            {
+                test_prepare_change_baud( pctx, 300 );
+            }
+        }
+    }
+#endif
+
     return;
+    
 }
 
 
@@ -206,6 +292,10 @@ int  test_init( struct event_base * pevbase )
     {
         return 1;
     }
+
+    /**/
+    pctx->pevbase = pevbase;
+    pctx->count = 0;
     
     /**/
     iret = nuart_init( pevbase, 0, &(pctx->uctx) );
@@ -252,8 +342,12 @@ int  test_init( struct event_base * pevbase )
     ptmx_set_callbk( pctx->mctx0, test_ptmx0_callbk, (intptr_t)pctx );
     ptmx_set_callbk( pctx->mctx1, test_ptmx1_callbk, (intptr_t)pctx );
     ptmx_set_callbk( pctx->mctx2, test_ptmx2_callbk, (intptr_t)pctx );
+
+    /**/
+    ptmx_pktmode( pctx->mctx3, 1 );
     ptmx_set_callbk( pctx->mctx3, test_ptmx3_callbk, (intptr_t)pctx );    
 
+    /**/
     return 0;
     
 }
@@ -280,7 +374,7 @@ int  test( void )
         return 2;
     }
     
-    // ¿ªÊ¼Ö÷³ÌĞòµÄÑ­»·
+    // å¼€å§‹ä¸»ç¨‹åºçš„å¾ªç¯
     event_base_dispatch( pevbase );
     return 0;
     
