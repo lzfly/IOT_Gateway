@@ -1,6 +1,0 @@
-#define CB_TYPE "0032"
-#define CB_ATTR_REM 1015
-#define CB_ATTR_SHORT 1008
-#define CB_ATTR_SET 1014
-#define CB_ATTR_WORK_STAT 1013
-#define CB_SET_TIM 1066
