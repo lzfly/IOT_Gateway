@@ -34,7 +34,8 @@
 
 char  g_mac_addr[200];
 intptr_t  g_gthrd = 0;
-char  g_gas_id[200];
+
+
 char cb_id[200];
 
 
@@ -44,7 +45,6 @@ char cb_id[200];
 /**/
 int  g_intver = 1;
 struct uloop_timeout * g_ptmr = NULL;
-int  g_state = 0;
 
 /**/
 int  g_con_count = 0;
@@ -75,7 +75,6 @@ void  test_data_cback(struct ubus_request *req, int type, struct blob_attr *msg)
 
 int  sendTemToWeb( unsigned short int attr, unsigned  int data)
 {
-    int  iret;
     uint32_t  id;
     struct ubus_context *ctx;
 	static struct blob_buf b;
@@ -89,7 +88,7 @@ int  sendTemToWeb( unsigned short int attr, unsigned  int data)
 	if ( NULL == ctx) 
 	{
 	    fprintf(stderr, "Failed to connect to ubus\n");
-	    return -1;
+	    return 1;
 	}
 
     printf("[sendMsgToWeb] start--1\r\n");
@@ -97,7 +96,7 @@ int  sendTemToWeb( unsigned short int attr, unsigned  int data)
     /**/
 	if ( ubus_lookup_id(ctx, "jianyou", &id) ) {
 		fprintf(stderr, "Failed to look up jianyou object\n");
-		return;
+		return 2;
 	}
 	printf("[sendMsgToWeb] start--2\r\n");
 
@@ -106,11 +105,11 @@ int  sendTemToWeb( unsigned short int attr, unsigned  int data)
 	sprintf(gatewayidstr, "we26n_%s", g_mac_addr);
 	blobmsg_add_string( &b, "gatewayid", gatewayidstr );
 
-        printf("[sendMsgToWeb] start--3\r\n");
+    printf("[sendMsgToWeb] start--3\r\n");
 	
 	char deviceidstr[64];
 	sprintf(deviceidstr, "CB_controller_%s", cb_id);
-        printf("[sendMsgToWeb] start--%s\r\n", deviceidstr);
+    printf("[sendMsgToWeb] start--%s\r\n", deviceidstr);
 	blobmsg_add_string( &b, "deviceid", deviceidstr);
 	
 	char devicetypestr[8];
@@ -215,54 +214,6 @@ int  test_get_macaddr( void )
 }
 
 
-int  get_gasmeterid_config( char * jyconfig, char * mstr )
-{
-    int  iret;
-    struct uci_context * uci_ctx;
-    struct uci_package * uci_pkg;
-    struct uci_element * uci_ele;
-    struct uci_section * uci_sec; 
-    const char * value_s = NULL;
-
-    uci_ctx = uci_alloc_context();
-    if(!uci_ctx)
-        return  1;
-
-    iret = uci_load( uci_ctx, jyconfig, &uci_pkg );
-    if ( 0 != iret )
-    {
-        printf("uci load jianyou config fail\n");
-        uci_free_context( uci_ctx );
-        return  2;
-    }
-
-
-    /* scan jianyou config ! */
-    uci_foreach_element(&uci_pkg->sections, uci_ele)
-    {
-        uci_sec = uci_to_section(uci_ele);
-        if( 0 == strcmp(uci_sec->type, "deviceid") )
-        {
-            value_s = uci_lookup_option_string( uci_ctx, uci_sec, "gasmeter");
-            if ( NULL == value_s )
-            {
-                uci_free_context( uci_ctx );
-                return 1;
-            }
-
-            /**/
-            strcpy( mstr, value_s );
-            uci_free_context( uci_ctx );            
-            return 0;
-        }
-    }
-
-    uci_free_context( uci_ctx );
-    return 4;
-    
-}
-
-
 int  get_cbid_config( char * jyconfig, char * mstr )
 {
     int  iret;
@@ -311,20 +262,6 @@ int  get_cbid_config( char * jyconfig, char * mstr )
 }
 
 
-
-int  get_gas_meter_id( void )
-{
-    int  iret;
-    
-    iret = get_gasmeterid_config( "jyconfig", g_gas_id );
-    if ( iret != 0 )
-    {
-        strcpy( g_gas_id, "A01000000000000" );
-    }
-    
-    /**/
-    return 0;
-}
 
 int  get_cb_id( void )
 {
@@ -516,11 +453,9 @@ static int CB_notify( struct ubus_context *ctx, struct ubus_object *obj,
 	const char * gatewayidstr, *deviceidstr,*devicetypestr,*attrstr,*datastr;
     static struct blob_buf b;
 	unsigned int attr,data;
-    uint32_t  hour,min;
     
     /**/
-
-	blobmsg_parse( CB_policy, ARRAY_SIZE(CB_policy), tb, blob_data(msg), blob_len(msg));
+    blobmsg_parse( CB_policy, ARRAY_SIZE(CB_policy), tb, blob_data(msg), blob_len(msg));
 	
 	if ( tb[CB_GATEWAY] )
 	{	
@@ -612,31 +547,26 @@ static int CB_notify( struct ubus_context *ctx, struct ubus_object *obj,
 	data = strtoul( datastr, NULL, 10 );
 	printf("data = %d\n",data);
 
-	switch(attr)
-		{
-		case CB_ATTR_SET:
-    		gthrd_notify_mid( g_gthrd, data );
-			break;
-		case CB_ATTR_WORK_STAT:
-			get_ctrl_stat(g_gthrd);
-			break;
-		case CB_ATTR_SHORT:
-			get_tem(g_gthrd);
-			break;
-		case CB_ATTR_REM:
-			//get_rem_tem(g_gthrd);
-			set_rem_tem( g_gthrd, data );
-			break;
-		case CB_SET_TIM:
-			hour = data/100;
-			min =  data%100;
-			gthrd_set_time( g_gthrd, hour, min);
-			break;
-		case CB_SET_CTL_MOD:
-			set_ctrl_mode( g_gthrd, data );
-			break;
-		}	
-    g_state = 0;
+    
+	switch( attr )
+	{
+	case CB_ATTR_SET:
+		gthrd_set_target_tem( g_gthrd, data );
+		break;
+		
+	case CB_ATTR_WORK_STAT:
+		gthrd_get_ctrl_status( g_gthrd );
+		break;
+		
+	case CB_ATTR_REM:
+		gthrd_set_rem_tem( g_gthrd, data );
+		break;
+		
+	case CB_SET_CTL_MOD:
+		gthrd_set_ctrl_mode( g_gthrd, data );
+		break;
+	}
+	
     blob_buf_init( &b, 0 );
     blobmsg_add_string( &b, "return",  "ok" );
     
@@ -665,7 +595,7 @@ static int CB_getstat( struct ubus_context *ctx, struct ubus_object *obj,
     blobmsg_add_string( &b, "return",  "ok" );
 
     /**/
-    sprintf( tstr, "mid=%s, interval=%d, state=%d, accept=%d, ipadr=%s", g_gas_id, g_intver, g_state, g_con_count, g_con_ipstr );
+    sprintf( tstr, "interval=%d, accept=%d, ipadr=%s", g_intver, g_con_count, g_con_ipstr );
     blobmsg_add_string( &b, "global",  tstr );
 
     /**/
@@ -746,11 +676,8 @@ void  test_accept_cbk( struct uloop_fd * pufd, unsigned int events )
     /**/
     printf( "accept, %d \n", sock );
     printf( "client IP and Port %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port) );
+
     /**/
-#if 0
-    test_write_to_ini( g_gas_id, 0.0 );
-#endif
-    
     sprintf( g_con_ipstr, "%s", inet_ntoa(client_addr.sin_addr) );
     g_con_count += 1;
     
@@ -808,7 +735,6 @@ void  test_recv_cbk( struct uloop_fd * pufd, unsigned int events )
 {
     int  iret;
     uint8_t  tary[2048];
-    double  data;
     tem_t * tem;
     
     /**/
@@ -842,9 +768,6 @@ void  test_recv_cbk( struct uloop_fd * pufd, unsigned int events )
         printf( "uloop recv %d\n", iret );        
         dump_hex( &(tary[0]), iret );
 
-        /* report to web */
-        g_state = 1;
-		
 		/**/
 		tem = (tem_t *)tary;
 		printf( "sdfsdfsdf : %f\n", tem->data );
@@ -863,7 +786,6 @@ int  test_gthrd_start( void )
     int  tfd;
     intptr_t  tctx;
     struct uloop_fd * pufd;
-    uint64_t  mid;
     
     /**/
     iret = gthrd_init( &tctx );
@@ -901,11 +823,6 @@ int  test_gthrd_start( void )
     }
 
     /**/
-    mid = strtoull( &g_gas_id[3], NULL, 10 );
-    gthrd_notify_mid( tctx, mid );
-    printf( "start, mid, %llu\n", mid );
-    
-    /**/
     g_gthrd = tctx;
     return 0;
     
@@ -914,22 +831,9 @@ int  test_gthrd_start( void )
 
 void  test_timer_cbk( struct uloop_timeout * ptmr )
 {
-  
-    
-    read_tem( g_gthrd );
-    
-    
-    if ( 0 == g_state )
-    {
-        uloop_timeout_set( ptmr, 50000 );
-    }
-  
-    else
-    {
-        //uloop_timeout_set( ptmr, g_intver * 60000 );    
-         uloop_timeout_set( ptmr, 50000 );
-    }
-    
+    /**/    
+    gthrd_get_tem( g_gthrd );
+    uloop_timeout_set( ptmr, 50000 );
     return;
 }
 
@@ -965,12 +869,11 @@ int  main( void )
     int  temp;
     
     /**/
-    openlog( "wifibridge", 0, 0 );    
+    openlog( "cb_ctrl", 0, 0 );    
     syslog( LOG_CRIT, "begin wifibridge ..." );
 	get_cb_id();
-	//printf("CB id =%s\n",cb_id);
+    
     /**/
-    get_gas_meter_id();
     iret = get_gas_report_time( &temp );
     if ( 0 != iret )
     {

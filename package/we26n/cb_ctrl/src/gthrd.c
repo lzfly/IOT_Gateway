@@ -20,8 +20,7 @@
 #include <event2/buffer.h>
 #include <event2/bufferevent.h>
 
-#include "pktintf.h"
-#include "dgramsck.h"
+#include "myqueue.h"
 #include "gthrd.h"
 #include "type.h"
 
@@ -39,30 +38,26 @@
 #define  SET_RSP_LEN 14
 #define  SET_TIM_RSP 14
 
-int socketfd;
-
-
-
-
 
 
 int  temp_write_to_ini( char * path, uint8_t data ,char *name)
 {
     char devicesstr[2048];
-   // char *path="/tmp/devices_6.ini";
     FILE *fp;
+    
     devicesstr[0] = 0;
 	get_cb_id();
 	printf("cb id =%s\n",cb_id);
     sprintf(&devicesstr[0], "[");
     sprintf(&devicesstr[strlen(devicesstr)], "{");
     sprintf(&devicesstr[strlen(devicesstr)], "\"%s\":\"%d\",",name,data);
-	if(name == "Remote")
-		{
-			sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"%s\",",cb_id);
-			sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\",",CB_TYPE);
-			sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"8\"");
-		}
+	if( 0 == strcmp( name, "Remote") )
+	{
+		sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"%s\",",cb_id);
+		sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\",",CB_TYPE);
+		sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"8\"");
+	}
+	
     sprintf(&devicesstr[strlen(devicesstr)], "},");
     sprintf(&devicesstr[strlen(devicesstr)-1], "]");
 
@@ -137,12 +132,6 @@ void  dump_hex( const unsigned char * ptr, size_t  len )
 }
 
 
-int  util_send_to_uloop( int sock, double data )
-{
-    /**/
-    send( sock, &data, sizeof(data), 0 );
-    return 0;
-}
 
 
 int send_tem_to_uloop(int sock,  tem_t tem)
@@ -152,41 +141,10 @@ int send_tem_to_uloop(int sock,  tem_t tem)
 }
 
 
-uint8_t  util_calc_sum( uint8_t * tbuf, int tlen )
-{
-    int i;
-    uint8_t  temp;
-
-    /**/
-    temp = 0;
-    for( i = 0; i < tlen; i++ )
-    {
-        temp = temp + tbuf[i];
-    }
-    
-    return temp;
-}
-
-
-
-int  util_patch_read_buf( uint8_t * rdbuf, uint32_t mid )
-{
-
-    rdbuf[4] = (uint8_t)(mid & 0xff);
-    rdbuf[5] = (uint8_t)(mid >>8 & 0xff);
-    rdbuf[6] = (uint8_t)(mid >>16 & 0xff);
-    rdbuf[7] = (uint8_t)(mid >>24 & 0xff);
-    
-    rdbuf[15] = util_calc_sum( &(rdbuf[1]), 14 );
-
-    printf( "CRC = %x\n", rdbuf[15] );
-    return 0;
-}
 
 int  util_check_readtem_resp( uint8_t * resp, int tlen )
 {
-    uint8_t  temp;
-	
+
     /**/
     if ( resp[4] != 0xEE )
     {
@@ -210,79 +168,6 @@ int util_check_settem_resp(uint8_t * resp, int tlen)
     
 }
 
-int  util_check_wake_resp( uint8_t * resp, int tlen )
-{
-    uint8_t  temp;
-
-    /**/
-    if ( resp[0] != 0x3C )
-    {
-        syslog( LOG_CRIT,"check wake, head byte error" );
-        return 1;
-    }
-    
-    /**/
-    temp = util_calc_sum( &(resp[1]), tlen-2 );
-    if ( temp != resp[tlen-1] )
-    {
-        syslog( LOG_CRIT,"check wake, crc error" );
-        return 2;
-    }
-    
-    return 0;
-    
-}
-
-
-int  util_check_read_resp( uint8_t * resp, int tlen, uint64_t mid, double * pval )
-{
-    uint8_t  temp;
-    uint32_t  uval;
-    double  data;
-    uint64_t  tu64;
-    
-    /**/
-    if ( resp[0] != 0x3C )
-    {
-        syslog( LOG_CRIT,"check read, head byte error" );
-        return 1;
-    }
-    
-    /**/
-    temp = util_calc_sum( &(resp[1]), tlen-2 );
-    if ( temp != resp[tlen-1] )
-    {
-        syslog( LOG_CRIT,"check read, crc error" );
-        return 2;
-    }
-
-    /* check id */
-    tu64 = resp[7];
-    tu64 = (tu64 << 8) | resp[6];
-    tu64 = (tu64 << 8) | resp[5];
-    tu64 = (tu64 << 8) | resp[4];
-    if ( tu64 != (mid & 0xFFFFFFFF) )
-    {
-        return 3;
-    }
-    
-    /**/
-    uval = resp[18];
-    uval = resp[17] | (uval << 8);
-    uval = resp[16] | (uval << 8);
-    uval = resp[15] | (uval << 8);
-    
-    /**/
-    data = (double)uval;
-    data = data / 10.0;
-
-    /**/
-    *pval = data;    
-    return 0;
-    
-}
-
-
 
 
 struct _tag_gthrd_context;
@@ -302,8 +187,7 @@ struct _tag_gthrd_context
     
     /* socket pair */
     int  sv[2];
-    intptr_t  dgctx;
-    pkt_intf_t * pintf;
+    intptr_t  mqctx;
     struct event * prdevt;
 
     /* task */
@@ -312,18 +196,9 @@ struct _tag_gthrd_context
     struct evbuffer * pbuf;
 
     /**/
-    uint32_t  mid;
-	uint32_t rem_tem;
-	uint32_t  hour;
-	uint32_t  min;
-	uint32_t ctrl_mode;
-    uint8_t buf_set[32];
-    uint8_t buf_read[32];
-    uint8_t buf_rem[32];
-	uint8_t buf_time[32];
-	uint8_t buf_stat[32];
-	uint8_t buf_set_rem[32];
-	uint8_t buf_ctrl_mode[32];
+    uint32_t  target_tem;
+	uint32_t  rem_tem;
+	uint32_t  ctrl_mode;
     
 };
 
@@ -333,18 +208,19 @@ typedef struct _tag_notify_msg
     int  type;
 	uint32_t min;
 	uint32_t hour;
-	uint32_t rem_tem;
-	uint32_t ctrl_mode;
     union 
     {
         int  sock;
-        uint32_t  mid;
-		
+        uint32_t  target_tem;
+        uint32_t  rem_tem;
+        uint32_t  ctrl_mode;
+        
     } value;
     
 } notify_msg_t;
 
 
+void  gthrd_inter_check_new( gthrd_context_t * pctx );
 
 int  gth_task_init( gthrd_context_t * pctx, task_cbfunc func )
 {
@@ -368,6 +244,9 @@ int  gth_task_fini( gthrd_context_t * pctx )
     /**/
     evtimer_add( pctx->pevtmr, NULL );
     pctx->tfunc = NULL;
+
+    /**/
+    gthrd_inter_check_new( pctx );
 	return 0;
 }
 
@@ -398,7 +277,7 @@ int  gth_task_active( gthrd_context_t * pctx, int tlen, uint8_t * pdat, uint32_t
 }
 
 
-void  gthrd_inter_timer_cbk( evutil_socket_t fd, short events, void * arg )
+void  gth_task_timer_cbk( evutil_socket_t fd, short events, void * arg )
 {
     gthrd_context_t * pctx;
 
@@ -418,7 +297,7 @@ void  gthrd_inter_timer_cbk( evutil_socket_t fd, short events, void * arg )
 }
 
 
-void  gthrd_inter_data_cbk( struct bufferevent * bev, void * arg )
+void  gth_task_data_cbk( struct bufferevent * bev, void * arg )
 {
     gthrd_context_t * pctx;
     uint8_t  tbuf[64];
@@ -452,76 +331,11 @@ void  gthrd_inter_data_cbk( struct bufferevent * bev, void * arg )
 }
 
 
-void  task_wait_sleep( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
-{
-    /**/
-    if ( tlen == 0 )
-    {
-        gth_task_fini( pctx );
-        syslog( LOG_CRIT, "sleep, end" );
-        return;
-    }
-
-    return;
-}
-
-
-void  task_wait_read( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
-{
-    int  iret;
-	 uint8_t * resp;
-    double  value;
-    
-    /**/
-    if ( tlen == 0 )
-    {
-        gth_task_fini( pctx );
-        syslog( LOG_CRIT, "read data, time out" );
-        return;
-    }
-
-    /**/
-    evbuffer_add( pctx->pbuf, pdat, tlen );
-    iret = evbuffer_get_length( pctx->pbuf );
-    if ( iret < READ_RSP_LEN )
-    {
-        return;
-    }
-
-    /* check wake resp */
-    resp = evbuffer_pullup( pctx->pbuf, READ_RSP_LEN );
-  
-    /* send to uloop thread */
-    syslog( LOG_CRIT, "read data, value = %f", value );    
-    
-    /**/
-    iret = evbuffer_get_length( pctx->pbuf );
-    evbuffer_drain( pctx->pbuf, iret + 1 );
-    gth_task_active( pctx, READ_REQ_LEN, pctx->buf_read, 1000 );
-    return;
-    
-}
-
-
-void  task_wait_wait5( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
-{
-    int  iret;
-    
-    if ( tlen == 0 )
-    {
-        iret = evbuffer_get_length( pctx->pbuf );
-        evbuffer_drain( pctx->pbuf, iret + 1 );    
-        gth_task_init( pctx, task_wait_read );
-        gth_task_active( pctx, READ_REQ_LEN, pctx->buf_read, 5000 );
-    }
-}
-
 
 void  task_set_tem( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 {
     int  iret;
     uint8_t * resp;
-    tem_t tem;
    
     /**/
     if ( tlen == 0 )
@@ -610,7 +424,6 @@ void  task_set_rem_tem( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 {
     int  iret;
     uint8_t * resp;
-    tem_t tem;
    
     /**/
     if ( tlen == 0 )
@@ -632,15 +445,13 @@ void  task_set_rem_tem( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
     resp = evbuffer_pullup( pctx->pbuf, SET_RSP_LEN );
   
   
-   iret = util_check_settem_resp( resp, SET_RSP_LEN );
+    iret = util_check_settem_resp( resp, SET_RSP_LEN );
     if ( 0 != iret )
     {
        gth_task_fini( pctx );
         syslog( LOG_CRIT, "set  rem  tem fail" );
         return;
     }
-	
-	
 	
     syslog( LOG_CRIT, "set tem, success" );
 	printf("set tem\n");
@@ -654,7 +465,6 @@ void  task_set_time( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 {
     int  iret;
     uint8_t * resp;
-    tem_t tem;
    
     /**/
     if ( tlen == 0 )
@@ -769,11 +579,12 @@ void  task_read_rem_tem( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
     }
 	printf("Remote = %d\n",resp[3]);
 
-			tem.attr = CB_ATTR_REM;
-			tem.data = resp[3];
-			send_tem_to_uloop(pctx->sv[0],tem);
-			
-   			temp_write_to_ini("/etc/CB/Remote.ini",resp[3],"Remote");
+	tem.attr = CB_ATTR_REM;
+	tem.data = resp[3];
+	send_tem_to_uloop(pctx->sv[0],tem);
+	
+    temp_write_to_ini("/etc/CB/Remote.ini",resp[3],"Remote");
+    
     /**/
     syslog( LOG_CRIT, "wakeup, success" );
 	printf("wakeup\n");
@@ -785,6 +596,7 @@ void  task_read_rem_tem( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 /**/
 void  task_read_tem( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
 {
+    uint8_t buf_rem[READ_REQ_LEN]= {0XFF,0XAA,0X00,0X32,0X01,0XEE};
     int  iret;
     uint8_t * resp;
 	tem_t   tem;
@@ -809,7 +621,7 @@ void  task_read_tem( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
     resp = evbuffer_pullup( pctx->pbuf, READ_RSP_LEN );
    
   
-   iret = util_check_readtem_resp( resp, READ_RSP_LEN );
+    iret = util_check_readtem_resp( resp, READ_RSP_LEN );
     if ( 0 != iret )
     {
         return;
@@ -828,17 +640,16 @@ void  task_read_tem( gthrd_context_t * pctx, int tlen, uint8_t * pdat )
     evbuffer_drain( pctx->pbuf, iret + 1 );
     
     gth_task_init( pctx, task_read_rem_tem );
-    gth_task_active( pctx, READ_REQ_LEN, pctx->buf_rem, 6000 );
-
-
+    gth_task_active( pctx, READ_REQ_LEN, buf_rem, 6000 );
     return;
     
 }
 
 
-int read_tem(gthrd_context_t * pctx)
+int  gthrd_spawn_get_tem(gthrd_context_t * pctx)
 {
-	
+    uint8_t buf_read[READ_REQ_LEN] = {0xFF,0XAA,0X01,0X00,0X01,0XEE};
+    
 	/**/
 	if ( NULL != pctx->tfunc )
 	{
@@ -848,33 +659,17 @@ int read_tem(gthrd_context_t * pctx)
     /**/
     evbuffer_drain( pctx->pbuf, 999999 );    
     gth_task_init( pctx, task_read_tem );
-    gth_task_active( pctx, READ_REQ_LEN, pctx->buf_read, 6000 );
+    gth_task_active( pctx, READ_REQ_LEN, buf_read, 6000 );
     return 0;
 
 }
 
-int read_rem_tem(gthrd_context_t * pctx)
-{
-	
-	
-	/**/
-	if ( NULL != pctx->tfunc )
-	{
-	    syslog( LOG_CRIT, "spawn task, but func is not null" );
-	    return 1;
-	}
-    /**/
-    evbuffer_drain( pctx->pbuf, 999999 );    
-    gth_task_init( pctx, task_read_rem_tem );
-    gth_task_active( pctx, READ_REQ_LEN, pctx->buf_rem, 6000 );
-    return 0;
 
-}
 
-int get_ctrl_status(gthrd_context_t * pctx)
+int  gthrd_spawn_get_ctrl_status(gthrd_context_t * pctx)
 {
-	
-	
+    uint8_t buf_stat[GET_CTRL_STAT] ={0XFF,0XAA,0X01,0X03,0X01,0XEE};
+
 	/**/
 	if ( NULL != pctx->tfunc )
 	{
@@ -884,15 +679,19 @@ int get_ctrl_status(gthrd_context_t * pctx)
     /**/
     evbuffer_drain( pctx->pbuf, 999999 );    
     gth_task_init( pctx, task_get_stat );
-    gth_task_active( pctx, GET_CTRL_STAT, pctx->buf_stat, 6000 );
+    gth_task_active( pctx, GET_CTRL_STAT, buf_stat, 6000 );
     return 0;
 
 }
 
 
-int  gthrd_inter_spawn_task( gthrd_context_t * pctx )
+int  gthrd_spawn_set_target_tem( gthrd_context_t * pctx, uint32_t target_tem )
 {
-	
+    uint8_t buf_set[SET_REQ_LEN] = {0xFF,0xBB,0x00,0x01,0x01,0x28,0xEE};
+
+    /**/
+    buf_set[5] = (uint8_t)( target_tem & 0xFF);
+		
 	/**/
 	if ( NULL != pctx->tfunc )
 	{
@@ -902,13 +701,18 @@ int  gthrd_inter_spawn_task( gthrd_context_t * pctx )
     /**/
     evbuffer_drain( pctx->pbuf, 999999 );    
     gth_task_init( pctx, task_set_tem );
-    gth_task_active( pctx, SET_REQ_LEN, pctx->buf_set, 6000 );
+    gth_task_active( pctx, SET_REQ_LEN, buf_set, 6000 );
     return 0;
 }
 
-int  gthrd_set_rem_tem( gthrd_context_t * pctx )
+
+int  gthrd_spawn_set_rem_tem( gthrd_context_t * pctx, uint32_t rem_tem )
 {
-	
+    uint8_t buf_set_rem[SET_REM_LEN] = {0xFF,0xBB,0x00,0x32,0x01,0x28,0xEE};
+
+    /**/
+    buf_set_rem[5] = (uint8_t)(rem_tem & 0xFF);
+
 	/**/
 	if ( NULL != pctx->tfunc )
 	{
@@ -918,13 +722,18 @@ int  gthrd_set_rem_tem( gthrd_context_t * pctx )
     /**/
     evbuffer_drain( pctx->pbuf, 999999 );    
     gth_task_init( pctx, task_set_rem_tem );
-    gth_task_active( pctx, SET_REM_LEN, pctx->buf_set_rem, 6000 );
+    gth_task_active( pctx, SET_REM_LEN, buf_set_rem, 6000 );
     return 0;
 }
 
-int  gthrd_set_ctrl_mode( gthrd_context_t * pctx )
+
+int  gthrd_spawn_set_ctrl_mode( gthrd_context_t * pctx, uint32_t ctrl_mode )
 {
-	
+    uint8_t buf_ctrl_mode[SET_CTR_MOD] = {0xFF,0xBB,0x00,0x33,0x01,0x00,0xEE};
+
+    /**/
+    buf_ctrl_mode[5] = (uint8_t)(ctrl_mode & 0xFF);
+    
 	/**/
 	if ( NULL != pctx->tfunc )
 	{
@@ -934,14 +743,22 @@ int  gthrd_set_ctrl_mode( gthrd_context_t * pctx )
     /**/
     evbuffer_drain( pctx->pbuf, 999999 );    
     gth_task_init( pctx, task_set_ctrl_mode );
-    gth_task_active( pctx, SET_CTR_MOD, pctx->buf_ctrl_mode, 6000 );
+    gth_task_active( pctx, SET_CTR_MOD, buf_ctrl_mode, 6000 );
     return 0;
 }
 
 
-int  set_time( gthrd_context_t * pctx )
+int  gthrd_spawn_set_time( gthrd_context_t * pctx, uint32_t hour, uint32_t min )
 {
-	
+    uint8_t buf_time[SET_TIM_LEN] = {0xFF,0xBB,0x00,0x02,0x02,0x00,0x00,0xEE};
+
+    /**/
+    buf_time[6] = (uint8_t)(hour & 0xFF);
+    buf_time[5] = (uint8_t)(min & 0xFF);
+
+    /**/
+    printf( "case hour =%d\n min = %d\n", buf_time[5], buf_time[6] );	
+    
 	/**/
 	if ( NULL != pctx->tfunc )
 	{
@@ -951,8 +768,9 @@ int  set_time( gthrd_context_t * pctx )
     /**/
     evbuffer_drain( pctx->pbuf, 999999 );    
     gth_task_init( pctx, task_set_time );
-    gth_task_active( pctx, SET_TIM_LEN, pctx->buf_time, 6000 );
+    gth_task_active( pctx, SET_TIM_LEN, buf_time, 6000 );
     return 0;
+    
 }
 
 
@@ -1016,12 +834,12 @@ int  gthrd_inter_create_evbuf( gthrd_context_t * pctx, int sock )
     struct bufferevent * pevbuf;
 
     pevbuf = bufferevent_socket_new( pctx->pevbase, (evutil_socket_t)sock, BEV_OPT_DEFER_CALLBACKS );
-    if ( NULL )
+    if ( NULL == pevbuf )
     {
         return 1;
     }
 
-    bufferevent_setcb( pevbuf, gthrd_inter_data_cbk, NULL, gthrd_inter_event_cbk, (void *)pctx );
+    bufferevent_setcb( pevbuf, gth_task_data_cbk, NULL, gthrd_inter_event_cbk, (void *)pctx );
     bufferevent_enable( pevbuf, EV_READ | EV_WRITE );
     
     /**/
@@ -1030,118 +848,133 @@ int  gthrd_inter_create_evbuf( gthrd_context_t * pctx, int sock )
 }
 
 
-
-void  gthrd_inter_dgram_evt( evutil_socket_t ufd, short event, void * parg )
+void  gthrd_inter_check_new( gthrd_context_t * pctx )
 {
-    gthrd_context_t * pctx;
-
-    /**/
-    pctx = (gthrd_context_t *)parg;
+    int  iret;
+    notify_msg_t * pmsg;
+    int  tlen;
     
     /**/
-    pctx->pintf->pkti_try_run( pctx->dgctx );
-    return;
-}
-
-
-void  gthrd_inter_dgram_cbk( intptr_t arg, int tlen, void * pdat )
-{
-    gthrd_context_t * pctx;
-    notify_msg_t * pmsg;
-
-    /**/
-    pctx = (gthrd_context_t *)arg;
-    pmsg = (notify_msg_t *)pdat;
-
-    /**/
-    switch ( pmsg->type )
+    if ( NULL != pctx->tfunc )
     {
-    case 0x11111111:
-        pctx->mid = pmsg->value.mid;
-		pctx->buf_set[5] = (uint8_t)((pctx->mid) & 0xFF);
-		if ( NULL != pctx->pevbuf )
-			{
-				gthrd_inter_spawn_task( pctx );
-			}
-        break;
-        
-    case 0x22222222:
+        return;
+    }
+
+    /**/
+    iret = msq_dequeue( pctx->mqctx, (void **)&pmsg, &tlen );
+    if ( 0 != iret )
+    {
+        return;
+    }
+
+    /* new accept sock. */
+    if ( pmsg->type == 0x22222222 )
+    {
         if ( NULL != pctx->pevbuf )
         {
             gth_task_fini( pctx );
             gthrd_inter_delete_evbuf( pctx );
         }
-
+        
         /**/
         gthrd_inter_create_evbuf( pctx, pmsg->value.sock );
-        gthrd_inter_spawn_task( pctx );
-        break;
 
-    case 0x33333333:
-        if ( NULL == pctx->pevbuf )
+        /**/
+        iret = msq_dequeue( pctx->mqctx, (void **)&pmsg, &tlen );
+        if ( 0 != iret )
         {
-            break;
-        }
-        
-        syslog( LOG_CRIT, "gas_meter try start " );
-        gthrd_inter_spawn_task( pctx );
-        break;
-	case 0x44444444:
-		//util_patch_read_buf( pctx->buf_read, pmsg->value.mid );
-		if ( NULL != pctx->pevbuf )
-			{
-				read_tem( pctx );
-			}
-        break;
-	case 0x55555555:
-		if ( NULL != pctx->pevbuf )
-			{
-				read_rem_tem( pctx );
-			}
-        break;
-	case 0x66666666:
-		pctx->hour= pmsg->hour;
-		pctx->min= pmsg->min;
-		pctx->buf_time[6] = (uint8_t)((pctx->hour) & 0xFF);
-		pctx->buf_time[5] = (uint8_t)((pctx->min) & 0xFF);
-		printf("case hour =%d\n min = %d\n",pctx->buf_time[5],pctx->buf_time[6]);
-		if ( NULL != pctx->pevbuf )
-			{
-				set_time( pctx );
-			}
-        break;
-	case 0x77777777:
-		if ( NULL != pctx->pevbuf )
-			{
-				get_ctrl_status( pctx );
-			}
-        break;
-	case 0x88888888:
-      	         pctx->rem_tem = pmsg->rem_tem;
-		pctx->buf_set_rem[5] = (uint8_t)((pctx->rem_tem) & 0xFF);
-		if ( NULL != pctx->pevbuf )
-			{
-				gthrd_set_rem_tem( pctx );
-			}
-        break;
-        case 0x99999999:
-      	         pctx->ctrl_mode= pmsg->ctrl_mode;
-		pctx->buf_ctrl_mode[5] = (uint8_t)((pctx->ctrl_mode) & 0xFF);
-		if ( NULL != pctx->pevbuf )
-			{
-				gthrd_set_ctrl_mode( pctx );
-			}
-        break;
-    default:
-        break;
+            return;
+        }     
     }
     
     /**/
-#if 0
-    dump_hex( pdat, tlen );
-#endif
+    if ( NULL == pctx->pevbuf )
+    {
+        return;
+    }
+    
+    /**/
+    switch ( pmsg->type )
+    {
+    case 0x11111111:
+        pctx->target_tem = pmsg->value.target_tem;
+		gthrd_spawn_set_target_tem( pctx, pmsg->value.target_tem );
+        break;
+        
+	case 0x44444444:
+	    /* read short and re*/
+		gthrd_spawn_get_tem( pctx );
+        break;
+        
+	case 0x66666666:
+		gthrd_spawn_set_time( pctx, pmsg->hour, pmsg->min );
+        break;
+        
+	case 0x77777777:
+		gthrd_spawn_get_ctrl_status( pctx );
+        break;
+
+	case 0x88888888:
+      	pctx->rem_tem = pmsg->value.rem_tem;
+		gthrd_spawn_set_rem_tem( pctx, pmsg->value.rem_tem );
+        break;
+    
+    case 0x99999999:
+        pctx->ctrl_mode= pmsg->value.ctrl_mode;
+		gthrd_spawn_set_ctrl_mode( pctx, pmsg->value.ctrl_mode );
+        break;
+        
+    default:
+        break;
+    }
 
     return;
+    
+}
+
+
+void  gthrd_inter_dgram_evt( evutil_socket_t ufd, short event, void * parg )
+{
+    int  iret;
+    gthrd_context_t * pctx;
+    uint8_t  tary[200];
+    
+    /**/
+    while (1)
+    {
+        iret = recv( ufd, tary, 200, 0 );
+
+        /**/
+        if ( iret < 0 )
+        {
+            if ( (errno == EAGAIN) || (errno == EWOULDBLOCK) )
+            {
+                break;
+            }
+            else if ( errno == EINTR )
+            {
+                continue;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if ( iret == 0 )
+        {
+            break;
+        }
+
+        /**/
+        
+    }
+    
+    /**/
+    pctx = (gthrd_context_t *)parg;
+    gthrd_inter_check_new( pctx );
+    return;
+    
 }
 
 
@@ -1163,15 +996,7 @@ int  gthrd_init( intptr_t * pret )
     int  iret;
     gthrd_context_t * pctx;
 
-    char buf_set[SET_REQ_LEN] = {0xFF,0xBB,0x00,0x01,0x01,0x28,0xEE};
-    char buf_read[READ_REQ_LEN] = {0xFF,0XAA,0X01,0X00,0X01,0XEE};
-    char buf_rem[READ_REQ_LEN]= {0XFF,0XAA,0X00,0X32,0X01,0XEE};
-    char buf_time[SET_TIM_LEN]= {0xFF,0xBB,0x00,0x02,0x02,0x00,0x00,0xEE};
-    char buf_stat[GET_CTRL_STAT] ={0XFF,0XAA,0X01,0X03,0X01,0XEE};
-    char buf_set_rem[SET_REM_LEN] = {0xFF,0xBB,0x00,0x32,0x01,0x28,0xEE};
-    char buf_ctrl_mode[SET_CTR_MOD] = {0xFF,0xBB,0x00,0x33,0x01,0x00,0xEE};
  
-    
     /**/
     pctx = (gthrd_context_t *)malloc( sizeof(gthrd_context_t) );
     if ( NULL == pctx )
@@ -1182,16 +1007,9 @@ int  gthrd_init( intptr_t * pret )
     /**/
     pctx->pevbuf = NULL;
     pctx->tfunc = NULL;
-    pctx->mid = 0;
     pctx->dbg_close_count = 0;
+    pctx->target_tem = 0;    
     
-    memcpy( pctx->buf_set, buf_set, SET_REQ_LEN );
-    memcpy( pctx->buf_read, buf_read, READ_REQ_LEN );
-    memcpy( pctx->buf_rem, buf_rem, READ_REQ_LEN );
-    memcpy( pctx->buf_time, buf_time, SET_TIM_LEN );
-    memcpy( pctx->buf_stat, buf_stat, GET_CTRL_STAT);
-    memcpy( pctx->buf_set_rem, buf_set_rem, SET_REM_LEN);
-	 memcpy( pctx->buf_ctrl_mode, buf_ctrl_mode, SET_CTR_MOD);
     /**/
     pctx->pevbase = event_base_new();
     if ( NULL == pctx->pevbase )
@@ -1200,7 +1018,7 @@ int  gthrd_init( intptr_t * pret )
     }
 
     /**/
-    pctx->pevtmr = evtimer_new( pctx->pevbase, gthrd_inter_timer_cbk, (void *)pctx );
+    pctx->pevtmr = evtimer_new( pctx->pevbase, gth_task_timer_cbk, (void *)pctx );
     if ( NULL == pctx->pevtmr )
     {
         return 3;
@@ -1220,20 +1038,17 @@ int  gthrd_init( intptr_t * pret )
     }
     
     /**/
-    iret = dgram_sock_init( pctx->sv[0], &(pctx->dgctx), &(pctx->pintf) );
-    if ( 0 != iret )
-    {
-        return 6;
-    }
-
-    /**/
-    pctx->pintf->pkti_set_callbk( pctx->dgctx, gthrd_inter_dgram_cbk, (intptr_t)pctx );
-
-    /**/
     pctx->prdevt = event_new( pctx->pevbase, pctx->sv[0], EV_READ|EV_PERSIST, gthrd_inter_dgram_evt, (void *)pctx );
     if ( pctx->prdevt == NULL )
     {
         return 7;
+    }
+
+    /**/
+    iret = msq_init( &(pctx->mqctx) );
+    if ( 0 != iret )
+    {
+        return 8;
     }
     
     /**/
@@ -1284,7 +1099,7 @@ int  gthrd_getstat( intptr_t ctx, char * pstr )
     pctx = (gthrd_context_t *)ctx;
 
     /**/
-    offset = sprintf( pstr, "mid=%d,", pctx->mid );
+    offset = sprintf( pstr, "target_tem=%d,", pctx->target_tem );
     if ( pctx->pevbuf == NULL )
     {
         offset += sprintf( pstr+offset, "sock not connected," );
@@ -1293,14 +1108,15 @@ int  gthrd_getstat( intptr_t ctx, char * pstr )
     {
         offset += sprintf( pstr+offset, "sock is connected," );
     }
-    offset += sprintf( pstr+offset, "close count=%d,", pctx->dbg_close_count );
     
+    offset += sprintf( pstr+offset, "close count=%d,", pctx->dbg_close_count );
     return 0;
     
 }
 
-int get_tem( intptr_t ctx )
-	
+
+
+int  gthrd_get_tem( intptr_t ctx )
 {
 	
 	gthrd_context_t * pctx;
@@ -1311,26 +1127,16 @@ int get_tem( intptr_t ctx )
 
     /**/
     msg.type = 0x44444444;
-	send( pctx->sv[1], &msg, sizeof(msg), 0 );
-    return 0;
-}
 
-int get_rem_tem( intptr_t ctx )
-{
-	gthrd_context_t * pctx;
-    notify_msg_t  msg;
-    
     /**/
-    pctx = (gthrd_context_t *)ctx;
-    
-    /**/
-    msg.type = 0x55555555;
-	send( pctx->sv[1], &msg, sizeof(msg), 0 );
+    msq_enqueue( pctx->mqctx, sizeof(msg), &msg );
+    send( pctx->sv[1], &msg, 4, 0 );
     return 0;
 }
 
 
-int get_ctrl_stat( intptr_t ctx )
+
+int  gthrd_get_ctrl_status( intptr_t ctx )
 {
 	gthrd_context_t * pctx;
     notify_msg_t  msg;
@@ -1340,13 +1146,16 @@ int get_ctrl_stat( intptr_t ctx )
 
     /**/
     msg.type = 0x77777777;
-	send( pctx->sv[1], &msg, sizeof(msg), 0 );
+
+    /**/
+    msq_enqueue( pctx->mqctx, sizeof(msg), &msg );
+    send( pctx->sv[1], &msg, 4, 0 );
     return 0;
 }
 
 
 /* notify meter id change. */
-int  gthrd_notify_mid( intptr_t ctx, uint32_t mid )
+int  gthrd_set_target_tem( intptr_t ctx, uint32_t value )
 {
     gthrd_context_t * pctx;
     notify_msg_t  msg;
@@ -1356,13 +1165,16 @@ int  gthrd_notify_mid( intptr_t ctx, uint32_t mid )
 
     /**/
     msg.type = 0x11111111;
-    msg.value.mid = mid;
+    msg.value.target_tem = value;
+
     /**/
-    send( pctx->sv[1], &msg, sizeof(msg), 0 );
+    msq_enqueue( pctx->mqctx, sizeof(msg), &msg );
+    send( pctx->sv[1], &msg, 4, 0 );
     return 0;
 }
 
-int  set_rem_tem( intptr_t ctx, uint32_t  rem_tem )
+
+int  gthrd_set_rem_tem( intptr_t ctx, uint32_t  rem_tem )
 {
     gthrd_context_t * pctx;
     notify_msg_t  msg;
@@ -1372,13 +1184,16 @@ int  set_rem_tem( intptr_t ctx, uint32_t  rem_tem )
 
     /**/
     msg.type = 0x88888888;
-    msg.rem_tem = rem_tem;
+    msg.value.rem_tem = rem_tem;
+
     /**/
-    send( pctx->sv[1], &msg, sizeof(msg), 0 );
+    msq_enqueue( pctx->mqctx, sizeof(msg), &msg );
+    send( pctx->sv[1], &msg, 4, 0 );
     return 0;
 }
 
-int  set_ctrl_mode( intptr_t ctx, uint32_t  ctrl_mode )
+
+int  gthrd_set_ctrl_mode( intptr_t ctx, uint32_t  ctrl_mode )
 {
     gthrd_context_t * pctx;
     notify_msg_t  msg;
@@ -1388,9 +1203,11 @@ int  set_ctrl_mode( intptr_t ctx, uint32_t  ctrl_mode )
 
     /**/
     msg.type = 0x99999999;
-    msg.ctrl_mode= ctrl_mode;
+    msg.value.ctrl_mode= ctrl_mode;
+
     /**/
-    send( pctx->sv[1], &msg, sizeof(msg), 0 );
+    msq_enqueue( pctx->mqctx, sizeof(msg), &msg );
+    send( pctx->sv[1], &msg, 4, 0 );
     return 0;
 }
 
@@ -1407,8 +1224,10 @@ int  gthrd_set_time( intptr_t ctx, uint32_t hour, uint32_t min )
     msg.type = 0x66666666;
     msg.hour = hour;
 	msg.min = min;
+
     /**/
-    send( pctx->sv[1], &msg, sizeof(msg), 0 );
+    msq_enqueue( pctx->mqctx, sizeof(msg), &msg );
+    send( pctx->sv[1], &msg, 4, 0 );
     return 0;
 }
 
@@ -1426,32 +1245,16 @@ int  gthrd_notify_sock( intptr_t ctx, int sock )
     /**/
     msg.type = 0x22222222;
     msg.value.sock = sock;
-	socketfd = sock;
-    printf("\n******sockfd = %d**********\n",socketfd);
+
+    printf("\n******sockfd = %d**********\n", sock );
     /**/
-    send( pctx->sv[1], &msg, sizeof(msg), 0 );
+    msq_enqueue( pctx->mqctx, sizeof(msg), &msg );
+    send( pctx->sv[1], &msg, 4, 0 );
     return 0;
 
 }
 
 
-
-/* notify meter ever time change. */
-int  gthrd_notify_ever( intptr_t ctx )
-{
-    gthrd_context_t * pctx;
-    notify_msg_t  msg;
-    
-    /**/
-    pctx = (gthrd_context_t *)ctx;
-    
-    /**/
-    //msg.type = 0x33333333;
-    msg.type = 0x44444444;
-    /**/
-    send( pctx->sv[1], &msg, sizeof(msg), 0 );
-    return 0;
-}
 
 
 
