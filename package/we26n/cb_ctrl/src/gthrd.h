@@ -22,7 +22,7 @@ int  gthrd_set_ctrl_mode( intptr_t ctx, uint32_t  ctrl_mode );
 
 
 int  get_cb_id(void);
-char cb_id[200];
+extern char cb_id[200];
 
 
 typedef struct _tag_tem_msg

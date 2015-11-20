@@ -38,7 +38,7 @@
 #define  SET_RSP_LEN 14
 #define  SET_TIM_RSP 14
 
-
+char cb_id[200];
 
 int  temp_write_to_ini( char * path, uint8_t data ,char *name)
 {
@@ -46,14 +46,14 @@ int  temp_write_to_ini( char * path, uint8_t data ,char *name)
     FILE *fp;
     
     devicesstr[0] = 0;
-	get_cb_id();
+	//get_cb_id();
 	printf("cb id =%s\n",cb_id);
     sprintf(&devicesstr[0], "[");
     sprintf(&devicesstr[strlen(devicesstr)], "{");
     sprintf(&devicesstr[strlen(devicesstr)], "\"%s\":\"%d\",",name,data);
 	if( 0 == strcmp( name, "Remote") )
 	{
-		sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"%s\",",cb_id);
+		sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"CB_controller_%s\",",cb_id);
 		sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\",",CB_TYPE);
 		sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"8\"");
 	}

@@ -36,14 +36,14 @@ char  g_mac_addr[200];
 intptr_t  g_gthrd = 0;
 
 
-char cb_id[200];
+//char cb_id[200];
 
 
 
 
 
 /**/
-int  g_intver = 1;
+int  c_intver = 1;
 struct uloop_timeout * g_ptmr = NULL;
 
 /**/
@@ -278,7 +278,7 @@ int  get_cb_id( void )
 }
 
 
-int  get_gas_report_time_config( char * ennconfig, int * pret )
+int  get_cb_report_time_config( char * ennconfig, int * pret )
 {
     int  iret;
     struct uci_context * uci_ctx;
@@ -306,7 +306,7 @@ int  get_gas_report_time_config( char * ennconfig, int * pret )
         if( 0 == strcmp(uci_sec->type, "wifi") )
         {
 
-            value_s = uci_lookup_option_string(uci_ctx, uci_sec, "gas_interval");
+            value_s = uci_lookup_option_string(uci_ctx, uci_sec, "cb_controller");
 
             if (value_s)
             {
@@ -329,18 +329,18 @@ int  get_gas_report_time_config( char * ennconfig, int * pret )
 
 
 
-int  get_gas_report_time( int * pret )
+int  get_cb_report_time( int * pret )
 {
     int  iret;
 
     /**/
-    iret = get_gas_report_time_config( "ennconfig", pret );
+    iret = get_cb_report_time_config( "ennconfig", pret );
     if ( iret == 0)
     {
         return 0;
     }
 
-    iret =  get_gas_report_time_config( "ennconfig_ever", pret );
+    iret =  get_cb_report_time_config( "ennconfig_ever", pret );
     if ( iret == 0 )
     {
         return 0;
@@ -595,7 +595,7 @@ static int CB_getstat( struct ubus_context *ctx, struct ubus_object *obj,
     blobmsg_add_string( &b, "return",  "ok" );
 
     /**/
-    sprintf( tstr, "interval=%d, accept=%d, ipadr=%s", g_intver, g_con_count, g_con_ipstr );
+    sprintf( tstr, "interval=%d, accept=%d, ipadr=%s", c_intver, g_con_count, g_con_ipstr );
     blobmsg_add_string( &b, "global",  tstr );
 
     /**/
@@ -609,9 +609,33 @@ static int CB_getstat( struct ubus_context *ctx, struct ubus_object *obj,
 }
 
 
+static int CB_change_id( struct ubus_context *ctx, struct ubus_object *obj,
+                struct ubus_request_data *req, const char *method,
+                struct blob_attr *msg )
+{
+
+    static struct blob_buf b;
+    char  tstr[1024];
+    
+    /**/
+    printf( "change id\n" );
+    
+    /* send reply */
+    blob_buf_init( &b, 0 );
+    blobmsg_add_string( &b, "return",  "ok" );
+
+    get_cb_id();
+    /**/
+    ubus_send_reply( ctx, req, b.head );
+    return UBUS_STATUS_OK;
+    
+}
+
+
 static const struct ubus_method CB_methods[] = {
     //UBUS_METHOD_NOARG( "notify",  CB_notify ,CB_policy ),
      UBUS_METHOD_NOARG( "getstat",  CB_getstat ),
+     UBUS_METHOD_NOARG( "change_id",  CB_change_id ),
     UBUS_METHOD( "ctrlcmd",  CB_notify ,CB_policy ),
 };
 
@@ -833,7 +857,7 @@ void  test_timer_cbk( struct uloop_timeout * ptmr )
 {
     /**/    
     gthrd_get_tem( g_gthrd );
-    uloop_timeout_set( ptmr, 50000 );
+    uloop_timeout_set( ptmr, c_intver*60000 );
     return;
 }
 
@@ -874,13 +898,13 @@ int  main( void )
 	get_cb_id();
     
     /**/
-    iret = get_gas_report_time( &temp );
+    iret = get_cb_report_time( &temp );
     if ( 0 != iret )
     {
         temp = 1;
     }
-    g_intver = temp;
-    syslog( LOG_CRIT, "interval, %d", g_intver );
+    c_intver = temp;
+    syslog( LOG_CRIT, "interval, %d", c_intver );
     
 
     /**/
@@ -929,7 +953,7 @@ int  main( void )
         uloop_done();
         return 4;
     }
-    printf("8888\n");
+   
     /**/
     uloop_run();
     uloop_done();
