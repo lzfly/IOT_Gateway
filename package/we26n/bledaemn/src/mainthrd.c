@@ -34,26 +34,30 @@ uint16_t  crc16_ccitt( int tlen, uint8_t * pdata );
 /* pret data len : 8 + tlen */
 static void  meter_encode( uint8_t addr, uint16_t cmd, int tlen, uint8_t * pdat, uint8_t * pret )
 {
-    uint16_t  tcrc;
+    int  i;
+    uint8_t  tcrc;
 
     /**/
-    pret[0] = 0xfe;
-    pret[1] = addr;
-    pret[2] = (uint8_t)(cmd >> 8);
-    pret[3] = (uint8_t)cmd;
-    pret[4] = (uint8_t)tlen;
-
+    pret[0] = 0x68;
+    pret[1] = 0x50;
+    pret[2] = (uint8_t)cmd;
+    
     /**/
     if ( tlen > 0 )
     {
-        memcpy( &(pret[5]), pdat, tlen );
+        memcpy( &(pret[3]), pdat, tlen );
     }
-
+    
     /* crc */
-    tcrc = crc16_ccitt( 5+tlen, pret );
-    pret[5+tlen] = (uint8_t)(tcrc >> 8);
-    pret[5+tlen+1] = (uint8_t)tcrc;
-    pret[5+tlen+2] = 0xf5;
+    tcrc = 0;
+    for ( i=0; i<tlen+3; i++ )
+    {
+        tcrc += pret[i];
+    }
+    
+    /**/
+    pret[3+tlen] = tcrc;
+    pret[3+tlen+1] = 0x16;
     return;
     
 }
@@ -61,38 +65,20 @@ static void  meter_encode( uint8_t addr, uint16_t cmd, int tlen, uint8_t * pdat,
 
 static int  meter_check( uint8_t addr, uint16_t cmd, int tlen, uint8_t * pdat )
 {
-    uint16_t  tcrc;
-    uint16_t  temp;
 
     /**/
-    if ( (pdat[0] != 0xCE) || (pdat[tlen-1] != 0xC5) )
+    if ( (pdat[0] != 0x68) || (pdat[1] != 0x50) )
     {
         return 1;
     }
 
     /**/
-    tcrc = crc16_ccitt( tlen-3, pdat );
-    temp = pdat[tlen-3];
-    temp = (temp << 8) | pdat[tlen-2];
-    if ( tcrc != temp )
+    if ( pdat[tlen-1] != 0x16 )
     {
         return 2;
     }
 
     /**/
-    if ( addr != pdat[1] )
-    {
-        return 3;
-    }
-
-    /**/
-    temp = pdat[2];
-    temp = (temp << 8) | pdat[3];
-    if ( cmd != temp )
-    {
-        return 4;
-    }
-    
     return 0;
     
 }
@@ -183,7 +169,7 @@ int  mthrd_exch_waitnotify( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat
             return 0;
         }
 
-        if ( (pdat[0] != 0x32) || (pdat[1] != 0x00) )
+        if ( (pdat[0] != 0x28) || (pdat[1] != 0x00) )
         {
             mthrd_commn_resp_code( pexc->pctx, &(pexc->treq), 0xEE08 );
             return 0;        
@@ -197,7 +183,7 @@ int  mthrd_exch_waitnotify( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat
         {
             printf( "offs too large\n ");
             mthrd_commn_resp_code( pexc->pctx, &(pexc->treq), 0xEE09 );
-            return 0;        
+            return 0;
         }
 
         /**/
@@ -295,17 +281,16 @@ void  mthrd_start_exchage( mthrd_context_t * pctx, m4bus_req_t * preq )
     memcpy( &(pexc->treq), preq, sizeof(m4bus_req_t) );
 
     /**/
-    pexc->tpad[0] = 0x32;
+    pexc->tpad[0] = 0x25;
     pexc->tpad[1] = 0x00;
     meter_encode( preq->addr, preq->cmd, preq->tlen, preq->tary, &(pexc->tpad[2]) );
     
     /**/
-    task_active( tctx, CMD_WRT_NRSP, 2 + 8 + preq->tlen, pexc->tpad, mthrd_exch_waitwrite, 2000 );
+    task_active( tctx, CMD_WRT_NRSP, 2 + 5 + preq->tlen, pexc->tpad, mthrd_exch_waitwrite, 2000 );
     return;
 
-
-    return;
 }
+
 
 typedef struct _tag_task_connect
 {
@@ -458,7 +443,7 @@ int  mthrd_conn_waitconn( intptr_t tctx, uint8_t cmd, int tlen, uint8_t * pdat )
         }
 
         /**/
-        tary[0] = 0x33;
+        tary[0] = 0x29;
         tary[1] = 0x00;
         
         /**/

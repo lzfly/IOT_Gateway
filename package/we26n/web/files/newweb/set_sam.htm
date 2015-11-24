@@ -1,0 +1,157 @@
+
+
+<!doctype html>
+<!-- lights a{ float:left; padding-left:380px; padding-top:10px;text-decoration:none; font-size:30px;}-->
+
+<html>
+<head>
+<style> 
+body{ margin:auto;background-color:#1c69bb;}
+img{display:block};
+a{ display:block; text-decoration:none; font-family:"微软雅黑";}
+.big_box{width:100%;height:auto;position:absolute;top:50%;margin-top:-325px;}
+.big_top{ width:1196px;margin:auto;overflow:hidden; padding-top:5px;}
+.big_top img,.big_top a{ float:left;padding-bottom:15px;text-decoration:none;}
+.big_top a{font-size:26px; text-decoration:none;  color:white;font-family:"微软雅黑"; }
+
+.button{margin-left:960px;color:white;padding-top:10px;}
+.big_top p{ padding-top:20px;color:#FFF; font-size:12px;font-family:"微软雅黑";}
+
+.nav{ width:100%;line-height:50px; background-color:#8eb3db;overflow:hidden;}
+.nav a{ float:left; padding-left:580px; padding-top:5px;text-decoration:none; font-size:26px;color:#ffffff;font-family:"微软雅黑";}
+.title{ float:left; padding-left:580px; padding-top:10px;padding-bottom:10px;text-decoration:none; font-size:20px;color:#ffffff;font-family:"微软雅黑";}
+
+.big_bottom{width:1198px;background-color:#226fc0;margin:auto;border-top:1px solid #407CB8; overflow:hidden;}
+.bottom{ height:auto background-color:#226fc0; margin:auto;float:left;padding-left:30px;padding-top:20px;}
+.bottom p{font-size:16px; color:#ffffff;font-family:"微软雅黑";}
+
+
+table{
+	width:100%;
+}
+
+table, th, td {
+	border: 1px solid #8eb3db;
+	border-collapse: collapse;
+	padding: 5px;
+}
+
+th,td{
+	text-align: left;color:#CCC; 
+}
+td.img{
+   float;
+}
+
+</style>
+<meta charset="utf-8">
+<title>wifi设备</title>
+
+<script type="text/javascript" src="<%=resource%>/js/jquery-1.8.1.min.js"></script>
+
+		<script type="text/javascript" src="<%=resource%>/js/jquery.rotate.js"></script>
+
+		<script type="text/javascript" src="<%=resource%>/js/modernizr-1.5.min.js"></script>
+
+		<script type="text/javascript" src="<%=resource%>/js/prefixfree.min.js"></script>
+
+		<script type="text/javascript" src="<%=resource%>/js/jquery.form.js"></script>
+
+		<script type="text/javascript" src="<%=resource%>/js/tip.js"></script>
+
+		<script type="text/javascript">
+
+		var resPath = "<%=resource%>" + "/images/";
+</script>
+	
+
+</head>
+
+<body>
+
+    
+	<div class="big_bottom">
+		<div class="nav">
+        	<a>数据上报时间设置</a>
+        </div>
+    
+    
+  
+<div class="bottom">
+   <form action="<%= luci.dispatcher.build_url("admin/jianyou_set/set_ble") %>" method="post">
+		<p>蓝牙气表：</p>
+        <input type="text"  name="tm"/>
+       <input type="submit"  value="设置" font-size:14px;font-family:"微软雅黑";" onClick="add1()"/>
+	   <p id="deom"></p>
+   </form>
+</div>
+
+<div class="bottom">
+   <form action="<%= luci.dispatcher.build_url("admin/jianyou_set/set_wifi") %>" method="post">
+		<p>wifi气表：</p>
+        <input type="text"  name="tm"/>
+       <input type="submit"  value="设置" font-size:14px;font-family:"微软雅黑";" onClick="add2()"/>
+	   <p id="deom"></p>
+   </form>
+</div>
+
+<div class="bottom">
+   <form action="<%= luci.dispatcher.build_url("admin/jianyou_set/set_power") %>" method="post">
+		<p>电表：</p>
+        <input type="text"  name="tm"/>
+       <input type="submit"  value="设置" font-size:14px;font-family:"微软雅黑";" onClick="add2()"/>
+	   <p id="deom"></p>
+   </form>
+</div>
+
+<div class="bottom">
+   <form action="<%= luci.dispatcher.build_url("admin/jianyou_set/set_water") %>" method="post">
+		<p>水表：</p>
+        <input type="text"  name="tm"/>
+       <input type="submit"  value="设置" font-size:14px;font-family:"微软雅黑";" onClick="add2()"/>
+	   <p id="deom"></p>
+   </form>
+</div>
+
+<div class="bottom">
+   <form action="<%= luci.dispatcher.build_url("admin/jianyou_set/set_heat") %>" method="post">
+		<p>热表：</p>
+        <input type="text"  name="tm"/>
+       <input type="submit"  value="设置" font-size:14px;font-family:"微软雅黑";" onClick="add2()"/>
+	   <p id="deom"></p>
+   </form>
+</div>
+
+
+<script>
+    function add1()
+	{
+	//document.write("保存成功");
+	document.getElementById("deom").innerHTML="保存成功";
+	}
+	function add2()
+	{
+	//document.write("保存成功");
+	document.getElementById("deom").innerHTML="设置成功";
+	}
+		function add()
+	{
+	//document.write("保存成功");
+	document.getElementById("deom").innerHTML="添加成功";
+	}
+	function del()
+	{		 
+	//document.write("保存成功");
+	document.getElementById("deom").innerHTML="删除成功";
+	}
+	
+	if(j==0){
+	   document.getElementById("title1").style.display="none";
+	}
+	if(k==0){
+	   document.getElementById("title2").style.display="none";
+	}
+</script>
+</div>
+</body>
+</html>

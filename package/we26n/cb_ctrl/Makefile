@@ -7,7 +7,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=CB_CTRL
+PKG_NAME:=cb_ctrl
 PKG_VERSION:=0.1.1
 PKG_RELEASE:=1
 
@@ -16,16 +16,16 @@ PKG_USE_MIPS16:=0
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/CB_CTRL
+define Package/cb_ctrl
   SECTION:=we26n
   CATEGORY:=WE26N
-  TITLE:=test program for CB_CTRL
+  TITLE:=test program for cb_ctrl
   MAINTAINER:=dwz <weizheng.duan@jianluyou.com>
   DEPENDS:=+libpthread +libubox +libubus +libuci +libevent2-core 
 endef
 
-define Package/CB_CTRL/description
-  test program for CB_CTRL 
+define Package/cb_ctrl/description
+  test program for cb_ctrl 
 endef
 
 define Build/Prepare
@@ -44,13 +44,13 @@ define Build/Compile
 	-f test.mk
 endef
 
-define Package/CB_CTRL/install
+define Package/cb_ctrl/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/CB_CTRL $(1)/usr/bin/CB_CTRL
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/cb_ctrl $(1)/usr/bin/cb_ctrl
 	$(INSTALL_DIR)  $(1)/etc/CB/
 	$(CP) ./CB/  $(1)/etc/
 	
 endef
 
-$(eval $(call BuildPackage,CB_CTRL))
+$(eval $(call BuildPackage,cb_ctrl))
 

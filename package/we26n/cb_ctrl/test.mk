@@ -1,5 +1,5 @@
 
-target := CB_CTRL
+target := cb_ctrl
 
 all : $(target)
 .PHONY : clean all

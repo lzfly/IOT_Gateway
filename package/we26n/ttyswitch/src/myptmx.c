@@ -50,7 +50,6 @@ void  ptmx_read_cbk( evutil_socket_t ufd, short event, void * parg )
     /**/
     pctx = (ptmx_context_t *)parg;
 
-printf( "ptmx read event %d\n", event  );
 
     /**/
     while(1)
@@ -67,16 +66,11 @@ printf( "ptmx read event %d\n", event  );
 
                 {
                     int  flags;
-                
-                    printf( "ptmx, bbbb flags\n" );
                     ioctl( pctx->mfd, TIOCGPTN, &flags );
-                    printf( "ptmx, cccc flags = %x\n", flags );
                 }
 	    	
-	    	    printf( "%d:%s\n", errno, strerror(errno) );
 
-
-
+                printf( "slave close?? \n" );
 #if 0
 while(1)	    	    
 {
@@ -84,7 +78,7 @@ while(1)
 }
 #endif
 
-		        return;	       
+		        return;
 		    }
 		}
         
@@ -362,6 +356,67 @@ int  ptmx_set_callbk( intptr_t ctx, ptmx_cbk_func func, intptr_t arg )
     pctx->func = func;
     pctx->arg = arg;
     return 0;
+}
+
+
+
+int  ptmx_pktmode( intptr_t ctx, int mode )
+{
+    ptmx_context_t * pctx;
+    
+    
+    /**/
+    pctx = (ptmx_context_t *)ctx;
+
+    /**/
+    mode = mode != 0? 1: 0;
+    
+    /**/
+    ioctl( pctx->mfd, TIOCPKT, &mode );
+    return 0;
+
+}
+
+
+
+static const uint32_t baud_table[31] = {
+	0, 50, 75, 110, 134, 150, 200, 300, 
+	600, 1200, 1800, 2400, 4800, 9600, 19200, 38400, 
+	57600, 115200, 230400, 460800,	500000, 576000, 921600, 1000000, 
+	1152000, 1500000, 2000000,	2500000, 3000000, 3500000, 4000000
+};
+
+
+int  ptmx_getspeed( intptr_t ctx, uint32_t * pspeed )
+{
+    ptmx_context_t * pctx;
+	struct termios  settings;
+	uint32_t  cbaud;
+	
+    
+    /**/
+    pctx = (ptmx_context_t *)ctx;
+    
+    memset( &settings, 0, sizeof(settings));
+
+    tcgetattr( pctx->mfd, &settings );
+
+	cbaud = settings.c_cflag & CBAUD;
+
+	if ( 0 != (cbaud & CBAUDEX) ) 
+	{
+		cbaud &= ~CBAUDEX;
+
+		if (cbaud < 1 || (cbaud + 15) > 31)
+			cbaud = 0;
+		else
+			cbaud += 15;
+	}
+
+    /**/
+	*pspeed = baud_table[cbaud];
+	return 0;
+	
 }
 
 

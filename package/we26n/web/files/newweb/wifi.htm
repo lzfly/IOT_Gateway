@@ -173,9 +173,6 @@ td.img{
         </div>
     <script type="text/javascript">
     
-    
-  
-	        var deviceid = "CB_controller_5EC5D4B5009540000001";
 		
 			
 			//document.write('<p class="deom" id="deom1"></p>');
@@ -187,6 +184,7 @@ td.img{
 	var i=0;         
 	var j=0;
 	var k=0;
+	
 	//气表
 	document.write('<div class="title" id="title1">已有设备</div>');
 	for(i=0;i<gasArr.length;i++){  
@@ -199,7 +197,6 @@ td.img{
 		var temp = gasData["Short-range"];
 		var tem_rem =gasData["Remote"];
 		
-
 		if(status!="-1")
 		{
 		    if(sss == "5")
@@ -225,13 +222,13 @@ td.img{
 			    document.write("<table>");
 			    document.write("<tr>") ;
 			    document.write("<td><center>壁挂炉"+"</td>");
-			    document.write("<td style='width:250px'><center>"+deviceid+"</td>"); 
+			    document.write("<td style='width:250px'><center>"+devId+"</td>"); 
 			    document.write("</form>");
 			      document.write("<td style='width:250px'><center>"+tem_rem+"/"+temp+"</td>");  
 			   
 		
 			    document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/CB_del") %>"  >');
-			      document.write('<input class="id" type="hidden"  name="deviceid" value="'+deviceid+'"/>');
+			      document.write('<input class="id" type="hidden"  name="deviceid" value="'+devId+'"/>');
 			      document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
 			     document.write('<td><center><button onclick="del()">删除</button></td>');
 			    document.write("</form>");
@@ -280,11 +277,11 @@ td.img{
 			    document.write("<table>");
 			    document.write("<tr>") ;
 			    document.write("<td><center>壁挂炉"+"</td>");
-			    document.write("<td style='width:250px'><center>"+deviceid+"</td>"); 
+			    document.write("<td style='width:250px'><center>"+devId+"</td>"); 
 			    document.write("</form>");
 			    document.write("<td style='width:250px'><center>"+tem_rem+"/"+temp+"</td>"); 
 			    document.write('<form method="post" id="lightSet" action="<%= luci.dispatcher.build_url("admin/newweb/CB_add") %>"  >');
-			     document.write('<input class="id" type="hidden"  name="deviceid" value="'+deviceid+'"/>');
+			     document.write('<input class="id" type="hidden"  name="deviceid" value="'+devId+'"/>');
 			     document.write('<input class="type" type="hidden"  name="devicetype" value="'+devicetype+'"/>');
 			     document.write('<td><center><button onclick="add()">添加</button></td>');
 			    document.write("</form>");

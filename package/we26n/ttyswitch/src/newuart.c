@@ -338,8 +338,6 @@ int  nuart_trysend( nuart_context_t * pctx, int tlen, uint8_t * pdat )
     int  iret;
     
     /**/
-    printf( "write tlen = %d\n", tlen );
-    
     iret = write( pctx->ufd, pdat, tlen );
     if ( iret >= 0 )
     {
