@@ -564,7 +564,7 @@ static int CB_notify( struct ubus_context *ctx, struct ubus_object *obj,
 		
 	case CB_SET_CTL_MOD:
 		gthrd_set_ctrl_mode( g_gthrd, data );
-		break;
+		break;   
 	}
 	
     blob_buf_init( &b, 0 );
