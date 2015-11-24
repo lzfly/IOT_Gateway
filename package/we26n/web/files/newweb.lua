@@ -344,14 +344,14 @@ function wireless_update()
     local limit = luci.http.formvalue("dhcp_end")
     local ipaddr = luci.http.formvalue("lan_ipaddr") 
 	local winame = luci.http.formvalue("winame")
-    
+   --[[ 
     local slegal = start
     slegal = slegal .. "."
     local sslegal =  Split(slegal , ".")
     if sslegal[1] =="" or ssslegal[1] >= 255 then
         return;
     end 
-    
+    ]]--
 	if not winame or winame == "" then
 		winame = x:add("wireless", "wifi-iface")
 		x:set("wireless", winame, "device", "mt7620")
