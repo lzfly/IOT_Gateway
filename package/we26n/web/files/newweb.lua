@@ -13,7 +13,7 @@ conn = ubus.connect();
 if not conn then
 	error("Failed to connect to ubusd");
 end
-local macReader = io.popen("eth_mac r lan");
+local macReader = io.popen("eth_mac r wifi");
 local macAddr = macReader:read("*all");
 macAddr = string.gsub(macAddr, ":", "");
 macAddr = "we26n_" .. macAddr;
@@ -103,7 +103,7 @@ function index()
 		entry({"admin","newweb","sensor_item"},call("sensor_item"),nil)
 		entry({"admin","newweb","alertor_item"},call("alertor_item"),nil)
 		entry({"admin","newweb","pair470_control"},call("pair470_control"),nil)
-		
+		entry({"admin","newweb","pair470_getstate"},call("pair470_getstate"),nil)
 		entry({"admin","newweb","CB_add"},call("CB_add"),nil)
 		entry({"admin","newweb","CB_del"},call("CB_del"),nil)
 		entry({"admin","newweb","CB_tem_set"},call("CB_tem_set"),nil)
@@ -270,22 +270,25 @@ end
 
 function pair470_control()
 
-	local result = conn:call("we26n_rfmodbus", "startpair", {});
+	local ret = conn:call("we26n_rfmodbus", "startpair", {});
+	conn:call( "we26n_rfreader","change_peer", {} );
 	
-        luci.http.redirect(luci.dispatcher.build_url("admin/newweb/elewater"))
+    luci.http.prepare_content("text/plain")
+	luci.http.write_json( ret );
+    luci.http.write( nil );
 end
 
-function get_470_state()
+function pair470_getstate()
 
 local ret = conn:call( "we26n_rfmodbus", "getstate", {} );
-	if ret.result == "0" and ret.state == "4" then
-	    luci.http.prepare_content("text/plain")
-	    luci.http.write("pairing ok")
-	else
-	    luci.http.prepare_content("text/plain")
-	    luci.http.write("pair fail")
-	end
 
+    if ret.addr ~= nil then
+	    ret.addr = string.format( "%x:%x:%x:%x:%x:%x", string.byte(ret.addr,1,6) );
+	end
+	
+    luci.http.prepare_content("text/plain")
+	luci.http.write_json( ret );
+    luci.http.write( nil );
 end
 
 
