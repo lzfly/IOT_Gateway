@@ -106,6 +106,28 @@ static int stm32_reset( struct ubus_context *ctx, struct ubus_object *obj,
 }
 
 
+static int stm32_testbb( struct ubus_context *ctx, struct ubus_object *obj,
+                struct ubus_request_data *req, const char *method,
+                struct blob_attr *msg )
+{
+    static struct blob_buf  b;
+    uint8_t  tary[4];
+
+    /**/
+    blob_buf_init( &b, 0 );
+    blobmsg_add_string( &b, "return",  "ok" );
+
+    tary[0] = 0xBB;
+    tary[1] = 0x0;
+    
+    myuart_send( g_uartctx, 2, tary );
+
+    /**/
+    ubus_send_reply( ctx, req, b.head );
+    return UBUS_STATUS_OK;
+    
+}
+
 
 static int stm32_getver( struct ubus_context *ctx, struct ubus_object *obj,
                 struct ubus_request_data *req, const char *method,
@@ -125,6 +147,7 @@ static int stm32_getver( struct ubus_context *ctx, struct ubus_object *obj,
 
 static const struct ubus_method stm32_methods[] = {
     UBUS_METHOD( "reset",  stm32_reset, reset_policy ),
+    UBUS_METHOD_NOARG( "testbb",  stm32_testbb ),
     UBUS_METHOD_NOARG( "getver",  stm32_getver )
 };
 
