@@ -12,9 +12,12 @@ local macReader = io.popen("eth_mac r wifi");
 local macAddr = macReader:read("*all");
 macAddr = string.gsub(macAddr, ":", "");
 macAddr = "we26n_" .. macAddr;
+macAddr = string.gsub(macAddr,"%\r","")
+macAddr = string.gsub(macAddr,"%\n","")
+
 
 http = require "socket.http";
-url = "http://10.4.44.210:8001/enngateway/ctrl?gatewayid=" .. macAddr;
+url = "http://123.57.206.2:8081/v1/deviceattrconfigs?query=gateway_sn:eq:" .. macAddr .. ",is_control:eq:1";
 
 conn = ubus.connect();
 if not conn then
@@ -83,11 +86,11 @@ function dispatchCommand(data)
 
 	for idx, value in ipairs(jobj) do
 		if value ~= nil then
-			local devId = value["deviceid"]
+			local devId = value["device_sn"]
 			if devId ~= nil then
-				local gatewayId = value["gatewayid"];
-				local attr = value["attr"];
-				local data = value["data"];
+				local gatewayId = value["gateway_sn"];
+				local attr = value["attr_code"];
+				local data = value["attr_value"];
 
 				local devIdLower = string.lower(devId);
 				if string.match(devIdLower, "zigbee_jianyou") == "zigbee_jianyou" then
@@ -116,7 +119,7 @@ function getWebServerURL()
     print(ip)
     print(port)
     if iplen ~= 0 and portlen ~= 0 then
-        url = "http://" .. ip .. ":" .. port .. "/enngateway/ctrl?gatewayid=" .. macAddr;
+        url = "http://" .. ip .. ":" .. port .. "/v1/deviceattrconfigs?query=gateway_sn:eq:" .. macAddr .. ",is_control:eq:1";
     end
     print(url)
 
@@ -143,10 +146,10 @@ function  commanddispather()
 			print("get command error....");
 		end
 		
-		ttmr:set(60000);
+		ttmr:set(1000);
 end		
 
-ttmr = uloop.timer( commanddispather, 3000 );
+ttmr = uloop.timer( commanddispather, 1000 );
 	
 local customMethod = {
 	we26n_commanddispather = {
