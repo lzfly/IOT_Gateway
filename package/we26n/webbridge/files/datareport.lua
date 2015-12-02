@@ -13,7 +13,7 @@ end
 http = require "socket.http";
 
 
-url = "http://123.57.206.2:8081/v1/devicereports"
+url = "http://123.57.206.2:8081/v1/deviceattrinfos"
 gatewayId = "we26n_78A351097F2E"
 
 function getWebServerURL()
@@ -29,7 +29,7 @@ function getWebServerURL()
     print(ip)
     print(port)
     if iplen ~= 0 and portlen ~= 0 then
-        url = "http://" .. ip .. ":" .. port .. "/v1/devicereports";
+        url = "http://" .. ip .. ":" .. port .. "/v1/deviceattrinfos";
     end
     print(url)
 
@@ -76,24 +76,27 @@ local customMethod = {
 		       --     return;
 		      --  end
                 
-				local queryParam = "{device_sn:\"".. deviceId .. "\"";               
 				
-				queryParam = queryParam .. ",attr_code:";
-				local attr = msg["attr"];
-				if attr ~= nil then
-					queryParam = queryParam .. "\"" ..attr .."\"";
+				
+		
+
+
+
+
+
+				queryParam = "{\"attr_value_cur\":";
+				local attr_value = msg["data"];
+				if attr_value ~= nil then
+					queryParam = queryParam  ..  attr_value .. "}";
 				end
 
-				queryParam = queryParam .. ",attr_value:";
-				local data = msg["data"];
-				if data ~= nil then
-					queryParam = queryParam .. "\"" ..  data .. "\"";
-				end
-                                queryParam = queryParam .. ",source:\"user\""; 
-                                queryParam = queryParam .. ",gateway_sn:" .. "\"" .. gatewayId .. "\"}";
-				
+                                local attr_code = msg["attr"];
+
+                               
+			        local targetURL = url .. "/" .. attr_code 	
 
 				print(queryParam);
+                                print(targetURL);
 
 				for i=1,3 do
 					--resp, code = http.request(targetUrl);
@@ -103,8 +106,8 @@ local customMethod = {
                                         local response_body = {}  
                                         --local post_data = '{"device_sn":"ttttt", "attr_code":666, "attr_value":567, "source":"user", "gateway_sn":"ffffff"}';  
                                         res, code = http.request{  
-                                            url = url,  
-                                            method = "POST",  
+                                            url = targetURL,  
+                                            method = "PUT",  
                                             headers =   
                                             {  
                                                 ["Content-Type"] = "application/x-www-form-urlencoded",  
