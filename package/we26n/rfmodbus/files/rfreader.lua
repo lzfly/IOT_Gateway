@@ -316,7 +316,15 @@ function  meter_record_report( meter )
 		rpt.gatewayid = "xxxx";
 		rpt.deviceid = mtrec[meter].deviceid;
 		rpt.devicetype = mtrec[meter].devicetype;
-		rpt.attr = "1004";
+                rpt.attr = "1018";
+                if rpt.devicetype == "0007" then
+		    rpt.attr = "1006";
+                end
+
+                if rpt.devicetype == "0008" then
+                    rpt.attr = "1007";
+                end
+
 		rpt.data = string.format( "%f", mtrec[meter].data );
 		
 		conn:call( "jianyou", "report", rpt );

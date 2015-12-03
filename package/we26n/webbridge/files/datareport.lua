@@ -87,13 +87,13 @@ local customMethod = {
 				queryParam = "{\"attr_value_cur\":";
 				local attr_value = msg["data"];
 				if attr_value ~= nil then
-					queryParam = queryParam  ..  attr_value .. "}";
+					queryParam = queryParam  ..  "\"" .. attr_value .. "\"}";
 				end
 
                                 local attr_code = msg["attr"];
 
                                
-			        local targetURL = url .. "/" .. attr_code 	
+			        local targetURL = url .. "/" .. deviceId .. ":" .. attr_code 	
 
 				print(queryParam);
                                 print(targetURL);
@@ -119,7 +119,7 @@ local customMethod = {
 
 
 					if code == 200 then
-						conn:reply(req, {code="S00000", message="" .. resp});
+						conn:reply(req, {code="S00000", message=""});
 						return;
 					end
 				end

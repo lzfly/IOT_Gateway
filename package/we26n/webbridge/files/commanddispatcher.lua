@@ -33,10 +33,10 @@ function getCommand()
 
 	return nil;
 end
-function setFlag(attr_code)
+function setFlag(deviceId, attr_code)
         queryParam = "{\"is_control\":0}";
 
-        local targetURL = url2 .. "/" .. attr_code
+        local targetURL = url2 .. "/" .. deviceId .. ":" .. attr_code;
 
         print(queryParam);
         print(targetURL);
@@ -118,17 +118,17 @@ function dispatchCommand(data)
 			local devId = value["device_sn"]
 			if devId ~= nil then
 				local gatewayId = value["gateway_sn"];
-				local attr = value["attr_code"];
+				local attr = string.format("%d", value["attr_code"]);
 				local data = value["attr_value_ctrl"];
 				local devIdLower = string.lower(devId);
 				if string.match(devIdLower, "zigbee_jianyou") == "zigbee_jianyou" then
 					sendToZigbeeJianyou(gatewayId, devId, attr, data);
 				elseif string.match(devIdLower, "zigbee_fbee") == "zigbee_fbee" then
-					sendToZigbeeFbee(atewayId, devId, attr, data);
+					sendToZigbeeFbee(gatewayId, devId, attr, data);
 				elseif string.match(devIdLower, "433_jianyou") == "433_jianyou" then
 					sendTo433Jianyou(gatewayId, devId, attr, data);
 				end
-                                setFlag(attr);
+                                setFlag(devId, attr);
 			end
 		end
 	end
