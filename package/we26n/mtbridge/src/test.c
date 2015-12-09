@@ -415,12 +415,20 @@ void  test_uloopfd_cbk(struct uloop_fd * pufd, unsigned int events)
             return;
         }
 
-        /**/
-        syslog( LOG_CRIT, "mqtt : %s,%s : %s\n", pmsg->payload.todev.devid, pmsg->payload.todev.attid, pmsg->payload.todev.value );
+        if ( pmsg->target == TARGET_TODEV )
+        {
+            /**/
+            printf( "todev : %s,%s : %s\n", pmsg->payload.todev.devid, pmsg->payload.todev.attid, pmsg->payload.todev.value );
+            
+            /**/
+            send_set_msg_to_zigbee( pmsg->payload.todev.devid, pmsg->payload.todev.attid, pmsg->payload.todev.value );
+        }
+        else if ( pmsg->target == TARGET_TOGTW )
+        {
+            printf( "togtw : %s\n", pmsg->payload.togtw.msge );        
+            test_set_gateway( pmsg->payload.togtw.msge );
+        }
         
-        /**/
-        send_set_msg_to_zigbee( pmsg->payload.todev.devid, pmsg->payload.todev.attid, pmsg->payload.todev.value );
-
     }
 
     /**/
