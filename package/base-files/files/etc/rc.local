@@ -20,7 +20,6 @@ start-stop-daemon -b -S -x add_del_deviceid.lua
 start-stop-daemon -b -S -x gatewayreport.lua
 
 
-start-stop-daemon -b -S -x mknet
 start-stop-daemon -b -S -x mtbridge
 start-stop-daemon -b -S -x bledaemn
 start-stop-daemon -b -S -x bleread.lua
