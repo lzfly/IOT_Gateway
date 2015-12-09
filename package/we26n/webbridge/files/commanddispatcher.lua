@@ -177,10 +177,10 @@ function  commanddispather()
 			print("get command error....");
 		end
 		
-		ttmr:set(1000);
+		ttmr:set(1000 * 60);
 end		
 
-ttmr = uloop.timer( commanddispather, 1000 );
+ttmr = uloop.timer( commanddispather, 1000*3 );
 	
 local customMethod = {
 	we26n_commanddispather = {
