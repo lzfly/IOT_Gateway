@@ -304,15 +304,15 @@ int startSearchDevice()
 		for(i = 0; i < g_devices_count; i++)
 		{
 		    //printf("getDeviceState");
-			printf("[startSearchDevice] endpoint=%d\r\n", g_devices[i].endpoint);
-			printf("device SN = %s\n", g_devices[i].SN);
-		    printf("device shortaddr = %d\n", g_devices[i].shortaddr);
+		    //printf("[startSearchDevice] endpoint=%d\r\n", g_devices[i].endpoint);
+		    //printf("device SN = %s\n", g_devices[i].SN);
+		    //printf("device shortaddr = %d\n", g_devices[i].shortaddr);
                     
                     printf("device ieee = %s\n", g_devices[i].ieeestr);
                     printf("openstatus=%d", g_openStatus[i]);
                     if(g_openStatus[i] == 5)
 			    continue;
-                    printf("getDeviceState------1\n");
+                    //printf("getDeviceState------1\n");
 
 			switch(g_devices[i].deviceId)
 			{
@@ -336,7 +336,7 @@ int startSearchDevice()
 					break;
 			}
 			
-			sleep(10);
+			sleep(30);
                 
 		    }
                     getDeviceStateCount = 0;

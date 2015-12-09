@@ -289,7 +289,7 @@ int receiveDeviceMsg(char *buf, int len)
 					g_devices[g_devices_count].shortaddr = (buffer[2]&0xFF)|((buffer[3]&0xFF)<<8);
 					//printf("buffer[2] = 0x%x", buffer[2]&0xFF);
 					//printf("buffer[3] = 0x%x", buffer[3]);
-					printf("[receiveDeviceMsg]shortaddr=%d\r\n",g_devices[g_devices_count].shortaddr);
+					//printf("[receiveDeviceMsg]shortaddr=%d\r\n",g_devices[g_devices_count].shortaddr);
 
 					g_devices[g_devices_count].endpoint = buffer[4];
 					printf("[receiveDeviceMsg]endpoint=%d\r\n",g_devices[g_devices_count].endpoint);
@@ -299,28 +299,28 @@ int receiveDeviceMsg(char *buf, int len)
 					//printf("buffer[5] = 0x%x", buffer[5]);
 					//printf("buffer[6] = 0x%x", buffer[6]);
 
-					printf("[receiveDeviceMsg]profileId=%d\r\n",g_devices[g_devices_count].profileId);
+					//printf("[receiveDeviceMsg]profileId=%d\r\n",g_devices[g_devices_count].profileId);
 
 					g_devices[g_devices_count].deviceId = (buffer[7]&0xFF)|((buffer[8]&0xFF)<<8);
 		            //printf("buffer[7] = 0x%x", buffer[7]);
 		            //printf("buffer[8] = 0x%x", buffer[8]);
 
-					printf("[receiveDeviceMsg]deviceId=%d\r\n",g_devices[g_devices_count].deviceId);
+					//printf("[receiveDeviceMsg]deviceId=%d\r\n",g_devices[g_devices_count].deviceId);
 
 					g_devices[g_devices_count].namelen = buffer[10];
-					printf("[receiveDeviceMsg]namelen=%d\r\n",g_devices[g_devices_count].namelen);
+					//printf("[receiveDeviceMsg]namelen=%d\r\n",g_devices[g_devices_count].namelen);
 
 					memcpy(g_devices[g_devices_count].name, &buffer[11], g_devices[g_devices_count].namelen);
 					g_devices[g_devices_count].name[g_devices[g_devices_count].namelen] = 0;
-					printf("[receiveDeviceMsg]name=%s\r\n",g_devices[g_devices_count].name);
+					//printf("[receiveDeviceMsg]name=%s\r\n",g_devices[g_devices_count].name);
 
 					g_devices[g_devices_count].status = buffer[11 + g_devices[g_devices_count].namelen];
-					printf("[receiveDeviceMsg]status=%d\r\n",g_devices[g_devices_count].status);
+					//printf("[receiveDeviceMsg]status=%d\r\n",g_devices[g_devices_count].status);
 
 					w26n_byte IEEE[8];
 					memcpy(&IEEE[0], &buffer[12 + g_devices[g_devices_count].namelen], 8);
 					memcpy(&g_devices[g_devices_count].IEEE[0], &buffer[12 + g_devices[g_devices_count].namelen], 8);
-                    sprintf(g_devices[g_devices_count].ieeestr,"%02x%02x%02x%02x%02x%02x%02x%02x", IEEE[0], IEEE[1], IEEE[2], IEEE[3], IEEE[4], IEEE[5], IEEE[6], IEEE[7]);
+                                        sprintf(g_devices[g_devices_count].ieeestr,"%02x%02x%02x%02x%02x%02x%02x%02x", IEEE[0], IEEE[1], IEEE[2], IEEE[3], IEEE[4], IEEE[5], IEEE[6], IEEE[7]);
 
 				/*	printf("[receiveDeviceMsg]ieeestr=%s\n",g_devices[g_devices_count].ieeestr);
 					for(iii=0;iii<=7;iii++)
@@ -330,20 +330,20 @@ int receiveDeviceMsg(char *buf, int len)
 						printf("\n");
 					}*/
 
-                    printf("[receiveDeviceMsg]IEEE=%s\r\n",g_devices[g_devices_count].ieeestr);
+                                        printf("[receiveDeviceMsg]IEEE=%s\r\n",g_devices[g_devices_count].ieeestr);
 
 					g_devices[g_devices_count].SNlen = buffer[20 + g_devices[g_devices_count].namelen];
                                         if(g_devices[g_devices_count].SNlen > 100)
                                             g_devices[g_devices_count].SNlen = 100;
 
-					printf("[receiveDeviceMsg]SNlen=%d\r\n",g_devices[g_devices_count].SNlen);
+					//printf("[receiveDeviceMsg]SNlen=%d\r\n",g_devices[g_devices_count].SNlen);
 
 
 
 					memcpy(g_devices[g_devices_count].SN, &buffer[21 + g_devices[g_devices_count].namelen], g_devices[g_devices_count].SNlen);
 					g_devices[g_devices_count].SN[g_devices[g_devices_count].SNlen] = 0;
                    
-					printf("[receiveDeviceMsg]SN=%s\r\n",g_devices[g_devices_count].SN);
+					//printf("[receiveDeviceMsg]SN=%s\r\n",g_devices[g_devices_count].SN);
 					
 					
 					int i;
