@@ -84,14 +84,6 @@ function sendToZigbeeFbee(gatewayid_value, deviceid_value, attr_value, data_valu
 		print("sendToZigbeeFbee return nil.");
 	end
 
-	local result = conn:call("we26n_zigbee_febee", "getstatecmd", { gatewayid = gatewayid_value, deviceid = deviceid_value, devicetype = "0012", attr = attr_value});
-	if result ~= nil then
-		for k, v in pairs(result) do
-			print("key=" .. k .. " value=" .. tostring(v));
-		end
-	else
-		print("sendToZigbeeFbee return nil.");
-	end
 end
 
 function sendTo433Jianyou(gatewayid_value, deviceid_value, attr_value, data_value)
