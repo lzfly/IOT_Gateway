@@ -3,28 +3,37 @@
 #define  __MY_MQTT_H__
 
 
-/**/
-#define  MT_ACT_GET     1
-#define  MT_ACT_SET     2
-#define  MT_ACT_NTC     3
+#define   TARGET_TOGTW      0x11
+#define   TARGET_TODEV      0x44
 
 
-#define  MT_OBJ_GATE    1
-#define  MT_OBJ_470     2
-#define  MT_OBJ_BLE     3
-#define  MT_OBJ_ZIG     4
-#define  MT_OBJ_WIFI    5
-#define  MT_OBJ_SYS     6           /* 内部产生的消息, 比如 mqtt 连接上服务器了. */
+#define   DEVID_MAX_LEN     49
+#define   ATTID_MAX_LEN      9
+#define   VALUE_MAX_LEN     19
 
+#define   GTW_MSG_MAX_LEN   80
 
 
 /**/
 typedef struct _tag_mmqt_msg
 {
-    uint8_t action;
-    uint8_t object;
-    char  msg[4];
+    int  target;
 
+    union {
+        struct _tag_todev
+        {
+            char  devid[DEVID_MAX_LEN+1];
+            char  attid[ATTID_MAX_LEN+1];
+            char  value[VALUE_MAX_LEN+1];
+        } todev;
+
+        struct _tag_togtw
+        {
+            char  msge[GTW_MSG_MAX_LEN+1];
+        } togtw;
+        
+    } payload;
+    
 } mmqt_msg_t;
 
 

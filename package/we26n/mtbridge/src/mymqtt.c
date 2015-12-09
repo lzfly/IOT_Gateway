@@ -26,139 +26,201 @@ typedef struct _tag_mmqt_context
 
 
 
-static uint8_t  recognize_action( char * ptr )
+int  recongnize_dir( char * path, int max, char * ptr, char ** ppnext )
 {
-    if ( 0 == strcmp(ptr, "C:S") )
-    {
-        return MT_ACT_SET;
-    }
-
-    if ( 0 == strcmp(ptr, "C:G") )
-    {
-        return MT_ACT_GET;
-    }
-
-    if ( 0 == strcmp(ptr, "C:N") )
-    {
-        return MT_ACT_NTC;
-    }
+    int  i;
     
-    return 0;
-}
-
-
-
-static uint8_t  recognize_object( char * ptr )
-{
-
-    if ( 0 == strcmp(ptr, "M:Z") )
+    if ( path[0] != '/' )
     {
-        return MT_OBJ_ZIG;
+        return 1;
     }
 
-    if ( 0 == strcmp(ptr, "M:W") )
+    /**/
+    for ( i=1;; i++ )
     {
-        return MT_OBJ_WIFI;
+        if ( i >= max )
+        {
+            return 2;
+        }
+        
+        if ( (path[i] == '/') || path[i] == '\0' )
+        {
+            break;
+        }
+
+        ptr[i-1] = path[i];
     }
 
-    if ( 0 == strcmp(ptr, "M:4") )
-    {
-        return MT_OBJ_470;
-    }
-    
-    if ( 0 == strcmp(ptr, "M:B") )
-    {
-        return MT_OBJ_BLE;
-    }
-
-    if ( 0 == strcmp(ptr, "M:G") )
-    {
-        return MT_OBJ_GATE;
-    }
-
+    /**/
+    ptr[i-1] = 0;
+    *ppnext = &(path[i]);
     return 0;
     
 }
 
+
+void  my_message_inner_togateway( mmqt_context_t * pctx, char * pnext, const struct mosquitto_message * message )
+{
+    int  iret;
+    mmqt_msg_t  tmsg;
+    char  tstr[50];
+
+    /**/
+    tmsg.target = TARGET_TOGTW;
+    
+    /**/
+    iret = recongnize_dir( pnext, 50, tstr, &pnext );
+    if ( 0 != iret )
+    {
+        /*  */
+        printf( "recongnize 3rd gtwid fail = %d\n", iret );
+        return;
+    }
+
+    if ( 0 != strcmp( pctx->topic, tstr ) )
+    {
+        return;
+    }
+
+    /**/
+    if ( message->payloadlen > GTW_MSG_MAX_LEN )
+    {
+        printf( "gateway msg too long\n" );
+        return;
+    }
+
+    memcpy( tmsg.payload.togtw.msge, message->payload, message->payloadlen );
+    tmsg.payload.togtw.msge[message->payloadlen] = '\0';
+
+    /**/
+    msq_enqueue( pctx->qctx, sizeof(tmsg), &tmsg );
+    write( ((int *)pctx->mosq)[1], tstr, 1 );
+    return;
+    
+}
+
+
+void  my_message_inner_todevice( mmqt_context_t * pctx, char * pnext, const struct mosquitto_message * message )
+{
+    int  iret;
+    mmqt_msg_t  tmsg;
+    char  tstr[50];
+
+    /**/
+    tmsg.target = TARGET_TODEV;
+    
+    /**/
+    iret = recongnize_dir( pnext, 50, tstr, &pnext );
+    if ( 0 != iret )
+    {
+        /*  */
+        printf( "recongnize 3rd devsn fail = %d\n", iret );
+        return;
+    }
+
+    if ( strlen(tstr) > DEVID_MAX_LEN )
+    {
+        printf( "devsn too long\n" );        
+        return;
+    }
+
+    /**/
+    strcpy( tmsg.payload.todev.devid, tstr );
+
+    /**/
+    iret = recongnize_dir( pnext, 50, tstr, &pnext );
+    if ( 0 != iret )
+    {
+        /*  */
+        printf( "recongnize 4th attid fail = %d\n", iret );
+        return;
+    }
+
+    if ( *pnext != '\0' )
+    {
+        /* */
+        printf( "attid not tail\n" );
+        return;
+    }
+
+    if ( strlen(tstr) > ATTID_MAX_LEN )
+    {
+        printf( "attid too long\n" );
+        return;
+    }
+
+    /**/
+    strcpy( tmsg.payload.todev.attid, tstr );
+
+    /**/
+    if ( message->payloadlen > VALUE_MAX_LEN )
+    {
+        printf( "value too long\n" );
+        return;
+    }
+
+    memcpy( tmsg.payload.todev.value, message->payload, message->payloadlen );
+    tmsg.payload.todev.value[message->payloadlen] = '\0';
+
+    /**/
+    msq_enqueue( pctx->qctx, sizeof(tmsg), &tmsg );
+    write( ((int *)pctx->mosq)[1], tstr, 1 );
+    return;
+    
+}
 
 
 void  my_message_callback(struct mosquitto * mosq, void * obj, const struct mosquitto_message * message )
 {
+    int  iret;
     mmqt_context_t * pctx;
-    mmqt_msg_t * pmsg;
-    char * ptr;
-    char * ped;
-    uint8_t  act;
-    uint8_t  ooo;
-    int  tsize;
+    char  tstr[50];
+    char * pnext;
     
     /**/
     pctx = (mmqt_context_t *)obj;
     
     /**/
-    if ( 0 != strcmp( message->topic, pctx->topic ) )
-    {
-        return;
-    }
-
-    /**/
   	if ( message->payloadlen <= 0 )
   	{
       	return;
   	}
-
-    /**/
-    printf( "inner cbk : %s\n", (char *)message->payload );
     
     /**/
-    ptr = (char *)(message->payload);
-    ped = strchr( ptr, '|' );
-    if ( NULL == ped )
+    iret = recongnize_dir( message->topic, 50, tstr, &pnext );
+    if ( 0 != iret )
     {
+        /*  */
+        printf( "recongnize 1st path fail = %d\n", iret );
+        return;
+    }
+    
+    if ( 0 != strcmp( "v1", tstr ) )
+    {
+        printf( "recg, 1st not v1\n" );
         return;
     }
 
     /**/
-    *ped = '\0';
-    act = recognize_action( ptr );
-    if ( 0 == act )
+    iret = recongnize_dir( pnext, 50, tstr, &pnext );
+    if ( 0 != iret )
     {
+        /*  */
+        printf( "recongnize 2nd path fail = %d\n", iret );
         return;
     }
 
     /**/
-    ptr = ped + 1;
-    ped = strchr( ptr, '|' );
-    if ( NULL == ped )
+    if ( 0 == strcmp( "to_device", tstr ) )
     {
-        return;
+        my_message_inner_todevice( pctx, pnext, message );    
     }
-
-    /**/
-    *ped = '\0';
-    ooo = recognize_object( ptr );
-    if ( 0 == ooo )
+    else if ( 0 == strcmp( "to_gateway", tstr ) )
     {
-        return;
+        my_message_inner_togateway( pctx, pnext, message );
     }
+    
 
-    /**/
-    ptr = ped + 1;
-    tsize = sizeof(mmqt_msg_t) + strlen(ptr);
-    pmsg = alloca( tsize );
-    if ( NULL == pmsg )
-    {
-        return;
-    }
-
-    /**/
-    pmsg->action = act;
-    pmsg->object = ooo;
-    strcpy( pmsg->msg, ptr );
-
-    /**/
-    msq_enqueue( pctx->qctx, tsize, pmsg );
-    write( ((int *)pctx->mosq)[1], &act, 1 );
     return;
   	
 }
@@ -167,21 +229,26 @@ void  my_message_callback(struct mosquitto * mosq, void * obj, const struct mosq
 
 void  my_connect_callback(struct mosquitto * mosq, void * obj, int result )
 {
-    mmqt_context_t * pctx;
-    mmqt_msg_t  tmsg;
 
-    /**/
-    pctx = (mmqt_context_t *)obj;
 
     /**/
 	if( 0 == result )
 	{
-		mosquitto_subscribe( mosq, NULL, pctx->topic, 0 );
+		mosquitto_subscribe( mosq, NULL, "/v1/to_gateway/#", 0 );
+		mosquitto_subscribe( mosq, NULL, "/v1/to_device/#", 0 );
 	}
 	else
 	{
 	    fprintf(stderr, "%s\n", mosquitto_connack_string(result));
 	}
+
+#if 0
+    mmqt_context_t * pctx;
+
+    /**/
+    pctx = (mmqt_context_t *)obj;
+
+    mmqt_msg_t  tmsg;
 
     /**/
     tmsg.action = MT_ACT_NTC;
@@ -191,7 +258,8 @@ void  my_connect_callback(struct mosquitto * mosq, void * obj, int result )
     /**/
     msq_enqueue( pctx->qctx, sizeof(mmqt_msg_t), &tmsg );
     write( ((int *)pctx->mosq)[1], &tmsg, 1 );    
-        
+#endif
+
     /**/
     printf( "connect ok, %d\n", result );
 	return;
