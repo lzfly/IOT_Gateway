@@ -48,6 +48,21 @@ static const struct blobmsg_policy  notice_policy[] = {
     [NTC_MESG] = { .name = "message", .type = BLOBMSG_TYPE_STRING },
 };
 
+enum {
+    DNTC_GATEWAY,
+    DNTC_DEVICEID,
+    DNTC_ATTR,
+    DNTC_DATA,
+    __DNTC_MAX
+};
+
+static const struct blobmsg_policy  dev_notice_policy[] = {
+	[DNTC_GATEWAY] = { .name = "gatewayid", .type = BLOBMSG_TYPE_STRING },
+	[DNTC_DEVICEID] = { .name = "deviceid", .type = BLOBMSG_TYPE_STRING },
+	[DNTC_ATTR] = { .name = "attr", .type = BLOBMSG_TYPE_STRING },
+	[DNTC_DATA] = { .name = "data", .type = BLOBMSG_TYPE_STRING },	
+};
+
 
 static int mtbridge_notice( struct ubus_context *ctx, struct ubus_object *obj,
                 struct ubus_request_data *req, const char *method,
@@ -86,6 +101,58 @@ static int mtbridge_notice( struct ubus_context *ctx, struct ubus_object *obj,
 
 }
 
+
+static int mtbridge_dev_notice( struct ubus_context *ctx, struct ubus_object *obj,
+                struct ubus_request_data *req, const char *method,
+                struct blob_attr *msg )
+{
+	struct blob_attr * tb[__DNTC_MAX];
+    char * gatewayidstr = NULL;
+	char * deviceIdstr = NULL;
+	char * attrstr = NULL;
+	char * datastr = NULL;
+	
+	char  topic[128];
+
+    /**/
+	blobmsg_parse( dev_notice_policy, ARRAY_SIZE(dev_notice_policy), tb, blob_data(msg), blob_len(msg));
+
+	if ( tb[DNTC_GATEWAY] )
+	{
+		gatewayidstr = blobmsg_data( tb[DNTC_GATEWAY] );
+	}
+
+	if ( tb[DNTC_DEVICEID] )
+	{
+		deviceIdstr = blobmsg_data( tb[DNTC_DEVICEID] );
+	}
+
+	if ( tb[DNTC_ATTR] )
+	{
+		attrstr = blobmsg_data( tb[DNTC_ATTR] );
+	}
+
+	if ( tb[DNTC_DATA] )
+	{
+		datastr = blobmsg_data( tb[DNTC_DATA] );
+	}
+
+    /**/
+    if ( (gatewayidstr == NULL) || (deviceIdstr == NULL) || (attrstr == NULL) || (datastr == NULL))
+    {
+        printf( "ubus dev_notice, args error \n" );
+        return UBUS_STATUS_OK;
+    }
+    
+	sprintf(topic , "/v1/from_device/%s/%s", deviceIdstr, attrstr);
+	
+	printf( "ubus dev_notice, topic = %s msg = %s \n" , topic, datastr);
+    
+    /**/
+    mmqt_publish( mtctx, topic, datastr );
+    return UBUS_STATUS_OK;
+
+}
 
 
 static int mtbridge_publish( struct ubus_context *ctx, struct ubus_object *obj,
@@ -128,6 +195,7 @@ static int mtbridge_publish( struct ubus_context *ctx, struct ubus_object *obj,
 static const struct ubus_method mtbridge_methods[] = {
     UBUS_METHOD( "publish", mtbridge_publish, public_policy ),    
     UBUS_METHOD( "notice", mtbridge_notice,  notice_policy ),
+	UBUS_METHOD( "dev_notice", mtbridge_dev_notice,  dev_notice_policy ),
 };
 
 

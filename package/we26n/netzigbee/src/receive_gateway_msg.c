@@ -120,11 +120,6 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
     uint32_t  id;
     struct ubus_context *ctx;
 	static struct blob_buf b;
-    if((strstr(ZigbeeId,ieeestr) == NULL) && ZIGBEE_ENABLE)
-	{
-		printf("sleep time:%d\n",g_ReportTime.hum_time);
-		return;
-	}
  
     printf("[sendMsgToWeb] start\r\n");
 
@@ -256,6 +251,145 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
 	return 0;
 	
 }
+
+int  sendMsgToMQTT(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint, w26n_uint16 attr, w26n_uint32 data)
+{
+    int  iret;
+    uint32_t  id;
+    struct ubus_context *ctx;
+	static struct blob_buf b;
+ 
+    printf("[sendMsgToMQTT] start\r\n");
+
+
+    /**/
+	ctx = ubus_connect( NULL );
+	if ( NULL == ctx) 
+	{
+	    fprintf(stderr, "Failed to connect to ubus\n");
+	    return -1;
+	}
+
+    //printf("[sendMsgToWeb] start--1\r\n");
+
+    /**/
+	if ( ubus_lookup_id(ctx, "we26n_mtbridge", &id) ) {
+		fprintf(stderr, "Failed to look up we26n_mtbridge object\n");
+		return;
+	}
+	//printf("[sendMsgToWeb] start--2\r\n");
+
+	blob_buf_init( &b, 0 );
+	char gatewayidstr[32];
+	sprintf(gatewayidstr, "we26n_%s", g_localMAC);
+	blobmsg_add_string( &b, "gatewayid", gatewayidstr );
+
+    //printf("[sendMsgToWeb] start--3\r\n");
+	
+	char deviceidstr[64];
+	sprintf(deviceidstr, "zigbee_fbee_%s_%d", ieeestr, endpoint);
+    //printf("[sendMsgToWeb] start--%s\r\n", deviceidstr);
+	blobmsg_add_string( &b, "deviceid", deviceidstr);
+	
+	char devicetypestr[8];
+	char deviceattrstr[16];
+	char devicedatastr[64];
+	
+	switch(deviceId)
+	{
+	 case FB_DEVICE_TYPE_GAS:
+	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_GAS);
+		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_GAS_ALERT);
+		  sprintf(devicedatastr, "%d", data);
+	     break;
+	 case FB_DEVICE_TYPE_MAGNETIC_DOOR:
+	      sprintf(devicetypestr,"%s",ENN_DEVICE_TYPE_MAGNETIC_DOOR);
+	      sprintf(deviceattrstr,"%d",ENN_DEVICE_ATTR_MAGNETIC_DOOR_ALERT);
+	      sprintf(devicedatastr, "%d", data);
+	     break;
+	 case FB_DEVICE_TYPE_BODY_INFRARED:
+	      sprintf(devicetypestr,"%s",ENN_DEVICE_TYPE_BODY_INFRARED);
+	      sprintf(deviceattrstr,"%d",ENN_DEVICE_ATTR_BODY_INFRARED);
+	      sprintf(devicedatastr, "%d", data);
+	     break;
+	 case FB_DEVICE_TYPE_TEMP_HUM:
+	 case FB_DEVICE_TYPE_TEMP_HUM_2:
+	     sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_TEMP_HUM);
+		 if(attr == ENN_DEVICE_ATTR_TEMP_VALUE)
+		 {
+		     double data1 = data;
+			 data1 = data1/100;
+			 sprintf(devicedatastr, "%2.2f", data1);
+			 
+		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_TEMP_VALUE);
+		 }
+		 else{
+		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_HUM_VALUE);
+			 sprintf(devicedatastr, "%d", data);
+		}
+	     break;
+		 
+	 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
+	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_ON_OFF_THREE);
+		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_ON_OFF_THREE_STATE);
+		  sprintf(devicedatastr, "%d", data);
+	     break;
+	 case FB_DEVICE_TYPE_POWER_OUTLET:
+	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_POWER_OUTLET);
+		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_POWER_OUTLET);
+		  sprintf(devicedatastr, "%d", data);
+	     break;
+	 case FB_DEVICE_TYPE_WINDOWS:
+	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_WINDOWS);
+		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_WINDOWS_VALUE);
+		  sprintf(devicedatastr, "%d", data);
+	     break;
+	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
+	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
+	     sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_COLOR_TEMP_LAMP);
+		 if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE){
+		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE);
+			 sprintf(devicedatastr, "%d", data);
+		}
+		 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE){
+		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE);
+			 data = (data)*100/255 ;
+			 sprintf(devicedatastr, "%d", data);
+		}
+		 else{
+		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE);
+			 if(data < 2700)
+			     data =2700;
+			 if(data > 6500)
+			     data =6500;
+			 data = (data - 2700)*100/(6500-2700) + 1 ;
+			 sprintf(devicedatastr, "%d", data);
+		}
+	     break;
+		 
+	 default:
+	     sprintf(devicedatastr, "%d", data);
+	     break;
+	}
+	blobmsg_add_string( &b, "devicetype", devicetypestr);
+	
+	blobmsg_add_string( &b, "attr", deviceattrstr );
+	
+
+	
+	blobmsg_add_string( &b, "data", devicedatastr);	
+
+	printf("[sendMsgToMQTT]ubus_invoke data = %s\r\n", devicedatastr);
+	/**/
+	ubus_invoke( ctx, id, "dev_notice", b.head, test_data_cback, 0, 3000);
+
+	
+    /**/
+	ubus_free(ctx);
+	return 0;
+	
+}
+
 
 int receiveDeviceMsg(char *buf, int len)
 {
@@ -601,6 +735,7 @@ int receiveDeviceMsg(char *buf, int len)
 						printf("[receiveDeviceMsg] value=%d\r\n",value);
 						
 						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, value);
+						sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, value);
 					}
 					
 					else if(g_devices[index].deviceId == FB_DEVICE_TYPE_MAGNETIC_DOOR)
@@ -620,6 +755,7 @@ int receiveDeviceMsg(char *buf, int len)
 						printf("[receiveDeviceMsg] value=%d\r\n",value);
 						
 						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_MAGNETIC_DOOR_ALERT, value);
+						sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, value);
 					}
 					else if(g_devices[index].deviceId == FB_DEVICE_TYPE_BODY_INFRARED)
 					{
@@ -638,6 +774,7 @@ int receiveDeviceMsg(char *buf, int len)
 						printf("[receiveDeviceMsg] value=%d\r\n",value);
 						
 						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_BODY_INFRARED, value);
+						sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, value);
 					}
 
 					else if(g_devices[index].deviceId == FB_DEVICE_TYPE_TEMP_HUM || g_devices[index].deviceId == FB_DEVICE_TYPE_TEMP_HUM_2)
