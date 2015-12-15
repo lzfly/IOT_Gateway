@@ -755,7 +755,7 @@ int receiveDeviceMsg(char *buf, int len)
 						printf("[receiveDeviceMsg] value=%d\r\n",value);
 						
 						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_MAGNETIC_DOOR_ALERT, value);
-						sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, value);
+						sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_MAGNETIC_DOOR_ALERT, value);
 					}
 					else if(g_devices[index].deviceId == FB_DEVICE_TYPE_BODY_INFRARED)
 					{
@@ -772,9 +772,12 @@ int receiveDeviceMsg(char *buf, int len)
 
 						w26n_byte value = buffer[11];
 						printf("[receiveDeviceMsg] value=%d\r\n",value);
-						
-						sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_BODY_INFRARED, value);
-						sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, value);
+						if(value == 1 || g_openStatus[index] == 1 )
+                                                {
+						    sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_BODY_INFRARED, value);
+						    sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_BODY_INFRARED, value);
+                                                }
+                                                g_openStatus[index] = value; 
 					}
 
 					else if(g_devices[index].deviceId == FB_DEVICE_TYPE_TEMP_HUM || g_devices[index].deviceId == FB_DEVICE_TYPE_TEMP_HUM_2)
@@ -804,27 +807,28 @@ int receiveDeviceMsg(char *buf, int len)
 						printf("\n**********************\n");
 						dump_hex( buffer, 17 );
 						printf("\n**********************\n");
-                        	if(type == 41 && num == 1)
-                        	{		
-                        	    if(humcount == 0 && value == 1)
-                        	    {
-                        	        humcount = 1;
-                        	        printf("in 41\n");
-                        	        return;
-                        	    }
-                        	     printf("after 41\n");	
-						        sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_TEMP_VALUE, value);
-						     }
-						     else if(type == 33 && num ==1)
-						      {   
-						              if(humcount == 0 && value == 1)
-                        	        { printf("in 33\n");
-                        	          humcount = 1;
-                        	             return;
-                        	        }	
-                        	         printf("in 33\n");
-								    sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_HUM_VALUE, value/100);
-						        }
+                        	                if(type == 41 && num == 1)
+                        	                {		
+                        	                   if(humcount == 0 && value == 1)
+                        	                   {
+                        	                       humcount = 1;
+                        	                       printf("in 41\n");
+                        	                       continue;
+                        	                   }
+                        	                    printf("after 41\n");	
+						    sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_TEMP_VALUE, value);
+						}
+						else if(type == 33 && num ==1)
+						{   
+						    if(humcount == 0 && value == 1)
+                        	                   { 
+                                                       printf("in 33\n");
+                        	                       humcount = 1;
+                        	                       continue;
+                        	                   }	
+                        	                   printf("in 33\n");
+					           sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_HUM_VALUE, value/100);
+					         }
 						        /*
 						        else if(num == 2 && type != 32)
 						        {
