@@ -439,7 +439,7 @@ int receiveDeviceMsg(char *buf, int len)
 		            //printf("buffer[7] = 0x%x", buffer[7]);
 		            //printf("buffer[8] = 0x%x", buffer[8]);
 
-					//printf("[receiveDeviceMsg]deviceId=%d\r\n",g_devices[g_devices_count].deviceId);
+					printf("[receiveDeviceMsg]deviceId=%d\r\n",g_devices[g_devices_count].deviceId);
 
 					g_devices[g_devices_count].namelen = buffer[10];
 					//printf("[receiveDeviceMsg]namelen=%d\r\n",g_devices[g_devices_count].namelen);
@@ -678,13 +678,13 @@ int receiveDeviceMsg(char *buf, int len)
 				}
 				else if(resptype == RPCS_DEVICE_REPORT)
 				{
-					printf("[receiveDeviceMsg]report resptype=%d\r\n",resptype);
+					//printf("[receiveDeviceMsg]report resptype=%d\r\n",resptype);
 
-                    printf("[receiveDeviceMsg] RPCS_DEVICE_REPORT \r\n");
+                                        printf("[receiveDeviceMsg] RPCS_DEVICE_REPORT \r\n");
 
 
 					w26n_byte resplen = buffer[1];
-					printf("[receiveDeviceMsg]report resplen=%d\r\n",resplen);
+					//printf("[receiveDeviceMsg]report resplen=%d\r\n",resplen);
 					index = index + resplen + 2;
 
                     //printf("buffer[2]= 0x%x", buffer[2]);
@@ -702,7 +702,7 @@ int receiveDeviceMsg(char *buf, int len)
                     
 
 					int i, index = -1;
-                    for(i = 0; i < g_devices_count; i++)
+                                        for(i = 0; i < g_devices_count; i++)
 					{
 						//printf("[receiveDeviceMsg] report i  endpoint=%d\r\n",g_devices[i].endpoint);
 						 //printf("[receiveDeviceMsg] report i  shortaddr=%d\r\n",g_devices[i].shortaddr);
@@ -714,7 +714,7 @@ int receiveDeviceMsg(char *buf, int len)
 							break;
 						}
 					}
-                    if(index == -1)
+                                        if(index == -1)
 						continue;
 
 

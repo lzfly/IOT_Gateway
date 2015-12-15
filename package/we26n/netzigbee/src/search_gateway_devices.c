@@ -298,7 +298,7 @@ int startSearchDevice()
                }
                searchDeviceCount++;
 
-            if(getDeviceStateCount >= GETDEVICESTATEMAX){		
+               if(getDeviceStateCount >= GETDEVICESTATEMAX){		
                 int i;
 		index++;
 		for(i = 0; i < g_devices_count; i++)
@@ -318,11 +318,12 @@ int startSearchDevice()
 			{
 				case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 				case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
-                    getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
-					getDeviceLevel(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
-					getDeviceColorTemp(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+                                        //getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+					//getDeviceLevel(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
+					//getDeviceColorTemp(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
 					break;
 				case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
+                                        break;
 				case FB_DEVICE_TYPE_WINDOWS:
 					getDeviceState(0x2, g_devices[i].shortaddr, g_devices[i].endpoint);
 					break;
