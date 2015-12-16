@@ -10,5 +10,6 @@ extern int getDeviceLevel(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8
 extern int getDeviceColorTemp(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint);
 extern int sendTmpHumAlertInterval(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint, w26n_uint16 alertInterval);
 extern int sendEntryNet();
+extern int delDevice(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint,char ieeestr);
 
 #endif /* CTRLGATEWAYDEVICES_H_ */

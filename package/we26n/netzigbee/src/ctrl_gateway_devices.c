@@ -66,6 +66,10 @@ static const struct blobmsg_policy  getdevicescmd_policy[] = {
 };
 
 
+static const struct blobmsg_policy  deldevice_policy[] = {
+	[CTRLCMD_DEVICEID] = { .name = "deviceid", .type = BLOBMSG_TYPE_STRING },
+};
+
 static int zigbee_ctrlcmd( struct ubus_context *ctx, struct ubus_object *obj,
                 struct ubus_request_data *req, const char *method,
                 struct blob_attr *msg )
@@ -272,6 +276,133 @@ done:
     return UBUS_STATUS_OK;
     
 }
+
+static int zigbee_deldevice( struct ubus_context *ctx, struct ubus_object *obj,
+                struct ubus_request_data *req, const char *method,
+                struct blob_attr *msg )
+{
+
+	struct blob_attr * tb[__CTRLCMD_MAX];
+	const char * deviceIdstr;
+	//w26n_uint16 shortaddr ;
+        char ieeestr[32];
+	w26n_uint8 endpoint;
+	
+    static struct blob_buf b;
+
+	printf("[zigbee_deldevicescmd]start\r\n");
+	
+    
+	blobmsg_parse( deldevice_policy, ARRAY_SIZE(deldevice_policy), tb, blob_data(msg), blob_len(msg));
+
+	
+	if ( tb[CTRLCMD_DEVICEID] )
+	{
+		deviceIdstr = blobmsg_data( tb[CTRLCMD_DEVICEID] );
+		printf( "device = %s\n", deviceIdstr );
+	}
+
+	
+	
+    {
+	   char *ptr,*ptr1, c = '_';
+	   //char ieeestr[32];
+	   char endpiontstr[32];
+	   ptr = strchr(deviceIdstr, c);
+	   printf( "deviceid parse 1\n");
+       if(ptr == NULL)
+	   {
+	       printf( "deviceid fromat is error\n");
+	       goto done;
+	    }
+		   
+	   ptr = strchr(ptr + 1, c);
+	   printf( "deviceid parse 2\n");
+       if(ptr == NULL)
+	   {
+	       printf( "deviceid fromat is error\n");
+	       goto done;
+	    }
+		   
+	   ptr1 = strchr(ptr + 1, c);
+	   printf( "deviceid parse 3\n");
+       if(ptr1 == NULL)
+	   {
+	       printf( "deviceid fromat is error\n");
+	       goto done;
+	    }
+		   
+       printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", (int)ptr,(int)ptr1);
+
+
+	   if(ptr == 0 || ptr1 == 0)
+	   {
+		   printf( "deviceid parse error\n");
+
+           goto done;
+	   }
+	   int i = 0;
+
+	   printf( "deviceid parse ptr=0x%x ptr1=0x%x\n", (int)ptr,(int)ptr1);
+
+	   printf( "deviceid parse count=%d\n", ptr1-ptr-1);
+
+	   while(i < ptr1 - ptr - 1)
+	   {
+	      ieeestr[i] = ptr[i+1];
+		  i++;
+	   }
+	   ieeestr[ptr1 - ptr - 1] = 0;
+	   
+	   strcpy(endpiontstr, ptr1 + 1);
+	   endpiontstr[strlen(ptr1) - 1] = 0;
+	   
+	   printf( "ieeestr = %s\n", ieeestr );
+	   printf( "endpiontstr = %s\n", endpiontstr );
+	   
+	   endpoint = strtoul(endpiontstr, NULL, 10);
+	   
+	   printf( "ieeestr = %s ieeelen=%d\n", ieeestr, strlen(ieeestr) );
+	   printf( "endpoint = %d\n", endpoint );
+	   
+	  
+	   
+
+	}
+	{
+        int i;
+		for(i = 0; i < g_devices_count; i++)
+		{
+                       
+			printf("[ctrlcmd] ieeestr=%s ieeelen=%d endpoint=%d\r\n", g_devices[i].ieeestr,strlen(g_devices[i].ieeestr), g_devices[i].endpoint);
+			if(g_devices[i].endpoint == endpoint && (strcmp(g_devices[i].ieeestr,  ieeestr) == 0))
+			{
+				printf("device SN = %s", g_devices[i].SN);
+				printf("device ieeestr = %s", g_devices[i].ieeestr);
+				printf("\n******111111*******\n");
+				delDevice(0x2, g_devices[i].shortaddr, g_devices[i].endpoint, g_devices[i].ieeestr);
+				printf("\n******222222*******\n");
+			}
+		}
+	}
+
+done:
+
+    
+	blob_buf_init( &b, 0 );
+	blobmsg_add_string( &b, "return",  "ok777" );
+    
+   
+    ubus_send_reply( ctx, req, b.head );
+	
+	
+	
+	
+    return UBUS_STATUS_OK;
+    
+}
+
+
 
 static int zigbee_getstatecmd( struct ubus_context *ctx, struct ubus_object *obj,
                 struct ubus_request_data *req, const char *method,
@@ -609,10 +740,34 @@ static int zigbee_getdevicescmd( struct ubus_context *ctx, struct ubus_object *o
 }
 
 
+static int zigbee_entrynet( struct ubus_context *ctx, struct ubus_object *obj,
+                struct ubus_request_data *req, const char *method,
+                struct blob_attr *msg )
+{
+
+    static struct blob_buf b;
+    char  tstr[1024];
+    
+    
+    
+    /* send reply */
+    blob_buf_init( &b, 0 );
+    blobmsg_add_string( &b, "return",  "ok" );
+    
+    sendEntryNet();
+   
+    /**/
+    ubus_send_reply( ctx, req, b.head );
+    return UBUS_STATUS_OK;
+    
+}
+
 static const struct ubus_method zigbee_methods[] = {
 	UBUS_METHOD( "ctrlcmd",  zigbee_ctrlcmd, ctrlcmd_policy ),
 	UBUS_METHOD( "getstatecmd",  zigbee_getstatecmd, getstatecmd_policy ),
 	UBUS_METHOD( "getdevicescmd",  zigbee_getdevicescmd, getdevicescmd_policy ),
+	UBUS_METHOD( "deldevice",  zigbee_deldevice, deldevice_policy ),
+	UBUS_METHOD_NOARG( "entrynet",  zigbee_entrynet ),
 };
 
 
@@ -778,6 +933,38 @@ int sendDeviceState(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPo
 	msg[13] = 0x0;
 	msg[14] = state;
 
+	sendCommand(g_monitor_socket,msg,cmd_length);
+
+	return 0;
+
+}
+
+
+int delDevice(w26n_uint8 addrmode, w26n_uint16 shortaddr, w26n_uint8 endPoint,char ieeestr)
+{
+
+	int cmd_length=14;
+	w26n_byte msg[cmd_length];
+    printf("\n******33333*******\n");
+	
+	printf( "[delDevice]start");
+	
+	msg[0] = RPCS_DELETE_DEVICE ;
+	msg[1] = 0x0C;
+	msg[2] = addrmode;
+	msg[3] = shortaddr&0xFF;
+	msg[4] = (shortaddr&0xFF00)>>8;
+    msg[5] = ieeestr&0xFF;
+	msg[6] = (ieeestr&0xFF00)>>8;
+	msg[7] = (ieeestr&0xFF0000)>>8;
+	msg[8] = (ieeestr&0xFF000000)>>8;
+	msg[9] = (ieeestr&0xFF00000000)>>8;
+	msg[10] = (ieeestr&0xFF0000000000)>>8;
+	msg[11] = (ieeestr&0xFF000000000000)>>8;
+	msg[12] = (ieeestr&0xFF00000000000000)>>8;
+	msg[13] = (ieeestr&0xFF0000000000000000)>>8;
+	msg[14] = endPoint;
+    printf("\n******33333*******\n");
 	sendCommand(g_monitor_socket,msg,cmd_length);
 
 	return 0;

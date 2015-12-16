@@ -191,6 +191,8 @@ function zigbee_item()
   local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
   else
   local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+  local res = conn:call("we26n_zigbee_febee","deldevicescmd",{ deviceid = deviceid});
+ 
   end
   luci.http.redirect(luci.dispatcher.build_url("admin/newweb/zigbee"))
 
@@ -206,6 +208,7 @@ function windows_item()
   local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
   else
   local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+  local res = conn:call("we26n_zigbee_febee","deldevicescmd",{ deviceid = deviceid});
   end
   luci.http.redirect(luci.dispatcher.build_url("admin/newweb/windows"))
 
@@ -221,6 +224,7 @@ function switch_item()
   local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
   else
   local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+   local res = conn:call("we26n_zigbee_febee","deldevicescmd",{ deviceid = deviceid});
   end
   luci.http.redirect(luci.dispatcher.build_url("admin/newweb/switch"))
 
@@ -237,6 +241,7 @@ function sensor_item()
   local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
   else
   local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+  local res = conn:call("we26n_zigbee_febee","deldevicescmd",{ deviceid = deviceid});
   end
   luci.http.redirect(luci.dispatcher.build_url("admin/newweb/sensor"))
 
@@ -252,6 +257,7 @@ function alertor_item()
   local result=conn:call("deviceid_add_del", "add_deviceid", { deviceid = deviceid, devicetype = devicetype});
   else
   local result=conn:call("deviceid_add_del", "del_deviceid", { deviceid = deviceid});
+  local res = conn:call("we26n_zigbee_febee","deldevicescmd",{ deviceid = deviceid});
   end
   luci.http.redirect(luci.dispatcher.build_url("admin/newweb/alertor"))
 
@@ -264,7 +270,7 @@ function light_control()
 end
 function entrynet_control()
 
-	local result = conn:call("we26n_zigbee_febee", "ctrlcmd", { gatewayid =macAddr , deviceid = "zigbee_fbee_entrynet_ffffffffffffffff_99", attr = "9999", data = "0" });
+	local result = conn:call("we26n_zigbee_febee", "entrynet", {});
         luci.http.redirect(luci.dispatcher.build_url("admin/newweb/zigbee"))
 end
 
