@@ -331,7 +331,7 @@ int  test_write_to_ini( char * gas_meter_id, double data )
     sprintf(&devicesstr[strlen(devicesstr)], "{");
     sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_gas_%s\",",gas_meter_id);
     sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
-    sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0020\",");
+    sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"20\",");
     sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",data);
     sprintf(&devicesstr[strlen(devicesstr)], "},");
     sprintf(&devicesstr[strlen(devicesstr)-1], "]");
@@ -403,7 +403,7 @@ int  sendMsgToWeb( char * meterid, unsigned short int attr, double data )
     char deviceattrstr[16];
     char devicedatastr[64];
 
-    sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_GAS_METER);
+    sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_GAS_METER);
     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_GASMETER_VALUE);
     sprintf(devicedatastr, "%lf", data);
 

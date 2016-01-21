@@ -387,15 +387,15 @@ function  meter_record_init()
 	
 	mtrec.power = {};
 	mtrec.power.deviceid = "rf470_power_" .. tmac .. "_07";
-	mtrec.power.devicetype = "0007";
+	mtrec.power.devicetype = "7";
 
 	mtrec.water = {};
 	mtrec.water.deviceid = "rf470_water_" .. tmac .. "_08";
-	mtrec.water.devicetype = "0008";
+	mtrec.water.devicetype = "8";
 
 	mtrec.heat = {};
 	mtrec.heat.deviceid = "rf470_heat_" .. tmac .. "_21";
-	mtrec.heat.devicetype = "0021";
+	mtrec.heat.devicetype = "21";
 	
 	
 	x = uci.cursor();

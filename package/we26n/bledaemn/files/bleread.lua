@@ -214,7 +214,7 @@ function  ble_gasmeter_report( tmac, data )
 	
 	rpt.gatewayid = "we26n_78A35106F196";
 	rpt.deviceid = ble_gasmeter_cvtname(tmac);
-	rpt.devicetype = "0020";
+	rpt.devicetype = "20";
 	rpt.attr = "1004";
 	rpt.data = string.format ( "%f", data );
 	
@@ -235,7 +235,7 @@ function  ble_gasmeter_writes( tmac, data )
 	ttt[1] = {};
 	ttt[1].deviceid = ble_gasmeter_cvtname( tmac );
 	ttt[1].stauts = "0";
-    ttt[1].devicetype = "0020";
+    ttt[1].devicetype = "20";
 	ttt[1].data = string.format ( "%f", data );
 	
 	str = cjson.encode( ttt );

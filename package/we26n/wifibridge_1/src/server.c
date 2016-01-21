@@ -63,19 +63,19 @@ int write_to_ini(char *powerid,char *waterid,char *heatid,double ddd,double ccc,
     sprintf(&devicesstr[strlen(devicesstr)], "{");
     sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_meter_%s\",",powerid);
     sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
-    sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0007\",");
+    sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"7\",");
     sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ddd);
     sprintf(&devicesstr[strlen(devicesstr)], "},");
     sprintf(&devicesstr[strlen(devicesstr)], "{");
     sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_meter_%s\",",waterid);
     sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
-    sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0008\",");
+    sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"8\",");
     sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ccc);
     sprintf(&devicesstr[strlen(devicesstr)], "},");
     sprintf(&devicesstr[strlen(devicesstr)], "{");
     sprintf(&devicesstr[strlen(devicesstr)], "\"deviceid\":\"wifi_meter_%s\",",heatid);
     sprintf(&devicesstr[strlen(devicesstr)], "\"status\":\"5\",");
-    sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"0021\",");
+    sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"21\",");
     sprintf(&devicesstr[strlen(devicesstr)], "\"data\":\"%f\"",ccc_h);
     sprintf(&devicesstr[strlen(devicesstr)], "},");
     sprintf(&devicesstr[strlen(devicesstr)-1], "]");
@@ -719,24 +719,24 @@ int  sendMsgToWeb(char *ieeestr,unsigned short int type,double data)
     printf( "[sendMsgToWeb] start--%s\r\n", deviceidstr );
     blobmsg_add_string( &b, "deviceid", deviceidstr);
 
-    char devicetypestr[8];
+    char devicetypestr[16];
     char deviceattrstr[16];
     char devicedatastr[64];
 
     switch(type)
     {
     case POWER:
-        sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_POWERMETER);
+        sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_POWERMETER);
         sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_POWERMETER_VALUE);
         sprintf(devicedatastr, "%lf", data);
         break;
     case WATER:
-        sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_WATERMETER);
+        sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_WATERMETER);
         sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_WATERMETER_VALUE);
         sprintf(devicedatastr, "%lf", data);
         break;
     case HEAT:
-        sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_HEAT_METER);
+        sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_HEAT_METER);
         sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_HEATMETER_VALUE);
         sprintf(devicedatastr, "%lf", data);
         break;
