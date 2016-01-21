@@ -135,9 +135,9 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
     //printf("[sendMsgToWeb] start--1\r\n");
 
     /**/
-	if ( ubus_lookup_id(ctx, "jianyou", &id) ) {
-		fprintf(stderr, "Failed to look up jianyou object\n");
-		return;
+	if ( ubus_lookup_id(ctx, "webbridge_device", &id) ) {
+		fprintf(stderr, "Failed to look up webbridge_device object\n");
+		return -1;
 	}
 	//printf("[sendMsgToWeb] start--2\r\n");
 
@@ -153,30 +153,30 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
     //printf("[sendMsgToWeb] start--%s\r\n", deviceidstr);
 	blobmsg_add_string( &b, "deviceid", deviceidstr);
 	
-	char devicetypestr[8];
+	char devicetypestr[16];
 	char deviceattrstr[16];
 	char devicedatastr[64];
 	
 	switch(deviceId)
 	{
 	 case FB_DEVICE_TYPE_GAS:
-	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_GAS);
+	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_GAS);
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_GAS_ALERT);
 		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_MAGNETIC_DOOR:
-	      sprintf(devicetypestr,"%s",ENN_DEVICE_TYPE_MAGNETIC_DOOR);
+	      sprintf(devicetypestr,"%d",ENN_DEVICE_TYPE_MAGNETIC_DOOR);
 	      sprintf(deviceattrstr,"%d",ENN_DEVICE_ATTR_MAGNETIC_DOOR_ALERT);
 	      sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_BODY_INFRARED:
-	      sprintf(devicetypestr,"%s",ENN_DEVICE_TYPE_BODY_INFRARED);
+	      sprintf(devicetypestr,"%d",ENN_DEVICE_TYPE_BODY_INFRARED);
 	      sprintf(deviceattrstr,"%d",ENN_DEVICE_ATTR_BODY_INFRARED);
 	      sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_TEMP_HUM:
 	 case FB_DEVICE_TYPE_TEMP_HUM_2:
-	     sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_TEMP_HUM);
+	     sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_TEMP_HUM);
 		 if(attr == ENN_DEVICE_ATTR_TEMP_VALUE)
 		 {
 		     double data1 = data;
@@ -192,23 +192,23 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
 	     break;
 		 
 	 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
-	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_ON_OFF_THREE);
+	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_ON_OFF_THREE);
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_ON_OFF_THREE_STATE);
 		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_POWER_OUTLET:
-	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_POWER_OUTLET);
+	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_POWER_OUTLET);
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_POWER_OUTLET);
 		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_WINDOWS:
-	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_WINDOWS);
+	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_WINDOWS);
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_WINDOWS_VALUE);
 		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
-	     sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_COLOR_TEMP_LAMP);
+	     sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_COLOR_TEMP_LAMP);
 		 if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE){
 		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE);
 			 sprintf(devicedatastr, "%d", data);
@@ -235,7 +235,7 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
 	}
 	blobmsg_add_string( &b, "devicetype", devicetypestr);
 	
-	blobmsg_add_string( &b, "attr", deviceattrstr );
+	blobmsg_add_string( &b, "deviceattr", deviceattrstr );
 	
 
 	
@@ -243,7 +243,7 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
 
 	printf("[sendMsgToWeb]ubus_invoke data = %s\r\n", devicedatastr);
 	/**/
-	ubus_invoke( ctx, id, "report", b.head, test_data_cback, 0, 3000);
+	ubus_invoke( ctx, id, "device_attr_report", b.head, test_data_cback, 0, 3000);
 
 	
     /**/
@@ -251,6 +251,180 @@ int  sendMsgToWeb(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint,
 	return 0;
 	
 }
+
+int  addDeviceToWeb(w26n_char * gatewayId, w26n_char * deviceId, w26n_char * devicetype)
+{
+    uint32_t  id;
+    struct ubus_context *ctx;
+	static struct blob_buf b;
+ 
+    printf("[addDeviceToWeb] start\r\n");
+
+    /**/
+	ctx = ubus_connect( NULL );
+	if ( NULL == ctx) 
+	{
+	    fprintf(stderr, "Failed to connect to ubus\n");
+	    return -1;
+	}
+ printf("[addDeviceToWeb] start-1\r\n");
+    /**/
+	if ( ubus_lookup_id(ctx, "webbridge_device", &id) ) {
+		fprintf(stderr, "Failed to look up webbridge_device object\n");
+		return -1;
+	}
+	
+    blob_buf_init( &b, 0 );
+	 printf("[addDeviceToWeb] start-%s %s %s\r\n", gatewayId,deviceId,devicetype);
+	
+	blobmsg_add_string( &b, "gatewayid", gatewayId );
+
+	blobmsg_add_string( &b, "deviceid", deviceId);
+	
+	blobmsg_add_string( &b, "devicetype", devicetype);
+	
+	 printf("[addDeviceToWeb] start-3\r\n");
+	/**/
+	ubus_invoke( ctx, id, "add_device", b.head, test_data_cback, 0, 3000);
+
+	
+    /**/
+	ubus_free(ctx);
+	return 0;
+	
+}
+
+int  addDeviceAttrToWeb(w26n_char * gatewayId, w26n_char * deviceId, w26n_char * devicetype,   w26n_char *  deviceattr, w26n_char * attrpermission)
+{
+    uint32_t  id;
+    struct ubus_context *ctx;
+	static struct blob_buf b;
+ 
+    printf("[addDeviceAttrToWeb] start\r\n");
+
+    /**/
+	ctx = ubus_connect( NULL );
+	if ( NULL == ctx) 
+	{
+	    fprintf(stderr, "Failed to connect to ubus\n");
+	    return -1;
+	}
+
+    /**/
+	if ( ubus_lookup_id(ctx, "webbridge_device", &id) ) {
+		fprintf(stderr, "Failed to look up webbridge_device object\n");
+		return -1;
+	}
+    blob_buf_init( &b, 0 );
+	blobmsg_add_string( &b, "gatewayid", gatewayId );
+
+	blobmsg_add_string( &b, "deviceid", deviceId);
+	
+	blobmsg_add_string( &b, "devicetype", devicetype);
+	
+	blobmsg_add_string( &b, "deviceattr", deviceattr );
+	
+	blobmsg_add_string( &b, "attrpermission", attrpermission );
+	
+	
+	/**/
+	ubus_invoke( ctx, id, "add_device_attr", b.head, test_data_cback, 0, 3000);
+
+	
+    /**/
+	ubus_free(ctx);
+	return 0;
+	
+}
+
+int  addDevice(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint)
+{
+    uint32_t  id;
+    struct ubus_context *ctx;
+	static struct blob_buf b;
+ 
+    printf("[addDevice] start\r\n");
+
+	char gatewayidstr[32];
+	sprintf(gatewayidstr, "we26n_%s", g_localMAC);
+	
+	char deviceidstr[64];
+	sprintf(deviceidstr, "zigbee_fbee_%s_%d", ieeestr, endpoint);
+
+	
+	char devicetypestr[16];
+	char deviceattrstr[16];
+
+	
+	switch(deviceId)
+	{
+	 case FB_DEVICE_TYPE_GAS:
+	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_GAS);
+		  addDeviceToWeb(gatewayidstr, deviceidstr, devicetypestr);
+		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_GAS_ALERT);
+		  addDeviceAttrToWeb(gatewayidstr, deviceidstr, devicetypestr, deviceattrstr, "I");
+		  
+	     break;
+	 case FB_DEVICE_TYPE_MAGNETIC_DOOR:
+	      sprintf(devicetypestr,"%d",ENN_DEVICE_TYPE_MAGNETIC_DOOR);
+		  addDeviceToWeb(gatewayidstr, deviceidstr, devicetypestr);
+	      sprintf(deviceattrstr,"%d",ENN_DEVICE_ATTR_MAGNETIC_DOOR_ALERT);
+	      addDeviceAttrToWeb(gatewayidstr, deviceidstr, devicetypestr, deviceattrstr, "I");
+	     break;
+	 case FB_DEVICE_TYPE_BODY_INFRARED:
+	      sprintf(devicetypestr,"%d",ENN_DEVICE_TYPE_BODY_INFRARED);
+		  addDeviceToWeb(gatewayidstr, deviceidstr, devicetypestr);
+	      sprintf(deviceattrstr,"%d",ENN_DEVICE_ATTR_BODY_INFRARED);
+	      addDeviceAttrToWeb(gatewayidstr, deviceidstr, devicetypestr, deviceattrstr, "I");
+	     break;
+	 case FB_DEVICE_TYPE_TEMP_HUM:
+	 case FB_DEVICE_TYPE_TEMP_HUM_2:
+	     sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_TEMP_HUM);
+
+		 sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_TEMP_VALUE);
+         addDeviceAttrToWeb(gatewayidstr, deviceidstr, devicetypestr, deviceattrstr, "RI");
+		 sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_HUM_VALUE);
+         addDeviceAttrToWeb(gatewayidstr, deviceidstr, devicetypestr, deviceattrstr, "RI");
+	     break;
+		 
+	 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
+	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_ON_OFF_THREE);
+		  addDeviceToWeb(gatewayidstr, deviceidstr, devicetypestr);
+		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_ON_OFF_THREE_STATE);
+		  addDeviceAttrToWeb(gatewayidstr, deviceidstr, devicetypestr, deviceattrstr, "RW");
+	     break;
+	 case FB_DEVICE_TYPE_POWER_OUTLET:
+	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_POWER_OUTLET);
+		  addDeviceToWeb(gatewayidstr, deviceidstr, devicetypestr);
+		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_POWER_OUTLET);
+		  addDeviceAttrToWeb(gatewayidstr, deviceidstr, devicetypestr, deviceattrstr, "RW");
+	     break;
+	 case FB_DEVICE_TYPE_WINDOWS:
+	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_WINDOWS);
+		  addDeviceToWeb(gatewayidstr, deviceidstr, devicetypestr);
+		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_WINDOWS_VALUE);
+		  addDeviceAttrToWeb(gatewayidstr, deviceidstr, devicetypestr, deviceattrstr, "RW");
+	     break;
+	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
+	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
+	     sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_COLOR_TEMP_LAMP);
+		 addDeviceToWeb(gatewayidstr, deviceidstr, devicetypestr);
+
+		 sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE);
+	     addDeviceAttrToWeb(gatewayidstr, deviceidstr, devicetypestr, deviceattrstr, "RW");
+		 sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE);
+		 addDeviceAttrToWeb(gatewayidstr, deviceidstr, devicetypestr, deviceattrstr, "RW");
+		 sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE);
+         addDeviceAttrToWeb(gatewayidstr, deviceidstr, devicetypestr, deviceattrstr, "RW");
+	     break;
+		 
+	 default:
+	     break;
+	}
+	return 0;
+	
+}
+
 
 int  sendMsgToMQTT(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint, w26n_uint16 attr, w26n_uint32 data)
 {
@@ -298,23 +472,23 @@ int  sendMsgToMQTT(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint
 	switch(deviceId)
 	{
 	 case FB_DEVICE_TYPE_GAS:
-	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_GAS);
+	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_GAS);
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_GAS_ALERT);
 		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_MAGNETIC_DOOR:
-	      sprintf(devicetypestr,"%s",ENN_DEVICE_TYPE_MAGNETIC_DOOR);
+	      sprintf(devicetypestr,"%d",ENN_DEVICE_TYPE_MAGNETIC_DOOR);
 	      sprintf(deviceattrstr,"%d",ENN_DEVICE_ATTR_MAGNETIC_DOOR_ALERT);
 	      sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_BODY_INFRARED:
-	      sprintf(devicetypestr,"%s",ENN_DEVICE_TYPE_BODY_INFRARED);
+	      sprintf(devicetypestr,"%d",ENN_DEVICE_TYPE_BODY_INFRARED);
 	      sprintf(deviceattrstr,"%d",ENN_DEVICE_ATTR_BODY_INFRARED);
 	      sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_TEMP_HUM:
 	 case FB_DEVICE_TYPE_TEMP_HUM_2:
-	     sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_TEMP_HUM);
+	     sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_TEMP_HUM);
 		 if(attr == ENN_DEVICE_ATTR_TEMP_VALUE)
 		 {
 		     double data1 = data;
@@ -330,23 +504,23 @@ int  sendMsgToMQTT(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint
 	     break;
 		 
 	 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
-	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_ON_OFF_THREE);
+	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_ON_OFF_THREE);
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_ON_OFF_THREE_STATE);
 		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_POWER_OUTLET:
-	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_POWER_OUTLET);
+	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_POWER_OUTLET);
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_POWER_OUTLET);
 		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_WINDOWS:
-	      sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_WINDOWS);
+	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_WINDOWS);
 		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_WINDOWS_VALUE);
 		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
-	     sprintf(devicetypestr, "%s", ENN_DEVICE_TYPE_COLOR_TEMP_LAMP);
+	     sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_COLOR_TEMP_LAMP);
 		 if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE){
 		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE);
 			 sprintf(devicedatastr, "%d", data);
@@ -517,6 +691,9 @@ int receiveDeviceMsg(char *buf, int len)
 						continue;
 					
 				    printf("[receiveDeviceMsg] find new device\r\n");
+					
+					addDevice(g_devices[g_devices_count].deviceId, g_devices[g_devices_count].ieeestr, g_devices[g_devices_count].endpoint);
+					
                     if(g_devices[g_devices_count].status != 0)
 					{
                         if(g_devices[g_devices_count].deviceId == FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH)

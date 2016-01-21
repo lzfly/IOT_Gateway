@@ -668,35 +668,35 @@ static int zigbee_getdevicescmd( struct ubus_context *ctx, struct ubus_object *o
 			switch(g_devices[i].deviceId)
 			{
 			 case FB_DEVICE_TYPE_GAS:
-				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_GAS);
+				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%d\"", ENN_DEVICE_TYPE_GAS);
 				 break;
 			 case FB_DEVICE_TYPE_MAGNETIC_DOOR:
-				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_MAGNETIC_DOOR);
+				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%d\"", ENN_DEVICE_TYPE_MAGNETIC_DOOR);
 				 break;
 			 case FB_DEVICE_TYPE_BODY_INFRARED:
-				  sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_BODY_INFRARED);
+				  sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%d\"", ENN_DEVICE_TYPE_BODY_INFRARED);
 				 break;
 			 case FB_DEVICE_TYPE_TEMP_HUM:
 			 case FB_DEVICE_TYPE_TEMP_HUM_2:
-				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_TEMP_HUM);
+				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%d\"", ENN_DEVICE_TYPE_TEMP_HUM);
 				 break;
 				 
 			 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
-				  sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_ON_OFF_THREE);
+				  sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%d\"", ENN_DEVICE_TYPE_ON_OFF_THREE);
 				 break;
 			 case FB_DEVICE_TYPE_POWER_OUTLET:
-				  sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_POWER_OUTLET);
+				  sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%d\"", ENN_DEVICE_TYPE_POWER_OUTLET);
 				 break;
 			 case FB_DEVICE_TYPE_WINDOWS:
-				  sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_WINDOWS);
+				  sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%d\"", ENN_DEVICE_TYPE_WINDOWS);
 				 break;
 			 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 			 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
-				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", ENN_DEVICE_TYPE_COLOR_TEMP_LAMP);
+				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%d\"", ENN_DEVICE_TYPE_COLOR_TEMP_LAMP);
 				 break;
 				 
 			 default:
-				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%s\"", "xxxx");
+				 sprintf(&devicesstr[strlen(devicesstr)], "\"devicetype\":\"%d\"", "xxxx");
 				 break;
 			}
                                
