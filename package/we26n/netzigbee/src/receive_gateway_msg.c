@@ -380,7 +380,7 @@ int  addDevice(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint)
 	 case FB_DEVICE_TYPE_TEMP_HUM:
 	 case FB_DEVICE_TYPE_TEMP_HUM_2:
 	     sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_TEMP_HUM);
-
+                 addDeviceToWeb(gatewayidstr, deviceidstr, devicetypestr);
 		 sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_TEMP_VALUE);
          addDeviceAttrToWeb(gatewayidstr, deviceidstr, devicetypestr, deviceattrstr, "RI");
 		 sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_HUM_VALUE);

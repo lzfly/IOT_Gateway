@@ -400,24 +400,19 @@ function pppoe_update()
 	x:delete("network","wan","gateway") 
 	x:delete("network","wan","dns")
 	x:delete("network", "wwan")
+    x:set("network", "wan", "ifname", "eth0.2")
 	x:commit("network")
 
    	x:set("band","band_manage","bandwidth", bandwidth)
 	x:set("band","lan_set","lan_mode", 1)
 	x:commit("band")
 
-	local winame = ""
-	x:foreach("wireless", "wifi-iface",
-		function(s)
-			if s['mode'] == "sta" then
-				winame = s['.name']
-				return false
-			end
-		end)
-	if winame ~= "" then 
-		x:delete("wireless", winame)
-		x:commit("wireless")
-	end
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliEnable")
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliSsid")
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliAuthMode")
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliEncrypType")
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliWPAPSK")
+	x:commit("wireless")
 	
 	luci.sys.call("/etc/init.d/network restart >/dev/null")
     luci.http.redirect(luci.dispatcher.build_url("admin/newweb/network_set"))
@@ -436,24 +431,20 @@ function static_update()
 	x:set("network", "wan", "dns", s_dns)
 	x:set("network","wan","proto", "static")
 	x:delete("network", "wwan")
+	x:set("network", "wan", "ifname", "eth0.2")
 	x:commit("network")
 
    	x:set("band","band_manage","bandwidth", s_bandwidth)
 	x:set("band","lan_set","lan_mode", 2)
 	x:commit("band")
 	
-	local winame = ""
-	x:foreach("wireless", "wifi-iface",
-		function(s)
-			if s['mode'] == "sta" then
-				winame = s['.name']
-				return false
-			end
-		end)
-	if winame ~= "" then 
-		x:delete("wireless", winame)
-		x:commit("wireless")
-	end
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliEnable")
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliSsid")
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliAuthMode")
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliEncrypType")
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliWPAPSK")
+	x:commit("wireless")
+
 
 	luci.sys.call("/etc/init.d/network restart >/dev/null")
     luci.http.redirect(luci.dispatcher.build_url("admin/newweb/network_set"))
@@ -471,20 +462,15 @@ function dhcp_update()
 	x:delete("network","wan","gateway") 
 	x:delete("network","wan","dns")
 	x:delete("network", "wwan")
+	x:set("network", "wan", "ifname", "eth0.2")
 	x:commit("network")
 
-	local winame = ""
-	x:foreach("wireless", "wifi-iface",
-		function(s)
-			if s['mode'] == "sta" then
-				winame = s['.name']
-				return false
-			end
-		end)
-	if winame ~= "" then 
-		x:delete("wireless", winame)
-		x:commit("wireless")
-	end
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliEnable")
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliSsid")
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliAuthMode")
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliEncrypType")
+	luci.sys.exec("uci delete wireless.@wifi-iface[0].ApCliWPAPSK")
+	x:commit("wireless")
 	
 	luci.sys.call("/etc/init.d/network restart >/dev/null")
     luci.http.redirect(luci.dispatcher.build_url("admin/newweb/network_set"))
@@ -498,33 +484,14 @@ function wds_update()
 	x:set("band","lan_set","lan_mode", 4)
 	x:commit("band")
 
-	x:set("network", "wwan", "interface")
-	x:set("network", "wwan", "proto", "dhcp")
+	x:set("network", "wan", "ifname", "apcli0")
 	x:commit("network")
 
-	local winame = ""
-	x:foreach("wireless", "wifi-iface",
-		function(s)
-			if s['mode'] == "sta" then
-				winame = s['.name']
-				return false
-			end
-		end)
-	if winame == "" then 
-		winame = x:add("wireless", "wifi-iface")
-	end
-	x:set("wireless", winame, "device", "radio0")
-	x:set("wireless", winame, "network", "wwan")
-	x:set("wireless", winame, "mode", "sta")
-	x:set("wireless", winame, "ssid", d_name)
-
-	if not d_pwd or d_pwd == "" then
-		x:set("wireless", winame, "encryption", "none")
-		x:delete("wireless", winame, "key")
-	else
-		x:set("wireless", winame, "encryption", "psk-mixed")
-		x:set("wireless", winame, "key", d_pwd)
-	end
+	luci.sys.exec("uci set wireless.@wifi-iface[0].ApCliEnable=".."1")
+	luci.sys.exec("uci set wireless.@wifi-iface[0].ApCliSsid="..d_name)
+	luci.sys.exec("uci set wireless.@wifi-iface[0].ApCliAuthMode=".."WPA2PSK")
+	luci.sys.exec("uci set wireless.@wifi-iface[0].ApCliEncrypType=".."AES")
+	luci.sys.exec("uci set wireless.@wifi-iface[0].ApCliWPAPSK="..d_pwd)
 	x:commit("wireless")
 
 	luci.sys.call("/etc/init.d/network restart >/dev/null")
