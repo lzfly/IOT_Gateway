@@ -465,7 +465,7 @@ int  sendMsgToMQTT(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint
     //printf("[sendMsgToWeb] start--%s\r\n", deviceidstr);
 	blobmsg_add_string( &b, "deviceid", deviceidstr);
 	
-	char devicetypestr[8];
+	char devicetypestr[16];
 	char deviceattrstr[16];
 	char devicedatastr[64];
 	
@@ -558,6 +558,108 @@ int  sendMsgToMQTT(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint
 	ubus_invoke( ctx, id, "dev_notice", b.head, test_data_cback, 0, 3000);
 
 	
+    /**/
+	ubus_free(ctx);
+	return 0;
+	
+}
+
+int  addDeviceToMQTT(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint)
+{
+    int  iret;
+    uint32_t  id;
+    struct ubus_context *ctx;
+	static struct blob_buf b;
+	void *e;
+ 
+    printf("[addDeviceToMQTT] start\r\n");
+
+
+    /**/
+	ctx = ubus_connect( NULL );
+	if ( NULL == ctx) 
+	{
+	    fprintf(stderr, "Failed to connect to ubus\n");
+	    return -1;
+	}
+
+    //printf("[sendMsgToWeb] start--1\r\n");
+
+    /**/
+	if ( ubus_lookup_id(ctx, "we26n_mtbridge", &id) ) {
+		fprintf(stderr, "Failed to look up we26n_mtbridge object\n");
+		return;
+	}
+	//printf("[sendMsgToWeb] start--2\r\n");
+
+	blob_buf_init( &b, 0 );
+
+    //printf("[sendMsgToWeb] start--3\r\n");
+	
+	char deviceidstr[64];
+	sprintf(deviceidstr, "zigbee_fbee_%s_%d", ieeestr, endpoint);
+    //printf("[sendMsgToWeb] start--%s\r\n", deviceidstr);
+	blobmsg_add_string( &b, "devid", deviceidstr);
+	
+	char devicetypestr[16];
+	char deviceattrstr[16];
+	
+	switch(deviceId)
+	{
+	 case FB_DEVICE_TYPE_GAS:
+		  e = blobmsg_open_array(&b, "attrs");
+		  blobmsg_add_u32(&b, NULL, ENN_DEVICE_ATTR_GAS_ALERT);
+	      blobmsg_close_array(&b, e);
+	     break;
+	 case FB_DEVICE_TYPE_MAGNETIC_DOOR:
+		  e = blobmsg_open_array(&b, "attrs");
+		  blobmsg_add_u32(&b, NULL, ENN_DEVICE_ATTR_MAGNETIC_DOOR_ALERT);
+	      blobmsg_close_array(&b, e);
+	     break;
+	 case FB_DEVICE_TYPE_BODY_INFRARED:
+		  e = blobmsg_open_array(&b, "attrs");
+		  blobmsg_add_u32(&b, NULL, ENN_DEVICE_ATTR_BODY_INFRARED);
+	      blobmsg_close_array(&b, e);
+	     break;
+	 case FB_DEVICE_TYPE_TEMP_HUM:
+	 case FB_DEVICE_TYPE_TEMP_HUM_2:
+		  e = blobmsg_open_array(&b, "attrs");
+		  blobmsg_add_u32(&b, NULL, ENN_DEVICE_ATTR_TEMP_VALUE);
+		  blobmsg_add_u32(&b, NULL, ENN_DEVICE_ATTR_HUM_VALUE);
+	      blobmsg_close_array(&b, e);
+	     break;
+		 
+	 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
+		  e = blobmsg_open_array(&b, "attrs");
+		  blobmsg_add_u32(&b, NULL, ENN_DEVICE_ATTR_ON_OFF_THREE_STATE);
+	      blobmsg_close_array(&b, e);
+	     break;
+	 case FB_DEVICE_TYPE_POWER_OUTLET:
+		  e = blobmsg_open_array(&b, "attrs");
+		  blobmsg_add_u32(&b, NULL, ENN_DEVICE_ATTR_POWER_OUTLET);
+	      blobmsg_close_array(&b, e);
+	     break;
+	 case FB_DEVICE_TYPE_WINDOWS:
+		  e = blobmsg_open_array(&b, "attrs");
+		  blobmsg_add_u32(&b, NULL, ENN_DEVICE_ATTR_WINDOWS_VALUE);
+	      blobmsg_close_array(&b, e);
+	     break;
+	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
+	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
+		  e = blobmsg_open_array(&b, "attrs");
+		  blobmsg_add_u32(&b, NULL, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE);
+		  blobmsg_add_u32(&b, NULL, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE);
+		  blobmsg_add_u32(&b, NULL, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE);
+	      blobmsg_close_array(&b, e);
+	     break;
+		 
+	 default:
+	     break;
+	}
+
+	/**/
+	ubus_invoke( ctx, id, "add_device", b.head, test_data_cback, 0, 3000);
+
     /**/
 	ubus_free(ctx);
 	return 0;
@@ -693,6 +795,7 @@ int receiveDeviceMsg(char *buf, int len)
 				    printf("[receiveDeviceMsg] find new device\r\n");
 					
 					addDevice(g_devices[g_devices_count].deviceId, g_devices[g_devices_count].ieeestr, g_devices[g_devices_count].endpoint);
+					addDeviceToMQTT(g_devices[g_devices_count].deviceId, g_devices[g_devices_count].ieeestr, g_devices[g_devices_count].endpoint);
 					
                     if(g_devices[g_devices_count].status != 0)
 					{
