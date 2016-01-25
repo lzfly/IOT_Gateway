@@ -463,27 +463,27 @@ int  sendMsgToMQTT(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint
 	char deviceidstr[64];
 	sprintf(deviceidstr, "zigbee_fbee_%s_%d", ieeestr, endpoint);
     //printf("[sendMsgToWeb] start--%s\r\n", deviceidstr);
-	blobmsg_add_string( &b, "deviceid", deviceidstr);
+	blobmsg_add_string( &b, "devid", deviceidstr);
 	
 	char devicetypestr[16];
-	char deviceattrstr[16];
+	uint32_t  uuid = 0;
 	char devicedatastr[64];
 	
 	switch(deviceId)
 	{
 	 case FB_DEVICE_TYPE_GAS:
 	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_GAS);
-		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_GAS_ALERT);
+		  uuid = ENN_DEVICE_ATTR_GAS_ALERT;
 		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_MAGNETIC_DOOR:
 	      sprintf(devicetypestr,"%d",ENN_DEVICE_TYPE_MAGNETIC_DOOR);
-	      sprintf(deviceattrstr,"%d",ENN_DEVICE_ATTR_MAGNETIC_DOOR_ALERT);
+	      uuid = ENN_DEVICE_ATTR_MAGNETIC_DOOR_ALERT;
 	      sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_BODY_INFRARED:
 	      sprintf(devicetypestr,"%d",ENN_DEVICE_TYPE_BODY_INFRARED);
-	      sprintf(deviceattrstr,"%d",ENN_DEVICE_ATTR_BODY_INFRARED);
+	      uuid = ENN_DEVICE_ATTR_BODY_INFRARED;
 	      sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_TEMP_HUM:
@@ -495,43 +495,43 @@ int  sendMsgToMQTT(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint
 			 data1 = data1/100;
 			 sprintf(devicedatastr, "%2.2f", data1);
 			 
-		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_TEMP_VALUE);
+		     uuid = ENN_DEVICE_ATTR_TEMP_VALUE;
 		 }
 		 else{
-		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_HUM_VALUE);
+		     uuid = ENN_DEVICE_ATTR_HUM_VALUE;
 			 sprintf(devicedatastr, "%d", data);
 		}
 	     break;
 		 
 	 case FB_DEVICE_TYPE_LEVEL_CONTROL_SWITCH:
 	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_ON_OFF_THREE);
-		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_ON_OFF_THREE_STATE);
+		  uuid = ENN_DEVICE_ATTR_ON_OFF_THREE_STATE;
 		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_POWER_OUTLET:
 	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_POWER_OUTLET);
-		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_POWER_OUTLET);
+		  uuid = ENN_DEVICE_ATTR_POWER_OUTLET;
 		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_WINDOWS:
 	      sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_WINDOWS);
-		  sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_WINDOWS_VALUE);
+		  uuid = ENN_DEVICE_ATTR_WINDOWS_VALUE;
 		  sprintf(devicedatastr, "%d", data);
 	     break;
 	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 	 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
 	     sprintf(devicetypestr, "%d", ENN_DEVICE_TYPE_COLOR_TEMP_LAMP);
 		 if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE){
-		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE);
+		     uuid = ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE;
 			 sprintf(devicedatastr, "%d", data);
-		}
+		 }
 		 else if(attr == ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE){
-		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE);
+		     uuid = ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE;
 			 data = (data)*100/255 ;
 			 sprintf(devicedatastr, "%d", data);
-		}
+		 }
 		 else{
-		     sprintf(deviceattrstr, "%d", ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE);
+		     uuid = ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE;
 			 if(data < 2700)
 			     data =2700;
 			 if(data > 6500)
@@ -547,16 +547,13 @@ int  sendMsgToMQTT(w26n_uint16 deviceId, w26n_char *ieeestr, w26n_uint8 endpoint
 	}
 	blobmsg_add_string( &b, "devicetype", devicetypestr);
 	
-	blobmsg_add_string( &b, "attr", deviceattrstr );
+	blobmsg_add_u32( &b, "uuid", uuid );
 	
-
-	
-	blobmsg_add_string( &b, "data", devicedatastr);	
+	blobmsg_add_string( &b, "value", devicedatastr);	
 
 	printf("[sendMsgToMQTT]ubus_invoke data = %s\r\n", devicedatastr);
 	/**/
-	ubus_invoke( ctx, id, "dev_notice", b.head, test_data_cback, 0, 3000);
-
+	ubus_invoke( ctx, id, "report", b.head, test_data_cback, 0, 3000);
 	
     /**/
 	ubus_free(ctx);

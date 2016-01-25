@@ -93,7 +93,7 @@ void  isou_zigbee_lookup_cb( intptr_t arg, uint32_t tid )
     char  tstr[200];
     
     /**/
-    printf( "zigbee lookup cb, %d\n", tid );
+    printf( "zigbee lookup cb, %u\n", tid );
     
     /**/
     parg = (invoke_args_t *)arg;
@@ -115,6 +115,8 @@ void  isou_zigbee_lookup_cb( intptr_t arg, uint32_t tid )
     {
         free( parg );
     }
+
+printf( "isou, invoke, %d\n", iret );
 
     blob_buf_free( &b );
     return;
@@ -320,7 +322,7 @@ int  isou_report_handler( intptr_t reply, const char * method, struct blob_attr 
     isou_report_attr( did, uuid, value );
     
     /**/    
-    printf( "isou report handler, end\n");
+    printf( "isou report handler, %s, %d, %f::%s\n", did, uuid, value, (char *)blobmsg_data( tb[2] ) );
     return 0;
     
 }

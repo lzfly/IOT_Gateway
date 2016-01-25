@@ -440,8 +440,6 @@ int  tubus_req_search( struct list_head * plist, struct ubus_msghdr * phdr, tubu
 {
     tubus_request_t * preq;
 
-printf("search: %d, %d\n", phdr->peer, phdr->seq );
-
     /**/
     list_for_each_entry( preq, plist, node )
     {
@@ -749,7 +747,6 @@ void  tubus_read_alloc_cb( uv_handle_t* handle, size_t suggested_size, uv_buf_t 
     char * ptr;
 
     /**/
-    printf( "suggested_size %zu\n", suggested_size );
     ptr = (char *)malloc( 4096 );
     if ( NULL == ptr )
     {
@@ -909,10 +906,15 @@ void  tubus_invoke_cbk( intptr_t ctx, int status, struct blob_attr * attr )
         return;
     }
 
+printf( "internal invoke cbk, %d\n", status );
+
     /**/
     if ( status != UBUS_STATUS_OK )
     {
-        func( arg, status, NULL );
+        if ( NULL != func )
+        {
+            func( arg, status, NULL );
+        }
         return;
     }
     
@@ -926,13 +928,25 @@ void  tubus_invoke_cbk( intptr_t ctx, int status, struct blob_attr * attr )
     {
         if ( UBUS_ATTR_DATA == blob_id( node ) )
         {
-            func( arg, status, node );
             break;
         }
     
         /**/
         offs += blob_pad_len( node );
         node = blob_next( node );
+    }
+
+    if ( offs >= total )
+    {
+        node = NULL;
+    }
+
+
+
+    /**/
+    if ( NULL != func )
+    {
+        func( arg, status, node );
     }
     
     return;
@@ -1025,7 +1039,7 @@ int  tubus_invoke( intptr_t ctx, uint32_t obj, const char * method, struct blob_
     pctx = (tubus_context_t *)ctx;
     
     /**/
-    iret = tubus_req_alloc( 0, &preq );
+    iret = tubus_req_alloc( obj, &preq );
     if ( 0 != iret )
     {
         return 1;
