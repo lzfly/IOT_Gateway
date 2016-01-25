@@ -109,7 +109,7 @@ int  ccbk_invoke( intptr_t ctx, int type, intptr_t tdat )
         pnext = pcur->next;
 
         /**/
-        if ( pcur->type == type )
+        if ( type == (pcur->type & type) )
         {
             // pcur->tdat = tdat;
             // list_add( &(pcur->node), &(g_ccqueue_ctx->queue_list) );

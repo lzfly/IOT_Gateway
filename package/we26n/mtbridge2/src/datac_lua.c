@@ -48,7 +48,7 @@ static void waitchg_change_cbk( intptr_t wctx, intptr_t tdat )
     pctx = (waitchg_context_t *)wctx;
 
     /**/
-    tdata_unsubscribe( tdat, wctx, CCBK_T_REPORT );
+    tdata_unsubscribe( tdat, wctx, CCBK_T_BOTH );
     tdata_get_double( tdat, &value );
     
     /**/
@@ -81,7 +81,7 @@ int  waitchg_subs( intptr_t wctx, lua_State * L, int timeout )
     }
 
     /**/
-    iret = tdata_subscribe( tdat, waitchg_change_cbk, wctx, CCBK_T_REPORT );
+    iret = tdata_subscribe( tdat, waitchg_change_cbk, wctx, CCBK_T_BOTH );
     if ( 0 != iret )
     {
         return 1;

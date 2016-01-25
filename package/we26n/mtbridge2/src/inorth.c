@@ -25,8 +25,66 @@ typedef struct  _tag_inor_context
     
 } inor_context_t;
 
-
 inor_context_t  inor_ctx;
+
+
+/**/
+void  inor_field_change_cbk( intptr_t ctx, intptr_t tdat )
+{
+    int  iret;
+    inor_context_t * pctx;
+    intptr_t  sctx;
+    intptr_t  dctx;
+    uint16_t  uuid;
+    const char * name;
+    double  value;
+    char * topic;
+    char * pload;
+
+    /**/
+    printf( "inor field change cbk, begin\n" );
+    
+    /**/
+    pctx = (inor_context_t *)ctx;
+    
+    /**/
+    iret = tdata_get_father( tdat, &sctx );
+    if ( 0 != iret )
+    {
+        return;
+    }
+    
+    iret = srvs_get_father( sctx, &dctx );
+    if ( 0 != iret )
+    {
+        return;
+    }
+
+    /**/
+    tdata_get_double( tdat, &value );
+    tdata_get_uuid( tdat, &uuid );
+    devs_get_name( dctx, &name );
+
+    /* /v1/from_device/name/attr */
+    topic = alloca( 20 + strlen(name) + 10 );
+    sprintf( topic, "/v1/from_device/%s/%u", name, uuid );
+
+    pload = alloca( 40 );
+    sprintf( pload, "%f", value );
+    
+    /**/
+    iret = mqtt_publish( pctx->mqtt, topic, pload );
+    if ( 0 != iret )
+    {
+        printf( "inor, mqtt_pulish, ret = %d\n", iret );
+        return;
+    }
+
+    /**/
+    return;
+    
+}
+
 
 
 /**/
@@ -215,6 +273,14 @@ int  inor_init( uv_loop_t * ploop )
     if ( 0 != iret )
     {
         return 9;
+    }
+
+
+    /**/
+    iret = gtw_subscribe( inor_field_change_cbk, (intptr_t)&inor_ctx, CCBK_T_REPORT );
+    if ( 0 != iret )
+    {
+        return 3;
     }
 
     return 0;

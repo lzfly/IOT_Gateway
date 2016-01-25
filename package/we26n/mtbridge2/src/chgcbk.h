@@ -2,8 +2,10 @@
 #ifndef  __CHG_CBK_H__
 #define  __CHG_CBK_H__
 
-#define  CCBK_T_REPORT  0
-#define  CCBK_T_ACTION  1
+
+#define  CCBK_T_REPORT  1
+#define  CCBK_T_ACTION  2
+#define  CCBK_T_BOTH    (CCBK_T_REPORT|CCBK_T_ACTION)
 
 
 typedef void (* field_change_cbf)( intptr_t ctx, intptr_t tdat );

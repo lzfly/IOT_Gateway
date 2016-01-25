@@ -38,7 +38,7 @@ endef
 define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 	CC="$(TARGET_CC)" \
-	CFLAGS="$(TARGET_CFLAGS) -Wall -g " \
+	CFLAGS="$(TARGET_CFLAGS) -O0 -Wall -g " \
 	LDFLAGS="$(TARGET_LDFLAGS) -g -llua -lubox -luv -lpthread -lm" \
 	-f test.mk
 endef

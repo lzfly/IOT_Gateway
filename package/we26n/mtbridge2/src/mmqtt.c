@@ -726,52 +726,23 @@ int  mqtt_init( uv_loop_t * ploop, intptr_t * pret )
 }
 
 
-#if 0
 
-int  main( void )
+int  mqtt_publish( intptr_t ctx, char * topic, char * mesge )
 {
-    int  iret;
-    intptr_t  inq;    
-    intptr_t  outq;
-    intptr_t  mqtt;
+	mqtt_context_t * pctx;
 
     /**/
-    iret = msq_init( &inq );
-    if ( 0 != iret )
-    {
-        return 1;
-    }
+    pctx = (mqtt_context_t *)ctx;
 
-    iret = msq_init( &outq );
-    if ( 0 != iret )
-    {
-        return 1;
-    }
-    
     /**/
-    iret = mqtt_init( inq, outq, &mqtt );
-    if ( 0 != iret )
+    if ( pctx->status != STA_CONN_OK )
     {
         return 1;
     }
 
     /**/
-    iret = mqtt_run( mqtt );
-    if ( 0 != iret )
-    {
-        return 2;
-    }
-    
-    /**/
-    while( 1 )
-    {
-        sleep( 5 );
-        // msq_enqueue( inq, 15, "abcdefghijklmn" );
-    }
-    
-    return 0;
-    
+    return mqtt_send_publish( pctx, topic, mesge );
 }
 
-#endif
+
 
