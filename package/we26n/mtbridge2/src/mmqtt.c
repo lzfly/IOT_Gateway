@@ -392,9 +392,6 @@ void  mqtt_send_publ_cb( uv_write_t * req, int status )
     intptr_t  mpkt;
 
     /**/
-    printf( "mqtt_send_publish_cb, s = %d\n", status );
-
-    /**/
     mpkt = (intptr_t)req->data;
     mpkt_free( mpkt );
 
@@ -439,13 +436,15 @@ int  mqtt_send_publish( mqtt_context_t * pctx, char * topic, char * mesge )
     {
         mpkt_free( mpkt );
     }
-    
+
+#if 0    
     /**/
     printf( "\n, header: ");
     dump_hex( pbufs[0].len, (uint8_t *)pbufs[0].base );
 
     printf( "\n, payload: ");
     dump_hex( pbufs[1].len, (uint8_t *)pbufs[1].base );
+#endif
 
     /**/
     uv_write( wreq, (uv_stream_t*)&(pctx->tcp), pbufs, bfnum, mqtt_send_publ_cb );
@@ -496,12 +495,14 @@ int  mqtt_send_connect( mqtt_context_t * pctx )
         return 2;
     }
 
+#if 0
     /**/
     printf( "\n, header: ");
     dump_hex( pbufs[0].len, (uint8_t *)pbufs[0].base );
 
     printf( "\n, payload: ");
     dump_hex( pbufs[1].len, (uint8_t *)pbufs[1].base );
+#endif
 
     /**/
     uv_write( &(pctx->sendconn), (uv_stream_t*)&(pctx->tcp), pbufs, bfnum, mqtt_send_conn_cb );

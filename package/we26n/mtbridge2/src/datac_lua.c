@@ -14,104 +14,146 @@
 #include "chgcbk.h"
 #include "atthead.h"
 #include "gateway.h"
+#include "iluaexc.h"
 
 
-typedef struct _tag_waitchg_context
+typedef struct _tag_wait_field_context
 {
     /**/
     lua_State * corte;
+
+    /**/
+    int  status;
     
     /**/
     uint16_t uuid;
     char  did[2];
-    
-} waitchg_context_t;
+
+} wait_field_context_t;
 
 
-int  waitchg_fini( intptr_t wctx )
-{
-    waitchg_context_t * pctx;
 
-    /**/
-    pctx = (waitchg_context_t *)wctx;
-    free( pctx );
-    return 0;
-}
-
-
-static void waitchg_change_cbk( intptr_t wctx, intptr_t tdat )
-{
-    waitchg_context_t * pctx;
-    double  value;
-    
-    /**/
-    pctx = (waitchg_context_t *)wctx;
-
-    /**/
-    tdata_unsubscribe( tdat, wctx, CCBK_T_BOTH );
-    tdata_get_double( tdat, &value );
-    
-    /**/
-    lua_pushnumber( pctx->corte, value );
-    lua_resume( pctx->corte, 1 );
-    
-    /**/
-    waitchg_fini( wctx );
-    return;
-}
-
-
-int  waitchg_subs( intptr_t wctx, lua_State * L, int timeout )
+void  wait_field_fini_cb( intptr_t wctx )
 {
     int  iret;
+    wait_field_context_t * pctx;
     intptr_t  tdat;
-    waitchg_context_t * pctx;
+    lua_State * corte;
+    
+    /**/
+    wait_getptr( wctx, (void **)&pctx );
+    
+    /**/
+    if ( pctx->status == WAIT_SUBS )
+    {
+        pctx->status = WAIT_FREE;
+    
+        /**/
+        corte = pctx->corte;
+        lua_pushnil( corte );
+        lua_setglobal( corte, "curWait" );
+        
+        /**/
+        iret = gtw_search_tdata( pctx->did, pctx->uuid, &tdat );
+        if ( 0 != iret )
+        {
+            return;
+        }
+        
+        /**/
+        iret = tdata_unsubscribe( tdat, wctx );
+        if ( 0 != iret )
+        {
+            return;
+        }
+    }
+    
+    /**/
+    return;
+    
+}
+
+
+static void wait_field_change_cb( intptr_t wctx, intptr_t tdat )
+{
+    wait_field_context_t * pctx;
+    double  value;
+    lua_State * corte;
 
     /**/
-    pctx = (waitchg_context_t *)wctx;
+    printf( "wait field cb cb cb\n" );
+    
+    /**/
+    wait_getptr( wctx, (void **)&pctx );
+    pctx->status = WAIT_FREE;
+    
+    /**/
+    tdata_get_double( tdat, &value );
 
     /**/
-    pctx->corte = L;
+    corte = pctx->corte;
+    lua_pushnil( corte );
+    lua_setglobal( corte, "curWait" );
+
+    /**/
+    wait_fini( wctx );
+    
+    /**/
+    lua_pushnumber( corte, value );
+    lua_resume( corte, 1 );
+    return;
+    
+}
+
+
+int  wait_field_subs( const char * did, uint16_t uuid, lua_State * corte )
+{
+    int  iret;
+    intptr_t  wctx;
+    wait_field_context_t * pctx;
+    intptr_t  tdat;
+    
+    /**/
+    iret = wait_init( sizeof(wait_field_context_t) + strlen(did), wait_field_fini_cb, &wctx );
+    if ( 0 != iret )
+    {
+        return 1;
+    }
+    
+    /**/
+    wait_getptr( wctx, (void **)&pctx );
+    
+    /**/
+    pctx->corte = corte;
+    pctx->status = WAIT_FREE;
+    pctx->uuid = uuid;
+    strcpy( pctx->did, did );
 
     /**/
     iret = gtw_search_tdata( pctx->did, pctx->uuid, &tdat );
     if ( 0 != iret )
     {
-        return luaL_error( L, "gtw search data ret =%d", iret );
+        return 2;
     }
-
+    
     /**/
-    iret = tdata_subscribe( tdat, waitchg_change_cbk, wctx, CCBK_T_BOTH );
+    iret = tdata_subscribe( tdat, wait_field_change_cb, wctx, (CCBK_T_BOTH | CCBK_T_ONCE) );
     if ( 0 != iret )
     {
-        return 1;
-    }
-    
-    return 0;
-    
-}
-
-
-int  waitchg_init( const char * did, uint16_t uuid, intptr_t * pret )
-{
-    waitchg_context_t * pctx;
-
-    /**/
-    pctx = (waitchg_context_t *)malloc( sizeof(waitchg_context_t) + strlen(did) );
-    if ( NULL == pctx )
-    {
-        return 1;
+        return 3;
     }
 
     /**/
-    pctx->uuid = uuid;
-    strcpy( pctx->did, did );
+    pctx->status = WAIT_SUBS;
 
     /**/
-    *pret = (intptr_t)pctx;
-    return 0;
-}
+    lua_pushlightuserdata( corte, (void *)wctx );
+    lua_setglobal( corte, "curWait" );
 
+    /**/
+    return 0;
+    
+}
 
 
 
@@ -277,8 +319,7 @@ static int  datac_gtw_waitchg( lua_State * L )
     int  top;
     const char * did;
     uint16_t  uuid;
-    intptr_t  wctx;
-    
+        
     /**/
     top = lua_gettop( L );
     if ( top != 2 )
@@ -303,17 +344,10 @@ static int  datac_gtw_waitchg( lua_State * L )
     uuid = (uint16_t)lua_tointeger( L, 2 );
 
     /**/
-    iret = waitchg_init( did, uuid, &wctx );
+    iret = wait_field_subs( did, uuid, L );
     if ( 0 != iret )
     {
-        return luaL_error( L, "waitchg init ret =%d", iret );    
-    }
-
-    iret = waitchg_subs( wctx, L, 0 );
-    if ( 0 != iret )
-    {
-        waitchg_fini( wctx );
-        return luaL_error( L, "waitchg subs ret =%d", iret );    
+        return luaL_error( L, "wait field subs ret =%d", iret );    
     }
 
     printf( "datac waitchg, end\n" );

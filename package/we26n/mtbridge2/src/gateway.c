@@ -80,7 +80,7 @@ int  tdata_subscribe( intptr_t ctx, field_change_cbf pfunc, intptr_t argkey, int
 }
 
 
-int  tdata_unsubscribe( intptr_t ctx, intptr_t argkey, int type )
+int  tdata_unsubscribe( intptr_t ctx, intptr_t argkey )
 {
     tdata_context_t * pctx;
     
@@ -88,7 +88,7 @@ int  tdata_unsubscribe( intptr_t ctx, intptr_t argkey, int type )
     pctx = (tdata_context_t *)ctx;
 
     /**/
-    ccbk_remove( pctx->ccbk, argkey, type );
+    ccbk_remove( pctx->ccbk, argkey );
     return 0;
 }
 
@@ -232,14 +232,14 @@ int  srvs_subscribe( intptr_t sctx, field_change_cbf pfunc, intptr_t argkey, int
 }
 
 
-int  srvs_unsubscribe( intptr_t sctx, intptr_t argkey, int type )
+int  srvs_unsubscribe( intptr_t sctx, intptr_t argkey )
 {
     service_context_t * pctx;
 
     /**/
     pctx = (service_context_t *)sctx;
 
-    return ccbk_remove( pctx->ccbk, argkey, type );
+    return ccbk_remove( pctx->ccbk, argkey );
 }
 
 
@@ -400,14 +400,14 @@ int  devs_subscribe( intptr_t dctx, field_change_cbf pfunc, intptr_t argkey, int
 }
 
 
-int  devs_unsubscribe( intptr_t dctx, intptr_t argkey, int type )
+int  devs_unsubscribe( intptr_t dctx, intptr_t argkey )
 {
     device_context_t * pctx;
 
     /**/
     pctx = (device_context_t *)dctx;
 
-    return ccbk_remove( pctx->ccbk, argkey, type );
+    return ccbk_remove( pctx->ccbk, argkey );
 }
 
 
@@ -872,9 +872,9 @@ int  gtw_subscribe( field_change_cbf pfunc, intptr_t argkey, int type )
 }
 
 
-int  gtw_unsubscribe( intptr_t argkey, int type )
+int  gtw_unsubscribe( intptr_t argkey )
 {
-    return ccbk_remove( gtw_ccbk, argkey, type );
+    return ccbk_remove( gtw_ccbk, argkey );
 }
 
 

@@ -4,14 +4,16 @@
 #include <stdlib.h>
 
 #include <uv.h>
+#include "dlist.h"
 #include "chgcbk.h"
 
 
 typedef struct _tag_field_chg_cbk_info
 {
     /**/
-    struct _tag_field_chg_cbk_info * next;
-
+    struct list_head  node;
+    struct list_head  tttt;
+    
     /**/
     int  type;
     intptr_t  argkey;
@@ -23,7 +25,7 @@ typedef struct _tag_field_chg_cbk_info
 typedef struct _tag_chgcbk_context
 {
     intptr_t  fccbk;
-    field_chg_cbk_info_t * chain;
+    struct list_head  head;
     
 } chgcbk_context_t;
 
@@ -97,29 +99,42 @@ int  ccbk_invoke( intptr_t ctx, int type, intptr_t tdat )
 {
     chgcbk_context_t * pctx;
     field_chg_cbk_info_t * pcur;
-    field_chg_cbk_info_t * pnext;
+    struct list_head  head;
 
+    /**/
+    INIT_LIST_HEAD( &head );
+    
     /**/
     pctx = (chgcbk_context_t *)ctx;
 
     /**/
-    pcur = pctx->chain;
-    while ( NULL != pcur )
+    list_for_each_entry( pcur, &(pctx->head), node )
     {
-        pnext = pcur->next;
-
         /**/
         if ( type == (pcur->type & type) )
         {
-            // pcur->tdat = tdat;
-            // list_add( &(pcur->node), &(g_ccqueue_ctx->queue_list) );
-            pcur->pfunc( pcur->argkey, tdat );
+            list_add( &(pcur->tttt), &head );
+        }
+    }
+    
+    /**/
+    list_for_each_entry( pcur, &head, tttt )
+    {
+        /**/
+        if ( CCBK_T_ONCE == (pcur->type & CCBK_T_ONCE) )
+        {
+            list_del( &(pcur->node) );
         }
 
         /**/
-        pcur = pnext;        
-    }
+        pcur->pfunc( pcur->argkey, tdat );
 
+        if ( CCBK_T_ONCE == (pcur->type & CCBK_T_ONCE) )
+        {
+            free( pcur );
+        }
+    }
+    
     /**/
     if ( 0 != pctx->fccbk )
     {
@@ -135,21 +150,10 @@ int  ccbk_invoke( intptr_t ctx, int type, intptr_t tdat )
 int  ccbk_addtail( intptr_t ctx, field_change_cbf pfunc, intptr_t argkey, int type )
 {
     chgcbk_context_t * pctx;
-    field_chg_cbk_info_t ** ppcbk;
     field_chg_cbk_info_t * pcur;
-        
-    /**/
-    pctx = (chgcbk_context_t *)ctx;
 
     /**/
-    ppcbk = &(pctx->chain);
-    pcur = pctx->chain;
-    
-    while( pcur != NULL )
-    {
-        ppcbk = &(pcur->next);
-        pcur = pcur->next;
-    }
+    pctx = (chgcbk_context_t *)ctx;
 
     /**/
     pcur = (field_chg_cbk_info_t *)malloc( sizeof(field_chg_cbk_info_t) );
@@ -157,44 +161,36 @@ int  ccbk_addtail( intptr_t ctx, field_change_cbf pfunc, intptr_t argkey, int ty
     {
         return 1;
     }
-
+    
     /**/
     pcur->type = type;
     pcur->argkey = argkey;
     pcur->pfunc = pfunc;
-    pcur->next = NULL;
+    list_add( &(pcur->node), &(pctx->head) );
     
     /**/
-    *ppcbk = pcur;
     return 0;
     
 }
 
 
-int  ccbk_remove( intptr_t ctx, intptr_t argkey, int type )
+int  ccbk_remove( intptr_t ctx, intptr_t argkey )
 {
     chgcbk_context_t * pctx;
-    field_chg_cbk_info_t ** ppre;
-    field_chg_cbk_info_t * pcur;    
+    field_chg_cbk_info_t * pcur;
+    field_chg_cbk_info_t * ptr;
 
     /**/
     pctx = (chgcbk_context_t *)ctx;
 
     /**/
-    ppre = &(pctx->chain);
-    pcur = pctx->chain;
-    while ( NULL != pcur )
+    list_for_each_entry_safe( pcur, ptr, &(pctx->head), node )
     {
-        if ( (pcur->argkey == argkey) && (pcur->type == type) )
+        if ( pcur->argkey == argkey )
         {
-            *ppre = pcur->next;
+            list_del( &(pcur->node) );
             free( pcur );
-            break;
         }
-        
-        /**/
-        ppre = &(pcur->next);
-        pcur = pcur->next;
     }
 
     /**/
@@ -216,7 +212,7 @@ int  ccbk_init( intptr_t fccbk, intptr_t * pret )
     
     /**/
     pctx->fccbk = fccbk;
-    pctx->chain = NULL;
+    INIT_LIST_HEAD( &(pctx->head) );
         
     /**/
     *pret = (intptr_t)pctx;
@@ -227,19 +223,17 @@ int  ccbk_init( intptr_t fccbk, intptr_t * pret )
 int  ccbk_fini( intptr_t ctx )
 {
     chgcbk_context_t * pctx;
-    field_chg_cbk_info_t * pnext;
+    field_chg_cbk_info_t * pcur;
     field_chg_cbk_info_t * ptr;
-        
+    
     /**/
     pctx = (chgcbk_context_t *)ctx;
 
     /**/
-    ptr = pctx->chain;
-    while ( NULL != ptr )
+    list_for_each_entry_safe( pcur, ptr, &(pctx->head), node )
     {
-        pnext = ptr->next;
-        free( ptr );
-        ptr = pnext;
+        list_del( &(pcur->node) );
+        free( pcur );
     }
     
     /**/
