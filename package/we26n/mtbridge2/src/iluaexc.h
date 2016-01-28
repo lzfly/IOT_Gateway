@@ -18,8 +18,9 @@ int  wait_getptr( intptr_t ctx, void ** pret );
 int  ilua_init( uv_loop_t * ploop );
 
 int  ilua_run_once( char * code );
-int  ilua_add_instance( char * key, char * code );
-int  ilua_del_instance( char * key );
+int  ilua_add_instance( const char * key, char * code );
+int  ilua_del_instance( const char * key );
+int  ilua_clr_instance( void );
 
 
 #endif

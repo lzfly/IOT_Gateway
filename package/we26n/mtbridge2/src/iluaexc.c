@@ -85,7 +85,7 @@ int  wait_getptr( intptr_t ctx, void ** pret )
 }
 
 
-int  ilua_del_instance( char * key )
+int  ilua_del_instance( const char * key )
 {
     lua_State * corte;
     intptr_t  wctx;
@@ -126,8 +126,37 @@ int  ilua_del_instance( char * key )
 }
 
 
+
+int  ilua_clr_instance( void )
+{
+    const char * key;
+    
+    /**/
+    lua_getglobal( ilua_ctx.L, "ifttt_threads" );
+        
+    while ( 1 )
+    {
+        lua_pushnil( ilua_ctx.L );
+        if ( 0 == lua_next( ilua_ctx.L, -2 ) )
+        {
+            break;
+        }
+
+        /**/
+        lua_pop( ilua_ctx.L, 1 );
+        key = lua_tostring( ilua_ctx.L, -1 );
+        printf( "del ifttt, %s\n", key );
+        ilua_del_instance( key );
+        lua_pop( ilua_ctx.L, 1 );        
+    }
+
+    return 0;
+    
+}
+
+
 /**/
-int  ilua_add_instance( char * key, char * code )
+int  ilua_add_instance( const char * key, char * code )
 {
     int  iret;
     lua_State * corte;

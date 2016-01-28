@@ -409,13 +409,26 @@ int  isou_del_ifttt_handler( intptr_t reply, const char * method, struct blob_at
 }
 
 
+int  isou_clr_ifttt_handler( intptr_t reply, const char * method, struct blob_attr * args )
+{
+    /**/
+    ilua_clr_instance();
+    
+    /**/    
+    printf( "isou clr ifttt handler, end\n");
+    return 0;
+    
+}
+
+
 
 struct ubus_method  isou_ubus_method[] = 
 {
     { "add_device", isou_adddev_handler, isou_adddev_plcy, ARRAY_SIZE(isou_adddev_plcy) },
     { "report", isou_report_handler, isou_report_plcy, ARRAY_SIZE(isou_report_plcy) },
     { "add_ifttt", isou_add_ifttt_handler, isou_add_ifttt, ARRAY_SIZE(isou_add_ifttt) },
-    { "del_ifttt", isou_del_ifttt_handler, isou_del_ifttt, ARRAY_SIZE(isou_del_ifttt) }
+    { "del_ifttt", isou_del_ifttt_handler, isou_del_ifttt, ARRAY_SIZE(isou_del_ifttt) },
+    { "clr_ifttt", isou_clr_ifttt_handler, NULL, 0 }
 };
 
 
