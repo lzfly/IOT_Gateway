@@ -319,7 +319,9 @@ static int  datac_gtw_waitchg( lua_State * L )
     int  top;
     const char * did;
     uint16_t  uuid;
-        
+
+    printf( "datac waitchg, 1111\n" );
+    
     /**/
     top = lua_gettop( L );
     if ( top != 2 )
@@ -343,6 +345,8 @@ static int  datac_gtw_waitchg( lua_State * L )
     did = lua_tostring( L, 1 );
     uuid = (uint16_t)lua_tointeger( L, 2 );
 
+    printf( "datac waitchg, 2222\n" );
+    
     /**/
     iret = wait_field_subs( did, uuid, L );
     if ( 0 != iret )

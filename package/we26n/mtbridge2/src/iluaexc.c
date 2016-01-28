@@ -150,6 +150,12 @@ int  ilua_clr_instance( void )
         lua_pop( ilua_ctx.L, 1 );        
     }
 
+    lua_pop( ilua_ctx.L, 1 );
+
+    /**/
+//    printf( "before, gc, count = %d\n ", lua_gc( ilua_ctx.L, LUA_GCCOUNT, 0 ) );
+    lua_gc( ilua_ctx.L, LUA_GCCOLLECT, 0 );
+//    printf( "after, gc, count = %d\n ", lua_gc( ilua_ctx.L, LUA_GCCOUNT, 0 ) );    
     return 0;
     
 }
@@ -162,7 +168,8 @@ int  ilua_add_instance( const char * key, char * code )
     lua_State * corte;
 
     /**/
-    ilua_del_instance( key );
+    // ilua_del_instance( key );
+    printf( "add instance 1111\n" );
     
     /**/
     lua_getglobal( ilua_ctx.L, "ifttt_threads" );
@@ -178,6 +185,8 @@ int  ilua_add_instance( const char * key, char * code )
         printf( "lua load string error:\n %s\n", str );
         return 4;
     }
+
+    printf( "add instance 2222\n" );
 
     /*
     --- thread status; 0 is OK 
