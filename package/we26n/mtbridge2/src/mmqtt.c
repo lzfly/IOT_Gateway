@@ -477,7 +477,7 @@ int  mqtt_send_connect( mqtt_context_t * pctx )
     int  bfnum;
     
     /**/
-    iret = mpkt_conn_alloc( 16, &mpkt );
+    iret = mpkt_conn_alloc( 40, &mpkt );
     if ( 0 != iret )
     {
         return 1;
@@ -487,6 +487,8 @@ int  mqtt_send_connect( mqtt_context_t * pctx )
     mpkt_conn_set_protocol_level( mpkt, 4 );
     mpkt_conn_set_clean_session( mpkt, 1 );
     mpkt_conn_set_client_ident( mpkt, pctx->name );
+
+printf( "connect.client.ident: %s\n", pctx->name );
 
     /**/
     iret = mpkt_iovec( mpkt, &pbufs, &bfnum );
