@@ -1,0 +1,147 @@
+<%
+
+function get_devices()
+	local x = require("luci.model.uci").cursor()
+    local devices = "["
+    local s = require "luci.tools.status"
+	local devs = s.dhcp_leases() or {}
+	local ss = {}
+	local found = false
+	local needwrite = false
+	for key, value in pairs(devs) do
+	    local name = value.hostname
+		if not name then 
+		    name = "unknown_name"
+		else
+		    name = (string.gsub(name, " ", ""))
+		end
+		devices = devices .. "{".."\"name\"".. ":".."\"" .. name .. "\""..",".."\"ip\"" .. ":" .."\""..value.ipaddr .."\""..",".."\"mac\""..":".."\""..value.macaddr.."\"".."}"..","
+	end
+	devices = devices .. "]"
+	return devices;
+end
+
+
+local result=get_devices();
+
+%>
+
+
+<!doctype html>
+<html>
+<head>
+<style> 
+body{ margin:auto;background-color:#1c69bb;}
+img{display:block;border:none;}
+a{ display:block; text-decoration:none; font-family:"微软雅黑";}
+.big_box{width:100%;height:auto;position:absolute;top:50%;margin-top:-325px;}
+.big_top{ width:1196px;margin:auto;overflow:hidden; padding-top:5px;}
+.big_top img,.big_top a{ float:left;padding-bottom:15px;text-decoration:none;}
+.zig{font-size:26px; color:white; padding-top:4px;font-family:"微软雅黑";}
+.button{margin-left:860px;color:white;padding-top:10px;}
+.big_top p{ padding-top:20px;  color:#FFF; font-size:12px;font-family:"微软雅黑";}
+.big_bottom{width:1196px; background-color:#226fc0;margin:auto;border-top:1px solid #407CB8;}
+.nav{ width:100%;  line-height:50px; background-color:#8eb3db; overflow:hidden;}
+.nav a{ float:left; padding-left:591px; padding-top:5px;text-decoration:none; font-size:26px; color:#FFF;font-family:"微软雅黑";}
+.title{ float:left; padding-left:580px; padding-top:10px;padding-bottom:10px;text-decoration:none; font-size:20px;color:#ffffff;font-family:"微软雅黑";}
+table{
+	width:100%;
+}
+
+table, th, td {
+	border: 1px solid #8eb3db;
+	border-collapse: collapse;
+	padding: 5px;
+}
+
+th,td{
+	text-align: left; color:#CCC;
+}
+td.img{
+   float;
+}
+.bottom{width:1198px; height:auto background-color:#226fc0; margin:auto;overflow:hidden; padding-bottom:50px;}
+.bottom p{font-size:16px; color:#ffffff;font-family:"微软雅黑";}
+</style>
+<meta charset="utf-8">
+<title>已连接设备</title>
+
+
+	
+	
+<script type="text/javascript">
+
+	var devicedata='<%=result%>';
+</script>
+</head>
+
+<body>
+<div class="big_box">
+	<div class="big_top">
+    	<a href="newweb_index"> <img src="<%=resource%>/images/back.png"></a>
+        <a class="zig">&nbsp;&nbsp;已连接设备</a>
+    </div>
+    
+	<div class="big_bottom">
+		<div class="nav">
+        	<a class="zigbe" href="routes">已连接设备</a>
+    	</div>
+    <script type="text/javascript">
+    
+    var deviceArr = eval(devicedata);
+	
+	
+	var a=0;
+	var i=0;
+	var j=0;
+	var k=0;
+	
+	document.write('<table id="table2">') ;
+    document.write('<tr id="name">') ;
+    document.write("<td  width='30%'><center>"+"主机名"+"</td>");
+    document.write("<td  width='30%'><center>"+"IP地址"+"</td>");
+    document.write("<td  width='30%'><center>"+"MAC地址"+"</td>");
+	document.write("</tr>") ;
+    document.write("</table>") ;
+    
+	for(i=0;i<deviceArr.length;i++){
+		var deviceData = deviceArr[i];
+		var devName = deviceData["name"];
+		var devip=deviceData["ip"];
+		var devmac=deviceData["mac"];
+		    
+		    document.write('<table id="table1">') ;
+		    document.write('<tr id="delCell">') ;
+		    
+			document.write("<td width='30%' ><center>"+devName+"</td>"); 
+			
+			document.write("<td width='30%' ><center>"+devip+"</td>"); 
+			
+			document.write("<td width='30%' ><center>"+devmac+"</td>"); 
+			
+			document.write("</form>");
+			document.write("</tr>") ;
+			document.write("</table>") ;
+			
+			
+			
+			
+			j++;
+		
+	}
+	
+	if(j!=0){
+	   document.getElementById("title1").style.display="block";
+	}
+	if(k!=0){
+	   document.getElementById("title2").style.display="block";
+	}
+	</script>
+	
+	</div>  <!--big_bottom结束-->
+<div class="bottom">
+    <p class="deom" id="deom"></p>
+</div>
+</div>
+</body>
+</html>
