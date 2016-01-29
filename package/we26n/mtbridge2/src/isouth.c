@@ -360,10 +360,10 @@ int  isou_report_handler( intptr_t reply, const char * method, struct blob_attr 
     value = strtod( (char *)blobmsg_data( tb[2] ), NULL );
 
     /**/
-    isou_report_attr( did, uuid, value );
+    iret = isou_report_attr( did, uuid, value );
     
     /**/    
-    printf( "isou report handler, %s, %d, %f::%s\n", did, uuid, value, (char *)blobmsg_data( tb[2] ) );
+    printf( "isou report handler :%d:, %s, %d, %f::%s\n", iret, did, uuid, value, (char *)blobmsg_data( tb[2] ) );
     return 0;
     
 }

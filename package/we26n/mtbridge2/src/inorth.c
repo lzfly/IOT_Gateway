@@ -352,7 +352,7 @@ int  inor_init( uv_loop_t * ploop )
     printf( "inor, getmac, %s\n", inor_ctx.gtwid );
     
     /**/
-    iret = mqtt_init( ploop, &(inor_ctx.mqtt) );
+    iret = mqtt_init( inor_ctx.gtwid, ploop, &(inor_ctx.mqtt) );
     if ( 0 != iret )
     {
         printf( "mqtt init , ret = %d\n", iret );

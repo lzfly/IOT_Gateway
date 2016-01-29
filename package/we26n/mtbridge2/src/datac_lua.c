@@ -80,12 +80,15 @@ static void wait_field_change_cb( intptr_t wctx, intptr_t tdat )
     double  value;
     lua_State * corte;
 
-    /**/
-    printf( "wait field cb cb cb\n" );
     
     /**/
     wait_getptr( wctx, (void **)&pctx );
+
+    /**/
+    printf( "wait field cb cb cb, %d\n", pctx->status );
+
     pctx->status = WAIT_FREE;
+
     
     /**/
     tdata_get_double( tdat, &value );
@@ -97,10 +100,13 @@ static void wait_field_change_cb( intptr_t wctx, intptr_t tdat )
 
     /**/
     wait_fini( wctx );
+    printf( "wait field cb cb 1111\n" );
     
     /**/
     lua_pushnumber( corte, value );
     lua_resume( corte, 1 );
+
+    printf( "wait field cb cb 2222\n" );
     return;
     
 }
@@ -133,6 +139,7 @@ int  wait_field_subs( const char * did, uint16_t uuid, lua_State * corte )
     iret = gtw_search_tdata( pctx->did, pctx->uuid, &tdat );
     if ( 0 != iret )
     {
+        wait_fini( wctx );
         return 2;
     }
     
@@ -140,6 +147,7 @@ int  wait_field_subs( const char * did, uint16_t uuid, lua_State * corte )
     iret = tdata_subscribe( tdat, wait_field_change_cb, wctx, (CCBK_T_BOTH | CCBK_T_ONCE) );
     if ( 0 != iret )
     {
+        wait_fini( wctx );    
         return 3;
     }
 

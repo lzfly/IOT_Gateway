@@ -25,6 +25,7 @@ extern  void  dump_hex( size_t len, uint8_t * ptr );
 typedef struct _tag_mqtt_context
 {
     /**/
+    char * name;
 	uv_loop_t * ploop;
 
     /* call back function */
@@ -485,7 +486,7 @@ int  mqtt_send_connect( mqtt_context_t * pctx )
     /**/
     mpkt_conn_set_protocol_level( mpkt, 4 );
     mpkt_conn_set_clean_session( mpkt, 1 );
-    mpkt_conn_set_client_ident( mpkt, "TEST_PC" );
+    mpkt_conn_set_client_ident( mpkt, pctx->name );
 
     /**/
     iret = mpkt_iovec( mpkt, &pbufs, &bfnum );
@@ -691,7 +692,7 @@ int  mqtt_set_mesage_callbk( intptr_t ctx, mqtt_message_cbf func, intptr_t arg )
 }
 
 
-int  mqtt_init( uv_loop_t * ploop, intptr_t * pret )
+int  mqtt_init( char * name, uv_loop_t * ploop, intptr_t * pret )
 {
 	int  iret;
 	mqtt_context_t * pctx;
@@ -704,6 +705,7 @@ int  mqtt_init( uv_loop_t * ploop, intptr_t * pret )
 	}
 
 	/**/
+	pctx->name = strdup(name);
 	pctx->tid = 11;
 	pctx->status = STA_NOTHING;
     pctx->ploop	= ploop;

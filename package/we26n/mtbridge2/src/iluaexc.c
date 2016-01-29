@@ -97,15 +97,18 @@ int  ilua_del_instance( const char * key )
     /**/
     if ( lua_isnil( ilua_ctx.L, -1 ) )
     {
+        lua_pop( ilua_ctx.L, 2 );
         return 1;
     }
 
     /**/
     if ( 0 == lua_isthread( ilua_ctx.L, -1 ) )
     {
+        lua_pop( ilua_ctx.L, 2 );
         return 2;
     }
 
+    /**/
     corte = lua_tothread( ilua_ctx.L, -1 );
     lua_pop( ilua_ctx.L, 1 );
     
@@ -116,7 +119,8 @@ int  ilua_del_instance( const char * key )
         wctx = (intptr_t)lua_touserdata( corte, -1 );
         wait_fini( wctx );
     }
-
+    lua_pop( corte, 2 );
+    
     /**/
     lua_pushnil( ilua_ctx.L );
     lua_setfield( ilua_ctx.L, -2, key );
@@ -206,7 +210,8 @@ int  ilua_add_instance( const char * key, char * code )
     if ( 0 != iret )
     {
         const char * str = lua_tostring( corte, -1 );
-        printf( "lua pcall error:\n %s\n", str );
+        printf( "corte lua_resume error:\n %s\n", str );
+        ilua_del_instance( key );
         return 4;
     }
     

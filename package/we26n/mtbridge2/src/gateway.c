@@ -453,7 +453,7 @@ typedef struct _tag_device_map
 } device_map_t;
 
 
-#define  GTW_DEV_MAX        10
+#define  GTW_DEV_MAX        40
 
 static device_map_t  dev_map[GTW_DEV_MAX];
 static intptr_t  gtw_ccbk;
@@ -766,7 +766,7 @@ int  gtw_search_device( const char * did, intptr_t * pret )
         }
     }
 
-    if ( i<10 )
+    if ( i<GTW_DEV_MAX )
     {
         *pret = dev_map[i].dctx;
         return 0;
