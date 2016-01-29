@@ -189,6 +189,46 @@ void  isou_field_change_cbk( intptr_t ctx, intptr_t tdat )
 }
 
 
+void isou_gateway_notify_invoke_cb( intptr_t arg, int iret, struct blob_attr * attr )
+{
+    return;
+}
+
+
+void  isou_gateway_notify_lookup_cb( intptr_t arg, uint32_t tid )
+{
+    int  iret;
+
+    /**/
+    if ( 0 == tid )
+    {
+        return;
+    }
+    
+    /**/
+    iret = tubus_invoke( isou_ctx.ubus, tid, "update", NULL, isou_gateway_notify_invoke_cb, 0 );
+    printf( "isou, invoke, %d\n", iret );
+    return;
+}
+
+
+int  isou_gateway_notify_linkdevice( void )
+{
+    int  iret;
+    
+    /**/
+    iret = tubus_lookup( isou_ctx.ubus, "we26n_updateifttt", isou_gateway_notify_lookup_cb, (intptr_t)0 );
+    if ( iret != 0 )
+    {
+        printf( "gateway notify linkdevice, lookup ret = %d\n", iret );
+        return 1;
+    }
+
+    /**/
+    return 0;
+}
+
+
 struct blobmsg_policy  isou_adddev_plcy[] = 
 {
     { "devid", BLOBMSG_TYPE_STRING },
@@ -268,6 +308,7 @@ int  isou_adddev_handler( intptr_t reply, const char * method, struct blob_attr 
     
     /**/    
     printf( "isou adddev handler, end, %s, %d\n", did, num );
+    isou_gateway_notify_linkdevice();
     return 0;
     
 }

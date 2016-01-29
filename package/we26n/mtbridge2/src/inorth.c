@@ -12,6 +12,7 @@
 
 #include "chgcbk.h"
 #include "gateway.h"
+#include "isouth.h"
 #include "inorth.h"
 
 
@@ -22,8 +23,10 @@ typedef struct  _tag_inor_context
 {
     uv_loop_t * ploop;
     intptr_t  mqtt;
+    char  gtwid[40];
     
 } inor_context_t;
+
 
 inor_context_t  inor_ctx;
 
@@ -161,8 +164,22 @@ int  inor_inner_to_device( char * did, char * attr, int tlen, uint8_t * pdat )
 }
 
 
-int  inor_inner_to_gateway( const char * topic, int tlen, uint8_t * pdat )
+
+int  inor_inner_to_gateway( inor_context_t * pctx, const char * gtwid, int tlen, uint8_t * pdat )
 {
+    if ( 0 != strcmp( gtwid, pctx->gtwid ) )
+    {
+        return 1;
+    }
+
+    /* mpacket alloc more 4 bytes, so this may write tail zero. */
+    pdat[tlen] = 0;
+    if ( 0 == strcmp( (char *)pdat, "linkdevice" ) )
+    {
+        printf( "link device\n" );
+        isou_gateway_notify_linkdevice();
+    }
+    
     return 0;
 }
 
@@ -177,6 +194,7 @@ void  inor_mqtt_conn_cb( intptr_t arg, int status )
 void  inor_mqtt_message_cb( intptr_t arg, const char * topic, int tlen, uint8_t * pdat )
 {
     int  iret;
+    inor_context_t * pctx;
     char  tstr[50];
     char  attr[10];
     const char * pnext;
@@ -188,6 +206,9 @@ void  inor_mqtt_message_cb( intptr_t arg, const char * topic, int tlen, uint8_t 
         return;
     }
 
+    /**/
+    pctx = (inor_context_t *)arg;
+    
     /**/
     iret = recongnize_dir( topic, 50, tstr, &pnext );
     if ( 0 != iret )
@@ -235,7 +256,18 @@ void  inor_mqtt_message_cb( intptr_t arg, const char * topic, int tlen, uint8_t 
     }
     else if ( 0 == strcmp( "to_gateway", tstr ) )
     {
-        inor_inner_to_gateway( pnext, tlen, pdat );
+        iret = recongnize_dir( pnext, 50, tstr, &pnext );
+        if ( 0 != iret )
+        {
+            return;
+        }
+
+        /**/
+        iret = inor_inner_to_gateway( pctx, tstr, tlen, pdat );
+        if ( 0 != iret )
+        {
+            return;
+        }
     }
     
     /**/
@@ -249,12 +281,75 @@ void  inor_mqtt_message_cb( intptr_t arg, const char * topic, int tlen, uint8_t 
 }
 
 
+
+static int  inor_get_macaddr( char * pmac )
+{
+    FILE * fout;
+    char  tbuf[100];
+    char * ptr;
+    char * dst;
+    
+    /**/
+    fout = popen( "eth_mac r wifi", "r" );
+    if ( fout == NULL )
+    {
+        return 1;
+    }
+
+    /**/
+    ptr = fgets( tbuf, 90, fout );
+    if ( NULL == ptr )
+    {
+        return 2;
+    }
+
+    /**/
+    pclose( fout );
+
+    /**/
+    strcpy( pmac, "we26n_" );
+    dst = &(pmac[strlen(pmac)]);
+    ptr = tbuf;
+    while( '\0' != *(ptr) )
+    {
+        if ( *(ptr) != ':' )
+        {
+            *dst++ = *ptr++;
+        }
+        else
+        {
+            ptr++;
+        }
+    }
+
+    /**/
+    if ( *(dst-1) == 0x0a )
+    {
+        *(dst-1) = '\0';
+    }
+    
+    *dst = '\0';
+    return 0;
+    
+}
+
+
+
 int  inor_init( uv_loop_t * ploop )
 {
     int  iret;
 
     /**/
     inor_ctx.ploop = ploop;
+
+    /**/
+    iret = inor_get_macaddr( inor_ctx.gtwid );
+    if ( 0 != iret )
+    {
+        return 7;
+    }
+
+    printf( "inor, getmac, %s\n", inor_ctx.gtwid );
     
     /**/
     iret = mqtt_init( ploop, &(inor_ctx.mqtt) );

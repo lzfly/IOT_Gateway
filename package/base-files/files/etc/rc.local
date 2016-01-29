@@ -8,6 +8,7 @@ start-stop-daemon -b -S -x ttyswitch
 sleep 1
 start-stop-daemon -b -S -x zlldaemon
 sleep 2
+start-stop-daemon -b -S -x mtbridge2
 start-stop-daemon -b -S -x netzigbee
 start-stop-daemon -b -S -x webdevice.lua
 start-stop-daemon -b -S -x wifibridge
@@ -16,12 +17,7 @@ start-stop-daemon -b -S -x wifibridge_1
 start-stop-daemon -b -S -x webbridge_device.lua
 start-stop-daemon -b -S -x gatewayreport.lua
 
-
-start-stop-daemon -b -S -x mtbridge
-start-stop-daemon -b -S -x bledaemn
-start-stop-daemon -b -S -x bleread.lua
 start-stop-daemon -b -S -x rfmodbus
 start-stop-daemon -b -S -x rfreader.lua
-start-stop-daemon -b -S -x cb_ctrl
 
 exit 0
