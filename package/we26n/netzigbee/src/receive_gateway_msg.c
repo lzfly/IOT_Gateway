@@ -853,9 +853,11 @@ int receiveDeviceMsg(char *buf, int len)
 					 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 					 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
                          sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE, status);
+						 sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_STATE, status);
 						 break;
 					 default:
 					     sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, status);
+						 sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, status);
 						 break;
 					}
 					
@@ -902,9 +904,11 @@ int receiveDeviceMsg(char *buf, int len)
 					 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP:
 					 case FB_DEVICE_TYPE_COLOR_TEMP_LAMP_2:
                          sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE, level);
+						 sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_BRIGHTNESS_VALUE, level);
 						 break;
 					 default:
 					     sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, level);
+						 sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, 0, level);
 						 break;
 					}
 				}
@@ -952,6 +956,7 @@ int receiveDeviceMsg(char *buf, int len)
 					g_colorTmp[index] = colortmp;
 					 
                      sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE, colortmp);
+					 sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_COLOR_TEMP_LAMP_COLOR_TEMP_VALUE, colortmp);
 				}
 				else if(resptype == RPCS_DEVICE_REPORT)
 				{
@@ -1094,6 +1099,7 @@ int receiveDeviceMsg(char *buf, int len)
                         	                   }
                         	                    printf("after 41\n");	
 						    sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_TEMP_VALUE, value);
+							sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_TEMP_VALUE, value);
 						}
 						else if(type == 33 && num ==1)
 						{   
@@ -1105,6 +1111,7 @@ int receiveDeviceMsg(char *buf, int len)
                         	                   }	
                         	                   printf("in 33\n");
 					           sendMsgToWeb(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_HUM_VALUE, value/100);
+							   sendMsgToMQTT(g_devices[index].deviceId, g_devices[index].ieeestr, g_devices[index].endpoint, ENN_DEVICE_ATTR_HUM_VALUE, value/100);
 					         }
 						        /*
 						        else if(num == 2 && type != 32)
