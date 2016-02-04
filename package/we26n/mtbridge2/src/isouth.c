@@ -408,7 +408,6 @@ int  isou_add_ifttt_handler( intptr_t reply, const char * method, struct blob_at
     ilua_add_instance( name, code );
     
     /**/    
-    printf( "isou add ifttt handler, end\n");
     return 0;
     
 }
@@ -444,7 +443,6 @@ int  isou_del_ifttt_handler( intptr_t reply, const char * method, struct blob_at
     ilua_del_instance( name );
     
     /**/    
-    printf( "isou del ifttt handler, end\n");
     return 0;
     
 }
@@ -456,9 +454,7 @@ int  isou_clr_ifttt_handler( intptr_t reply, const char * method, struct blob_at
     ilua_clr_instance();
     
     /**/    
-    printf( "isou clr ifttt handler, end\n");
     return 0;
-    
 }
 
 

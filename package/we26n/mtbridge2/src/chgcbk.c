@@ -99,6 +99,7 @@ int  ccbk_invoke( intptr_t ctx, int type, intptr_t tdat )
 {
     chgcbk_context_t * pctx;
     field_chg_cbk_info_t * pcur;
+    field_chg_cbk_info_t * ptr;    
     struct list_head  head;
 
     /**/
@@ -118,7 +119,7 @@ int  ccbk_invoke( intptr_t ctx, int type, intptr_t tdat )
     }
     
     /**/
-    list_for_each_entry( pcur, &head, tttt )
+    list_for_each_entry_safe( pcur, ptr, &head, tttt )
     {
         /**/
         if ( CCBK_T_ONCE == (pcur->type & CCBK_T_ONCE) )
@@ -190,6 +191,7 @@ int  ccbk_remove( intptr_t ctx, intptr_t argkey )
         {
             list_del( &(pcur->node) );
             free( pcur );
+            break;
         }
     }
 
