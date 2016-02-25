@@ -46,6 +46,7 @@ endef
 define Package/mtbridge2/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/mtbridge2 $(1)/usr/bin/mtbridge2
+	$(INSTALL_BIN) ./files/update_ifttt.lua  $(1)/usr/bin
 endef
 
 $(eval $(call BuildPackage,mtbridge2))
