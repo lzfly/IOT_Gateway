@@ -3,13 +3,14 @@
 
 start-stop-daemon -b -S -x datareport.lua
 start-stop-daemon -b -S -x commanddispatcher.lua
-start-stop-daemon -b -S -x flowmeter
 start-stop-daemon -b -S -x ttyswitch
 sleep 1
 start-stop-daemon -b -S -x zlldaemon
 sleep 2
 start-stop-daemon -b -S -x mtbridge2
 start-stop-daemon -b -S -x netzigbee
+start-stop-daemon -b -S -x update_ifttt.lua
+
 start-stop-daemon -b -S -x webdevice.lua
 start-stop-daemon -b -S -x wifibridge
 start-stop-daemon -b -S -x wifibridge_1
